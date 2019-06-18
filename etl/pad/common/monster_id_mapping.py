@@ -2,15 +2,15 @@
 # We use JP ids as the monster number; NA-only cards are adjusted to a new range.
 
 
-def between(n, bottom, top):
+def between(n: int, bottom: int, top: int):
     return bottom <= n <= top
 
 
-def adjust(n, local_bottom, remote_bottom):
+def adjust(n: int, local_bottom: int, remote_bottom: int):
     return n - local_bottom + remote_bottom
 
 
-def jp_id_to_monster_no(jp_id):
+def jp_id_to_monster_no(jp_id: int):
     jp_id = int(jp_id)
 
     # We use JP IDs as the monster_no; no need to adjust.
@@ -18,7 +18,7 @@ def jp_id_to_monster_no(jp_id):
 
 
 # Fixes for early collabs, and adjusting voltron to a new range.
-def na_id_to_monster_no(na_id):
+def na_id_to_monster_no(na_id: int):
     na_id = int(na_id)
 
     # Shinra Bansho 1
@@ -41,4 +41,4 @@ def na_id_to_monster_no(na_id):
     if between(na_id, 2601, 2631):
         return adjust(na_id, 2601, 2601 + 10000)
 
-    raise NotImplementedError('only voltron supported')
+    return na_id
