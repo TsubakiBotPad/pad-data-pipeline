@@ -18,7 +18,7 @@ def jp_id_to_monster_no(jp_id: int):
 
 
 # Fixes for early collabs, and adjusting voltron to a new range.
-def na_id_to_monster_no(na_id: int):
+def nakr_id_to_monster_no(na_id: int):
     na_id = int(na_id)
 
     # Shinra Bansho 1
