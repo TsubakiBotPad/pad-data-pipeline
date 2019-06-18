@@ -45,17 +45,17 @@ class Enemy(pad_util.Printable):
 class Card(pad_util.Printable):
     """Data about a player-ownable monster."""
 
-    def __init__(self, raw: List[Any]):
+    def __init__(self, raw: List[str]):
         _unflatten(raw, 57, 3)
         _unflatten(raw, 58, 1)
 
-        self.card_id = CardId(raw[0])
-        self.name = str(raw[1])
-        self.attr_id = AttrId(raw[2])
-        self.sub_attr_id = AttrId(raw[3])
+        self.card_id = CardId(int(raw[0]))
+        self.name = raw[1]
+        self.attr_id = AttrId(int(raw[2]))
+        self.sub_attr_id = AttrId(int(raw[3]))
         self.is_ult = bool(raw[4])  # True if ultimate, False if normal evo
-        self.type_1_id = TypeId(raw[5])
-        self.type_2_id = TypeId(raw[6])
+        self.type_1_id = TypeId(int(raw[5]))
+        self.type_2_id = TypeId(int(raw[6]))
         self.rarity = int(raw[7])
         self.cost = int(raw[8])
 
@@ -83,8 +83,8 @@ class Card(pad_util.Printable):
         self.xp_max = int(raw[23])
         self.xp_scale = float(raw[24])
 
-        self.active_skill_id = SkillId(raw[25])
-        self.leader_skill_id = SkillId(raw[26])
+        self.active_skill_id = SkillId(int(raw[25]))
+        self.leader_skill_id = SkillId(int(raw[26]))
 
         # Enemy turn timer for normal dungeons, and techs where enemy_turns_alt is not populated.
         self.enemy_turns = int(raw[27])
@@ -106,24 +106,30 @@ class Card(pad_util.Printable):
         self.enemy_coins_at_lvl_2 = int(raw[38])
         self.enemy_xp_at_lvl_2 = int(raw[39])
 
-        self.ancestor_id = CardId(raw[40])
+        self.ancestor_id = CardId(int(raw[40]))
 
-        self.evo_mat_id_1 = CardId(raw[41])
-        self.evo_mat_id_2 = CardId(raw[42])
-        self.evo_mat_id_3 = CardId(raw[43])
-        self.evo_mat_id_4 = CardId(raw[44])
-        self.evo_mat_id_5 = CardId(raw[45])
+        self.evo_mat_id_1 = CardId(int(raw[41]))
+        self.evo_mat_id_2 = CardId(int(raw[42]))
+        self.evo_mat_id_3 = CardId(int(raw[43]))
+        self.evo_mat_id_4 = CardId(int(raw[44]))
+        self.evo_mat_id_5 = CardId(int(raw[45]))
 
-        self.un_evo_mat_1 = CardId(raw[46])
-        self.un_evo_mat_2 = CardId(raw[47])
-        self.un_evo_mat_3 = CardId(raw[48])
-        self.un_evo_mat_4 = CardId(raw[49])
-        self.un_evo_mat_5 = CardId(raw[50])
+        self.un_evo_mat_1 = CardId(int(raw[46]))
+        self.un_evo_mat_2 = CardId(int(raw[47]))
+        self.un_evo_mat_3 = CardId(int(raw[48]))
+        self.un_evo_mat_4 = CardId(int(raw[49]))
+        self.un_evo_mat_5 = CardId(int(raw[50]))
 
         # When >0, the enemy turn timer for technical dungeons.
         self.enemy_turns_alt = int(raw[51])
 
-        self.unknown_052 = raw[52]
+
+        # Controls whether the monster uses the 'new' AI or the 'old' AI.
+        # Monsters using the old  AI only have support up to some limit of ES values.
+        # One main difference between is behavior during preempts; old-AI monsters will
+        # attack if they cannot execute a preempt, new-AI monsters will skip to the next.
+        # (needs verification).
+        self.use_new_ai = bool(raw[52])
 
         # Each monster has an internal counter which starts at raw[53] and is decremented
         # each time a skill activates. If the counter is less than the action cost, it cannot
@@ -133,11 +139,12 @@ class Card(pad_util.Printable):
         # 1: pick action (possibly checking counter value)
         # 2: increment the counter up, capped at the max value
         # 3: decrement the counter based on the selected action value
-
+        #
         # The starting and maximum value for the enemy skill action counter.
         self.enemy_skill_max_counter = int(raw[53])
 
         # The amount to increment the counter each turn.
+        #
         # The vast majority of these are 0/1.
         # Deus Ex Machina has 2, Kanna has 7.
         self.enemy_skill_counter_increment = int(raw[54])
@@ -156,9 +163,9 @@ class Card(pad_util.Printable):
         self.awakenings = raw[58]  # type: List[int]
         self.super_awakenings = list(map(int, filter(str.strip, raw[59].split(','))))  # List[int]
 
-        self.base_id = CardId(raw[60])  # ??
+        self.base_id = CardId(int(raw[60]))  # ??
         self.group_id = raw[61]  # ??
-        self.type_3_id = TypeId(raw[62])
+        self.type_3_id = TypeId(int(raw[62]))
 
         self.sell_mp = int(raw[63])
         self.latent_on_feed = int(raw[64])
