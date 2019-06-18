@@ -3,8 +3,6 @@ Parses Dungeon and DungeonFloor data.
 """
 
 import csv
-import json
-import os
 from io import StringIO
 from typing import List, Any
 
@@ -154,15 +152,10 @@ class Dungeon(pad_util.Printable):
         return 'Dungeon({} - {})'.format(self.dungeon_id, self.clean_name)
 
 
-def load_dungeon_data(data_dir: str = None, dungeon_file: str = None) -> List[Dungeon]:
+def load_dungeon_data(data_dir: str = None, json_file: str = None) -> List[Dungeon]:
     """Converts dungeon JSON into an array of Dungeons."""
-    if dungeon_file is None:
-        dungeon_file = os.path.join(data_dir, FILE_NAME)
-
-    with open(dungeon_file) as f:
-        dungeon_json = json.load(f)
-
-    dungeon_info = dungeon_json['dungeons']
+    data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
+    dungeon_info = data_json['dungeons']
 
     dungeons = []
     cur_dungeon = None
