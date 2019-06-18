@@ -51,13 +51,13 @@ class ExtraEggMachine(pad_util.Printable):
 
     def is_open(self):
         current_time = int(time.time())
-        return self.start_timestamp < current_time and current_time < self.end_timestamp
+        return self.start_timestamp < current_time < self.end_timestamp
 
     def __str__(self):
         return str(self.__dict__)
 
     def __repr__(self):
-        return 'ExtraEggMachine({} - {})'.format(self.egg_machine_id, self.clean_name)
+        return 'ExtraEggMachine({}/{} - {})'.format(self.egg_machine_row, self.egg_machine_type, self.clean_name)
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
