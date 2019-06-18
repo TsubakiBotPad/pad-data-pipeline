@@ -2,22 +2,22 @@ import csv
 import os
 from typing import List
 
-from pad.common.pad_util import Printable
+from pad.common import pad_util
 
 
-class WaveResponse(Printable):
+class WaveResponse(pad_util.Printable):
     def __init__(self, wave_data):
         """Converts the raw enemy dungeon wave response into an object."""
         self.floors = [WaveFloor(floor) for floor in wave_data]
 
 
-class WaveFloor(Printable):
+class WaveFloor(pad_util.Printable):
     def __init__(self, floor_data):
         """Converts the raw stage response data into an object."""
         self.monsters = [WaveMonster(monster) for monster in floor_data]
 
 
-class WaveMonster(Printable):
+class WaveMonster(pad_util.Printable):
     def __init__(self, monster_data):
         """Converts the raw spawn response data into an object."""
         self.spawn_type = monster_data[0]  # Dungeon trigger maybe? Mostly 0, last is 1
@@ -28,7 +28,7 @@ class WaveMonster(Printable):
         self.plus_amount = monster_data[5]
 
 
-class WaveSummary(Printable):
+class WaveSummary(pad_util.Printable):
     def __init__(self,
                  dungeon_id: int = 0,
                  floor_id: int = 0,
@@ -51,6 +51,7 @@ def load_wave_summary(processed_input_dir) -> List[WaveSummary]:
     results = []
     with open(wave_summary_file) as f:
         csvreader = csv.reader(f, delimiter=',', quotechar='"')
+        # Skip header
         next(csvreader)
         for row in csvreader:
             results.append(WaveSummary(
