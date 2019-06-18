@@ -6,7 +6,7 @@ each other to get the full list.
 """
 
 import time
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from pad.common import pad_util
 from pad.common.pad_util import ghmult_plain, ghchance_plain, Printable
@@ -105,7 +105,7 @@ class Bonus(Printable):
 
     keys = 'sebiadmf'
 
-    def __init__(self, raw: Dict[str, Any], server: str):
+    def __init__(self, raw: Dict[str, str], server: str):
         if not set(raw) <= set(Bonus.keys):
             raise ValueError('Unexpected keys: ' + str(set(raw) - set(Bonus.keys)))
 
@@ -120,13 +120,13 @@ class Bonus(Printable):
         # Optional DungeonId
         self.dungeon_id = None  # type: Optional[DungeonId]
         if 'd' in raw:
-            self.dungeon_id = DungeonId(raw['d'])
+            self.dungeon_id = DungeonId(int(raw['d']))
 
         # Optional DungeonFloorId
         # Stuff like rewards text in monthly quests
         self.dungeon_floor_id = None  # type: Optional[DungeonFloorId]
         if 'f' in raw:
-            self.dungeon_floor_id = DungeonFloorId(raw['f'])
+            self.dungeon_floor_id = DungeonFloorId(int(raw['f']))
 
         # If REM/PEM, the ID of the machine
         self.egg_machine_id = None  # type: Optional[int]
@@ -157,7 +157,7 @@ class Bonus(Printable):
 
     def is_open(self):
         current_time = int(time.time())
-        return self.start_timestamp < current_time and current_time < self.end_timestamp
+        return self.start_timestamp < current_time < self.end_timestamp
 
     def __str__(self):
         return 'Bonus({} - {} - {}/{})'.format(self.bonus_name, self.clean_message,
