@@ -5,7 +5,7 @@ import re
 
 import pytz
 
-from pad.common.shared_types import JsonType
+from pad.common.shared_types import JsonType, Server
 
 
 def strip_colors(message: str) -> str:
@@ -40,6 +40,7 @@ def ghchance_plain(x: int) -> str:
     return '%d%%' % (x // 100)
 
 
+# TODO: Change this to take Server
 def ghtime(time_str: str, server: str) -> datetime.datetime:
     """Converts a time string into a datetime."""
     # <  151228000000
@@ -54,9 +55,15 @@ def ghtime(time_str: str, server: str) -> datetime.datetime:
     return datetime.datetime.strptime(timezone_str, '%y%m%d%H%M%S %z')
 
 
+# TODO: delete this
 def gh_to_timestamp(time_str: str, server: str) -> int:
     """Converts a time string to a timestamp."""
     dt = ghtime(time_str, server)
+    return int(dt.timestamp())
+
+def gh_to_timestamp_2(time_str: str, server: Server) -> int:
+    """Converts a time string to a timestamp."""
+    dt = ghtime(time_str, server.name)
     return int(dt.timestamp())
 
 
