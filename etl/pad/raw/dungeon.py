@@ -8,10 +8,7 @@ import os
 from io import StringIO
 from typing import List, Any
 
-from pad.common import pad_util
-from pad.common.dungeon_types import DUNGEON_TYPE, REPEAT_DAY
-from ..common.dungeon_maps import raw7_map
-from ..common.dungeon_parse import getModifiers
+from pad.common import pad_util, dungeon_types
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_dungeon_data.json'
@@ -30,41 +27,13 @@ class DungeonFloor(pad_util.Printable):
         self.bgm1 = raw[5]
         self.bgm2 = raw[6]
         self.rflags2 = int(raw[7])
-        # These need to be parsed depending on flags
-        self.otherModifier = raw7_map[int(raw[7])]
-
-        possibleDrops = {}
 
         # This next loop runs through the elements from raw[8] until it hits a 0. The 0 indicates the end of the list
         # of drops for the floor, the following segments are the dungeon modifiers
         pos = 8
-
-        while (int(raw[pos]) is not 0):
-            rawVal = int(raw[pos])
-            if rawVal > 10000:
-                val = rawVal - 10000
-                possibleDrops[val] = "rare"
-                pos += 1
-            else:
-                possibleDrops[rawVal] = "normal"
-                pos += 1
+        while int(raw[pos]) is not 0:
+            pos += 1
         pos += 1
-        modifiers = getModifiers(raw, pos)
-
-        drops = []
-        dropRarities = []
-
-        for key, val in possibleDrops.items():
-            drops.append(key)
-            dropRarities.append(val)
-
-        self.drops = drops
-        self.dropRarities = dropRarities
-
-        self.entryRequirement = modifiers.entryRequirement
-        self.requiredDungeon = modifiers.requiredDungeon
-
-        self.modifiers = modifiers.modifiers
 
         self.flags = int(raw[pos])
         self.remaining_fields = raw[pos + 1:]
@@ -118,29 +87,24 @@ class DungeonFloor(pad_util.Printable):
         self.score = None
         i = 0
 
-        if ((self.flags & 0x1) != 0):
+        if (self.flags & 0x1) != 0:
             i += 2
             # self.requirement = {
             #  dungeonId: Number(self.remaining_fields[i++]),
             #  floorId: Number(self.remaining_fields[i++])
             # };
-        if ((self.flags & 0x4) != 0):
+        if (self.flags & 0x4) != 0:
             i += 1
             # self.beginTime = fromPADTime(self.remaining_fields[i++]);
-        if ((self.flags & 0x8) != 0):
-            self.score = int(self.remaining_fields[i]);
+        if (self.flags & 0x8) != 0:
+            self.score = int(self.remaining_fields[i])
             i += 1
-        if ((self.flags & 0x10) != 0):
+        if (self.flags & 0x10) != 0:
             i += 1
             # self.minRank = Number(self.remaining_fields[i++]);
-        if ((self.flags & 0x40) != 0):
+        if (self.flags & 0x40) != 0:
             i += 1
             # self.properties = self.remaining_fields[i++].split('|');
-
-        # self.conditions = {
-        #  type: Number(raw[i++]),
-        #  values: raw.slice(i).map(Number)
-        # };
 
 
 prefix_to_dungeontype = {
@@ -170,24 +134,18 @@ class Dungeon(pad_util.Printable):
 
         self.clean_name = pad_util.strip_colors(self.name)
 
-        # Using DUNGEON TYPES file in common.dungeon_types
-        self.alt_dungeon_type = DUNGEON_TYPE[int(raw[3])]
-
         # Temporary hack. The newly added 'Guerrilla' type doesn't seem to be correct, and that's
         # the only type actively in use. Using the old logic for now.
-        self.dungeon_type = None
+        self.dungeon_type = None # type: str
 
-        # I call it comment as it is similar to dungeon_type, but sometimes designates certain dungeons specifically
-        # over others. See dungeon_types.py for more details.
-        self.dungeon_comment = pad_util.get_dungeon_comment(int(raw[5]))
-        self.dungeon_comment_value = int(raw[5])
+        # A more detailed dungeon type.
+        self.full_dungeon_type = dungeon_types.RawDungeonType(int(raw[3]))
 
         # This will be a day of the week, or an empty string if it doesn't repeat regularly
-        self.repeat_day = REPEAT_DAY[int(raw[4])]
+        self.repeat_day = dungeon_types.RawRepeatDay(int(raw[4]))
 
         for prefix, dungeon_type in prefix_to_dungeontype.items():
             if self.clean_name.startswith(prefix):
-                self.prefix = prefix
                 self.dungeon_type = dungeon_type
                 self.clean_name = self.clean_name[len(prefix):]
                 break

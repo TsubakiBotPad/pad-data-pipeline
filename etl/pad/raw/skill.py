@@ -2,29 +2,26 @@
 Parses monster skill (leader/active) data.
 """
 
-import json
-import os
-from typing import List, Any
+from typing import List
 
 from pad.common import pad_util
-from pad.common.pad_util import Printable
 from pad.common.shared_types import SkillId
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_skill_data.json'
 
 
-class MonsterSkill(Printable):
+class MonsterSkill(pad_util.Printable):
     """Leader/active skill info for a player-ownable monster."""
 
-    def __init__(self, skill_id: int, raw: List[Any]):
+    def __init__(self, skill_id: int, raw: List[str]):
         self.skill_id = SkillId(skill_id)
 
         # Skill name text.
-        self.name = str(raw[0])
+        self.name = raw[0]
 
         # Skill description text (may include formatting).
-        self.description = str(raw[1])
+        self.description = raw[1]
 
         # Skill description text (no formatting).
         self.clean_description = pad_util.strip_colors(
@@ -56,24 +53,7 @@ class MonsterSkill(Printable):
         return 'Skill(%s, %r)' % (self.skill_id, self.name)
 
 
-def load_skill_data(data_dir=None, skill_json_file: str = None) -> List[MonsterSkill]:
+def load_skill_data(data_dir=None, json_file: str = None) -> List[MonsterSkill]:
     """Load MonsterSkill objects from the PAD json file."""
-    if skill_json_file is None:
-        skill_json_file = os.path.join(data_dir, FILE_NAME)
-
-    with open(skill_json_file) as f:
-        skill_json = json.load(f)
-
-    return [MonsterSkill(i, ms) for i, ms in enumerate(skill_json['skill'])]
-
-
-def load_raw_skill_data(data_dir=None, skill_json_file: str = None) -> object:
-    """Load raw PAD json file."""
-    # Temporary hack
-    if skill_json_file is None:
-        skill_json_file = os.path.join(data_dir, FILE_NAME)
-
-    with open(skill_json_file) as f:
-        skill_json = json.load(f)
-
-    return skill_json
+    data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
+    return [MonsterSkill(i, ms) for i, ms in enumerate(data_json['skill'])]
