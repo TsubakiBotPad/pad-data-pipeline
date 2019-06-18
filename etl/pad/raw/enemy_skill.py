@@ -1,8 +1,6 @@
 import csv
-import json
-import os
 from io import StringIO
-from typing import List, Any
+from typing import List
 
 from pad.common import pad_util
 
@@ -11,7 +9,7 @@ FILE_NAME = 'download_enemy_skill_data.json'
 
 class EnemySkill(pad_util.Printable):
 
-    def __init__(self, raw: List[Any]):
+    def __init__(self, raw: List[str]):
         self.enemy_skill_id = int(raw[0])
         self.name = raw[1]
         self.type = int(raw[2])
@@ -27,12 +25,10 @@ class EnemySkill(pad_util.Printable):
             offset += 1
 
 
-def load_enemy_skill_data(data_dir: str = None, card_json_file: str = None) -> List[EnemySkill]:
-    if card_json_file is None:
-        card_json_file = os.path.join(data_dir, FILE_NAME)
-    with open(card_json_file) as f:
-        enemy_skill_json = json.load(f)
-    es = enemy_skill_json['enemy_skills']
+def load_enemy_skill_data(data_dir: str = None, json_file: str = None) -> List[EnemySkill]:
+    data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
+    es = data_json['enemy_skills']
+    # Cleanup for the truly atrocious way that GungHo handles CSV/JSON data.
     es = es.replace("',", "#,").replace(",'", ",#").replace("'\n", "#\n")
     csv_lines = csv.reader(StringIO(es), quotechar="#", delimiter=',')
     return [EnemySkill(x) for x in csv_lines if x[0] != 'c']
