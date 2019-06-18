@@ -6,7 +6,6 @@ import re
 import pytz
 
 from pad.common.shared_types import JsonType
-from .dungeon_types import DUNGEON_TYPE_COMMENTS
 
 
 def strip_colors(message: str) -> str:
@@ -111,27 +110,6 @@ class Printable(object):
 
     def __str__(self):
         return self.__repr__()
-
-
-# directly into a dictionary when multiple val's correspond to a single
-# comment, but are unnecessarily delineated
-def get_dungeon_comment(val: int) -> str:
-    if val in range(5611, 5615):
-        return "Retired Special Dungeons"  # These are the last normal dungeons
-    elif val in range(21612, 21618):
-        return "Technical"
-    elif val in range(38901, 38912):
-        return "Descended (original)"
-    elif val in range(200101, 200111):
-        return "Alt. Technial"
-    elif val in range(200021, 200057):
-        return "Technical"
-    elif val in range(200301, 200306) or val in range(200201, 200206):
-        return "Special Decended"
-    elif val in DUNGEON_TYPE_COMMENTS:
-        return DUNGEON_TYPE_COMMENTS[val]
-    else:
-        return "No Data"
 
 
 def identify_server(json_file: str, server: str) -> str:
