@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 
 from pad.common import pad_util
 from pad.common.pad_util import ghmult_plain, ghchance_plain, Printable
-from pad.common.shared_types import DungeonId, DungeonFloorId
+from pad.common.shared_types import DungeonId, DungeonFloorId, Server, StarterGroup
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_limited_bonus_data_{}.json'
@@ -105,17 +105,17 @@ class Bonus(Printable):
 
     keys = 'sebiadmf'
 
-    def __init__(self, raw: Dict[str, str], server: str):
+    def __init__(self, raw: Dict[str, str], server: Server):
         if not set(raw) <= set(Bonus.keys):
             raise ValueError('Unexpected keys: ' + str(set(raw) - set(Bonus.keys)))
 
         # Start time as gungho time string
         self.start_time_str = str(raw['s'])
-        self.start_timestamp = pad_util.gh_to_timestamp(self.start_time_str, server)
+        self.start_timestamp = pad_util.gh_to_timestamp_2(self.start_time_str, server)
 
         # End time as gungho time string
         self.end_time_str = str(raw['e'])
-        self.end_timestamp = pad_util.gh_to_timestamp(self.end_time_str, server)
+        self.end_timestamp = pad_util.gh_to_timestamp_2(self.end_time_str, server)
 
         # Optional DungeonId
         self.dungeon_id = None  # type: Optional[DungeonId]
@@ -168,10 +168,10 @@ class Bonus(Printable):
 
 
 def load_bonus_data(data_dir: str = None,
-                    data_group: str = None,
-                    json_file: str = None,
-                    server: str = None) -> List[Bonus]:
+                    data_group: StarterGroup = None,
+                    server: Server = None,
+                    json_file: str = None) -> List[Bonus]:
     """Load Bonus objects from the PAD json file."""
-    data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
-    server = pad_util.identify_server(json_file, server)
+    group_file_name = FILE_NAME.format(data_group)
+    data_json = pad_util.load_raw_json(data_dir, json_file, group_file_name)
     return [Bonus(item, server) for item in data_json['bonuses']]

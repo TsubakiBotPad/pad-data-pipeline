@@ -1,6 +1,7 @@
 from enum import Enum
 
 class RawDungeonType(Enum):
+    UNKNOWN = 0
     NORMAL = 1
     SPECIAL = 2
     TECHNICAL = 3

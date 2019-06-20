@@ -3,7 +3,8 @@ import logging
 import os
 from typing import List, Dict
 
-from pad.common.shared_types import Server, StarterGroup
+from pad.common.monster_id_mapping import nakr_id_to_monster_no
+from pad.common.shared_types import Server, StarterGroup, MonsterNo, CardId, DungeonId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, egg_machine
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill
 # from ..processor import enemy_skillset as ess
@@ -85,7 +86,7 @@ def _clean_enemy(cards, enemy_skills) -> List[MergedEnemy]:
 class Database(object):
     def __init__(self, server: Server, raw_dir: str):
         self.server = server
-        self.base_dir = os.path.join(raw_dir, server.name)
+        self.base_dir = os.path.join(raw_dir, server.value)
 
         # Loaded from disk
         self.raw_cards = []  # type: List[Card]
@@ -102,8 +103,9 @@ class Database(object):
         self.enemies = []  # type: List[MergedEnemy]
 
         # Faster lookups
-        self.dungeon_id_to_dungeon = {}
-        self.card_id_to_card = {}
+        self.dungeon_id_to_dungeon = {} # type: Dict[DungeonId, Dungeon]
+        self.card_id_to_card = {} # type: Dict[CardId, MergedCard]
+        self.monster_no_to_card = {} # type: Dict[MonsterNo, MergedCard]
         self.enemy_id_to_enemy = {}
 
     def load_database(self, skip_skills=False, skip_bonus=False, skip_extra=False):
@@ -113,7 +115,7 @@ class Database(object):
 
         if not skip_bonus:
             self.bonus_sets = {
-                g.name: bonus.load_bonus_data(data_dir=base_dir, data_group=g.name) for g in StarterGroup
+                g.value: bonus.load_bonus_data(data_dir=base_dir, server=self.server, data_group=g.value) for g in StarterGroup
             }
 
         if not skip_skills:
@@ -132,6 +134,11 @@ class Database(object):
 
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
         self.card_id_to_card = {c.card_id: c for c in self.cards}
+        if self.server == Server.JP:
+            self.monster_no_to_card = self.card_id_to_card
+        else:
+            self.monster_no_to_card = {nakr_id_to_monster_no(c.card_id): c for c in self.cards}
+
         self.enemy_id_to_enemy = {e.enemy_id: e for e in self.enemies}
 
     def save(self, output_dir: str, file_name: str, obj: object, pretty: bool):
@@ -149,11 +156,14 @@ class Database(object):
         self.save(output_dir, 'exchange', self.exchange, pretty)
         self.save(output_dir, 'enemies', self.enemies, pretty)
 
-    def dungeon_by_id(self, dungeon_id):
+    def dungeon_by_id(self, dungeon_id: DungeonId):
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
 
-    def card_by_id(self, card_id):
+    def card_by_id(self, card_id: CardId):
         return self.card_id_to_card.get(card_id, None)
+
+    def card_by_monster_no(self, monster_no: MonsterNo):
+        return self.monster_no_to_card.get(monster_no, None)
 
     def enemy_by_id(self, enemy_id):
         return self.enemy_id_to_enemy.get(enemy_id, None)
