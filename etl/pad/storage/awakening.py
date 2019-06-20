@@ -1,22 +1,8 @@
-# `awakening_id` int(11) NOT NULL AUTO_INCREMENT,
-# `name_jp` text NOT NULL,
-# `name_na` text NOT NULL,
-# `name_kr` text NOT NULL,
-# `desc_jp` text NOT NULL,
-# `desc_na` text NOT NULL,
-# `desc_kr` text NOT NULL,
-# `adj_hp` int(11) NOT NULL,
-# `adj_atk` int(11) NOT NULL,
-# `adj_rcv` int(11) NOT NULL,
-# `tstamp` int(11) NOT NULL,
-import time
-
 from pad.db.sql_item import SimpleSqlItem
 
 
 class Awakening(SimpleSqlItem):
     """Monster awakening."""
-    UNSORTED = 41
     TABLE = 'awakening'
     KEY_COL = 'awakening_id'
 
