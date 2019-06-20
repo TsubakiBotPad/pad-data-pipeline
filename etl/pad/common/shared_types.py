@@ -2,8 +2,6 @@ import math
 from enum import Enum
 from typing import NewType, Dict, Any
 
-from pad.common.pad_util import Printable
-
 # Raw data types
 AttrId = NewType('AttrId', int)
 CardId = NewType('CardId', int)
@@ -17,6 +15,16 @@ MonsterNo = NewType('MonsterNo', int)
 
 # General purpose types
 JsonType = Dict[str, Any]
+
+
+class Printable(object):
+    """Simple way to make an object printable."""
+
+    def __repr__(self):
+        return '%s(%s)'.format(self.__class__.__name__, self.__dict__)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class Curve(Printable):

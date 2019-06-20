@@ -46,8 +46,8 @@ class Card(pad_util.Printable):
     """Data about a player-ownable monster."""
 
     def __init__(self, raw: List[str]):
-        _unflatten(raw, 57, 3)
-        _unflatten(raw, 58, 1)
+        _unflatten(raw, 57, 3, replace=True)
+        _unflatten(raw, 58, 1, replace=True)
 
         self.card_id = CardId(int(raw[0]))
         self.name = raw[1]

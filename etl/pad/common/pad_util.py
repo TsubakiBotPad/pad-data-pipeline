@@ -5,8 +5,9 @@ import re
 
 import pytz
 
-from pad.common.shared_types import JsonType, Server
+from pad.common.shared_types import JsonType, Printable, Server
 
+Printable = Printable
 
 def strip_colors(message: str) -> str:
     return re.sub(r'(?i)[$^][a-f0-9]{6}[$^]', '', message)
@@ -107,16 +108,6 @@ def display_id_to_group(d_id: str) -> str:
 def internal_id_to_group(i_id: str) -> str:
     """Converts the internal ID into the group name (a,b,c,d,e)."""
     return chr(ord('a') + (int(i_id) % 5))
-
-
-class Printable(object):
-    """Simple way to make an object printable."""
-
-    def __repr__(self):
-        return '%s(%s)'.format(self.__class__.__name__, self.__dict__)
-
-    def __str__(self):
-        return self.__repr__()
 
 
 def identify_server(json_file: str, server: str) -> str:
