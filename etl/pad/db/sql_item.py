@@ -74,12 +74,15 @@ def _process_col_mappings(obj_type, d, reverse=False):
     return d
 
 
-def _full_columns(o: 'SqlItem', remove_cols=[], add_cols=[]):
+def _full_columns(o: 'SqlItem', remove_cols=None, add_cols=None):
+    remove_cols = remove_cols or []
+    add_cols = add_cols or []
+
     cols = set(vars(o).keys())
     if o.uses_local_primary_key():
         cols.discard(o._key())
     cols.discard('tstamp')
-    # Do something about tstamp in SqlItem insert or update
+
     cols = set([x for x in cols if not x.startswith('resolved')])
     cols = cols.difference(remove_cols)
     cols = cols.union(add_cols)
@@ -210,6 +213,8 @@ class SimpleSqlItem(SqlItem):
     def _insert_columns(self):
         return _full_columns(self)
 
+    def _non_auto_update_cols(self):
+        return []
+
     def _update_columns(self):
-        # Is the remove_cols here necessary?
-        return _full_columns(self, remove_cols=[self._key])
+        return _full_columns(self, remove_cols=self._non_auto_update_cols())
