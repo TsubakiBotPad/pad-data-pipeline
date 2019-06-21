@@ -1,4 +1,5 @@
 from datetime import date
+from typing import List
 
 from pad.common import shared_types
 from pad.common.shared_types import Server
@@ -262,9 +263,23 @@ class MonsterLS(SimpleSqlItem):
 
 
 class MonsterAwakening(SimpleSqlItem):
-    """Monster leader skill."""
-    TABLE = 'monster_awakening_id'
+    """Monster awakening entry."""
+    TABLE = 'monster_awakening'
     KEY_COL = 'monster_awakening_id'
+
+    @staticmethod
+    def from_csm(o: CrossServerCard) -> List['MonsterAwakening']:
+        awakenings = [(a_id, False) for a_id in o.jp_card.card.awakenings]
+        awakenings.extend([(sa_id, True) for sa_id in o.jp_card.card.super_awakenings])
+        results = []
+        for i, v in enumerate(awakenings):
+            results.append(MonsterAwakening(
+                monster_awakening_id=None,
+                monster_id=o.monster_no,
+                awakening_id=v[0],
+                is_super=v[1],
+                order_idx=i))
+        return results
 
     def __init__(self,
                  monster_awakening_id: int = None,
