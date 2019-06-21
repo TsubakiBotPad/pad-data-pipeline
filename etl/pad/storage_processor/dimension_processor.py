@@ -8,9 +8,9 @@ D_ATTRIBUTE = {
     'name': 'd_attribute',
     'cols': ['attribute_id', 'name'],
     'rows': [
-        [0, 'Red'],
-        [1, 'Blue'],
-        [2, 'Green'],
+        [0, 'Fire'],
+        [1, 'Water'],
+        [2, 'Wood'],
         [3, 'Light'],
         [4, 'Dark'],
     ],
@@ -21,26 +21,27 @@ D_CONDITION = {
     'name': 'd_condition',
     'cols': ['condition_type', 'name'],
     'rows': [
+        [1, 'active'],
+        [2, 'leader'],
     ],
 }
 
-# Do we need this?
 D_TYPE = {
     'name': 'd_type',
     'cols': ['type_id', 'name'],
     'rows': [
-            [0, 'Evolve'],
-            [1, 'Balance'],
-            [2, 'Physical'],
-            [3, 'Healer'],
-            [4, 'Dragon'],
-            [5, 'God'],
-            [6, 'Attacker'],
-            [7, 'Devil'],
-            [8, 'Machine'],
-            [12, 'Awoken'],
-            [14, 'Enhance'],
-            [15, 'Vendor'],
+        [0, 'Evolve'],
+        [1, 'Balance'],
+        [2, 'Physical'],
+        [3, 'Healer'],
+        [4, 'Dragon'],
+        [5, 'God'],
+        [6, 'Attacker'],
+        [7, 'Devil'],
+        [8, 'Machine'],
+        [12, 'Awoken'],
+        [14, 'Enhance'],
+        [15, 'Vendor'],
     ],
 }
 
