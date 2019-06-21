@@ -8,7 +8,8 @@ from typing import List, Any
 import pytz
 
 from pad.common import pad_util
-from pad.common.shared_types import Server, StarterGroup
+from pad.common.monster_id_mapping import nakr_id_to_monster_no, jp_id_to_monster_no
+from pad.common.shared_types import Server, StarterGroup, CardId, MonsterNo
 from pad.raw import Bonus, Card, MonsterSkill, Dungeon
 
 
@@ -54,6 +55,12 @@ class MergedCard(object):
         self.enemy_behavior = enemy_behavior
 
         self.critical_failures = []
+
+    def id_to_no(self, card_id: CardId) -> MonsterNo:
+        if self.server == Server.JP:
+            return jp_id_to_monster_no(card_id)
+        else:
+            return nakr_id_to_monster_no(card_id)
 
     def __repr__(self):
         return 'MergedCard({} - {} - {})'.format(
