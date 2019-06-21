@@ -1,23 +1,23 @@
 # Pad NA/JP don't have the exact same monster IDs for the same monster.
 # We use JP ids as the monster number; NA-only cards are adjusted to a new range.
-from pad.common.shared_types import MonsterNo, CardId
+from pad.common.shared_types import MonsterId, MonsterNo
 
 
 def between(n: int, bottom: int, top: int):
     return bottom <= n <= top
 
 
-def adjust(n: CardId, local_bottom: int, remote_bottom: int) -> MonsterNo:
-    return MonsterNo(n - local_bottom + remote_bottom)
+def adjust(n: MonsterNo, local_bottom: int, remote_bottom: int) -> MonsterId:
+    return MonsterId(n - local_bottom + remote_bottom)
 
 
-def jp_id_to_monster_no(jp_id: CardId) -> MonsterNo:
+def jp_no_to_monster_id(jp_id: MonsterNo) -> MonsterId:
     # We use JP IDs as the monster_no; no need to adjust.
-    return MonsterNo(jp_id)
+    return MonsterId(jp_id)
 
 
 # Fixes for early collabs, and adjusting voltron to a new range.
-def nakr_id_to_monster_no(na_id: CardId) -> MonsterNo:
+def nakr_no_to_monster_id(na_id: MonsterNo) -> MonsterId:
     # Shinra Bansho 1
     if between(na_id, 934, 935):
         return adjust(na_id, 934, 669)
@@ -38,4 +38,4 @@ def nakr_id_to_monster_no(na_id: CardId) -> MonsterNo:
     if between(na_id, 2601, 2631):
         return adjust(na_id, 2601, 2601 + 10000)
 
-    return MonsterNo(na_id)
+    return MonsterId(na_id)

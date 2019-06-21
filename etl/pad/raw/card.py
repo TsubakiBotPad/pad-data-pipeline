@@ -5,7 +5,7 @@ Parses card data.
 from typing import List, Any
 
 from pad.common import pad_util
-from pad.common.shared_types import AttrId, CardId, SkillId, TypeId, Curve
+from pad.common.shared_types import AttrId, MonsterNo, SkillId, TypeId, Curve
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_card_data.json'
@@ -49,7 +49,7 @@ class Card(pad_util.Printable):
         _unflatten(raw, 57, 3, replace=True)
         _unflatten(raw, 58, 1, replace=True)
 
-        self.card_id = CardId(int(raw[0]))
+        self.monster_no = MonsterNo(int(raw[0]))
         self.name = raw[1]
         self.attr_id = AttrId(int(raw[2]))
         self.sub_attr_id = AttrId(int(raw[3]))
@@ -106,19 +106,19 @@ class Card(pad_util.Printable):
         self.enemy_coins_at_lvl_2 = int(raw[38])
         self.enemy_xp_at_lvl_2 = int(raw[39])
 
-        self.ancestor_id = CardId(int(raw[40]))
+        self.ancestor_id = MonsterNo(int(raw[40]))
 
-        self.evo_mat_id_1 = CardId(int(raw[41]))
-        self.evo_mat_id_2 = CardId(int(raw[42]))
-        self.evo_mat_id_3 = CardId(int(raw[43]))
-        self.evo_mat_id_4 = CardId(int(raw[44]))
-        self.evo_mat_id_5 = CardId(int(raw[45]))
+        self.evo_mat_id_1 = MonsterNo(int(raw[41]))
+        self.evo_mat_id_2 = MonsterNo(int(raw[42]))
+        self.evo_mat_id_3 = MonsterNo(int(raw[43]))
+        self.evo_mat_id_4 = MonsterNo(int(raw[44]))
+        self.evo_mat_id_5 = MonsterNo(int(raw[45]))
 
-        self.un_evo_mat_1 = CardId(int(raw[46]))
-        self.un_evo_mat_2 = CardId(int(raw[47]))
-        self.un_evo_mat_3 = CardId(int(raw[48]))
-        self.un_evo_mat_4 = CardId(int(raw[49]))
-        self.un_evo_mat_5 = CardId(int(raw[50]))
+        self.un_evo_mat_1 = MonsterNo(int(raw[46]))
+        self.un_evo_mat_2 = MonsterNo(int(raw[47]))
+        self.un_evo_mat_3 = MonsterNo(int(raw[48]))
+        self.un_evo_mat_4 = MonsterNo(int(raw[49]))
+        self.un_evo_mat_5 = MonsterNo(int(raw[50]))
 
         # When >0, the enemy turn timer for technical dungeons.
         self.enemy_turns_alt = int(raw[51])
@@ -163,7 +163,7 @@ class Card(pad_util.Printable):
         self.awakenings = raw[58]  # type: List[int]
         self.super_awakenings = list(map(int, filter(str.strip, raw[59].split(','))))  # List[int]
 
-        self.base_id = CardId(int(raw[60]))  # ??
+        self.base_id = MonsterNo(int(raw[60]))  # ??
         self.group_id = raw[61]  # ??
         self.type_3_id = TypeId(int(raw[62]))
 
@@ -219,7 +219,7 @@ class Card(pad_util.Printable):
         return Curve(0, self.xp_max, self.xp_scale)
 
     def __str__(self):
-        return 'Card({} - {})'.format(self.card_id, self.name)
+        return 'Card({} - {})'.format(self.monster_no, self.name)
 
 
 def _unflatten(raw: List[Any], idx: int, width: int, replace: bool = False):
