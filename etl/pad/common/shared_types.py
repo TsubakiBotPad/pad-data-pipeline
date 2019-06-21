@@ -45,6 +45,10 @@ class Curve(Printable):
         return self.min_value + (self.max_value - self.min_value) * math.pow(f, self.scale)
 
 
+def curve_value(min_val, max_val, scale, level, max_level):
+    return Curve(min_val, max_val, scale).value_at(level, max_level)
+
+
 class Server(Enum):
     JP = 'jp'
     NA = 'na'

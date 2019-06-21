@@ -4,7 +4,7 @@ Data from across multiple servers merged together.
 
 import logging
 from datetime import datetime
-from typing import List, Any
+from typing import List, Any, Optional
 
 import pytz
 
@@ -127,12 +127,9 @@ def build_cross_server_dungeons(jp_database: Database,
                                 kr_database: Database) -> List[CrossServerDungeon]:
     jp_dungeon_ids = [dungeon.dungeon_id for dungeon in jp_database.dungeons]
 
-    # This is the list of dungeons we could potentially update
     combined_dungeons = []  # type: List[CrossServerDungeon]
     for dungeon_id in jp_dungeon_ids:
         jp_dungeon = jp_database.dungeon_by_id(dungeon_id)
-
-        # Might need a mapping like cards
         na_dungeon = na_database.dungeon_by_id(dungeon_id)
         kr_dungeon = kr_database.dungeon_by_id(dungeon_id)
 
@@ -166,11 +163,60 @@ def make_cross_server_dungeon(jp_dungeon: Dungeon,
     return CrossServerDungeon(jp_dungeon, na_dungeon, kr_dungeon), None
 
 
+class CrossServerSkill(object):
+    def __init__(self, jp_skill: MonsterSkill, na_skill: MonsterSkill, kr_skill: MonsterSkill):
+        self.skill_id = jp_skill.dungeon_id
+        self.jp_skill = jp_skill
+        self.na_skill = na_skill
+        self.kr_skill = kr_skill
+
+
+def build_cross_server_skills(jp_database: Database,
+                              na_database: Database,
+                              kr_database: Database) -> List[CrossServerSkill]:
+    results = []  # type: List[CrossServerSkill]
+    jp_ids = [skill.skill_id for skill in jp_database.skills]
+
+    for skill_id in jp_ids:
+        jp_skill = jp_database.skill_by_id(skill_id)
+        na_skill = na_database.skill_by_id(skill_id)
+        kr_skill = kr_database.skill_by_id(skill_id)
+
+        combined_skill = make_cross_server_skill(jp_skill, na_skill, kr_skill)
+        if combined_skill:
+            results.append(combined_skill)
+
+    return results
+
+
+def make_cross_server_skill(jp_skill: MonsterSkill,
+                            na_skill: MonsterSkill,
+                            kr_skill: MonsterSkill) -> Optional[CrossServerSkill]:
+    jp_skill = jp_skill
+    na_skill = na_skill or jp_skill
+    kr_skill = kr_skill or na_skill
+
+    if is_bad_name(jp_skill.name):
+        # Probably a debug skill
+        return None
+
+    if is_bad_name(na_skill.name):
+        # skill probably exists in JP but not in NA
+        na_skill = jp_skill
+
+    if is_bad_name(kr_skill.name):
+        # skill probably exists in JP but not in KR
+        kr_skill = na_skill
+
+    return CrossServerSkill(jp_skill, na_skill, kr_skill)
+
+
 class CrossServerDatabase(object):
     def __init__(self, jp_database: Database, na_database: Database, kr_database: Database):
         self.all_cards = build_cross_server_cards(jp_database, na_database, kr_database)
         self.ownable_cards = list(filter(lambda c: 0 < c.monster_no < 19_999, self.all_cards))
         self.dungeons = build_cross_server_dungeons(jp_database, na_database, kr_database)
+        self.skills = build_cross_server_skills(jp_database, na_database, kr_database)
 
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')

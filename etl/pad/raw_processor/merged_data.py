@@ -35,15 +35,22 @@ class MergedBonus(object):
 
 class MergedCard(object):
     def __init__(self,
+                 server: Server,
                  card: Card,
                  active_skill: MonsterSkill,
                  leader_skill: MonsterSkill,
                  enemy_behavior: List[Any]):
                  # enemy_behavior: List[enemy_skillset.ESBehavior]):
+        self.server = server
         self.card_id = card.card_id
         self.card = card
+
+        self.active_skill_id = active_skill.skill_id if active_skill else None
         self.active_skill = active_skill
+
+        self.leader_skill_id = leader_skill.skill_id if leader_skill else None
         self.leader_skill = leader_skill
+
         self.enemy_behavior = enemy_behavior
 
         self.critical_failures = []
