@@ -1,8 +1,8 @@
 from datetime import date
-from typing import List
+from typing import List, Optional
 
 from pad.common import shared_types
-from pad.common.shared_types import Server
+from pad.common.shared_types import Server, MonsterNo, CardId
 from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
 
@@ -174,14 +174,14 @@ class Monster(SimpleSqlItem):
             ]
 
 
-class MonsterAS(SimpleSqlItem):
+class ActiveSkill(SimpleSqlItem):
     """Monster active skill."""
-    TABLE = 'monster_active_skill'
+    TABLE = 'active_skills'
     KEY_COL = 'active_skill_id'
 
     @staticmethod
-    def from_css(o: CrossServerSkill) -> 'MonsterAS':
-        return MonsterAS(
+    def from_css(o: CrossServerSkill) -> 'ActiveSkill':
+        return ActiveSkill(
             active_skill_id=o.skill_id,
             name_jp=o.jp_skill.name,
             name_na=o.na_skill.name,
@@ -215,14 +215,14 @@ class MonsterAS(SimpleSqlItem):
         self.tstamp = tstamp
 
 
-class MonsterLS(SimpleSqlItem):
+class LeaderSkill(SimpleSqlItem):
     """Monster leader skill."""
-    TABLE = 'monster_leader_skill'
+    TABLE = 'leader_skills'
     KEY_COL = 'leader_skill_id'
 
     @staticmethod
-    def from_css(o: CrossServerSkill) -> 'MonsterLS':
-        return MonsterLS(
+    def from_css(o: CrossServerSkill) -> 'LeaderSkill':
+        return LeaderSkill(
             leader_skill_id=o.skill_id,
             name_jp=o.jp_skill.name,
             name_na=o.na_skill.name,
@@ -262,37 +262,88 @@ class MonsterLS(SimpleSqlItem):
         self.tstamp = tstamp
 
 
-class MonsterAwakening(SimpleSqlItem):
+class Awakenings(SimpleSqlItem):
     """Monster awakening entry."""
-    TABLE = 'monster_awakening'
-    KEY_COL = 'monster_awakening_id'
+    TABLE = 'awakenings'
+    KEY_COL = 'awakening_id'
 
     @staticmethod
-    def from_csm(o: CrossServerCard) -> List['MonsterAwakening']:
+    def from_csm(o: CrossServerCard) -> List['Awakenings']:
         awakenings = [(a_id, False) for a_id in o.jp_card.card.awakenings]
         awakenings.extend([(sa_id, True) for sa_id in o.jp_card.card.super_awakenings])
         results = []
         for i, v in enumerate(awakenings):
-            results.append(MonsterAwakening(
-                monster_awakening_id=None,
+            results.append(Awakenings(
+                awakening_id=None, # Key that is looked up or inserted
                 monster_id=o.monster_no,
-                awakening_id=v[0],
+                awoken_skill_id=v[0],
                 is_super=v[1],
                 order_idx=i))
         return results
 
     def __init__(self,
-                 monster_awakening_id: int = None,
-                 monster_id: int = None,
                  awakening_id: int = None,
+                 monster_id: int = None,
+                 awoken_skill_id: int = None,
                  is_super: bool = None,
                  order_idx: int = None,
                  tstamp: int = None):
-        self.monster_awakening_id = monster_awakening_id
-        self.monster_id = monster_id
         self.awakening_id = awakening_id
+        self.monster_id = monster_id
+        self.awoken_skill_id = awoken_skill_id
         self.is_super = is_super
         self.order_idx = order_idx
+        self.tstamp = tstamp
+
+    def uses_alternate_key_lookup(self):
+        return True
+
+
+class Evolution(SimpleSqlItem):
+    """Monster evolution entry."""
+    TABLE = 'evolutions'
+    KEY_COL = 'evolution_id'
+
+    @staticmethod
+    def from_csm(o: CrossServerCard) -> Optional['Evolution']:
+        card = o.jp_card.card
+        if not card.ancestor_id:
+            return None
+
+        def convert(x: CardId) -> MonsterNo:
+            return o.jp_card.id_to_no(x)
+
+        return Evolution(
+            evolution_id=None, # Key that is looked up or inserted
+            evolution_type=None, # Fix
+            from_id=convert(card.ancestor_id),
+            to_id=convert(card.card_id),
+            mat_1_id=convert(card.evo_mat_id_1) if card.evo_mat_id_1 else None,
+            mat_2_id=convert(card.evo_mat_id_2) if card.evo_mat_id_2 else None,
+            mat_3_id=convert(card.evo_mat_id_3) if card.evo_mat_id_3 else None,
+            mat_4_id=convert(card.evo_mat_id_4) if card.evo_mat_id_4 else None,
+            mat_5_id=convert(card.evo_mat_id_5) if card.evo_mat_id_5 else None)
+
+    def __init__(self,
+                 evolution_id: int = None,
+                 evolution_type: int = None,
+                 from_id: MonsterNo = None,
+                 to_id: MonsterNo = None,
+                 mat_1_id: MonsterNo = None,
+                 mat_2_id: MonsterNo = None,
+                 mat_3_id: MonsterNo = None,
+                 mat_4_id: MonsterNo = None,
+                 mat_5_id: MonsterNo = None,
+                 tstamp: int = None):
+        self.evolution_id = evolution_id
+        self.evolution_type = evolution_type
+        self.from_id = from_id
+        self.to_id = to_id
+        self.mat_1_id = mat_1_id
+        self.mat_2_id = mat_2_id
+        self.mat_3_id = mat_3_id
+        self.mat_4_id = mat_4_id
+        self.mat_5_id = mat_5_id
         self.tstamp = tstamp
 
     def uses_alternate_key_lookup(self):
