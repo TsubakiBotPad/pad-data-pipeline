@@ -29,11 +29,6 @@ class CrossServerCard(object):
         self.kr_card = kr_card
 
 
-def nakr_id_to_jp_id(monster_id: CardId) -> CardId:
-    # The monster_no is equivalent to the JP id
-    return CardId(monster_id_mapping.nakr_id_to_monster_no(monster_id))
-
-
 def build_ownable_cross_server_cards(jp_database, na_database) -> List[CrossServerCard]:
     all_cards = build_cross_server_cards(jp_database, na_database)
     # 10K-20K could contain NA-only monsters (Voltron).
@@ -213,10 +208,17 @@ def make_cross_server_skill(jp_skill: MonsterSkill,
 
 class CrossServerDatabase(object):
     def __init__(self, jp_database: Database, na_database: Database, kr_database: Database):
-        self.all_cards = build_cross_server_cards(jp_database, na_database, kr_database)
-        self.ownable_cards = list(filter(lambda c: 0 < c.monster_no < 19_999, self.all_cards))
-        self.dungeons = build_cross_server_dungeons(jp_database, na_database, kr_database)
-        self.skills = build_cross_server_skills(jp_database, na_database, kr_database)
+        self.all_cards = build_cross_server_cards(jp_database,
+                                                  na_database,
+                                                  kr_database)  # type: List[CrossServerCard]
+        self.ownable_cards = list(
+            filter(lambda c: 0 < c.monster_no < 19_999, self.all_cards))  # type: List[CrossServerCard]
+        self.dungeons = build_cross_server_dungeons(jp_database,
+                                                    na_database,
+                                                    kr_database)  # type: List[CrossServerDungeon]
+        self.skills = build_cross_server_skills(jp_database,
+                                                na_database,
+                                                kr_database) # type: List[CrossServerSkill]
 
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')
