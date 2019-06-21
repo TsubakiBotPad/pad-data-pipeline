@@ -8,8 +8,8 @@ from typing import List, Any
 import pytz
 
 from pad.common import pad_util
-from pad.common.monster_id_mapping import nakr_id_to_monster_no, jp_id_to_monster_no
-from pad.common.shared_types import Server, StarterGroup, CardId, MonsterNo
+from pad.common.monster_id_mapping import nakr_no_to_monster_id, jp_no_to_monster_id
+from pad.common.shared_types import Server, StarterGroup, MonsterNo, MonsterId
 from pad.raw import Bonus, Card, MonsterSkill, Dungeon
 
 
@@ -43,7 +43,7 @@ class MergedCard(object):
                  enemy_behavior: List[Any]):
                  # enemy_behavior: List[enemy_skillset.ESBehavior]):
         self.server = server
-        self.card_id = card.card_id
+        self.monster_no = card.monster_no
         self.card = card
 
         self.active_skill_id = active_skill.skill_id if active_skill else None
@@ -56,11 +56,11 @@ class MergedCard(object):
 
         self.critical_failures = []
 
-    def id_to_no(self, card_id: CardId) -> MonsterNo:
+    def no_to_id(self, monster_no: MonsterNo) -> MonsterId:
         if self.server == Server.JP:
-            return jp_id_to_monster_no(card_id)
+            return jp_no_to_monster_id(monster_no)
         else:
-            return nakr_id_to_monster_no(card_id)
+            return nakr_no_to_monster_id(monster_no)
 
     def __repr__(self):
         return 'MergedCard({} - {} - {})'.format(

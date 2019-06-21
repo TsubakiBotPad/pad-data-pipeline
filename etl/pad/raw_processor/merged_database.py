@@ -3,8 +3,8 @@ import logging
 import os
 from typing import List, Dict
 
-from pad.common.monster_id_mapping import nakr_id_to_monster_no
-from pad.common.shared_types import Server, StarterGroup, MonsterNo, CardId, DungeonId, SkillId
+from pad.common.monster_id_mapping import nakr_no_to_monster_id
+from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, egg_machine
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill
 # from ..processor import enemy_skillset as ess
@@ -42,7 +42,7 @@ def _clean_cards(server: Server,
                  skills: List[skill.MonsterSkill],
                  enemy_skills: List[MergedEnemy]) -> List[MergedCard]:
     skills_by_id = {s.skill_id: s for s in skills}
-    enemy_behavior_by_card_id = {int(s.enemy_id): s.behavior for s in enemy_skills}
+    enemy_behavior_by_enemy_id = {int(s.enemy_id): s.behavior for s in enemy_skills}
 
     merged_cards = []
     for card in cards:
@@ -62,7 +62,7 @@ def _clean_cards(server: Server,
                 critical_failures.append('Leader skill lookup failed: %s - %s'.format(
                                          repr(card), card.leader_skill_id))
 
-        enemy_behavior = enemy_behavior_by_card_id.get(card.card_id, [])
+        enemy_behavior = enemy_behavior_by_enemy_id.get(card.monster_no, [])
 
         result = MergedCard(server, card, active_skill, leader_skill, enemy_behavior)
         result.critical_failures.extend(critical_failures)
@@ -106,8 +106,8 @@ class Database(object):
         # Faster lookups
         self.skill_id_to_skill = {} # type: Dict[SkillId, MonsterSkill]
         self.dungeon_id_to_dungeon = {} # type: Dict[DungeonId, Dungeon]
-        self.card_id_to_card = {} # type: Dict[CardId, MergedCard]
         self.monster_no_to_card = {} # type: Dict[MonsterNo, MergedCard]
+        self.monster_id_to_card = {} # type: Dict[MonsterId, MergedCard]
         self.enemy_id_to_enemy = {}
 
     def load_database(self, skip_skills=False, skip_bonus=False, skip_extra=False):
@@ -136,11 +136,11 @@ class Database(object):
         self.cards = _clean_cards(self.server, raw_cards, self.skills, self.enemies)
 
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
-        self.card_id_to_card = {c.card_id: c for c in self.cards}
+        self.monster_no_to_card = {c.monster_no: c for c in self.cards}
         if self.server == Server.JP:
-            self.monster_no_to_card = self.card_id_to_card
+            self.monster_id_to_card = self.monster_no_to_card
         else:
-            self.monster_no_to_card = {nakr_id_to_monster_no(c.card_id): c for c in self.cards}
+            self.monster_id_to_card = {nakr_no_to_monster_id(c.monster_no): c for c in self.cards}
 
         self.enemy_id_to_enemy = {e.enemy_id: e for e in self.enemies}
 
@@ -165,11 +165,11 @@ class Database(object):
     def dungeon_by_id(self, dungeon_id: DungeonId):
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
 
-    def card_by_id(self, card_id: CardId):
-        return self.card_id_to_card.get(card_id, None)
-
     def card_by_monster_no(self, monster_no: MonsterNo):
         return self.monster_no_to_card.get(monster_no, None)
+
+    def card_by_monster_id(self, monster_id: MonsterId):
+        return self.monster_id_to_card.get(monster_id, None)
 
     def enemy_by_id(self, enemy_id):
         return self.enemy_id_to_enemy.get(enemy_id, None)

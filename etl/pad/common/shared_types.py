@@ -4,14 +4,14 @@ from typing import NewType, Dict, Any
 
 # Raw data types
 AttrId = NewType('AttrId', int)
-CardId = NewType('CardId', int)
+MonsterNo = NewType('MonsterNo', int)
 DungeonId = NewType('DungeonId', int)
 DungeonFloorId = NewType('DungeonFloorId', int)
 SkillId = NewType('SkillId', int)
 TypeId = NewType('TypeId', int)
 
 # DadGuide internal types
-MonsterNo = NewType('MonsterNo', int)
+MonsterId = NewType('MonsterId', int)
 
 # General purpose types
 JsonType = Dict[str, Any]

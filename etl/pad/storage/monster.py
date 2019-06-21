@@ -2,15 +2,15 @@ from datetime import date
 from typing import List, Optional
 
 from pad.common import shared_types
-from pad.common.shared_types import Server, MonsterNo, CardId
+from pad.common.shared_types import Server, MonsterId, MonsterNo
 from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
 
 
 class Monster(SimpleSqlItem):
     """Monster data."""
-    TABLE = 'monster'
-    KEY_COL = 'monster_no'
+    TABLE = 'monsters'
+    KEY_COL = 'monster_id'
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> 'Monster':
@@ -30,10 +30,10 @@ class Monster(SimpleSqlItem):
             return value if value > -1 else None
 
         return Monster(
-                 monster_id=o.monster_no,
-                 monster_no_jp=jp_card.card_id,
-                 monster_no_na=na_card.card_id,
-                 monster_no_kr=kr_card.card_id,
+                 monster_id=o.monster_id,
+                 monster_no_jp=jp_card.monster_no,
+                 monster_no_na=na_card.monster_no,
+                 monster_no_kr=kr_card.monster_no,
                  name_jp=jp_card.name,
                  name_na=na_card.card.name,
                  name_kr=kr_card.card.name,
@@ -275,7 +275,7 @@ class Awakenings(SimpleSqlItem):
         for i, v in enumerate(awakenings):
             results.append(Awakenings(
                 awakening_id=None, # Key that is looked up or inserted
-                monster_id=o.monster_no,
+                monster_id=o.monster_id,
                 awoken_skill_id=v[0],
                 is_super=v[1],
                 order_idx=i))
@@ -310,14 +310,14 @@ class Evolution(SimpleSqlItem):
         if not card.ancestor_id:
             return None
 
-        def convert(x: CardId) -> MonsterNo:
-            return o.jp_card.id_to_no(x)
+        def convert(x: MonsterNo) -> MonsterId:
+            return o.jp_card.no_to_id(x)
 
         return Evolution(
             evolution_id=None, # Key that is looked up or inserted
             evolution_type=None, # Fix
             from_id=convert(card.ancestor_id),
-            to_id=convert(card.card_id),
+            to_id=convert(card.monster_no),
             mat_1_id=convert(card.evo_mat_id_1) if card.evo_mat_id_1 else None,
             mat_2_id=convert(card.evo_mat_id_2) if card.evo_mat_id_2 else None,
             mat_3_id=convert(card.evo_mat_id_3) if card.evo_mat_id_3 else None,
@@ -327,13 +327,13 @@ class Evolution(SimpleSqlItem):
     def __init__(self,
                  evolution_id: int = None,
                  evolution_type: int = None,
-                 from_id: MonsterNo = None,
-                 to_id: MonsterNo = None,
-                 mat_1_id: MonsterNo = None,
-                 mat_2_id: MonsterNo = None,
-                 mat_3_id: MonsterNo = None,
-                 mat_4_id: MonsterNo = None,
-                 mat_5_id: MonsterNo = None,
+                 from_id: MonsterId = None,
+                 to_id: MonsterId = None,
+                 mat_1_id: MonsterId = None,
+                 mat_2_id: MonsterId = None,
+                 mat_3_id: MonsterId = None,
+                 mat_4_id: MonsterId = None,
+                 mat_5_id: MonsterId = None,
                  tstamp: int = None):
         self.evolution_id = evolution_id
         self.evolution_type = evolution_type
