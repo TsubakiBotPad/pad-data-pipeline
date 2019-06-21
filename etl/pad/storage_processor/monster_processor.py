@@ -1,6 +1,6 @@
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
-from pad.storage.monster import MonsterLS, MonsterAS, Monster
+from pad.storage.monster import MonsterLS, MonsterAS, Monster, MonsterAwakening
 
 
 class MonsterProcessor(object):
@@ -49,4 +49,7 @@ class MonsterProcessor(object):
             db.insert_or_update(item)
 
     def _process_awakenings(self, db):
-        pass
+        for m in self.data.ownable_cards:
+            items = MonsterAwakening.from_csm(m)
+            for item in items:
+                db.insert_or_update(item)
