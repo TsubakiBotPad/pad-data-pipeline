@@ -79,8 +79,8 @@ def _full_columns(o: 'SqlItem', remove_cols=None, add_cols=None):
     add_cols = add_cols or []
 
     cols = set(vars(o).keys())
-    if o.uses_local_primary_key():
-        cols.discard(o._key())
+    # if o.uses_local_primary_key():
+    #     cols.discard(o._key())
     cols.discard('tstamp')
 
     cols = set([x for x in cols if not x.startswith('resolved')])
@@ -122,31 +122,43 @@ def _key_and_cols_compare(item: 'SqlItem', cols=None, include_key=True):
     return fixed_sql
 
 
+class ExistsStrategy(Enum):
+    BY_KEY = 1
+    BY_VALUE = 2
+    # CUSTOM = 3 # Is this still necessary?
+
+
 class SqlItem(object):
     def key_value(self):
         return getattr(self, self._key()) if self._key() else None
 
-    def needs_insert(self):
-        if not self.uses_local_primary_key():
-            raise Exception('Should not call this function, uses FK primary Key')
-        key_val = self.key_value()
-        return key_val is None or key_val == 0
+    def exists_strategy(self) -> ExistsStrategy:
+        return ExistsStrategy.BY_KEY
 
-    def uses_local_primary_key(self):
-        """Controls insert logic.
-        If true, an insert is needed if the primary key is missing.
-        If false, an insert is needed if the primary key is set but not found in the table.
-        """
-        return True
+    # def needs_insert(self):
+    #     if not self.uses_local_primary_key():
+    #         raise Exception('Should not call this function, uses FK primary Key')
+    #     key_val = self.key_value()
+    #     return key_val is None or key_val == 0
+    #
+    # def uses_local_primary_key(self):
+    #     """Controls insert logic.
+    #
+    #     If true, an insert is needed if the primary key is missing.
+    #     If false, an insert is needed if the primary key is set but not found in the table.
+    #
+    #     Should be True whenever a primary key can be calculated for a data item.
+    #     """
+    #     return True
+    #
+    # def uses_alternate_key_lookup(self):
+    #     """Controls insert logic.
+    #     If true, an insert is needed if the 'exists' sql fails, which will also be used to
+    #     retrieve the primary key.
+    #     """
+    #     return False
 
-    def uses_alternate_key_lookup(self):
-        """Controls insert logic.
-        If true, an insert is needed if the 'exists' sql fails, which will also be used to
-        retrieve the primary key.
-        """
-        return False
-
-    def exists_sql(self):
+    def key_exists_sql(self):
         return _key_and_cols_compare(self)
 
     def needs_update_sql(self, include_key=True):

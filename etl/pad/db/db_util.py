@@ -1,10 +1,10 @@
 import logging
 import random
+from typing import Callable
 
 import pymysql
 
-from .sql_item import SqlItem, _col_compare, _tbl_name_ref, _process_col_mappings
-
+from .sql_item import SqlItem, _col_compare, _tbl_name_ref, _process_col_mappings, ExistsStrategy
 
 logger = logging.getLogger('database')
 logger.setLevel(logging.ERROR)
@@ -56,7 +56,7 @@ class DbWrapper(object):
             else:
                 return data[0]
 
-    def get_single_value(self, sql, op=str, fail_on_empty=True):
+    def get_single_value(self, sql, op: Callable=str, fail_on_empty=True):
         with self.connection.cursor() as cursor:
             self.execute(cursor, sql)
             data = list(cursor.fetchall())
@@ -123,29 +123,36 @@ class DbWrapper(object):
 
     def insert_or_update(self, item: SqlItem):
         key = item.key_value()
-        if item.uses_alternate_key_lookup():
-            key = self.get_single_value(item.exists_sql(), op=int, fail_on_empty=False)
-            item.set_key_value(key)
-
-            if not key:
-                logger.info('item (alt) needed insert: %s %s', type(item), key)
-                key = self.insert_item(item.insert_sql())
+        if item.exists_strategy() == ExistsStrategy.BY_KEY:
+            if not self.check_existing(item.key_exists_sql()):
+                self.insert_item(item.insert_sql())
             elif not self.check_existing(item.needs_update_sql()):
-                logger.info('item (alt) needed update: %s %s', type(item), key)
                 self.insert_item(item.update_sql())
 
-        elif not item.uses_local_primary_key():
-            if not self.check_existing(item.exists_sql()):
-                logger.info('item (fk) needed insert: %s %s', type(item), key)
-                key = self.insert_item(item.insert_sql())
-            elif not self.check_existing(item.needs_update_sql()):
-                logger.info('item (fk) needed update: %s %s', type(item), key)
-                self.insert_item(item.update_sql())
-        else:
-            if item.needs_insert():
-                logger.info('item needed insert: %s %s', type(item), key)
-                key = self.insert_item(item.insert_sql())
-            elif not self.check_existing(item.needs_update_sql()):
-                logger.info('item needed update: %s %s', type(item), key)
-                self.insert_item(item.update_sql())
+        # elif item.exists_strategy() == ExistsStrategy.BY_VALUE:
+        #     key = self.get_single_value(item.exists_sql(), op=int, fail_on_empty=False)
+        #     item.set_key_value(key)
+        #
+        #     if not key:
+        #         logger.info('item (alt) needed insert: %s %s', type(item), key)
+        #         key = self.insert_item(item.insert_sql())
+        #     elif not self.check_existing(item.needs_update_sql()):
+        #         logger.info('item (alt) needed update: %s %s', type(item), key)
+        #         self.insert_item(item.update_sql())
+        #
+        #
+        # elif not item.uses_local_primary_key():
+        #     if not self.check_existing(item.exists_sql()):
+        #         logger.info('item (fk) needed insert: %s %s', type(item), key)
+        #         key = self.insert_item(item.insert_sql())
+        #     elif not self.check_existing(item.needs_update_sql()):
+        #         logger.info('item (fk) needed update: %s %s', type(item), key)
+        #         self.insert_item(item.update_sql())
+        # else:
+        #     if item.needs_insert():
+        #         logger.info('item needed insert: %s %s', type(item), key)
+        #         key = self.insert_item(item.insert_sql())
+        #     elif not self.check_existing(item.needs_update_sql()):
+        #         logger.info('item needed update: %s %s', type(item), key)
+        #         self.insert_item(item.update_sql())
         return key
