@@ -13,6 +13,7 @@ import time
 # import feedparser
 # from pad.common import monster_id_mapping
 from pad.common.shared_types import Server
+from pad.db.db_util import DbWrapper
 from pad.raw_processor import merged_database, crossed_data
 
 # from pad.processor import skill_info, merged_data
@@ -26,16 +27,19 @@ from pad.raw_processor import merged_database, crossed_data
 # from pad.storage.db_util import DbWrapper
 # from pad.storage.news import NewsItem
 # from pad.storage.schedule_item import ScheduleItem
-
+from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 
 logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+
 logger = logging.getLogger('processor')
+logger.setLevel(logging.DEBUG)
+
 fail_logger = logging.getLogger('processor_failures')
 fail_logger.setLevel(logging.INFO)
 
-logging.getLogger().setLevel(logging.DEBUG)
-# logger.setLevel(logging.DEBUG)
-logger.setLevel(logging.INFO)
+db_logger = logging.getLogger('database')
+db_logger.setLevel(logging.INFO)
 
 human_fix_logger = logging.getLogger('human_fix')
 if os.name != 'nt':
@@ -94,8 +98,19 @@ def load_data(args):
 
     cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, na_database)
 
-    cs_database.dungeon_diagnostics()
-    cs_database.card_diagnostics()
+    logger.info('Connecting to database')
+    with open(args.db_config) as f:
+        db_config = json.load(f)
+
+    dry_run = False
+    db_wrapper = DbWrapper(dry_run)
+    db_wrapper.connect(db_config)
+
+    # Ensure awakenings
+    AwakeningProcessor().process(db_wrapper)
+
+    # cs_database.dungeon_diagnostics()
+    # cs_database.card_diagnostics()
 
     print('done')
 

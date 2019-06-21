@@ -21,15 +21,15 @@ class AwokenSkill(SimpleSqlItem):
 
     def __init__(self,
                  awoken_skill_id: int = None,
-                 name_jp='',
-                 name_na: str = '',
-                 name_kr: str = '',
-                 desc_jp: str = '',
-                 desc_na: str = '',
-                 desc_kr: str = '',
-                 adj_hp: int = 0,
-                 adj_atk: int = 0,
-                 adj_rcv: int = 0,
+                 name_jp=None,
+                 name_na: str = None,
+                 name_kr: str = None,
+                 desc_jp: str = None,
+                 desc_na: str = None,
+                 desc_kr: str = None,
+                 adj_hp: int = None,
+                 adj_atk: int = None,
+                 adj_rcv: int = None,
                  tstamp: int = None):
         self.awoken_skill_id = awoken_skill_id
         self.name_jp = name_jp
