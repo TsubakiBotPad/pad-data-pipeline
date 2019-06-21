@@ -310,9 +310,6 @@ CREATE TABLE `monster_active_skill` (
   `desc_kr` text NOT NULL,
   `turn_max` int(11) NOT NULL,
   `turn_min` int(11) NOT NULL,
-  `desc_jp_override` text,
-  `desc_kr_override` text,
-  `desc_na_override` text,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`active_skill_id`),
   KEY `tstamp` (`tstamp`)
@@ -356,13 +353,10 @@ CREATE TABLE `monster_leader_skill` (
   `desc_jp` text NOT NULL,
   `desc_na` text NOT NULL,
   `desc_kr` text NOT NULL,
-  `max_hp` int(11) NOT NULL,
-  `max_atk` int(11) NOT NULL,
-  `max_rcv` int(11) NOT NULL,
+  `max_hp` float NOT NULL,
+  `max_atk` float NOT NULL,
+  `max_rcv` float NOT NULL,
   `max_shield` float NOT NULL,
-  `desc_jp_override` text,
-  `desc_na_override` text,
-  `desc_kr_override` text,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`leader_skill_id`),
   KEY `tstamp` (`tstamp`)
@@ -507,4 +501,4 @@ CREATE TABLE `timestamp` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-14 17:16:57
+-- Dump completed on 2019-06-20 22:37:16
