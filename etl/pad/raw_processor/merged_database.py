@@ -4,7 +4,7 @@ import os
 from typing import List, Dict
 
 from pad.common.monster_id_mapping import nakr_id_to_monster_no
-from pad.common.shared_types import Server, StarterGroup, MonsterNo, CardId, DungeonId
+from pad.common.shared_types import Server, StarterGroup, MonsterNo, CardId, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, egg_machine
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill
 # from ..processor import enemy_skillset as ess
@@ -37,7 +37,8 @@ def _clean_bonuses(server: Server, bonus_sets, dungeons) -> List[MergedBonus]:
     return merged_bonuses
 
 
-def _clean_cards(cards: List[card.Card],
+def _clean_cards(server: Server,
+                 cards: List[card.Card],
                  skills: List[skill.MonsterSkill],
                  enemy_skills: List[MergedEnemy]) -> List[MergedCard]:
     skills_by_id = {s.skill_id: s for s in skills}
@@ -63,7 +64,7 @@ def _clean_cards(cards: List[card.Card],
 
         enemy_behavior = enemy_behavior_by_card_id.get(card.card_id, [])
 
-        result = MergedCard(card, active_skill, leader_skill, enemy_behavior)
+        result = MergedCard(server, card, active_skill, leader_skill, enemy_behavior)
         result.critical_failures.extend(critical_failures)
         merged_cards.append(result)
 
@@ -103,6 +104,7 @@ class Database(object):
         self.enemies = []  # type: List[MergedEnemy]
 
         # Faster lookups
+        self.skill_id_to_skill = {} # type: Dict[SkillId, MonsterSkill]
         self.dungeon_id_to_dungeon = {} # type: Dict[DungeonId, Dungeon]
         self.card_id_to_card = {} # type: Dict[CardId, MergedCard]
         self.monster_no_to_card = {} # type: Dict[MonsterNo, MergedCard]
@@ -120,6 +122,7 @@ class Database(object):
 
         if not skip_skills:
             self.skills = skill.load_skill_data(data_dir=base_dir)
+            self.skill_id_to_skill = {s.skill_id: s for s in self.skills}
             # TODO: need to compute skill data here
 
         self.enemy_skills = enemy_skill.load_enemy_skill_data(data_dir=base_dir)
@@ -130,7 +133,7 @@ class Database(object):
 
         self.bonuses = _clean_bonuses(self.server, self.bonus_sets, self.dungeons)
         self.enemies = _clean_enemy(raw_cards, self.enemy_skills)
-        self.cards = _clean_cards(raw_cards, self.skills, self.enemies)
+        self.cards = _clean_cards(self.server, raw_cards, self.skills, self.enemies)
 
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
         self.card_id_to_card = {c.card_id: c for c in self.cards}
@@ -155,6 +158,9 @@ class Database(object):
         self.save(output_dir, 'cards', self.cards, pretty)
         self.save(output_dir, 'exchange', self.exchange, pretty)
         self.save(output_dir, 'enemies', self.enemies, pretty)
+
+    def skill_by_id(self, skill_id: SkillId):
+        return self.skill_id_to_skill.get(skill_id, None)
 
     def dungeon_by_id(self, dungeon_id: DungeonId):
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
