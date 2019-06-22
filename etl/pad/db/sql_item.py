@@ -87,12 +87,6 @@ def _full_columns(o: 'SqlItem', remove_cols=None, add_cols=None):
     cols = cols.difference(remove_cols)
     cols = cols.union(add_cols)
 
-    if hasattr(type(o), 'COL_MAPPINGS'):
-        mappings = type(o).COL_MAPPINGS
-        for k, v in mappings.items():
-            cols.discard(v)
-            cols.add(k)
-
     return list(cols)
 
 
@@ -135,31 +129,12 @@ class SqlItem(object):
     def exists_strategy(self) -> ExistsStrategy:
         return ExistsStrategy.BY_KEY
 
-    # def needs_insert(self):
-    #     if not self.uses_local_primary_key():
-    #         raise Exception('Should not call this function, uses FK primary Key')
-    #     key_val = self.key_value()
-    #     return key_val is None or key_val == 0
-    #
-    # def uses_local_primary_key(self):
-    #     """Controls insert logic.
-    #
-    #     If true, an insert is needed if the primary key is missing.
-    #     If false, an insert is needed if the primary key is set but not found in the table.
-    #
-    #     Should be True whenever a primary key can be calculated for a data item.
-    #     """
-    #     return True
-    #
-    # def uses_alternate_key_lookup(self):
-    #     """Controls insert logic.
-    #     If true, an insert is needed if the 'exists' sql fails, which will also be used to
-    #     retrieve the primary key.
-    #     """
-    #     return False
-
     def key_exists_sql(self):
         return _key_and_cols_compare(self)
+
+    def value_exists_sql(self):
+        update_cols = self._update_columns()
+        return _key_and_cols_compare(self, cols=update_cols, include_key=False)
 
     def needs_update_sql(self, include_key=True):
         update_cols = self._update_columns()
@@ -178,7 +153,7 @@ class SqlItem(object):
         if hasattr(self, 'tstamp'):
             if 'tstamp' not in cols:
                 cols = cols + ['tstamp']
-            self.tstamp = time.time()
+            self.tstamp = int(time.time())
 
         sql = 'UPDATE {}'.format(self._table())
         sql += ' SET ' + ', '.join(map(_col_compare, cols))
@@ -190,7 +165,7 @@ class SqlItem(object):
         if hasattr(self, 'tstamp'):
             if 'tstamp' not in cols:
                 cols = cols + ['tstamp']
-            self.tstamp = time.time()
+            self.tstamp = int(time.time())
         return generate_insert_sql(self._table(), cols, self)
 
     def set_key_value(self, key_value):
@@ -206,7 +181,7 @@ class SqlItem(object):
         raise NotImplemented('no insert columns set')
 
     def _update_columns(self):
-        return None
+        raise NotImplemented('no update columns set')
 
     def _key_lookup_sql(self):
         raise NotImplemented('no key lookup sql')
@@ -222,8 +197,11 @@ class SimpleSqlItem(SqlItem):
     def _key(self):
         return type(self).KEY_COL
 
+    def _non_auto_insert_cols(self):
+        return []
+
     def _insert_columns(self):
-        return _full_columns(self)
+        return _full_columns(self, remove_cols=self._non_auto_insert_cols())
 
     def _non_auto_update_cols(self):
         return []
