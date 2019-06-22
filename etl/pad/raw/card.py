@@ -207,16 +207,16 @@ class Card(pad_util.Printable):
                      self.enemy_skill_refs)
 
     def hp_curve(self) -> Curve:
-        return Curve(self.min_hp, self.max_hp, self.hp_scale)
+        return Curve(self.min_hp, self.max_hp, self.hp_scale, max_level=99)
 
     def atk_curve(self) -> Curve:
-        return Curve(self.min_atk, self.max_atk, self.atk_scale)
+        return Curve(self.min_atk, self.max_atk, self.atk_scale, max_level=99)
 
     def rcv_curve(self) -> Curve:
-        return Curve(self.min_rcv, self.max_rcv, self.rcv_scale)
+        return Curve(self.min_rcv, self.max_rcv, self.rcv_scale, max_level=99)
 
     def xp_curve(self) -> Curve:
-        return Curve(0, self.xp_max, self.xp_scale)
+        return Curve(0, self.xp_max, self.xp_scale, max_level=99)
 
     def __str__(self):
         return 'Card({} - {})'.format(self.monster_no, self.name)

@@ -22,7 +22,7 @@ class Monster(SimpleSqlItem):
         if max_level == 1:
             exp = 0
         else:
-            exp = shared_types.curve_value(0, jp_card.xp_max, jp_card.xp_scale, max_level, 99)
+            exp = jp_card.xp_curve().value_at(max_level)
 
         # TODO: fodder_exp and sell_gold
 
@@ -35,8 +35,8 @@ class Monster(SimpleSqlItem):
                  monster_no_na=na_card.monster_no,
                  monster_no_kr=kr_card.monster_no,
                  name_jp=jp_card.name,
-                 name_na=na_card.card.name,
-                 name_kr=kr_card.card.name,
+                 name_na=na_card.name,
+                 name_kr=kr_card.name,
                  pronunciation_jp=jp_card.furigana,
                  hp_min=jp_card.min_hp,
                  hp_max=jp_card.max_hp,
@@ -81,9 +81,6 @@ class Monster(SimpleSqlItem):
                  name_na: str = None,
                  name_kr: str = None,
                  pronunciation_jp: str = None,
-                 comment_jp: str = None,
-                 comment_na: str = None,
-                 comment_kr: str = None,
                  hp_min: int = None,
                  hp_max: int = None,
                  hp_scale: float = None,
@@ -126,9 +123,6 @@ class Monster(SimpleSqlItem):
         self.name_na = name_na
         self.name_kr = name_kr
         self.pronunciation_jp = pronunciation_jp
-        self.comment_jp = comment_jp
-        self.comment_na = comment_na
-        self.comment_kr = comment_kr
         self.hp_min = hp_min
         self.hp_max = hp_max
         self.hp_scale = hp_scale
