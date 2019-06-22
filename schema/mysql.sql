@@ -58,7 +58,7 @@ CREATE TABLE `awakenings` (
   KEY `awoken_skill_id_idx` (`awoken_skill_id`),
   CONSTRAINT `awakenings_fk_awoken_skill_id` FOREIGN KEY (`awoken_skill_id`) REFERENCES `awoken_skills` (`awoken_skill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `awakenings_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=69928 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=93237 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,108 +114,20 @@ CREATE TABLE `d_types` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `dungeon`
+-- Table structure for table `drops`
 --
 
-DROP TABLE IF EXISTS `dungeon`;
+DROP TABLE IF EXISTS `drops`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dungeon` (
-  `dungeon_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `dungeon_type` int(11) NOT NULL,
-  `comment_jp` text,
-  `comment_kr` text,
-  `comment_na` text,
-  `icon_id` int(11) NOT NULL,
-  `name_jp` text NOT NULL,
-  `name_kr` text NOT NULL,
-  `name_us` text NOT NULL,
-  `order_idx` int(11) NOT NULL,
-  `show_yn` tinyint(1) NOT NULL,
-  `tdt_seq` int(11) NOT NULL,
-  `tstamp` bigint(20) NOT NULL,
-  PRIMARY KEY (`dungeon_id`),
-  KEY `tstamp` (`tstamp`),
-  KEY `tdt_seq` (`tdt_seq`),
-  KEY `icon_seq` (`icon_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1674 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `dungeon_monster`
---
-
-DROP TABLE IF EXISTS `dungeon_monster`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dungeon_monster` (
-  `dungeon_monster_id` int(11) NOT NULL,
-  `dungeon_id` int(11) NOT NULL,
-  `dungeon_sublevel_id` int(11) NOT NULL,
+CREATE TABLE `drops` (
+  `drop_id` int(11) NOT NULL AUTO_INCREMENT,
+  `encounter_id` int(11) NOT NULL,
   `monster_id` int(11) NOT NULL,
-  `floor` int(11) NOT NULL,
-  `order_idx` int(11) NOT NULL,
-  `amount` int(11) NOT NULL,
-  `turn` int(11) NOT NULL,
-  `hp` bigint(20) NOT NULL,
-  `atk` int(11) NOT NULL,
-  `def` bigint(20) NOT NULL,
-  `comment_jp` text,
-  `comment_kr` text,
-  `comment_us` text,
-  `drop_monster_id` int(11) NOT NULL,
   `tstamp` int(11) NOT NULL,
-  PRIMARY KEY (`dungeon_monster_id`),
+  PRIMARY KEY (`drop_id`),
   KEY `tstamp` (`tstamp`),
-  KEY `tsd_seq` (`dungeon_sublevel_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `dungeon_monster_drop`
---
-
-DROP TABLE IF EXISTS `dungeon_monster_drop`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dungeon_monster_drop` (
-  `monster_no` int(11) NOT NULL,
-  `order_idx` bigint(20) NOT NULL,
-  `status` bigint(20) NOT NULL,
-  `tdmd_seq` bigint(20) NOT NULL AUTO_INCREMENT,
-  `tdm_seq` bigint(20) NOT NULL,
-  `tstamp` bigint(20) NOT NULL,
-  PRIMARY KEY (`tdmd_seq`),
-  KEY `tstamp` (`tstamp`),
-  KEY `dungeon_monster_drop_list_ibfk_1` (`monster_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `dungeon_sublevel`
---
-
-DROP TABLE IF EXISTS `dungeon_sublevel`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dungeon_sublevel` (
-  `coin_max` int(11) NOT NULL,
-  `coin_min` int(11) NOT NULL,
-  `dungeon_seq` bigint(20) NOT NULL,
-  `exp_max` int(11) NOT NULL,
-  `exp_min` int(11) NOT NULL,
-  `order_idx` int(11) NOT NULL,
-  `stage` int(11) NOT NULL,
-  `stamina` bigint(20) NOT NULL,
-  `name_jp` varchar(200) DEFAULT NULL,
-  `name_kr` varchar(200) NOT NULL,
-  `name_us` varchar(200) NOT NULL,
-  `tsd_seq` bigint(20) NOT NULL AUTO_INCREMENT,
-  `tstamp` bigint(20) NOT NULL,
-  PRIMARY KEY (`tsd_seq`),
-  KEY `tstamp` (`tstamp`),
-  KEY `sub_dungeon_list_ibfk_1` (`dungeon_seq`),
-  CONSTRAINT `dungeon_sublevel_ibfk_1` FOREIGN KEY (`dungeon_seq`) REFERENCES `dungeon` (`dungeon_id`) ON DELETE CASCADE
+  KEY `dungeon_monster_drop_list_ibfk_1` (`encounter_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -236,6 +148,64 @@ CREATE TABLE `dungeon_type` (
   PRIMARY KEY (`tdt_seq`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dungeons`
+--
+
+DROP TABLE IF EXISTS `dungeons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dungeons` (
+  `dungeon_id` int(11) NOT NULL,
+  `name_jp` text NOT NULL,
+  `name_na` text NOT NULL,
+  `name_kr` text NOT NULL,
+  `dungeon_type` int(11) NOT NULL,
+  `series_id` int(11) DEFAULT NULL,
+  `icon_id` int(11) DEFAULT NULL,
+  `comment_jp` text,
+  `comment_kr` text,
+  `comment_na` text,
+  `show` tinyint(1) NOT NULL,
+  `tstamp` bigint(20) NOT NULL,
+  PRIMARY KEY (`dungeon_id`),
+  KEY `tstamp` (`tstamp`),
+  KEY `tdt_seq` (`series_id`),
+  KEY `icon_seq` (`icon_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `encounters`
+--
+
+DROP TABLE IF EXISTS `encounters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `encounters` (
+  `encounter_id` int(11) NOT NULL,
+  `dungeon_id` int(11) NOT NULL,
+  `subdungeon_id` int(11) NOT NULL,
+  `enemy_id` int(11) DEFAULT NULL,
+  `monster_id` int(11) NOT NULL,
+  `floor` int(11) NOT NULL,
+  `comment_jp` text,
+  `comment_na` text,
+  `comment_kr` text,
+  `amount` int(11) NOT NULL,
+  `order_idx` int(11) NOT NULL,
+  `turn` int(11) NOT NULL,
+  `level` int(11) DEFAULT NULL,
+  `hp` bigint(20) NOT NULL,
+  `atk` bigint(20) NOT NULL,
+  `def` bigint(20) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`encounter_id`),
+  KEY `tstamp` (`tstamp`),
+  KEY `tsd_seq` (`subdungeon_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,7 +242,7 @@ CREATE TABLE `evolutions` (
   CONSTRAINT `evolutions_fk_mat_4_id` FOREIGN KEY (`mat_4_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_mat_5_id` FOREIGN KEY (`mat_5_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_to_id` FOREIGN KEY (`to_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2495 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9977 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -479,6 +449,41 @@ CREATE TABLE `skill_condition` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `sub_dungeons`
+--
+
+DROP TABLE IF EXISTS `sub_dungeons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sub_dungeons` (
+  `sub_dungeon_id` int(11) NOT NULL,
+  `dungeon_id` int(11) NOT NULL,
+  `name_jp` text NOT NULL,
+  `name_na` text NOT NULL,
+  `name_kr` text NOT NULL,
+  `comment_jp` text,
+  `comment_na` text,
+  `comment_kr` text,
+  `coin_max` int(11) NOT NULL,
+  `coin_min` int(11) NOT NULL,
+  `coin_avg` int(11) NOT NULL,
+  `exp_max` int(11) NOT NULL,
+  `exp_min` int(11) NOT NULL,
+  `exp_avg` int(11) NOT NULL,
+  `floors` int(11) NOT NULL,
+  `stamina` int(11) NOT NULL,
+  `hp_mult` float NOT NULL,
+  `atk_mult` float NOT NULL,
+  `def_mult` float NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`sub_dungeon_id`),
+  KEY `tstamp_idx` (`tstamp`),
+  KEY `dungeon_id_idx` (`dungeon_id`),
+  CONSTRAINT `subdungeon_fk_dungeon_id` FOREIGN KEY (`dungeon_id`) REFERENCES `dungeons` (`dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `timestamps`
 --
 
@@ -502,4 +507,4 @@ CREATE TABLE `timestamps` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-21 22:22:16
+-- Dump completed on 2019-06-22  0:41:53
