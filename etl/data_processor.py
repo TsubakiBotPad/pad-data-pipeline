@@ -28,6 +28,8 @@ from pad.raw_processor import merged_database, crossed_data
 # from pad.storage.news import NewsItem
 # from pad.storage.schedule_item import ScheduleItem
 from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
+from pad.storage_processor.dimension_processor import DimensionProcessor
+from pad.storage_processor.timestamp_processor import TimestampProcessor
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
@@ -106,8 +108,14 @@ def load_data(args):
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
 
+    # Load dimension tables
+    DimensionProcessor().process(db_wrapper)
+
     # Ensure awakenings
     AwakeningProcessor().process(db_wrapper)
+
+    # Update timestamps
+    TimestampProcessor().process(db_wrapper)
 
     # cs_database.dungeon_diagnostics()
     # cs_database.card_diagnostics()
