@@ -3,11 +3,15 @@ Data from across multiple servers merged together.
 """
 
 import logging
-from typing import List, Optional
+from datetime import datetime
+from typing import List, Any, Optional
+
+import pytz
 
 from pad.common.shared_types import MonsterId, MonsterNo
-from pad.raw import MonsterSkill, Dungeon
-from pad.raw_processor.merged_data import MergedCard
+from pad.common import pad_util, monster_id_mapping
+from pad.raw import Bonus, Card, MonsterSkill, Dungeon, ESRef
+from pad.raw_processor.merged_data import MergedCard, MergedBonus, MergedEnemy
 from pad.raw_processor.merged_database import Database
 
 fail_logger = logging.getLogger('processor_failures')
@@ -211,7 +215,7 @@ class CrossServerDatabase(object):
                                                     kr_database)  # type: List[CrossServerDungeon]
         self.skills = build_cross_server_skills(jp_database,
                                                 na_database,
-                                                kr_database)  # type: List[CrossServerSkill]
+                                                kr_database) # type: List[CrossServerSkill]
 
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')
