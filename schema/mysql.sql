@@ -168,7 +168,7 @@ CREATE TABLE `dungeons` (
   `comment_jp` text,
   `comment_kr` text,
   `comment_na` text,
-  `show` tinyint(1) NOT NULL,
+  `visible` tinyint(1) NOT NULL,
   `tstamp` bigint(20) NOT NULL,
   PRIMARY KEY (`dungeon_id`),
   KEY `tstamp` (`tstamp`),
@@ -464,12 +464,13 @@ CREATE TABLE `sub_dungeons` (
   `comment_jp` text,
   `comment_na` text,
   `comment_kr` text,
-  `coin_max` int(11) NOT NULL,
-  `coin_min` int(11) NOT NULL,
-  `coin_avg` int(11) NOT NULL,
-  `exp_max` int(11) NOT NULL,
-  `exp_min` int(11) NOT NULL,
-  `exp_avg` int(11) NOT NULL,
+  `coin_max` int(11) DEFAULT NULL,
+  `coin_min` int(11) DEFAULT NULL,
+  `coin_avg` int(11) DEFAULT NULL,
+  `exp_max` int(11) DEFAULT NULL,
+  `exp_min` int(11) DEFAULT NULL,
+  `exp_avg` int(11) DEFAULT NULL,
+  `mp_avg` int(11) DEFAULT NULL,
   `floors` int(11) NOT NULL,
   `stamina` int(11) NOT NULL,
   `hp_mult` float NOT NULL,
@@ -507,4 +508,4 @@ CREATE TABLE `timestamps` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-22  0:41:53
+-- Dump completed on 2019-06-22 10:03:55
