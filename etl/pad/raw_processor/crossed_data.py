@@ -3,15 +3,11 @@ Data from across multiple servers merged together.
 """
 
 import logging
-from datetime import datetime
-from typing import List, Any, Optional
+from typing import List, Optional
 
-import pytz
-
-from pad.common.shared_types import MonsterNo, CardId
-from pad.common import pad_util, monster_id_mapping
-from pad.raw import Bonus, Card, MonsterSkill, Dungeon, ESRef
-from pad.raw_processor.merged_data import MergedCard, MergedBonus, MergedEnemy
+from pad.common.shared_types import MonsterNo
+from pad.raw import MonsterSkill, Dungeon
+from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
 fail_logger = logging.getLogger('processor_failures')
@@ -32,7 +28,7 @@ class CrossServerCard(object):
 def build_ownable_cross_server_cards(jp_database, na_database) -> List[CrossServerCard]:
     all_cards = build_cross_server_cards(jp_database, na_database)
     # 10K-20K could contain NA-only monsters (Voltron).
-    return list(filter(lambda c: 0 < c.monster_no < 19_999, all_cards))
+    return list(filter(lambda c: 0 < c.monster_no < 19999, all_cards))
 
 
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
@@ -212,13 +208,14 @@ class CrossServerDatabase(object):
                                                   na_database,
                                                   kr_database)  # type: List[CrossServerCard]
         self.ownable_cards = list(
-            filter(lambda c: 0 < c.monster_no < 19_999, self.all_cards))  # type: List[CrossServerCard]
+            filter(lambda c: 0 < c.monster_no < 19999,
+                   self.all_cards))  # type: List[CrossServerCard]
         self.dungeons = build_cross_server_dungeons(jp_database,
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
         self.skills = build_cross_server_skills(jp_database,
                                                 na_database,
-                                                kr_database) # type: List[CrossServerSkill]
+                                                kr_database)  # type: List[CrossServerSkill]
 
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')
@@ -227,30 +224,37 @@ class CrossServerDatabase(object):
             nac = c.na_card
 
             if jpc.card.type_1_id != nac.card.type_1_id:
-                print('type1 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_1_id, nac.card.type_1_id))
+                print('type1 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_1_id,
+                                                         nac.card.type_1_id))
 
             if jpc.card.type_2_id != nac.card.type_2_id:
-                print('type2 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_2_id, nac.card.type_2_id))
+                print('type2 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_2_id,
+                                                         nac.card.type_2_id))
 
             if jpc.card.type_3_id != nac.card.type_3_id:
-                print('type3 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_3_id, nac.card.type_3_id))
+                print('type3 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_3_id,
+                                                         nac.card.type_3_id))
 
             jpcas = jpc.active_skill
             nacas = nac.active_skill
             if jpcas and nacas and jpcas.skill_id != nacas.skill_id:
-                print('active skill failure: {} - {} / {}'.format(nac.card.name, jpcas.skill_id, nacas.skill_id))
+                print('active skill failure: {} - {} / {}'.format(nac.card.name, jpcas.skill_id,
+                                                                  nacas.skill_id))
 
             jpcls = jpc.leader_skill
             nacls = nac.leader_skill
             if jpcls and nacls and jpcls.skill_id != nacls.skill_id:
-                print('leader skill failure: {} - {} / {}'.format(nac.card.name, jpcls.skill_id, nacls.skill_id))
+                print('leader skill failure: {} - {} / {}'.format(nac.card.name, jpcls.skill_id,
+                                                                  nacls.skill_id))
 
             if len(jpc.card.awakenings) != len(nac.card.awakenings):
-                print('awakening : {} - {} / {}'.format(nac.card.name, len(jpc.card.awakenings), len(nac.card.awakenings)))
+                print('awakening : {} - {} / {}'.format(nac.card.name, len(jpc.card.awakenings),
+                                                        len(nac.card.awakenings)))
 
             if len(jpc.card.super_awakenings) != len(nac.card.super_awakenings):
-                print('super awakening : {} - {} / {}'.format(nac.card.name, len(jpc.card.super_awakenings), len(nac.card.super_awakenings)))
-
+                print('super awakening : {} - {} / {}'.format(nac.card.name,
+                                                              len(jpc.card.super_awakenings),
+                                                              len(nac.card.super_awakenings)))
 
     def dungeon_diagnostics(self):
         print('checking', len(self.dungeons), 'dungeons')
@@ -259,9 +263,13 @@ class CrossServerDatabase(object):
             nad = d.na_dungeon
 
             if len(jpd.floors) != len(nad.floors):
-                print('Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name, len(jpd.floors),
-                                                                      len(nad.floors)))
+                print(
+                    'Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
+                                                                    len(jpd.floors),
+                                                                    len(nad.floors)))
 
             if jpd.full_dungeon_type != nad.full_dungeon_type:
-                print('Dungeon type failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
-                                                                       jpd.full_dungeon_type, nad.full_dungeon_type))
+                print('Dungeon type failure: {} / {} - {} / {}'.format(jpd.clean_name,
+                                                                       nad.clean_name,
+                                                                       jpd.full_dungeon_type,
+                                                                       nad.full_dungeon_type))
