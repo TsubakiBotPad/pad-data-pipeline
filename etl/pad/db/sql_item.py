@@ -38,7 +38,7 @@ def _value_to_sql_param(v):
 
 
 def _col_compare(col):
-    return col + ' = ' + _col_value_ref(col)
+    return _col_name_ref(col) + ' = ' + _col_value_ref(col)
 
 
 def _col_value_ref(col):
