@@ -17,13 +17,6 @@ can maybe autocompute skill rotation list?
 enhance mats that skill up rem monsters
 
 
-sub_dungeon needs new fields:
-total_points (mp)
-rewards (complex string data, convert to json), might need override
-score
-
-
-
 monster new fields:
 exchangable?
 
