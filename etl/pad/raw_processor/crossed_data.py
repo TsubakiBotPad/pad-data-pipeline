@@ -25,12 +25,6 @@ class CrossServerCard(object):
         self.kr_card = kr_card
 
 
-def build_ownable_cross_server_cards(jp_database, na_database) -> List[CrossServerCard]:
-    all_cards = build_cross_server_cards(jp_database, na_database)
-    # 10K-20K could contain NA-only monsters (Voltron).
-    return list(filter(lambda c: 0 < c.monster_no < 19999, all_cards))
-
-
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
     all_monster_nos = set(jp_database.monster_no_to_card.keys())
     all_monster_nos.update(na_database.monster_no_to_card.keys())
