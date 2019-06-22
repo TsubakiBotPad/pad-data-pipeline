@@ -311,7 +311,7 @@ class Evolution(SimpleSqlItem):
 
         return Evolution(
             evolution_id=None, # Key that is looked up or inserted
-            evolution_type=None, # Fix
+            evolution_type=0, # Fix
             from_id=convert(card.ancestor_id),
             to_id=convert(card.monster_no),
             mat_1_id=convert(card.evo_mat_id_1) if card.evo_mat_id_1 else None,
