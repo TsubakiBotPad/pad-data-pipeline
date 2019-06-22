@@ -29,6 +29,7 @@ from pad.raw_processor import merged_database, crossed_data
 # from pad.storage.schedule_item import ScheduleItem
 from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
+from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.timestamp_processor import TimestampProcessor
 
@@ -116,7 +117,10 @@ def load_data(args):
     AwakeningProcessor().process(db_wrapper)
 
     # Load monster data
-    MonsterProcessor(cs_database).process(db_wrapper)
+    # MonsterProcessor(cs_database).process(db_wrapper)
+
+    # Load dungeon data
+    DungeonProcessor(cs_database).process(db_wrapper)
 
     # Update timestamps
     TimestampProcessor().process(db_wrapper)
