@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pad.common import shared_types
 from pad.common.shared_types import Server, MonsterId, MonsterNo
-from pad.db.sql_item import SimpleSqlItem
+from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
 
 
@@ -289,9 +289,11 @@ class Awakenings(SimpleSqlItem):
         self.order_idx = order_idx
         self.tstamp = tstamp
 
-    def uses_alternate_key_lookup(self):
-        return True
+    def exists_strategy(self):
+        return ExistsStrategy.BY_VALUE
 
+    def _non_auto_insert_cols(self):
+        return [self._key()]
 
 class Evolution(SimpleSqlItem):
     """Monster evolution entry."""
@@ -340,5 +342,8 @@ class Evolution(SimpleSqlItem):
         self.mat_5_id = mat_5_id
         self.tstamp = tstamp
 
-    def uses_alternate_key_lookup(self):
-        return True
+    def exists_strategy(self):
+        return ExistsStrategy.BY_VALUE
+
+    def _non_auto_insert_cols(self):
+        return [self._key()]
