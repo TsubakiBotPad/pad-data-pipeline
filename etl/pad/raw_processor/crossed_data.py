@@ -49,7 +49,7 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
 
 def is_bad_name(name):
     """Finds names that are currently placeholder data."""
-    return any(x in name for x in ['***', '???'])
+    return any(x in name for x in ['***', '???']) or name == '無し'
 
 
 # Creates a CrossServerCard if appropriate.
@@ -181,9 +181,12 @@ def make_cross_server_skill(jp_skill: MonsterSkill,
     na_skill = na_skill or jp_skill
     kr_skill = kr_skill or na_skill
 
-    if is_bad_name(jp_skill.name):
+    if is_bad_name(jp_skill.name) and is_bad_name(na_skill.name):
         # Probably a debug skill
         return None
+
+    if is_bad_name(jp_skill.name):
+        jp_skill = na_skill
 
     if is_bad_name(na_skill.name):
         # skill probably exists in JP but not in NA
