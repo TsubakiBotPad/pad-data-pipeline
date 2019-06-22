@@ -6,7 +6,7 @@ from typing import NewType, Dict, Any
 AttrId = NewType('AttrId', int)
 MonsterNo = NewType('MonsterNo', int)
 DungeonId = NewType('DungeonId', int)
-DungeonFloorId = NewType('DungeonFloorId', int)
+SubDungeonId = NewType('SubDungeonId', int)
 SkillId = NewType('SkillId', int)
 TypeId = NewType('TypeId', int)
 
