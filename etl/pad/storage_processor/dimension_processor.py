@@ -2,50 +2,57 @@
 This processor sets up dimension tables that are used as foreign keys as other tables.
 In general it should do no work; it just simplifies the setup for a new database.
 """
+import logging
+
 from pad.db.db_util import DbWrapper
+from pad.db.sql_item import SimpleSqlItem
 
-D_ATTRIBUTE = {
-    'name': 'd_attribute',
-    'cols': ['attribute_id', 'name'],
-    'rows': [
-        [0, 'Fire'],
-        [1, 'Water'],
-        [2, 'Wood'],
-        [3, 'Light'],
-        [4, 'Dark'],
-    ],
-}
+logger = logging.getLogger('processor')
 
-# Do we need this?
-D_CONDITION = {
-    'name': 'd_condition',
-    'cols': ['condition_type', 'name'],
-    'rows': [
-        [1, 'active'],
-        [2, 'leader'],
-    ],
-}
 
-D_TYPE = {
-    'name': 'd_type',
-    'cols': ['type_id', 'name'],
-    'rows': [
-        [0, 'Evolve'],
-        [1, 'Balance'],
-        [2, 'Physical'],
-        [3, 'Healer'],
-        [4, 'Dragon'],
-        [5, 'God'],
-        [6, 'Attacker'],
-        [7, 'Devil'],
-        [8, 'Machine'],
-        [12, 'Awoken'],
-        [14, 'Enhance'],
-        [15, 'Vendor'],
-    ],
-}
+class DAttribute(SimpleSqlItem):
+    """Monster color attributes."""
+    TABLE = 'd_attributes'
+    KEY_COL = 'attribute_id'
 
-DIMENSION_TABLES = [D_ATTRIBUTE, D_CONDITION, D_TYPE]
+    def __init__(self, attribute_id: int = None, name: str = None):
+        self.attribute_id = attribute_id
+        self.name = name
+
+
+D_ATTRIBUTES = [
+    DAttribute(0, 'Fire'),
+    DAttribute(1, 'Water'),
+    DAttribute(2, 'Wood'),
+    DAttribute(3, 'Light'),
+    DAttribute(4, 'Dark'),
+]
+
+
+class DType(SimpleSqlItem):
+    """Monster types."""
+    TABLE = 'd_types'
+    KEY_COL = 'type_id'
+
+    def __init__(self, type_id: int = None, name: str = None):
+        self.type_id = type_id
+        self.name = name
+
+
+D_TYPES = [
+    DType(0, 'Evolve'),
+    DType(1, 'Balance'),
+    DType(2, 'Physical'),
+    DType(3, 'Healer'),
+    DType(4, 'Dragon'),
+    DType(5, 'God'),
+    DType(6, 'Attacker'),
+    DType(7, 'Devil'),
+    DType(8, 'Machine'),
+    DType(12, 'Awoken'),
+    DType(14, 'Enhance'),
+    DType(15, 'Vendor'),
+]
 
 
 class DimensionProcessor(object):
@@ -53,12 +60,9 @@ class DimensionProcessor(object):
         pass
 
     def process(self, db: DbWrapper):
-        print('loading', len(DIMENSION_TABLES), 'dimension tables')
-        for tbl in DIMENSION_TABLES:
-            sql = 'INSERT IGNORE INTO {} ({}) VALUES '.format(tbl['name'], ','.join(tbl['cols']))
-            rows = []
-            for row in tbl['rows']:
-                row = list(map(lambda x: "'{}'".format(x), row))
-                rows.append('({})'.format(','.join(row)))
-            sql += ','.join(rows)
-            db.insert_item(sql)
+        logger.warning('loading dimension tables')
+        for item in D_ATTRIBUTES:
+            db.insert_or_update(item)
+        for item in D_TYPES:
+            db.insert_or_update(item)
+        logger.warning('done loading dimension tables')
