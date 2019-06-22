@@ -54,14 +54,14 @@ class MonsterProcessor(object):
             db.insert_or_update(item)
 
     def _process_awakenings(self, db):
-        print('loading awakenings')
+        logger.warning('loading awakenings')
         for m in self.data.ownable_cards:
             items = Awakenings.from_csm(m)
             for item in items:
                 db.insert_or_update(item)
 
     def _process_evolutions(self, db):
-        print('loading evolutions')
+        logger.warning('loading evolutions')
         for m in self.data.ownable_cards:
             item = Evolution.from_csm(m)
             if item:
