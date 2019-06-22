@@ -1,7 +1,6 @@
 from datetime import date
 from typing import List, Optional
 
-from pad.common import shared_types
 from pad.common.shared_types import Server, MonsterId, MonsterNo
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
