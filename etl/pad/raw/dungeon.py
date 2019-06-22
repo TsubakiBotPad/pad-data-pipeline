@@ -9,17 +9,19 @@ from typing import List, Any
 from pad.common import pad_util, dungeon_types
 
 # The typical JSON file name for this data.
+from pad.common.shared_types import DungeonId, SubDungeonId
+
 FILE_NAME = 'download_dungeon_data.json'
 
 
-class DungeonFloor(pad_util.Printable):
-    """A floor listed once you click into a Dungeon."""
+class SubDungeon(pad_util.Printable):
+    """A dungeon difficulty level."""
 
-    def __init__(self, raw: List[Any]):
-        self.floor_number = int(raw[0])
+    def __init__(self, dungeon_id: DungeonId, raw: List[Any]):
+        self.sub_dungeon_id = SubDungeonId(dungeon_id * 1000 + int(raw[0]))
         self.raw_name = raw[1]
         self.clean_name = pad_util.strip_colors(self.raw_name)
-        self.waves = int(raw[2])
+        self.floors = int(raw[2])
         self.rflags1 = raw[3]
         self.stamina = raw[4]
         self.bgm1 = raw[5]
@@ -39,21 +41,19 @@ class DungeonFloor(pad_util.Printable):
         # Modifiers parsing doesn't seem to always work
         # Hacked up version for dungeon modifiers, needed for
         # enemy parsing.
-        self.modifiers_clean = {
-            'hp': 1.0,
-            'atk': 1.0,
-            'def': 1.0,
-        }
+        self.hp_mult = 1.0
+        self.atk_mult = 1.0
+        self.def_mult = 1.0
 
         for field in self.remaining_fields:
             if 'hp:' in field or 'at:' in field or 'df:' in field:
                 for mod in field.split('|'):
                     if mod.startswith('hp:'):
-                        self.modifiers_clean['hp'] = float(mod[3:]) / 10000
+                        self.hp_mult = float(mod[3:]) / 10000
                     elif mod.startswith('at:'):
-                        self.modifiers_clean['atk'] = float(mod[3:]) / 10000
+                        self.atk_mult = float(mod[3:]) / 10000
                     elif mod.startswith('df:'):
-                        self.modifiers_clean['def'] = float(mod[3:]) / 10000
+                        self.def_mult = float(mod[3:]) / 10000
                 break
 
         # Modifiers parsing also seems to skip fixed teams sometimes.
@@ -124,9 +124,9 @@ class Dungeon(pad_util.Printable):
     """A top-level dungeon."""
 
     def __init__(self, raw: List[Any]):
-        self.floors = []  # type: List[DungeonFloor]
+        self.sub_dungeons = []  # type: List[SubDungeon]
 
-        self.dungeon_id = int(raw[0])
+        self.dungeon_id = DungeonId(int(raw[0]))
         self.name = str(raw[1])
         self.unknown_002 = int(raw[2])
 
@@ -168,8 +168,8 @@ def load_dungeon_data(data_dir: str = None, json_file: str = None) -> List[Dunge
             cur_dungeon = Dungeon(data_values)
             dungeons.append(cur_dungeon)
         elif info == 'f;':
-            floor = DungeonFloor(data_values)
-            cur_dungeon.floors.append(floor)
+            floor = SubDungeon(cur_dungeon.dungeon_id, data_values)
+            cur_dungeon.sub_dungeons.append(floor)
         elif info == 'c;':
             pass
         else:

@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 
 from pad.common import pad_util
 from pad.common.pad_util import ghmult_plain, ghchance_plain, Printable
-from pad.common.shared_types import DungeonId, DungeonFloorId, Server, StarterGroup
+from pad.common.shared_types import DungeonId, SubDungeonId, Server, StarterGroup
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_limited_bonus_data_{}.json'
@@ -124,9 +124,9 @@ class Bonus(Printable):
 
         # Optional DungeonFloorId
         # Stuff like rewards text in monthly quests
-        self.dungeon_floor_id = None  # type: Optional[DungeonFloorId]
+        self.sub_dungeon_id = None  # type: Optional[SubDungeonId]
         if 'f' in raw:
-            self.dungeon_floor_id = DungeonFloorId(int(raw['f']))
+            self.sub_dungeon_id = SubDungeonId(int(raw['f']))
 
         # If REM/PEM, the ID of the machine
         self.egg_machine_id = None  # type: Optional[int]

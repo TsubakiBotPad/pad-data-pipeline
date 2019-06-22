@@ -17,7 +17,7 @@ class Dungeon(SimpleSqlItem):
             name_na=o.na_dungeon.clean_name,
             name_kr=o.kr_dungeon.clean_name,
             dungeon_type=o.jp_dungeon.full_dungeon_type.value,
-            show=True)
+            visible=True)
 
     def __init__(self,
                  dungeon_id: int = None,
@@ -25,14 +25,14 @@ class Dungeon(SimpleSqlItem):
                  name_na: str = None,
                  name_kr: str = None,
                  dungeon_type: int = None,
-                 show: bool = None,
+                 visible: bool = None,
                  tstamp: int = None):
         self.dungeon_id = dungeon_id
         self.name_jp = name_jp
         self.name_na = name_na
         self.name_kr = name_kr
         self.dungeon_type = dungeon_type
-        self.show = show
+        self.visible = visible
         self.tstamp = tstamp
 
 
@@ -48,7 +48,18 @@ class SubDungeon(SimpleSqlItem):
     @staticmethod
     def from_csd(o: CrossServerDungeon) -> List['SubDungeon']:
         results = []
-        # TODO: implement me
+        for sd in o.sub_dungeons:
+            results.append(SubDungeon(
+                sub_dungeon_id=sd.sub_dungeon_id,
+                dungeon_id=o.dungeon_id,
+                name_jp=sd.jp_sub_dungeon.clean_name,
+                name_na=sd.na_sub_dungeon.clean_name,
+                name_kr=sd.kr_sub_dungeon.clean_name,
+                floors=sd.jp_sub_dungeon.floors,
+                stamina=sd.jp_sub_dungeon.stamina,
+                hp_mult=sd.jp_sub_dungeon.hp_mult,
+                atk_mult=sd.jp_sub_dungeon.atk_mult,
+                def_mult=sd.jp_sub_dungeon.def_mult))
         return results
 
     def __init__(self,
@@ -62,7 +73,6 @@ class SubDungeon(SimpleSqlItem):
                  hp_mult: float = None,
                  atk_mult: float = None,
                  def_mult: float = None,
-                 show: bool = None,
                  tstamp: int = None):
         self.sub_dungeon_id = sub_dungeon_id
         self.dungeon_id = dungeon_id
@@ -74,7 +84,6 @@ class SubDungeon(SimpleSqlItem):
         self.hp_mult = hp_mult
         self.atk_mult = atk_mult
         self.def_mult = def_mult
-        self.show = show
         self.tstamp = tstamp
 
     def _non_auto_update_cols(self):

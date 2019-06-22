@@ -11,6 +11,7 @@ import pytz
 from pad.common.shared_types import MonsterId, MonsterNo
 from pad.common import pad_util, monster_id_mapping
 from pad.raw import Bonus, Card, MonsterSkill, Dungeon, ESRef
+from pad.raw.dungeon import SubDungeon
 from pad.raw_processor.merged_data import MergedCard, MergedBonus, MergedEnemy
 from pad.raw_processor.merged_database import Database
 
@@ -110,6 +111,16 @@ class CrossServerDungeon(object):
         self.na_dungeon = na_dungeon
         self.kr_dungeon = kr_dungeon
 
+        self.sub_dungeons = make_cross_server_sub_dungeons(jp_dungeon, na_dungeon, kr_dungeon)
+
+
+class CrossServerSubDungeon(object):
+    def __init__(self, jp_sub_dungeon: SubDungeon, na_sub_dungeon: SubDungeon, kr_sub_dungeon: SubDungeon):
+        self.sub_dungeon_id = jp_sub_dungeon.sub_dungeon_id
+        self.jp_sub_dungeon = jp_sub_dungeon
+        self.na_sub_dungeon = na_sub_dungeon
+        self.kr_sub_dungeon = kr_sub_dungeon
+
 
 def build_cross_server_dungeons(jp_database: Database,
                                 na_database: Database,
@@ -150,6 +161,39 @@ def make_cross_server_dungeon(jp_dungeon: Dungeon,
         kr_dungeon = na_dungeon
 
     return CrossServerDungeon(jp_dungeon, na_dungeon, kr_dungeon), None
+
+
+def make_cross_server_sub_dungeons(jp_dungeon: Dungeon,
+                                   na_dungeon: Dungeon,
+                                   kr_dungeon: Dungeon) -> List[CrossServerSubDungeon]:
+    jp_sd_map = {sd.sub_dungeon_id: sd for sd in jp_dungeon.sub_dungeons}
+    na_sd_map = {sd.sub_dungeon_id: sd for sd in na_dungeon.sub_dungeons}
+    kr_sd_map = {sd.sub_dungeon_id: sd for sd in kr_dungeon.sub_dungeons}
+
+    # Ensure we know every possible sub_dungeon across all servers
+    sd_keys = set(jp_sd_map.keys())
+    sd_keys.update(na_sd_map.keys())
+    sd_keys.update(kr_sd_map.keys())
+
+    # Convert to a sorted list of ids
+    sd_keys = list(sorted(sd_keys))
+
+    results = []
+    for key in sd_keys:
+        jp_sd = jp_sd_map.get(key)
+        na_sd = na_sd_map.get(key)
+        kr_sd = kr_sd_map.get(key)
+
+        if jp_sd is None or is_bad_name(jp_sd.clean_name):
+            jp_sd = na_sd
+        if na_sd is None or is_bad_name(na_sd.clean_name):
+            na_sd = jp_sd
+        if kr_sd is None or is_bad_name(kr_sd.clean_name):
+            kr_sd = na_sd
+
+        results.append(CrossServerSubDungeon(jp_sd, na_sd, kr_sd))
+
+    return results
 
 
 class CrossServerSkill(object):
@@ -255,9 +299,9 @@ class CrossServerDatabase(object):
             jpd = d.jp_dungeon
             nad = d.na_dungeon
 
-            if len(jpd.floors) != len(nad.floors):
-                print('Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name, len(jpd.floors),
-                                                                      len(nad.floors)))
+            if len(jpd.sub_dungeons) != len(nad.sub_dungeons):
+                print('Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name, len(jpd.sub_dungeons),
+                                                                      len(nad.sub_dungeons)))
 
             if jpd.full_dungeon_type != nad.full_dungeon_type:
                 print('Dungeon type failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
