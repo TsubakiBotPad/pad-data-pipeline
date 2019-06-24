@@ -21,7 +21,7 @@ class Monster(SimpleSqlItem):
         if max_level == 1:
             exp = 0
         else:
-            exp = jp_card.xp_curve().value_at(max_level)
+            exp = round(jp_card.xp_curve().value_at(max_level))
 
         # TODO: fodder_exp and sell_gold
 
@@ -255,18 +255,18 @@ class LeaderSkill(SimpleSqlItem):
         self.tstamp = tstamp
 
 
-class Awakenings(SimpleSqlItem):
+class Awakening(SimpleSqlItem):
     """Monster awakening entry."""
     TABLE = 'awakenings'
     KEY_COL = 'awakening_id'
 
     @staticmethod
-    def from_csm(o: CrossServerCard) -> List['Awakenings']:
+    def from_csm(o: CrossServerCard) -> List['Awakening']:
         awakenings = [(a_id, False) for a_id in o.jp_card.card.awakenings]
         awakenings.extend([(sa_id, True) for sa_id in o.jp_card.card.super_awakenings])
         results = []
         for i, v in enumerate(awakenings):
-            results.append(Awakenings(
+            results.append(Awakening(
                 awakening_id=None, # Key that is looked up or inserted
                 monster_id=o.monster_id,
                 awoken_skill_id=v[0],
@@ -292,6 +292,9 @@ class Awakenings(SimpleSqlItem):
         return ExistsStrategy.BY_VALUE
 
     def _non_auto_insert_cols(self):
+        return [self._key()]
+
+    def _non_auto_update_cols(self):
         return [self._key()]
 
 class Evolution(SimpleSqlItem):
@@ -345,4 +348,7 @@ class Evolution(SimpleSqlItem):
         return ExistsStrategy.BY_VALUE
 
     def _non_auto_insert_cols(self):
+        return [self._key()]
+
+    def _non_auto_update_cols(self):
         return [self._key()]

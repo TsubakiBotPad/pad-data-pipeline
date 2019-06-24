@@ -125,8 +125,10 @@ class DbWrapper(object):
         key = item.key_value()
         if item.exists_strategy() == ExistsStrategy.BY_KEY:
             if not self.check_existing(item.key_exists_sql()):
+                logger.info('item needed insert: %s %s', type(item), key)
                 self.insert_item(item.insert_sql())
             elif not self.check_existing(item.needs_update_sql()):
+                logger.info('item needed update: %s %s', type(item), key)
                 self.insert_item(item.update_sql())
 
         elif item.exists_strategy() == ExistsStrategy.BY_VALUE:
@@ -136,7 +138,9 @@ class DbWrapper(object):
             if not key:
                 key = self.insert_item(item.insert_sql())
                 item.set_key_value(key)
+                logger.info('item needed by-value insert: %s %s', type(item), key)
             elif not self.check_existing(item.needs_update_sql()):
+                logger.info('item needed by-value update: %s %s', type(item), key)
                 self.insert_item(item.update_sql())
         #
         #     if not key:

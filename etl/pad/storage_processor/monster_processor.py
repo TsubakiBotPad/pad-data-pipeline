@@ -2,7 +2,7 @@ import logging
 
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
-from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakenings, Evolution
+from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution
 
 logger = logging.getLogger('processor')
 
@@ -56,7 +56,7 @@ class MonsterProcessor(object):
     def _process_awakenings(self, db):
         logger.warning('loading awakenings')
         for m in self.data.ownable_cards:
-            items = Awakenings.from_csm(m)
+            items = Awakening.from_csm(m)
             for item in items:
                 db.insert_or_update(item)
 

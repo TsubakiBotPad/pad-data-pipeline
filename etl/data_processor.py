@@ -84,7 +84,6 @@ def parse_args():
     return parser.parse_args()
 
 
-
 def load_data(args):
     if args.logsql:
         logging.getLogger('database').setLevel(logging.DEBUG)
@@ -117,7 +116,7 @@ def load_data(args):
     AwakeningProcessor().process(db_wrapper)
 
     # Load monster data
-    # MonsterProcessor(cs_database).process(db_wrapper)
+    MonsterProcessor(cs_database).process(db_wrapper)
 
     # Load dungeon data
     DungeonProcessor(cs_database).process(db_wrapper)

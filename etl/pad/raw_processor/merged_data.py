@@ -41,9 +41,10 @@ class MergedCard(object):
                  active_skill: MonsterSkill,
                  leader_skill: MonsterSkill,
                  enemy_behavior: List[Any]):
-                 # enemy_behavior: List[enemy_skillset.ESBehavior]):
+        # enemy_behavior: List[enemy_skillset.ESBehavior]):
         self.server = server
         self.monster_no = card.monster_no
+        self.monster_id = self.no_to_id(card.monster_no)
         self.card = card
 
         self.active_skill_id = active_skill.skill_id if active_skill else None
@@ -71,10 +72,8 @@ class MergedEnemy(object):
     def __init__(self,
                  enemy_id: int,
                  behavior: List[Any]):
-                 # behavior: List[enemy_skillset.ESBehavior]):
+        # behavior: List[enemy_skillset.ESBehavior]):
         self.enemy_id = enemy_id
         self.behavior = behavior
 
         self.critical_failures = []
-
-

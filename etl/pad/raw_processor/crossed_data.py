@@ -101,7 +101,7 @@ def make_cross_server_card(jp_card: MergedCard,
     override_if_necessary(jp_card, na_card)
     override_if_necessary(na_card, kr_card)
 
-    return CrossServerCard(MonsterId(jp_card.card.monster_no), jp_card, na_card, kr_card), None
+    return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
 
 
 class CrossServerDungeon(object):
@@ -253,13 +253,15 @@ class CrossServerDatabase(object):
                                                   na_database,
                                                   kr_database)  # type: List[CrossServerCard]
         self.ownable_cards = list(
-            filter(lambda c: 0 < c.monster_no < 19999, self.all_cards))  # type: List[CrossServerCard]
+            filter(lambda c: 0 < c.monster_id < 19999, self.all_cards))  # type: List[CrossServerCard]
+
+
         self.dungeons = build_cross_server_dungeons(jp_database,
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
         self.skills = build_cross_server_skills(jp_database,
                                                 na_database,
-                                                kr_database) # type: List[CrossServerSkill]
+                                                kr_database)  # type: List[CrossServerSkill]
 
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')
@@ -287,10 +289,14 @@ class CrossServerDatabase(object):
                 print('leader skill failure: {} - {} / {}'.format(nac.card.name, jpcls.skill_id, nacls.skill_id))
 
             if len(jpc.card.awakenings) != len(nac.card.awakenings):
-                print('awakening : {} - {} / {}'.format(nac.card.name, len(jpc.card.awakenings), len(nac.card.awakenings)))
+                print('awakening : {} - {} / {}'.format(nac.card.name,
+                                                        len(jpc.card.awakenings),
+                                                        len(nac.card.awakenings)))
 
             if len(jpc.card.super_awakenings) != len(nac.card.super_awakenings):
-                print('super awakening : {} - {} / {}'.format(nac.card.name, len(jpc.card.super_awakenings), len(nac.card.super_awakenings)))
+                print('super awakening : {} - {} / {}'.format(nac.card.name,
+                                                              len(jpc.card.super_awakenings),
+                                                              len(nac.card.super_awakenings)))
 
 
     def dungeon_diagnostics(self):
@@ -300,7 +306,8 @@ class CrossServerDatabase(object):
             nad = d.na_dungeon
 
             if len(jpd.sub_dungeons) != len(nad.sub_dungeons):
-                print('Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name, len(jpd.sub_dungeons),
+                print('Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
+                                                                      len(jpd.sub_dungeons),
                                                                       len(nad.sub_dungeons)))
 
             if jpd.full_dungeon_type != nad.full_dungeon_type:
