@@ -4,7 +4,7 @@ from pad.db.db_util import DbWrapper
 from pad.db.sql_item import SimpleSqlItem
 from pad.storage.awoken_skill import AwokenSkill
 from pad.storage.dungeon import Dungeon
-from pad.storage.monster import Monster, ActiveSkill, LeaderSkill, Awakenings, Evolution
+from pad.storage.monster import Monster, ActiveSkill, LeaderSkill, Awakening, Evolution
 
 logger = logging.getLogger('processor')
 
@@ -13,7 +13,7 @@ _UPDATE_TABLES = [
     Monster.TABLE,
     ActiveSkill.TABLE,
     LeaderSkill.TABLE,
-    Awakenings.TABLE,
+    Awakening.TABLE,
     Evolution.TABLE,
     Dungeon.TABLE,
 ]

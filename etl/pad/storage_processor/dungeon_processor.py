@@ -3,7 +3,6 @@ import logging
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
 from pad.storage.dungeon import Dungeon, SubDungeon
-from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakenings, Evolution
 
 logger = logging.getLogger('processor')
 
@@ -26,7 +25,7 @@ class DungeonProcessor(object):
         logger.warning('done loading dungeons')
 
     def _process_subdungeons(self, db: DbWrapper):
-        logger.warning('loading subdungeons')
+        logger.warning('loading sub_dungeons')
         for dungeon in self.data.dungeons:
             items = SubDungeon.from_csd(dungeon)
             for item in items:
