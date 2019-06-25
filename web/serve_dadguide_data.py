@@ -1,5 +1,8 @@
 import argparse
 import json
+from datetime import datetime
+from decimal import Decimal
+
 import pymysql
 
 
@@ -14,11 +17,30 @@ def parse_args():
 
     return parser.parse_args()
 
+def fix_row(row):
+    row_data = {}
+    for col in row:
+        data = row[col]
+        if data is None:
+            fixed_data = None
+        elif type(data) is Decimal:
+            first = '{}'.format(float(data))
+            second = '{:.1f}'.format(float(data))
+            fixed_data = max((first, second), key=len)
+        elif type(data) is datetime:
+            fixed_data = data.isoformat(' ')
+        else:
+            fixed_data = str(data)
+
+        fixed_col = col
+        row_data[fixed_col] = fixed_data
+    return row_data
+
 
 def dump_table(table_name, cursor):
     result_json = {'items': []}
     for row in cursor:
-        result_json['items'].append(row)
+        result_json['items'].append(fix_row(row))
 
     return result_json
 
