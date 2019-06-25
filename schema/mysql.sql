@@ -58,7 +58,7 @@ CREATE TABLE `awakenings` (
   KEY `awoken_skill_id_idx` (`awoken_skill_id`),
   CONSTRAINT `awakenings_fk_awoken_skill_id` FOREIGN KEY (`awoken_skill_id`) REFERENCES `awoken_skills` (`awoken_skill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `awakenings_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=93237 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=46619 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,6 +96,34 @@ CREATE TABLE `d_attributes` (
   `attribute_id` int(11) NOT NULL,
   `name` varchar(30) NOT NULL,
   PRIMARY KEY (`attribute_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `d_event_types`
+--
+
+DROP TABLE IF EXISTS `d_event_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `d_event_types` (
+  `event_type_id` int(11) NOT NULL,
+  `name` text NOT NULL,
+  PRIMARY KEY (`event_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `d_servers`
+--
+
+DROP TABLE IF EXISTS `d_servers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `d_servers` (
+  `server_id` int(11) NOT NULL,
+  `name` text NOT NULL,
+  PRIMARY KEY (`server_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -227,7 +255,6 @@ CREATE TABLE `evolutions` (
   `mat_5_id` int(11) DEFAULT NULL,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`evolution_id`),
-  KEY `tstamp` (`tstamp`),
   KEY `from_id_idx` (`from_id`),
   KEY `to_id_idx` (`to_id`),
   KEY `mat_1_id_idx` (`mat_1_id`),
@@ -235,6 +262,7 @@ CREATE TABLE `evolutions` (
   KEY `mat_3_id_idx` (`mat_3_id`),
   KEY `mat_4_id_idx` (`mat_4_id`),
   KEY `mat_5_id_idx` (`mat_5_id`),
+  KEY `tstamp_idx` (`tstamp`),
   CONSTRAINT `evolutions_fk_from_id` FOREIGN KEY (`from_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_mat_1_id` FOREIGN KEY (`mat_1_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_mat_2_id` FOREIGN KEY (`mat_2_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -242,7 +270,7 @@ CREATE TABLE `evolutions` (
   CONSTRAINT `evolutions_fk_mat_4_id` FOREIGN KEY (`mat_4_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_mat_5_id` FOREIGN KEY (`mat_5_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_to_id` FOREIGN KEY (`to_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9977 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25314 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,10 +288,10 @@ CREATE TABLE `leader_skills` (
   `desc_jp` text NOT NULL,
   `desc_na` text NOT NULL,
   `desc_kr` text NOT NULL,
-  `max_hp` float NOT NULL,
-  `max_atk` float NOT NULL,
-  `max_rcv` float NOT NULL,
-  `max_shield` float NOT NULL,
+  `max_hp` decimal(8,2) NOT NULL,
+  `max_atk` decimal(8,2) NOT NULL,
+  `max_rcv` decimal(8,2) NOT NULL,
+  `max_shield` decimal(8,2) NOT NULL,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`leader_skill_id`),
   KEY `tstamp` (`tstamp`)
@@ -288,13 +316,13 @@ CREATE TABLE `monsters` (
   `pronunciation_jp` text NOT NULL,
   `hp_max` int(11) NOT NULL,
   `hp_min` int(11) NOT NULL,
-  `hp_scale` float NOT NULL,
+  `hp_scale` decimal(5,2) NOT NULL,
   `atk_max` int(11) NOT NULL,
   `atk_min` int(11) NOT NULL,
-  `atk_scale` float NOT NULL,
+  `atk_scale` decimal(5,2) NOT NULL,
   `rcv_max` int(11) NOT NULL,
   `rcv_min` int(11) NOT NULL,
-  `rcv_scale` float NOT NULL,
+  `rcv_scale` decimal(5,2) NOT NULL,
   `cost` int(11) NOT NULL,
   `exp` int(11) NOT NULL,
   `level` int(11) NOT NULL,
@@ -356,20 +384,20 @@ CREATE TABLE `news` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `rank_reward`
+-- Table structure for table `rank_rewards`
 --
 
-DROP TABLE IF EXISTS `rank_reward`;
+DROP TABLE IF EXISTS `rank_rewards`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `rank_reward` (
+CREATE TABLE `rank_rewards` (
+  `rank` int(11) NOT NULL,
+  `exp` bigint(20) NOT NULL,
   `add_cost` int(11) NOT NULL,
   `add_friend` int(11) NOT NULL,
   `add_stamina` int(11) NOT NULL,
   `cost` int(11) NOT NULL,
-  `exp` bigint(20) NOT NULL,
   `friend` int(11) NOT NULL,
-  `rank` int(11) NOT NULL,
   `stamina` int(11) NOT NULL,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`rank`),
@@ -385,29 +413,25 @@ DROP TABLE IF EXISTS `schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `schedule` (
-  `close_date` datetime NOT NULL,
-  `close_hour` bigint(20) NOT NULL,
-  `close_minute` bigint(20) NOT NULL,
-  `close_weekday` tinyint(1) NOT NULL,
-  `dungeon_seq` bigint(20) NOT NULL,
-  `event_seq` bigint(20) NOT NULL,
-  `event_type` bigint(20) NOT NULL,
-  `open_date` datetime NOT NULL,
-  `open_hour` bigint(20) NOT NULL,
-  `open_minute` bigint(20) NOT NULL,
-  `open_weekday` tinyint(1) NOT NULL,
-  `schedule_seq` bigint(20) NOT NULL,
-  `server` varchar(22) NOT NULL,
-  `server_open_date` datetime NOT NULL,
-  `server_open_hour` bigint(20) NOT NULL,
-  `team_data` varchar(21) DEFAULT NULL,
-  `tstamp` bigint(20) NOT NULL,
-  `url` varchar(126) DEFAULT NULL,
-  `open_timestamp` bigint(20) NOT NULL,
-  `close_timestamp` bigint(20) NOT NULL,
-  PRIMARY KEY (`schedule_seq`),
-  KEY `tstamp` (`tstamp`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `server_id` int(11) NOT NULL,
+  `event_type_id` int(11) NOT NULL,
+  `start_timestamp` int(11) NOT NULL,
+  `end_timestamp` int(11) NOT NULL,
+  `group_name` text,
+  `dungeon_id` int(11) DEFAULT NULL,
+  `url` text,
+  `info` text,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`event_id`),
+  KEY `tstamp_idx` (`tstamp`),
+  KEY `server_id_idx` (`server_id`),
+  KEY `event_type_id_idx` (`event_type_id`),
+  KEY `dungeon_id_idx` (`dungeon_id`),
+  CONSTRAINT `schedule_fk_dungeon_id` FOREIGN KEY (`dungeon_id`) REFERENCES `dungeons` (`dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `schedule_fk_event_type_id` FOREIGN KEY (`event_type_id`) REFERENCES `d_event_types` (`event_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `schedule_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=726 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -473,9 +497,11 @@ CREATE TABLE `sub_dungeons` (
   `mp_avg` int(11) DEFAULT NULL,
   `floors` int(11) NOT NULL,
   `stamina` int(11) NOT NULL,
-  `hp_mult` float NOT NULL,
-  `atk_mult` float NOT NULL,
-  `def_mult` float NOT NULL,
+  `hp_mult` decimal(8,4) NOT NULL,
+  `atk_mult` decimal(8,4) NOT NULL,
+  `def_mult` decimal(8,4) NOT NULL,
+  `s_rank` int(11) DEFAULT NULL,
+  `rewards` text,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`sub_dungeon_id`),
   KEY `tstamp_idx` (`tstamp`),
@@ -508,4 +534,4 @@ CREATE TABLE `timestamps` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-22 10:03:55
+-- Dump completed on 2019-06-25  0:06:25
