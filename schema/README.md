@@ -9,8 +9,8 @@ mysqldump -u root dadguide -p --no-data > mysql.sql
 ## Dumping a built database to sqlite
 
 ```bash
-
-./mysql2sqlite.sh -u root -p <password> dadguide
+rm dadguide.sqlite
+./mysql2sqlite.sh -u root -p<password> dadguide | sqlite3 dadguide.sqlite
 ```
 
 ## Clearing the local database
