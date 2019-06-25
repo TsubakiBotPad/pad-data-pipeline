@@ -58,7 +58,7 @@ class MergedCard(object):
         self.critical_failures = []
 
     def no_to_id(self, monster_no: MonsterNo) -> MonsterId:
-        if self.server == Server.JP:
+        if self.server == Server.jp:
             return jp_no_to_monster_id(monster_no)
         else:
             return nakr_no_to_monster_id(monster_no)

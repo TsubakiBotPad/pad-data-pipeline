@@ -27,9 +27,9 @@ def _clean_bonuses(server: Server, bonus_sets, dungeons) -> List[MergedBonus]:
                 if dungeon is None:
                     critical_failures.append('Dungeon lookup failed for bonus: %s'.format(repr(bonus)))
                 else:
-                    guerrilla_group = data_group if dungeon.dungeon_type == 'guerrilla' else None
+                    guerrilla_group = StarterGroup(data_group) if dungeon.dungeon_type == 'guerrilla' else None
 
-            if guerrilla_group or data_group == StarterGroup.RED.name:
+            if guerrilla_group or data_group == StarterGroup.red.name:
                 result = MergedBonus(server, bonus, dungeon, guerrilla_group)
                 result.critical_failures.extend(critical_failures)
                 merged_bonuses.append(result)
@@ -87,7 +87,7 @@ def _clean_enemy(cards, enemy_skills) -> List[MergedEnemy]:
 class Database(object):
     def __init__(self, server: Server, raw_dir: str):
         self.server = server
-        self.base_dir = os.path.join(raw_dir, server.value)
+        self.base_dir = os.path.join(raw_dir, server.name)
 
         # Loaded from disk
         self.raw_cards = []  # type: List[Card]
@@ -137,7 +137,7 @@ class Database(object):
 
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
         self.monster_no_to_card = {c.monster_no: c for c in self.cards}
-        if self.server == Server.JP:
+        if self.server == Server.jp:
             self.monster_id_to_card = self.monster_no_to_card
         else:
             self.monster_id_to_card = {nakr_no_to_monster_id(c.monster_no): c for c in self.cards}

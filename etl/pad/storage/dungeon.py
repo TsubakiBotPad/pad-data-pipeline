@@ -37,7 +37,7 @@ class Dungeon(SimpleSqlItem):
 
 
 def _non_auto_update_cols(self):
-    return ['show']
+    return ['visible']
 
 
 class SubDungeon(SimpleSqlItem):
@@ -88,6 +88,3 @@ class SubDungeon(SimpleSqlItem):
         self.def_mult = def_mult
         self.s_rank = s_rank
         self.tstamp = tstamp
-
-    def _non_auto_update_cols(self):
-        return ['show']

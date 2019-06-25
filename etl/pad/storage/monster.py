@@ -29,47 +29,47 @@ class Monster(SimpleSqlItem):
             return value if value > -1 else None
 
         return Monster(
-                 monster_id=o.monster_id,
-                 monster_no_jp=jp_card.monster_no,
-                 monster_no_na=na_card.monster_no,
-                 monster_no_kr=kr_card.monster_no,
-                 name_jp=jp_card.name,
-                 name_na=na_card.name,
-                 name_kr=kr_card.name,
-                 pronunciation_jp=jp_card.furigana,
-                 hp_min=jp_card.min_hp,
-                 hp_max=jp_card.max_hp,
-                 hp_scale=jp_card.hp_scale,
-                 atk_min=jp_card.min_atk,
-                 atk_max=jp_card.max_atk,
-                 atk_scale=jp_card.atk_scale,
-                 rcv_min=jp_card.min_rcv,
-                 rcv_max=jp_card.max_rcv,
-                 rcv_scale=jp_card.rcv_scale,
-                 cost=jp_card.cost,
-                 exp=exp,
-                 level=max_level,
-                 rarity=jp_card.rarity,
-                 limit_mult=jp_card.limit_mult,
-                 attribute_1_id=jp_card.attr_id,
-                 attribute_2_id=none_or(jp_card.sub_attr_id),
-                 leader_skill_id=jp_card.leader_skill_id,
-                 active_skill_id=jp_card.active_skill_id,
-                 type_1_id=jp_card.type_1_id,
-                 type_2_id=none_or(jp_card.type_2_id),
-                 type_3_id=none_or(jp_card.type_3_id),
-                 inheritable=jp_card.inheritable,
-                 fodder_exp=0,
-                 sell_gold=0,
-                 sell_mp=jp_card.sell_mp,
-                 buy_mp=None,
-                 reg_date=date.today().isoformat(),
-                 on_jp=o.jp_card.server == Server.JP and jp_card.released_status,
-                 on_na=o.na_card.server == Server.NA and na_card.released_status,
-                 on_kr=o.kr_card.server == Server.KR and kr_card.released_status,
-                 pal_egg=False,
-                 rem_egg=False,
-                 series_id=None)
+            monster_id=o.monster_id,
+            monster_no_jp=jp_card.monster_no,
+            monster_no_na=na_card.monster_no,
+            monster_no_kr=kr_card.monster_no,
+            name_jp=jp_card.name,
+            name_na=na_card.name,
+            name_kr=kr_card.name,
+            pronunciation_jp=jp_card.furigana,
+            hp_min=jp_card.min_hp,
+            hp_max=jp_card.max_hp,
+            hp_scale=jp_card.hp_scale,
+            atk_min=jp_card.min_atk,
+            atk_max=jp_card.max_atk,
+            atk_scale=jp_card.atk_scale,
+            rcv_min=jp_card.min_rcv,
+            rcv_max=jp_card.max_rcv,
+            rcv_scale=jp_card.rcv_scale,
+            cost=jp_card.cost,
+            exp=exp,
+            level=max_level,
+            rarity=jp_card.rarity,
+            limit_mult=jp_card.limit_mult,
+            attribute_1_id=jp_card.attr_id,
+            attribute_2_id=none_or(jp_card.sub_attr_id),
+            leader_skill_id=jp_card.leader_skill_id,
+            active_skill_id=jp_card.active_skill_id,
+            type_1_id=jp_card.type_1_id,
+            type_2_id=none_or(jp_card.type_2_id),
+            type_3_id=none_or(jp_card.type_3_id),
+            inheritable=jp_card.inheritable,
+            fodder_exp=0,
+            sell_gold=0,
+            sell_mp=jp_card.sell_mp,
+            buy_mp=None,
+            reg_date=date.today().isoformat(),
+            on_jp=o.jp_card.server == Server.jp and jp_card.released_status,
+            on_na=o.na_card.server == Server.na and na_card.released_status,
+            on_kr=o.kr_card.server == Server.kr and kr_card.released_status,
+            pal_egg=False,
+            rem_egg=False,
+            series_id=None)
 
     def __init__(self,
                  monster_id: int = None,
@@ -271,7 +271,7 @@ class Awakening(SimpleSqlItem):
         results = []
         for i, v in enumerate(awakenings):
             results.append(Awakening(
-                awakening_id=None, # Key that is looked up or inserted
+                awakening_id=None,  # Key that is looked up or inserted
                 monster_id=o.monster_id,
                 awoken_skill_id=v[0],
                 is_super=v[1],
@@ -301,6 +301,7 @@ class Awakening(SimpleSqlItem):
     def _non_auto_update_cols(self):
         return [self._key()]
 
+
 class Evolution(SimpleSqlItem):
     """Monster evolution entry."""
     TABLE = 'evolutions'
@@ -316,8 +317,8 @@ class Evolution(SimpleSqlItem):
             return o.jp_card.no_to_id(x)
 
         return Evolution(
-            evolution_id=None, # Key that is looked up or inserted
-            evolution_type=0, # Fix
+            evolution_id=None,  # Key that is looked up or inserted
+            evolution_type=0,  # Fix
             from_id=convert(card.ancestor_id),
             to_id=convert(card.monster_no),
             mat_1_id=convert(card.evo_mat_id_1) if card.evo_mat_id_1 else None,
