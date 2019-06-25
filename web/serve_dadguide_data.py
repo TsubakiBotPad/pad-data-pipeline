@@ -8,7 +8,7 @@ def parse_args():
 
     inputGroup = parser.add_argument_group("Input")
     inputGroup.add_argument("--db_config", help="JSON database info")
-    inputGroup.add_argument("--db_table", help="Table name")
+    inputGroup.add_argument("--table", help="Table name")
     inputGroup.add_argument("--tstamp", help="DadGuide tstamp field limit")
     inputGroup.add_argument("--plain", action='store_true', help="Print a more readable output")
 
@@ -23,7 +23,7 @@ def dump_table(table_name, cursor):
     return result_json
 
 
-def load_from_db(db_config, db_table, tstamp):
+def load_from_db(db_config, table, tstamp):
     connection = pymysql.connect(host=db_config['host'],
                                  user=db_config['user'],
                                  password=db_config['password'],
@@ -31,20 +31,20 @@ def load_from_db(db_config, db_table, tstamp):
                                  charset=db_config['charset'],
                                  cursorclass=pymysql.cursors.DictCursor)
 
-    db_table = db_table.lower()
-    sql = 'SELECT * FROM `{}`'.format(db_table)
+    table = table.lower()
+    sql = 'SELECT * FROM `{}`'.format(table)
 
-    if db_table == 'timestamps':
+    if table == 'timestamps':
         pass
     else:
         sql += ' WHERE tstamp > {}'.format(int(tstamp))
 
-        if db_table == 'schedule':
+        if table == 'schedule':
             sql += ' AND close_timestamp > UNIX_TIMESTAMP()'
 
     with connection.cursor() as cursor:
         cursor.execute(sql)
-        data = dump_table(db_table, cursor)
+        data = dump_table(table, cursor)
 
     connection.close()
     return data
@@ -53,7 +53,7 @@ def load_from_db(db_config, db_table, tstamp):
 def main(args):
     with open(args.db_config) as f:
         db_config = json.load(f)
-    data = load_from_db(db_config, args.db_table, args.tstamp)
+    data = load_from_db(db_config, args.table, args.tstamp)
 
     if args.plain:
         print(json.dumps(data, indent=4, sort_keys=True))
