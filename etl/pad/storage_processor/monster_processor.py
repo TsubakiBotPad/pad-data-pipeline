@@ -40,12 +40,14 @@ class MonsterProcessor(object):
         logger.warning('loading %s in-use leader skills', len(ls_in_use))
         for ls_skill_id in ls_in_use:
             ls_css = skill_id_to_crossed_skills[ls_skill_id]
-            db.insert_or_update(LeaderSkill.from_css(ls_css))
+            calc_skill = self.data.calculated_skills.get(ls_skill_id)
+            db.insert_or_update(LeaderSkill.from_css(ls_css, calc_skill))
 
         logger.warning('loading %s in-use active skills', len(as_in_use))
         for as_skill_id in as_in_use:
             as_css = skill_id_to_crossed_skills[as_skill_id]
-            db.insert_or_update(ActiveSkill.from_css(as_css))
+            calc_skill = self.data.calculated_skills.get(as_skill_id)
+            db.insert_or_update(ActiveSkill.from_css(as_css, calc_skill))
 
     def _process_monsters(self, db):
         logger.warning('loading %s monsters', len(self.data.ownable_cards))
