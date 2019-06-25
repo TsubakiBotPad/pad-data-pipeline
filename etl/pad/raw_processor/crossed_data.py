@@ -255,7 +255,6 @@ class CrossServerDatabase(object):
         self.ownable_cards = list(
             filter(lambda c: 0 < c.monster_id < 19999, self.all_cards))  # type: List[CrossServerCard]
 
-
         self.dungeons = build_cross_server_dungeons(jp_database,
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
@@ -263,14 +262,18 @@ class CrossServerDatabase(object):
                                                 na_database,
                                                 kr_database)  # type: List[CrossServerSkill]
 
+        # Hack to inject calculated skills from old padguide system
         self.calculated_skills = {}
+
+        self.jp_bonuses = jp_database.bonuses
+        self.na_bonuses = na_database.bonuses
+        # self.kr_bonuses = kr_database.bonuses
 
     def load_skill_text(self, skills_file_path: str):
         # This is a hack until we have skill parsing working properly.
         with open(skills_file_path) as f:
             skills_json = json.load(f)
         self.calculated_skills = {int(k): v for k, v in skills_json.items()}
-
 
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')
@@ -306,7 +309,6 @@ class CrossServerDatabase(object):
                 print('super awakening : {} - {} / {}'.format(nac.card.name,
                                                               len(jpc.card.super_awakenings),
                                                               len(nac.card.super_awakenings)))
-
 
     def dungeon_diagnostics(self):
         print('checking', len(self.dungeons), 'dungeons')

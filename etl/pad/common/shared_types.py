@@ -50,12 +50,12 @@ def curve_value(min_val, max_val, scale, level, max_level):
 
 
 class Server(Enum):
-    JP = 'jp'
-    NA = 'na'
-    KR = 'kr'
+    jp = 0
+    na = 1
+    kr = 2
 
 
 class StarterGroup(Enum):
-    RED = 'red'
-    BLUE = 'blue'
-    GREEN = 'green'
+    red = 'red'
+    blue = 'blue'
+    green = 'green'

@@ -32,6 +32,7 @@ from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
+from pad.storage_processor.schedule_processor import ScheduleProcessor
 from pad.storage_processor.timestamp_processor import TimestampProcessor
 
 logging.basicConfig()
@@ -94,10 +95,10 @@ def load_data(args):
     output_dir = args.output_dir
 
     logger.info('Loading data')
-    jp_database = merged_database.Database(Server.JP, input_dir)
+    jp_database = merged_database.Database(Server.jp, input_dir)
     jp_database.load_database()
 
-    na_database = merged_database.Database(Server.NA, input_dir)
+    na_database = merged_database.Database(Server.na, input_dir)
     na_database.load_database()
 
     cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, na_database)
@@ -128,6 +129,9 @@ def load_data(args):
 
     # Load dungeon data
     DungeonProcessor(cs_database).process(db_wrapper)
+
+    # Load event data
+    ScheduleProcessor(cs_database).process(db_wrapper)
 
     # Update timestamps
     TimestampProcessor().process(db_wrapper)

@@ -4,6 +4,7 @@ In general it should do no work; it just simplifies the setup for a new database
 """
 import logging
 
+from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
 from pad.db.sql_item import SimpleSqlItem
 
@@ -55,6 +56,38 @@ D_TYPES = [
 ]
 
 
+class DServer(SimpleSqlItem):
+    """PAD Servers."""
+    TABLE = 'd_servers'
+    KEY_COL = 'server_id'
+
+    def __init__(self, server_id: int = None, name: str = None):
+        self.server_id = server_id
+        self.name = name
+
+
+D_SERVERS = [
+    DServer(Server.jp.value, 'JP'),
+    DServer(Server.na.value, 'NA'),
+    DServer(Server.kr.value, 'KR'),
+]
+
+
+class DEventType(SimpleSqlItem):
+    """Monster types."""
+    TABLE = 'd_event_types'
+    KEY_COL = 'event_type_id'
+
+    def __init__(self, event_type_id: int = None, name: str = None):
+        self.event_type_id = event_type_id
+        self.name = name
+
+
+D_EVENT_TYPES = [
+    DEventType(0, 'General'),
+]
+
+
 class DimensionProcessor(object):
     def __init__(self):
         pass
@@ -63,4 +96,8 @@ class DimensionProcessor(object):
         for item in D_ATTRIBUTES:
             db.insert_or_update(item)
         for item in D_TYPES:
+            db.insert_or_update(item)
+        for item in D_SERVERS:
+            db.insert_or_update(item)
+        for item in D_EVENT_TYPES:
             db.insert_or_update(item)
