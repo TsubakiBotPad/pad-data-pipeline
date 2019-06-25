@@ -31,6 +31,7 @@ from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
+from pad.storage_processor.rank_reward_processor import RankRewardProcessor
 from pad.storage_processor.timestamp_processor import TimestampProcessor
 
 logging.basicConfig()
@@ -111,6 +112,9 @@ def load_data(args):
 
     # Load dimension tables
     DimensionProcessor().process(db_wrapper)
+
+    # Load rank data
+    RankRewardProcessor().process(db_wrapper)
 
     # Ensure awakenings
     AwakeningProcessor().process(db_wrapper)
