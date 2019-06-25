@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Optional
 
-from pad.common.shared_types import Server, MonsterId, MonsterNo
+from pad.common.shared_types import Server, MonsterId, MonsterNo, JsonType
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
 
@@ -173,14 +173,15 @@ class ActiveSkill(SimpleSqlItem):
     KEY_COL = 'active_skill_id'
 
     @staticmethod
-    def from_css(o: CrossServerSkill) -> 'ActiveSkill':
+    def from_css(o: CrossServerSkill, calc_skill: JsonType) -> 'ActiveSkill':
+        na_description = calc_skill['description'] if calc_skill else o.na_skill.description
         return ActiveSkill(
             active_skill_id=o.skill_id,
             name_jp=o.jp_skill.name,
             name_na=o.na_skill.name,
             name_kr=o.kr_skill.name,
             desc_jp=o.jp_skill.description,
-            desc_na=o.na_skill.description,
+            desc_na=na_description,
             desc_kr=o.kr_skill.description,
             turn_max=o.jp_skill.turn_max,
             turn_min=o.jp_skill.turn_min)
@@ -214,19 +215,22 @@ class LeaderSkill(SimpleSqlItem):
     KEY_COL = 'leader_skill_id'
 
     @staticmethod
-    def from_css(o: CrossServerSkill) -> 'LeaderSkill':
+    def from_css(o: CrossServerSkill, calc_skill: JsonType) -> 'LeaderSkill':
+        na_description = calc_skill['description'] if calc_skill else o.na_skill.description
+        skill_params = calc_skill['params'] if calc_skill else [1.0, 1.0, 1.0, 0.0]
+        skill_params = list(map(lambda x: round(x, 2), skill_params))
         return LeaderSkill(
             leader_skill_id=o.skill_id,
             name_jp=o.jp_skill.name,
             name_na=o.na_skill.name,
             name_kr=o.kr_skill.name,
             desc_jp=o.jp_skill.description,
-            desc_na=o.na_skill.description,
+            desc_na=na_description,
             desc_kr=o.kr_skill.description,
-            max_hp=1,
-            max_atk=1,
-            max_rcv=1,
-            max_shield=0)
+            max_hp=skill_params[0],
+            max_atk=skill_params[1],
+            max_rcv=skill_params[2],
+            max_shield=skill_params[3])
 
     def __init__(self,
                  leader_skill_id: int = None,

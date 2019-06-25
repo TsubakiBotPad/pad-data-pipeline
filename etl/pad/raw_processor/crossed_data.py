@@ -1,7 +1,7 @@
 """
 Data from across multiple servers merged together.
 """
-
+import json
 import logging
 from datetime import datetime
 from typing import List, Any, Optional
@@ -262,6 +262,15 @@ class CrossServerDatabase(object):
         self.skills = build_cross_server_skills(jp_database,
                                                 na_database,
                                                 kr_database)  # type: List[CrossServerSkill]
+
+        self.calculated_skills = {}
+
+    def load_skill_text(self, skills_file_path: str):
+        # This is a hack until we have skill parsing working properly.
+        with open(skills_file_path) as f:
+            skills_json = json.load(f)
+        self.calculated_skills = {int(k): v for k, v in skills_json.items()}
+
 
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')

@@ -102,6 +102,10 @@ def load_data(args):
 
     cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, na_database)
 
+    # Temporary hack until we have skill loading
+    skill_text_file = os.path.join(output_dir, 'jp_calc_skills.json')
+    cs_database.load_skill_text(skill_text_file)
+
     logger.info('Connecting to database')
     with open(args.db_config) as f:
         db_config = json.load(f)
