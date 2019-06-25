@@ -49,16 +49,16 @@ delete from d_types;
 * leader_skills
 * monsters
 * timestamps
+* dungeons
+* sub_dungeons
+* rank_rewards
 
 ### Needs work (some, a lot)
 
-* dungeon
-* dungeon_monster
-* dungeon_monster_drop
-* dungeon_sublevel
+* encounters
+* drops
 * dungeon_type
 * news
-* rank_reward
 * schedule
 * series
 * skill_condition

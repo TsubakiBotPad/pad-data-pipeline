@@ -60,9 +60,7 @@ class DimensionProcessor(object):
         pass
 
     def process(self, db: DbWrapper):
-        logger.warning('loading dimension tables')
         for item in D_ATTRIBUTES:
             db.insert_or_update(item)
         for item in D_TYPES:
             db.insert_or_update(item)
-        logger.warning('done loading dimension tables')
