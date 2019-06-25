@@ -59,7 +59,8 @@ class SubDungeon(SimpleSqlItem):
                 stamina=sd.jp_sub_dungeon.stamina,
                 hp_mult=sd.jp_sub_dungeon.hp_mult,
                 atk_mult=sd.jp_sub_dungeon.atk_mult,
-                def_mult=sd.jp_sub_dungeon.def_mult))
+                def_mult=sd.jp_sub_dungeon.def_mult,
+                s_rank=sd.jp_sub_dungeon.score))
         return results
 
     def __init__(self,
@@ -73,6 +74,7 @@ class SubDungeon(SimpleSqlItem):
                  hp_mult: float = None,
                  atk_mult: float = None,
                  def_mult: float = None,
+                 s_rank: int = None,
                  tstamp: int = None):
         self.sub_dungeon_id = sub_dungeon_id
         self.dungeon_id = dungeon_id
@@ -84,6 +86,7 @@ class SubDungeon(SimpleSqlItem):
         self.hp_mult = hp_mult
         self.atk_mult = atk_mult
         self.def_mult = def_mult
+        self.s_rank = s_rank
         self.tstamp = tstamp
 
     def _non_auto_update_cols(self):
