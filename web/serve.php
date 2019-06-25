@@ -1,11 +1,11 @@
 <?php
-  $dg_home = "/home/tactical0retreat/dadguide"
+  $dg_home = "/home/tactical0retreat/dadguide";
   $script = "${dg_home}/dadguide-data/web/serve_dadguide_data.py";
   $db_config = "${dg_home}/dadguide-jobs/db_config.json";
 
   $table = $_POST["table"];
 
-  $cmd = "python3 ${script} --db_config=${db_config} --db_table=${$table}";
+  $cmd = "python3 ${script} --db_config=${db_config} --db_table=${table}";
   if (array_key_exists("tstamp", $_POST)) {
     $tstamp = $_POST["tstamp"];
     $cmd = "$cmd --tstamp=${tstamp}";
