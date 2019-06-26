@@ -21,10 +21,14 @@ class ScheduleEvent(SimpleSqlItem):
             event_type_id=0,  # TODO: fixme
             start_timestamp=o.start_timestamp,
             end_timestamp=o.end_timestamp,
+            icon_id=0,
             group_name=o.group.name if o.group else None,
             dungeon_id=o.dungeon.dungeon_id if o.dungeon else None,
             url=None,
-            info='dummy text')
+            info_jp='dummy text',
+            info_na='dummy text',
+            info_kr='dummy text'
+        )
 
     def __init__(self,
                  event_id: int = None,
@@ -32,20 +36,26 @@ class ScheduleEvent(SimpleSqlItem):
                  event_type_id: int = None,
                  start_timestamp: int = None,
                  end_timestamp: int = None,
+                 icon_id: int = None,
                  group_name: str = None,
                  dungeon_id: int = None,
                  url: str = None,
-                 info: str = None,
+                 info_jp: str = None,
+                 info_na: str = None,
+                 info_kr: str = None,
                  tstamp: int = None):
         self.event_id = event_id
         self.server_id = server_id
         self.event_type_id = event_type_id
         self.start_timestamp = start_timestamp
         self.end_timestamp = end_timestamp
+        self.icon_id = icon_id
         self.group_name = group_name
         self.dungeon_id = dungeon_id
         self.url = url
-        self.info = info
+        self.info_jp = info_jp
+        self.info_na = info_na
+        self.info_kr = info_kr
         self.tstamp = tstamp
 
     def exists_strategy(self):
