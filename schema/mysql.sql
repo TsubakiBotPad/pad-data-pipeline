@@ -82,7 +82,7 @@ CREATE TABLE `awoken_skills` (
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`awoken_skill_id`),
   KEY `tstamp_idx` (`tstamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=16463 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -418,10 +418,13 @@ CREATE TABLE `schedule` (
   `event_type_id` int(11) NOT NULL,
   `start_timestamp` int(11) NOT NULL,
   `end_timestamp` int(11) NOT NULL,
+  `icon_id` varchar(45) NOT NULL,
   `group_name` text,
   `dungeon_id` int(11) DEFAULT NULL,
   `url` text,
-  `info` text,
+  `info_jp` text,
+  `info_na` text,
+  `info_kr` text,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`event_id`),
   KEY `tstamp_idx` (`tstamp`),
@@ -534,4 +537,4 @@ CREATE TABLE `timestamps` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-06-25  0:06:25
+-- Dump completed on 2019-06-25 20:47:52
