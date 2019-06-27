@@ -11,7 +11,10 @@
 
 # Thanks to and @artemyk and @gkuenning for their nice tweaks.
 
-mysqldump  --compatible=ansi --skip-extended-insert --compact  "$@" | \
+set -e
+
+mysqldump --default-character-set=utf8 --compatible=ansi --skip-extended-insert --compact  "$@" | \
+#mysqldump --skip-extended-insert --compact  "$@" | \
 
 awk '
 
