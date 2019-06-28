@@ -1,3 +1,4 @@
+import json
 import logging
 import random
 from typing import Callable
@@ -122,6 +123,13 @@ class DbWrapper(object):
             return cursor.lastrowid
 
     def insert_or_update(self, item: SqlItem):
+        try:
+            return self._insert_or_update(item)
+        except Exception as ex:
+            logger.fatal('Failed to insert item: %s', json.dumps(item, sort_keys=True, indent=4))
+
+    def _insert_or_update(self, item: SqlItem):
+
         key = item.key_value()
         if item.exists_strategy() == ExistsStrategy.BY_KEY:
             if not self.check_existing(item.key_exists_sql()):
@@ -142,27 +150,5 @@ class DbWrapper(object):
             elif not self.check_existing(item.needs_update_sql()):
                 logger.info('item needed by-value update: %s %s', type(item), key)
                 self.insert_item(item.update_sql())
-        #
-        #     if not key:
-        #         logger.info('item (alt) needed insert: %s %s', type(item), key)
-        #         key = self.insert_item(item.insert_sql())
-        #     elif not self.check_existing(item.needs_update_sql()):
-        #         logger.info('item (alt) needed update: %s %s', type(item), key)
-        #         self.insert_item(item.update_sql())
-        #
-        #
-        # elif not item.uses_local_primary_key():
-        #     if not self.check_existing(item.exists_sql()):
-        #         logger.info('item (fk) needed insert: %s %s', type(item), key)
-        #         key = self.insert_item(item.insert_sql())
-        #     elif not self.check_existing(item.needs_update_sql()):
-        #         logger.info('item (fk) needed update: %s %s', type(item), key)
-        #         self.insert_item(item.update_sql())
-        # else:
-        #     if item.needs_insert():
-        #         logger.info('item needed insert: %s %s', type(item), key)
-        #         key = self.insert_item(item.insert_sql())
-        #     elif not self.check_existing(item.needs_update_sql()):
-        #         logger.info('item needed update: %s %s', type(item), key)
-        #         self.insert_item(item.update_sql())
+
         return key
