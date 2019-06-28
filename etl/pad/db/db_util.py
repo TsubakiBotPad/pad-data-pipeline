@@ -128,6 +128,7 @@ class DbWrapper(object):
             return self._insert_or_update(item)
         except Exception as ex:
             logger.fatal('Failed to insert item: %s', pad_util.json_string_dump(item, pretty=True))
+            raise ex
 
     def _insert_or_update(self, item: SqlItem):
 
