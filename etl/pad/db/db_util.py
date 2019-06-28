@@ -5,6 +5,7 @@ from typing import Callable
 
 import pymysql
 
+from pad.common import pad_util
 from .sql_item import SqlItem, _col_compare, _tbl_name_ref, _process_col_mappings, ExistsStrategy
 
 logger = logging.getLogger('database')
@@ -126,7 +127,7 @@ class DbWrapper(object):
         try:
             return self._insert_or_update(item)
         except Exception as ex:
-            logger.fatal('Failed to insert item: %s', json.dumps(item, sort_keys=True, indent=4))
+            logger.fatal('Failed to insert item: %s', pad_util.json_string_dump(item, pretty=True))
 
     def _insert_or_update(self, item: SqlItem):
 
