@@ -21,7 +21,7 @@ class Printable(object):
     """Simple way to make an object printable."""
 
     def __repr__(self):
-        return '%s(%s)'.format(self.__class__.__name__, self.__dict__)
+        return '{}({})'.format(self.__class__.__name__, self.__dict__)
 
     def __str__(self):
         return self.__repr__()

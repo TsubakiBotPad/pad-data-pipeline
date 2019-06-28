@@ -90,6 +90,11 @@ def load_data(args):
 
     cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, na_database)
 
+    if not args.skipintermediate:
+        logger.info('Storing intermediate data')
+        jp_database.save_all(args.output_dir2, args.pretty)
+        na_database.save_all(args.output_dir2, args.pretty)
+
     # Temporary hack until we have skill loading
     skill_text_file = os.path.join(output_dir, 'jp_calc_skills.json')
     cs_database.load_skill_text(skill_text_file)
@@ -98,7 +103,6 @@ def load_data(args):
     with open(args.db_config) as f:
         db_config = json.load(f)
 
-    dry_run = False
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
 
@@ -125,11 +129,6 @@ def load_data(args):
 
     # cs_database.dungeon_diagnostics()
     # cs_database.card_diagnostics()
-
-    if not args.skipintermediate:
-        logger.info('Storing intermediate data')
-        jp_database.save_all(args.output_dir2, args.pretty)
-        na_database.save_all(args.output_dir2, args.pretty)
 
     print('done')
     #
