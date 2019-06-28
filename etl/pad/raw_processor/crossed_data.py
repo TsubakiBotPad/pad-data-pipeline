@@ -125,10 +125,12 @@ class CrossServerSubDungeon(object):
 def build_cross_server_dungeons(jp_database: Database,
                                 na_database: Database,
                                 kr_database: Database) -> List[CrossServerDungeon]:
-    jp_dungeon_ids = [dungeon.dungeon_id for dungeon in jp_database.dungeons]
+    dungeon_ids = set([dungeon.dungeon_id for dungeon in jp_database.dungeons])
+    dungeon_ids.update([dungeon.dungeon_id for dungeon in na_database.dungeons])
+    dungeon_ids = list(sorted(dungeon_ids))
 
     combined_dungeons = []  # type: List[CrossServerDungeon]
-    for dungeon_id in jp_dungeon_ids:
+    for dungeon_id in dungeon_ids:
         jp_dungeon = jp_database.dungeon_by_id(dungeon_id)
         na_dungeon = na_database.dungeon_by_id(dungeon_id)
         kr_dungeon = kr_database.dungeon_by_id(dungeon_id)
