@@ -77,7 +77,7 @@ class ScheduleProcessor(object):
 
     def process(self, db: DbWrapper):
         logger.warning('loading JP events')
-        # self._process_schedule(db, self.data.jp_bonuses)
+        self._process_schedule(db, self.data.jp_bonuses)
         logger.warning('loading NA events')
         self._process_schedule(db, self.data.na_bonuses)
         logger.warning('done loading schedule data')
