@@ -4,6 +4,7 @@ import os
 from enum import Enum
 from typing import List, Dict
 
+from pad.common import pad_util
 from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, egg_machine
@@ -149,8 +150,7 @@ class Database(object):
     def save(self, output_dir: str, file_name: str, obj: object, pretty: bool):
         output_file = os.path.join(output_dir, '{}_{}.json'.format(self.server.name, file_name))
         with open(output_file, 'w') as f:
-            indent = 4 if pretty else None
-            json.dump(obj, f, indent=indent, sort_keys=True, default=dump_helper)
+            pad_util.json_file_dump(obj, f, pretty)
 
     def save_all(self, output_dir: str, pretty: bool):
         self.save(output_dir, 'dungeons', self.dungeons, pretty)
@@ -175,12 +175,3 @@ class Database(object):
 
     def enemy_by_id(self, enemy_id):
         return self.enemy_id_to_enemy.get(enemy_id, None)
-
-
-def dump_helper(x):
-    if isinstance(x, Enum):
-        return str(x)
-    elif hasattr(x, '__dict__'):
-        return vars(x)
-    else:
-        return repr(x)

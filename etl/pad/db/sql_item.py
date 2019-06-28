@@ -1,8 +1,6 @@
-from datetime import datetime, date
 import decimal
-import json
 import time
-
+from datetime import datetime, date
 from enum import Enum
 
 
@@ -88,19 +86,6 @@ def _full_columns(o: 'SqlItem', remove_cols=None, add_cols=None):
     cols = cols.union(add_cols)
 
     return list(cols)
-
-
-def _dump_helper(x):
-    if isinstance(x, Enum):
-        return str(x)
-    elif hasattr(x, '__dict__'):
-        return vars(x)
-    else:
-        return repr(x)
-
-
-def dump(obj):
-    return json.dumps(obj, indent=4, sort_keys=True, default=_dump_helper)
 
 
 def _key_and_cols_compare(item: 'SqlItem', cols=None, include_key=True):

@@ -2,12 +2,14 @@ import datetime
 import json
 import os
 import re
+from enum import Enum
 
 import pytz
 
 from pad.common.shared_types import JsonType, Printable, Server
 
 Printable = Printable
+
 
 def strip_colors(message: str) -> str:
     return re.sub(r'(?i)[$^][a-f0-9]{6}[$^]', '', message)
@@ -61,6 +63,7 @@ def gh_to_timestamp(time_str: str, server: str) -> int:
     """Converts a time string to a timestamp."""
     dt = ghtime(time_str, server)
     return int(dt.timestamp())
+
 
 def gh_to_timestamp_2(time_str: str, server: Server) -> int:
     """Converts a time string to a timestamp."""
@@ -127,3 +130,22 @@ def load_raw_json(data_dir: str = None, json_file: str = None, file_name: str = 
 
     with open(json_file) as f:
         return json.load(f)
+
+
+def json_string_dump(obj, pretty=False):
+    indent = 4 if pretty else None
+    return json.dumps(obj, indent=indent, sort_keys=True, default=dump_helper)
+
+
+def json_file_dump(obj, f, pretty=False):
+    indent = 4 if pretty else None
+    json.dump(obj, f, indent=indent, sort_keys=True, default=dump_helper)
+
+
+def dump_helper(x):
+    if isinstance(x, Enum):
+        return str(x)
+    elif hasattr(x, '__dict__'):
+        return vars(x)
+    else:
+        return repr(x)
