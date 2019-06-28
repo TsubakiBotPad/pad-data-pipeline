@@ -77,7 +77,7 @@ class ScheduleProcessor(object):
 
     def process(self, db: DbWrapper):
         logger.warning('loading JP events')
-        self._process_schedule(db, self.data.jp_bonuses)
+        # self._process_schedule(db, self.data.jp_bonuses)
         logger.warning('loading NA events')
         self._process_schedule(db, self.data.na_bonuses)
         logger.warning('done loading schedule data')
@@ -102,11 +102,8 @@ class ScheduleProcessor(object):
                 logger.debug('Skipping long bonus: %s', bonus)
                 continue
 
-            if bonus_type != BonusType.dungeon:
-                logger.warning('Bonus research: %s', bonus)
-                continue
-
             if bonus.dungeon:
+                logger.debug('Creating event: %s', bonus)
                 event = ScheduleEvent.from_mb(bonus)
                 db.insert_or_update(event)
             else:
