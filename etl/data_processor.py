@@ -39,7 +39,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
 
 logger = logging.getLogger('processor')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 fail_logger = logging.getLogger('processor_failures')
 fail_logger.setLevel(logging.INFO)

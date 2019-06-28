@@ -7,6 +7,7 @@ each other to get the full list.
 
 import time
 from typing import Dict, List, Optional, Union
+from enum import Enum
 
 from pad.common import pad_util
 from pad.common.pad_util import ghmult_plain, ghchance_plain, Printable
@@ -16,92 +17,115 @@ from pad.common.shared_types import DungeonId, SubDungeonId, Server, StarterGrou
 FILE_NAME = 'download_limited_bonus_data_{}.json'
 
 
+class BonusType(Enum):
+    unknown = 0
+    exp_boost = 1
+    coin_boost = 2
+    drop_boost = 3
+    stamina_reduction = 5
+    dungeon = 6
+    pem_event = 8
+    rem_event = 9
+    pem_cost = 10
+    feed_xp_bonus_chance = 11
+    plus_drop_rate_1 = 12
+    send_egg_roll = 15
+    plus_drop_rate_2 = 16
+    feed_skillup_bonus_chance = 17
+    tournament_active = 20
+    tournament_closed = 21
+    score_announcement = 22
+    gift_dungeon_with_reward = 24
+    dungeon_special_event = 25
+    multiplayer_announcement = 29
+    multiplayer_dungeon_text = 31
+    tournament_text = 32
+    daily_dragons = 36
+    monthly_quest_dungeon = 37
+    exchange_text = 38
+    dungeon_floor_text = 39
+    dungeon_web_info_link = 43
+    stone_purchase_text = 44
+
+
+class BonusTypeEntry(object):
+    def __init__(self, bonus_type: BonusType, mod_fn=None):
+        self.bonus_type = bonus_type
+        self.mod_fn = mod_fn
+
+    def __str__(self):
+        return 'BonusType({}-{})'.format(self.bonus_type.value, self.bonus_type.name)
+
+
+UNKNOWN_TYPE = BonusTypeEntry(BonusType.unknown)
+
+ALL_TYPES = [
+    # EXP multiplier.
+    BonusTypeEntry(BonusType.exp_boost, ghmult_plain),
+    # Coin multiplier.
+    BonusTypeEntry(BonusType.coin_boost, ghmult_plain),
+    # Drop rate increased.
+    BonusTypeEntry(BonusType.drop_boost, ghmult_plain),
+    # Stamina reduced.
+    BonusTypeEntry(BonusType.stamina_reduction, ghmult_plain),
+    # Special/co-op dungeon list.
+    BonusTypeEntry(BonusType.dungeon),
+    # PEM text.
+    BonusTypeEntry(BonusType.pem_event),
+    # REM text.
+    BonusTypeEntry(BonusType.rem_event),
+    # Current PEM pal point cost.
+    BonusTypeEntry(BonusType.pem_cost, int),
+    # Feed XP modifier.
+    BonusTypeEntry(BonusType.feed_xp_bonus_chance, ghmult_plain),
+    # Increased plus rate 1?
+    BonusTypeEntry(BonusType.plus_drop_rate_1, ghchance_plain),
+    # Send a Premium Egg Machine to a Friend and you will get one too!
+    BonusTypeEntry(BonusType.send_egg_roll),
+    # Increased plus rate 2?
+    BonusTypeEntry(BonusType.plus_drop_rate_2, ghmult_plain),
+    # Increased skillup chance
+    BonusTypeEntry(BonusType.feed_skillup_bonus_chance, ghmult_plain),
+    # ?
+    BonusTypeEntry(BonusType.tournament_active),
+    # "tourney is over, results pending"?
+    BonusTypeEntry(BonusType.tournament_closed),
+    # ?
+    BonusTypeEntry(BonusType.score_announcement),
+    # Gift dungeon with special text?
+    # e.g. Mysterious Visitors dungeon with [+297] will be added to + Points message
+    # Has a huge timestamp range, so reward probably
+    BonusTypeEntry(BonusType.gift_dungeon_with_reward),
+    # Seems to contain random text in the comment
+    BonusTypeEntry(BonusType.dungeon_special_event),
+    # Limited Time Dungeon arrives! (on multiplayer mode button)
+    BonusTypeEntry(BonusType.multiplayer_announcement),
+    # Multiplayer dungeon announcement?
+    # TAMADRA Invades in Multiplayer Evo Rush!?
+    BonusTypeEntry(BonusType.multiplayer_dungeon_text),
+    # Tournament dungeon announcement?
+    # Rank into the top 30% to get a Dragonbound, Rikuu
+    BonusTypeEntry(BonusType.tournament_text),
+    # Daily XP dragon
+    BonusTypeEntry(BonusType.daily_dragons),
+    # ?
+    BonusTypeEntry(BonusType.monthly_quest_dungeon),
+    #  White Rose Wedding Dress Available!
+    BonusTypeEntry(BonusType.exchange_text),
+    # Reward: Jewel of Creation
+    # Latent TAMADRA (Skill Delay Resist.) invades guaranteed!
+    BonusTypeEntry(BonusType.dungeon_floor_text),
+    # https://bit.ly/2zWWGPd - #Q#6th Year Anniversary Quest 1
+    BonusTypeEntry(BonusType.dungeon_web_info_link),
+    # !June Bride bundles available!
+    BonusTypeEntry(BonusType.stone_purchase_text),
+]
+
+TYPES_MAP = {bte.bonus_type.value: bte for bte in ALL_TYPES}
+
+
 class Bonus(Printable):
     """Basically any type of modifier text shown in a menu."""
-
-    types = {
-        # EXP multiplier.
-        1: {'name': 'Exp Boost', 'mod_fn': ghmult_plain},
-
-        # Coin multiplier.
-        2: {'name': 'Coin Boost', 'mod_fn': ghmult_plain},
-
-        # Drop rate increased.
-        3: {'name': 'Drop Boost', 'mod_fn': ghmult_plain},
-
-        # Stamina reduced.
-        5: {'name': 'Stamina Reduction', 'mod_fn': ghmult_plain},
-
-        # Special/co-op dungeon list.
-        6: {'name': 'dungeon'},
-
-        # PEM text.
-        8: {'name': 'pem_event', },
-
-        # REM text.
-        9: {'name': 'rem_event', },
-
-        # Current PEM pal point cost.
-        10: {'name': 'pem_cost', 'mod_fn': int},
-
-        # Feed XP modifier.
-        11: {'name': 'Feed Exp Bonus Chance', 'mod_fn': ghmult_plain},
-
-        # Increased plus rate 1?
-        12: {'name': '+Egg Drop Rate 1', 'mod_fn': ghchance_plain},
-
-        # ?
-        14: {'name': 'gf_?', },
-
-        # Increased plus rate 2?
-        16: {'name': '+Egg Drop Rate 2', 'mod_fn': ghmult_plain},
-
-        # Increased skillup chance
-        17: {'name': 'Feed Skill-Up Chance', 'mod_fn': ghmult_plain},
-
-        # "tourney is over, results pending"?
-        20: {'name': 'tournament_active', },
-
-        # "tourney is over, results pending"?
-        21: {'name': 'tournament_closed', },
-
-        # ?
-        22: {'name': 'score_announcement', },
-
-        # metadata?
-        23: {'name': 'meta?', },
-
-        # Gift dungeon with special text?
-        # e.g. Mysterious Visitors dungeon with [+297] will be added to + Points message
-        # Has a huge timestamp range, so reward probably
-        24: {'name': 'gift_dungeon_with_reward', },
-
-        # Seems to contain random text in the comment
-        25: {'name': 'dungeon_special_event'},
-
-        # Limited Time Dungeon arrives! (on multiplayer mode button)
-        29: {'name': 'multiplayer_announcement'},
-
-        # Multiplayer dungeon announcement?
-        # TAMADRA Invades in Multiplayer Evo Rush!?
-        31: {'name': 'multiplayer_dungeon_text'},
-
-        # Tournament dungeon announcement?
-        # Rank into the top 30% to get a Dragonbound, Rikuu
-        32: {'name': 'tournament_text'},
-
-        # Daily XP dragon
-        36: {'name': 'daily_dragons'},
-
-        37: {'name': 'monthly_quest_dungeon'},
-
-        # Reward: Jewel of Creation
-        # Latent TAMADRA (Skill Delay Resist.) invades guaranteed!
-        39: {'name': 'dungeon_floor_text'},
-
-        # https://bit.ly/2zWWGPd - #Q#6th Year Anniversary Quest 1
-        43: {'name': 'monthly_quest_info'},
-    }
 
     keys = 'sebiadmf'
 
@@ -142,17 +166,19 @@ class Bonus(Printable):
             self.clean_message = pad_util.strip_colors(self.message)
 
         bonus_id = int(raw['b'])
-        bonus_info = Bonus.types.get(bonus_id, {'name': 'unknown_id:{}'.format(bonus_id)})
+        self.bonus_info = TYPES_MAP.get(bonus_id, UNKNOWN_TYPE)
 
         # Bonus value, if provided, optionally processed
         self.bonus_value = None  # type: Optional[Union[float, int]]
         if 'a' in raw:
             self.bonus_value = raw['a']
-            if 'mod_fn' in bonus_info:
-                self.bonus_value = bonus_info['mod_fn'](self.bonus_value)
+            if self.bonus_info.mod_fn:
+                self.bonus_value = self.bonus_info.mod_fn(self.bonus_value)
 
         # Human readable name for the bonus
-        self.bonus_name = bonus_info['name']
+        self.bonus_name = self.bonus_info.bonus_type.name
+        if self.bonus_info.bonus_type == BonusType.unknown:
+            self.bonus_name += '({})'.format(bonus_id)
         self.bonus_id = bonus_id
 
     def is_open(self):
@@ -160,8 +186,10 @@ class Bonus(Printable):
         return self.start_timestamp < current_time < self.end_timestamp
 
     def __str__(self):
-        return 'Bonus({} - {} - {}/{})'.format(self.bonus_name, self.clean_message,
-                                               self.dungeon_id, self.dungeon_floor_id)
+        return 'Bonus({} - {} - {}/{})'.format(self.bonus_name,
+                                               self.clean_message,
+                                               self.dungeon_id,
+                                               self.sub_dungeon_id)
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__

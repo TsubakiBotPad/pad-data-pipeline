@@ -13,7 +13,7 @@ from pad.common.shared_types import Server, StarterGroup, MonsterNo, MonsterId
 from pad.raw import Bonus, Card, MonsterSkill, Dungeon
 
 
-class MergedBonus(object):
+class MergedBonus(pad_util.Printable):
     def __init__(self, server: Server, bonus: Bonus, dungeon: Dungeon, group: StarterGroup):
         self.server = server
         self.bonus = bonus
@@ -26,7 +26,7 @@ class MergedBonus(object):
 
     def __str__(self):
         return 'MergedBonus({} {} - {} - {})'.format(
-            self.server, self.group, repr(self.dungeon), repr(self.bonus))
+            self.server, self.group, self.dungeon, self.bonus)
 
     def open_duration(self):
         open_datetime_utc = datetime.fromtimestamp(self.start_timestamp, pytz.UTC)
@@ -34,7 +34,7 @@ class MergedBonus(object):
         return close_datetime_utc - open_datetime_utc
 
 
-class MergedCard(object):
+class MergedCard(pad_util.Printable):
     def __init__(self,
                  server: Server,
                  card: Card,
@@ -63,12 +63,12 @@ class MergedCard(object):
         else:
             return nakr_no_to_monster_id(monster_no)
 
-    def __repr__(self):
+    def __str__(self):
         return 'MergedCard({} - {} - {})'.format(
             repr(self.card), repr(self.active_skill), repr(self.leader_skill))
 
 
-class MergedEnemy(object):
+class MergedEnemy(pad_util.Printable):
     def __init__(self,
                  enemy_id: int,
                  behavior: List[Any]):
