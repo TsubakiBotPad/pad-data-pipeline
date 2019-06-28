@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from enum import Enum
 from typing import List, Dict
 
 from pad.common.monster_id_mapping import nakr_no_to_monster_id
@@ -54,13 +55,13 @@ def _clean_cards(server: Server,
             active_skill = skills_by_id.get(card.active_skill_id, None)
             if active_skill is None:
                 critical_failures.append('Active skill lookup failed: %s - %s'.format(
-                                          repr(card), card.active_skill_id))
+                    repr(card), card.active_skill_id))
 
         if card.leader_skill_id:
             leader_skill = skills_by_id.get(card.leader_skill_id, None)
             if leader_skill is None:
                 critical_failures.append('Leader skill lookup failed: %s - %s'.format(
-                                         repr(card), card.leader_skill_id))
+                    repr(card), card.leader_skill_id))
 
         enemy_behavior = enemy_behavior_by_enemy_id.get(card.monster_no, [])
 
@@ -92,7 +93,7 @@ class Database(object):
         # Loaded from disk
         self.raw_cards = []  # type: List[Card]
         self.dungeons = []  # type: List[Dungeon]
-        self.bonus_sets = {} # type: Dict[str, List[Bonus]]
+        self.bonus_sets = {}  # type: Dict[str, List[Bonus]]
         self.skills = []  # type: List[MonsterSkill]
         self.enemy_skills = []  # type: List[EnemySkill]
         self.exchange = []  # type: List[Exchange]
@@ -104,10 +105,10 @@ class Database(object):
         self.enemies = []  # type: List[MergedEnemy]
 
         # Faster lookups
-        self.skill_id_to_skill = {} # type: Dict[SkillId, MonsterSkill]
-        self.dungeon_id_to_dungeon = {} # type: Dict[DungeonId, Dungeon]
-        self.monster_no_to_card = {} # type: Dict[MonsterNo, MergedCard]
-        self.monster_id_to_card = {} # type: Dict[MonsterId, MergedCard]
+        self.skill_id_to_skill = {}  # type: Dict[SkillId, MonsterSkill]
+        self.dungeon_id_to_dungeon = {}  # type: Dict[DungeonId, Dungeon]
+        self.monster_no_to_card = {}  # type: Dict[MonsterNo, MergedCard]
+        self.monster_id_to_card = {}  # type: Dict[MonsterId, MergedCard]
         self.enemy_id_to_enemy = {}
 
     def load_database(self, skip_skills=False, skip_bonus=False, skip_extra=False):
@@ -117,7 +118,8 @@ class Database(object):
 
         if not skip_bonus:
             self.bonus_sets = {
-                g.value: bonus.load_bonus_data(data_dir=base_dir, server=self.server, data_group=g.value) for g in StarterGroup
+                g.value: bonus.load_bonus_data(data_dir=base_dir, server=self.server, data_group=g.value) for g in
+                StarterGroup
             }
 
         if not skip_skills:
@@ -148,7 +150,7 @@ class Database(object):
         output_file = os.path.join(output_dir, '{}_{}.json'.format(self.server.name, file_name))
         with open(output_file, 'w') as f:
             indent = 4 if pretty else None
-            json.dump(obj, f, indent=indent, sort_keys=True, default=lambda x: x.__dict__)
+            json.dump(obj, f, indent=indent, sort_keys=True, default=dump_helper)
 
     def save_all(self, output_dir: str, pretty: bool):
         self.save(output_dir, 'dungeons', self.dungeons, pretty)
@@ -173,3 +175,12 @@ class Database(object):
 
     def enemy_by_id(self, enemy_id):
         return self.enemy_id_to_enemy.get(enemy_id, None)
+
+
+def dump_helper(x):
+    if isinstance(x, Enum):
+        return str(x)
+    elif hasattr(x, '__dict__'):
+        return vars(x)
+    else:
+        return repr(x)

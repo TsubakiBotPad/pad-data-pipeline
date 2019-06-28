@@ -104,6 +104,9 @@ class SubDungeon(pad_util.Printable):
             i += 1
             # self.properties = self.remaining_fields[i++].split('|');
 
+def __str__(self):
+        return 'SubDungeon({} - {})'.format(self.sub_dungeon_id, self.clean_name)
+
 
 prefix_to_dungeontype = {
     # #G#Ruins of the Star Vault 25
