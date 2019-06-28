@@ -3,30 +3,14 @@ Loads the raw data files for NA/JP into intermediate structures, saves them,
 then updates the database with the new data.
 """
 import argparse
-from collections import defaultdict
-from datetime import timedelta
 import json
 import logging
 import os
-import time
 
-# import feedparser
-# from pad.common import monster_id_mapping
 from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import merged_database, crossed_data
 
-# from pad.processor import skill_info, merged_data
-# from pad.storage import egg
-# from pad.storage import egg_processor
-# from pad.storage import monster
-# from pad.storage import monster_skill
-# from pad.storage import skill_data
-# from pad.storage import timestamp_processor
-#
-# from pad.storage.db_util import DbWrapper
-# from pad.storage.news import NewsItem
-# from pad.storage.schedule_item import ScheduleItem
 from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
@@ -49,7 +33,7 @@ db_logger.setLevel(logging.INFO)
 
 human_fix_logger = logging.getLogger('human_fix')
 if os.name != 'nt':
-    human_fix_logger.addHandler(logging.FileHandler('/tmp/pipeline_human_fixes.txt', mode='w'))
+    human_fix_logger.addHandler(logging.FileHandler('/tmp/dadguide_pipeline_human_fixes.txt', mode='w'))
 human_fix_logger.setLevel(logging.INFO)
 
 
@@ -76,6 +60,9 @@ def parse_args():
 
     outputGroup = parser.add_argument_group("Output")
     outputGroup.add_argument("--output_dir", required=True,
+                             help="Path to a folder where output should be saved")
+    # TODO: remove this
+    outputGroup.add_argument("--output_dir2", required=True,
                              help="Path to a folder where output should be saved")
     outputGroup.add_argument("--pretty", default=False, action="store_true",
                              help="Controls pretty printing of results")
@@ -139,12 +126,12 @@ def load_data(args):
     # cs_database.dungeon_diagnostics()
     # cs_database.card_diagnostics()
 
-    print('done')
+    if not args.skipintermediate:
+        logger.info('Storing intermediate data')
+        jp_database.save_all(args.output_dir2, args.pretty)
+        na_database.save_all(args.output_dir2, args.pretty)
 
-    # if not args.skipintermediate:
-    #     logger.info('Storing intermediate data')
-    #     jp_database.save_all(output_dir, args.pretty)
-    #     na_database.save_all(output_dir, args.pretty)
+    print('done')
     #
     # logger.info('Connecting to database')
     # with open(args.db_config) as f:
