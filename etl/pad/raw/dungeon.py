@@ -150,6 +150,7 @@ class Dungeon(pad_util.Printable):
         # Seems to relate to dungeon type?
         self._unknown_5 = int(raw[5])
 
+        # Might have to do with the 'badge' that is shown, e.g. 102 == 'collab'
         self._unknown_6 = int(raw[6])
 
         # Seems related to the ordering of dungeons, but only within their 'sub group'?
