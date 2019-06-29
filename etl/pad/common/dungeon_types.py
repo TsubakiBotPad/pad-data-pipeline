@@ -1,14 +1,14 @@
 from enum import Enum
 
 class RawDungeonType(Enum):
-    UNKNOWN = 0
-    NORMAL = 1
-    SPECIAL = 2
-    TECHNICAL = 3
-    GIFT = 4
-    TOURNAMENT = 5
+    NORMAL = 0
+    SPECIAL = 1
+    TECHNICAL = 2
+    GIFT = 3
+    RANKING = 4
+    DEPRECATED = 5 # Not entirely sure of this one but seems like a safe bet
     SPECIAL_DESCENDED = 6
-    MULTIPLAYER = 7
+    MULTIPLAYER_2 = 7
 
 class RawRepeatDay(Enum):
     NONE = 0 # Doesn't repeat
