@@ -9,7 +9,7 @@ from typing import List, Any, Optional
 import pytz
 
 from pad.common.shared_types import MonsterId, MonsterNo
-from pad.common import pad_util, monster_id_mapping
+from pad.common import pad_util, monster_id_mapping, dungeon_types
 from pad.raw import Bonus, Card, MonsterSkill, Dungeon, ESRef
 from pad.raw.dungeon import SubDungeon
 from pad.raw_processor.merged_data import MergedCard, MergedBonus, MergedEnemy
@@ -161,6 +161,9 @@ def make_cross_server_dungeon(jp_dungeon: Dungeon,
     if is_bad_name(kr_dungeon.clean_name):
         # dungeon probably exists in JP but not in KR
         kr_dungeon = na_dungeon
+
+    if jp_dungeon.full_dungeon_type == dungeon_types.RawDungeonType.DEPRECATED:
+        return None, 'Skipping deprecated dungeon'
 
     return CrossServerDungeon(jp_dungeon, na_dungeon, kr_dungeon), None
 
