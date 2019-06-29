@@ -131,19 +131,31 @@ class Dungeon(pad_util.Printable):
 
         self.dungeon_id = DungeonId(int(raw[0]))
         self.name = str(raw[1])
-        self.unknown_002 = int(raw[2])
+
+        self.bitmap_2 = int(raw[2])
+        self.one_time = self.bitmap_2 & 1 > 0
+        self.bg_id = self.bitmap_2 >> 4
 
         self.clean_name = pad_util.strip_colors(self.name)
 
-        # Temporary hack. The newly added 'Guerrilla' type doesn't seem to be correct, and that's
-        # the only type actively in use. Using the old logic for now.
-        self.dungeon_type = None # type: str
+        # Basic dungeon type computed by scanning the name for flags.
+        self.dungeon_type = None # type: Optional[str]
 
         # A more detailed dungeon type.
         self.full_dungeon_type = dungeon_types.RawDungeonType(int(raw[3]))
 
         # This will be a day of the week, or an empty string if it doesn't repeat regularly
         self.repeat_day = dungeon_types.RawRepeatDay(int(raw[4]))
+
+        # Seems to relate to dungeon type?
+        self._unknown_5 = int(raw[5])
+
+        self._unknown_6 = int(raw[6])
+
+        # Seems related to the ordering of dungeons, but only within their 'sub group'?
+        self.order = int(raw[7]) if raw[7] else None
+
+        self.remaining_fields = raw[8:]
 
         for prefix, dungeon_type in prefix_to_dungeontype.items():
             if self.clean_name.startswith(prefix):
