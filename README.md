@@ -27,3 +27,6 @@ i'm only adding 'new added' but padguide had more info
 icon list -> get rid of icon_seq probably
 
 ```
+
+sanic for webserver: requires python 3.6
+sanic_compress for gzip
