@@ -143,7 +143,9 @@ def json_file_dump(obj, f, pretty=False):
 
 
 def dump_helper(x):
-    if isinstance(x, Enum):
+    if callable(x):
+        return 'fn_obj'
+    elif isinstance(x, Enum):
         return str(x)
     elif hasattr(x, '__dict__'):
         return vars(x)
