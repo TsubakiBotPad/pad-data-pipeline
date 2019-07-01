@@ -8,7 +8,7 @@ from typing import List, Any, Optional
 
 import pytz
 
-from pad.common.shared_types import MonsterId, MonsterNo
+from pad.common.shared_types import MonsterId, MonsterNo, DungeonId
 from pad.common import pad_util, monster_id_mapping, dungeon_types
 from pad.raw import Bonus, Card, MonsterSkill, Dungeon, ESRef
 from pad.raw.dungeon import SubDungeon
@@ -273,6 +273,15 @@ class CrossServerDatabase(object):
         self.jp_bonuses = jp_database.bonuses
         self.na_bonuses = na_database.bonuses
         # self.kr_bonuses = kr_database.bonuses
+
+        self.monster_id_to_card = {c.monster_id: c for c in self.all_cards}
+        self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
+
+    def card_by_monster_id(self, monster_id: MonsterId) -> CrossServerCard:
+        return self.monster_id_to_card.get(monster_id, None)
+
+    def dungeon_by_id(self, dungeon_id: DungeonId) -> CrossServerDungeon:
+        return self.dungeon_id_to_dungeon.get(dungeon_id, None)
 
     def load_skill_text(self, skills_file_path: str):
         # This is a hack until we have skill parsing working properly.

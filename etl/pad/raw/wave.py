@@ -39,6 +39,7 @@ class WaveSummary(pad_util.Printable):
                  row_count: int = 0):
         self.dungeon_id = dungeon_id
         self.floor_id = floor_id
+        self.sub_dungeon_id = dungeon_id * 1000 + floor_id
         self.stage = stage
         self.spawn_type = spawn_type
         self.monster_id = monster_id
