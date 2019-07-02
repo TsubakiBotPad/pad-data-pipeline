@@ -13,6 +13,7 @@ from pad.raw_processor import merged_database, crossed_data
 
 from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
+from pad.storage_processor.dungeon_content_processor import DungeonContentProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
@@ -120,6 +121,9 @@ def load_data(args):
 
     # Load dungeon data
     DungeonProcessor(cs_database).process(db_wrapper)
+
+    # Load dungeon data derived from wave info
+    DungeonContentProcessor(cs_database).process(db_wrapper)
 
     # Load event data
     ScheduleProcessor(cs_database).process(db_wrapper)

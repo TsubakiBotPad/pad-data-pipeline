@@ -1,7 +1,8 @@
 from typing import List
 
 from pad.db.sql_item import SimpleSqlItem
-from pad.raw_processor.crossed_data import CrossServerDungeon
+from pad.dungeon.wave_converter import ResultFloor
+from pad.raw_processor.crossed_data import CrossServerDungeon, CrossServerSubDungeon
 
 
 class Dungeon(SimpleSqlItem):
@@ -35,9 +36,22 @@ class Dungeon(SimpleSqlItem):
         self.visible = visible
         self.tstamp = tstamp
 
+    def _non_auto_update_cols(self):
+        return ['visible']
 
-def _non_auto_update_cols(self):
-    return ['visible']
+
+class DungeonWaveData(SimpleSqlItem):
+    """Dungeon data that can only be computed from waves."""
+    TABLE = 'dungeons'
+    KEY_COL = 'dungeon_id'
+
+    def __init__(self,
+                 dungeon_id: int = None,
+                 icon_id: int = None,
+                 tstamp: int = None):
+        self.dungeon_id = dungeon_id
+        self.icon_id = icon_id
+        self.tstamp = tstamp
 
 
 class SubDungeon(SimpleSqlItem):
@@ -87,4 +101,45 @@ class SubDungeon(SimpleSqlItem):
         self.atk_mult = atk_mult
         self.def_mult = def_mult
         self.s_rank = s_rank
+        self.tstamp = tstamp
+
+
+class SubDungeonWaveData(SimpleSqlItem):
+    """Sub-dungeon data that can only be computed from waves."""
+    TABLE = 'sub_dungeons'
+    KEY_COL = 'sub_dungeon_id'
+
+    @staticmethod
+    def from_waveresult(o: ResultFloor, cssd: CrossServerSubDungeon) -> 'SubDungeonWaveData':
+        return SubDungeonWaveData(
+            sub_dungeon_id=cssd.sub_dungeon_id,
+            coin_max=o.coins_max,
+            coin_min=o.coins_min,
+            coin_avg=o.coins_avg,
+            exp_max=o.exp_max,
+            exp_min=o.exp_min,
+            exp_avg=o.exp_avg,
+            mp_avg=o.mp_avg,
+            icon_id=o.boss_monster_id())
+
+    def __init__(self,
+                 sub_dungeon_id: int = None,
+                 coin_max: int = None,
+                 coin_min: int = None,
+                 coin_avg: int = None,
+                 exp_max: int = None,
+                 exp_min: int = None,
+                 exp_avg: int = None,
+                 mp_avg: int = None,
+                 icon_id: int = None,
+                 tstamp: int = None):
+        self.sub_dungeon_id = sub_dungeon_id
+        self.coin_max = coin_max
+        self.coin_min = coin_min
+        self.coin_avg = coin_avg
+        self.exp_max = exp_max
+        self.exp_min = exp_min
+        self.exp_avg = exp_avg
+        self.mp_avg = mp_avg
+        self.icon_id = icon_id
         self.tstamp = tstamp
