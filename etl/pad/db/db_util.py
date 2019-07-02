@@ -127,22 +127,32 @@ class DbWrapper(object):
                 raise ValueError('got too many results for insert:', num_rows, sql)
             return cursor.lastrowid
 
-    def insert_or_update(self, item: SqlItem):
+    def insert_or_update(self, item: SqlItem, force_insert=False):
         try:
-            return self._insert_or_update(item)
+            return self._insert_or_update(item, force_insert=force_insert)
         except Exception as ex:
             logger.fatal('Failed to insert item: %s', pad_util.json_string_dump(item, pretty=True))
             raise ex
 
-    def _insert_or_update(self, item: SqlItem):
-
+    def _insert_or_update(self, item: SqlItem, force_insert: bool):
+        item_type = type(item)
         key = item.key_value()
+
+        if force_insert:
+            new_key = self.insert_item(item.insert_sql())
+            if not key:
+                key = new_key
+                item.set_key_value(key)
+            logger.info('force inserted an item: %s %s', item_type, key)
+            return
+
+
         if item.exists_strategy() == ExistsStrategy.BY_KEY:
             if not self.check_existing(item.key_exists_sql()):
-                logger.info('item needed insert: %s %s', type(item), key)
+                logger.info('item needed insert: %s %s', item_type, key)
                 self.insert_item(item.insert_sql())
             elif not self.check_existing(item.needs_update_sql()):
-                logger.info('item needed update: %s %s', type(item), key)
+                logger.info('item needed update: %s %s', item_type, key)
                 self.insert_item(item.update_sql())
 
         elif item.exists_strategy() == ExistsStrategy.BY_VALUE:
@@ -152,9 +162,12 @@ class DbWrapper(object):
             if not key:
                 key = self.insert_item(item.insert_sql())
                 item.set_key_value(key)
-                logger.info('item needed by-value insert: %s %s', type(item), key)
+                logger.info('item needed by-value insert: %s %s', item_type, key)
             elif not self.check_existing(item.needs_update_sql()):
-                logger.info('item needed by-value update: %s %s', type(item), key)
+                logger.info('item needed by-value update: %s %s', item_type, key)
                 self.insert_item(item.update_sql())
+
+        elif item.exists_strategy() == ExistsStrategy.CUSTOM:
+            raise ValueError('Item cannot be upserted: {}'.format(item_type))
 
         return key
