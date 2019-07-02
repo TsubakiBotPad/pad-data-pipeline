@@ -90,6 +90,10 @@ class DbWrapper(object):
         data = self.fetch_data(sql)
         return [obj_type(**_process_col_mappings(obj_type, d)) for d in data]
 
+    def custom_load_multiple_objects(self, obj_type, lookup_sql):
+        data = self.fetch_data(lookup_sql)
+        return [obj_type(**_process_col_mappings(obj_type, d)) for d in data]
+
     def check_existing(self, sql):
         with self.connection.cursor() as cursor:
             num_rows = self.execute(cursor, sql)

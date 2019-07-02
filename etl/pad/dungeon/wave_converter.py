@@ -1,6 +1,6 @@
 from collections import defaultdict
 from statistics import mean
-from typing import List
+from typing import List, Set, Optional
 
 from pad.common import monster_id_mapping
 from pad.common.shared_types import Server, MonsterId
@@ -28,13 +28,13 @@ class ProcessedFloor(object):
 
         self.entry_count = 0
         self.coins = []
-        self.xp = []
+        self.exp = []
         self.mp = []
 
     def add_entry(self, entry_waves: List[WaveCard]):
         """Computes stats across an individual dungeon entry."""
         entry_coins = 0
-        entry_xp = 0
+        xp = 0
         entry_mp = 0
 
         for wave_card in entry_waves:
@@ -43,14 +43,14 @@ class ProcessedFloor(object):
 
             entry_coins += wave_card.wave_item.get_coins()
             entry_coins += enemy_data.coin.value_at(enemy_level)
-            entry_xp += enemy_data.xp.value_at(enemy_level)
+            xp += enemy_data.xp.value_at(enemy_level)
 
             if wave_card.drop_card:
                 entry_mp += wave_card.drop_card.sell_mp
 
         self.entry_count += 1
         self.coins.append(entry_coins)
-        self.xp.append(entry_xp)
+        self.exp.append(xp)
         self.mp.append(entry_mp)
 
 
@@ -98,10 +98,18 @@ class ResultFloor(object):
         self.coins_min = min(floor.coins) if floor.coins else 0
         self.coins_max = max(floor.coins) if floor.coins else 0
         self.coins_avg = mean(floor.coins) if floor.coins else 0
-        self.xp_min = min(floor.xp) if floor.xp else 0
-        self.xp_max = max(floor.xp) if floor.xp else 0
-        self.xp_avg = mean(floor.xp) if floor.xp else 0
+        self.exp_min = min(floor.exp) if floor.exp else 0
+        self.exp_max = max(floor.exp) if floor.exp else 0
+        self.exp_avg = mean(floor.exp) if floor.exp else 0
         self.mp_avg = mean(floor.mp) if floor.mp else 0
+
+    def boss_monster_id(self) -> Optional[MonsterId]:
+        if not self.stages:
+            return None
+        final_stage = self.stages[-1]
+        if not final_stage.slots:
+            return None
+        return max(final_stage.slots, key=lambda m: m.monster_id).visible_monster_id()
 
 
 class ResultStage(object):
@@ -147,10 +155,10 @@ class ResultStage(object):
 
 class ResultSlot(object):
     def __init__(self,
-                 monster_id: int,
+                 monster_id: MonsterId,
                  monster_level: int,
                  order: int,
-                 drops: set,
+                 drops: Set[int],
                  always_spawns: bool,
                  min_spawn: int,
                  max_spawn: int):
@@ -162,9 +170,12 @@ class ResultSlot(object):
         self.min_spawn = min_spawn
         self.max_spawn = max_spawn
 
+    def visible_monster_id(self) -> MonsterId:
+        return MonsterId(self.monster_id % 100000)
+
 
 class WaveConverter(object):
-    def __init(self, data: CrossServerDatabase):
+    def __init__(self, data: CrossServerDatabase):
         self.data = data
 
     def convert(self, wave_items: List[WaveItem]) -> ResultFloor:
