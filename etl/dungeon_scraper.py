@@ -1,3 +1,9 @@
+"""
+Pulls spawn info from the PAD API and stores it in wave_data.
+
+Currently this is not running; the old PadGuide version is live.
+"""
+
 import argparse
 import json
 import subprocess
@@ -37,7 +43,6 @@ def parse_args():
     return parser.parse_args()
 
 
-
 def main(args):
     input_dir = args.input_dir
 
@@ -56,8 +61,6 @@ def main(args):
 
 if __name__ == '__main__':
     main(parse_args())
-
-
 
 # processed_dir = '/home/tactical0retreat/pad_data/processed'
 # bonuses_file = '{}/{}_bonuses.json'.format(processed_dir, parse_args().server)
@@ -117,4 +120,3 @@ if __name__ == '__main__':
 #         else:
 #             print('entering', dungeon_id, floor_id)
 #             do_dungeon_load(dungeon_id, floor_id)
-
