@@ -101,7 +101,7 @@ class DungeonContentProcessor(object):
                     comment_kr=None,
                     amount=slot.min_spawn if slot.min_spawn==slot.max_spawn else None,
                     order_idx=slot.order,
-                    turn=turns,
+                    turns=turns,
                     hp=hp,
                     atk=atk,
                     defence=defence)
