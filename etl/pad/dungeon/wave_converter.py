@@ -215,8 +215,8 @@ class WaveConverter(object):
         for stage in stages:
             waves_for_stage = waves_by_stage_and_entry[stage.stage_idx]
 
-            for entry_waves in waves_for_stage:
-                if stage.stage_idx != last_stage_idx and entry_waves[0].is_invade():
+            for entry_waves in waves_for_stage.values():
+                if stage.stage_idx != last_stage_idx and entry_waves[0].wave_item.is_invade():
                     # Invades happen only on non-boss floors
                     invades.add_wave_group(entry_waves)
                 else:
