@@ -95,13 +95,16 @@ class ResultFloor(object):
             self.stages.append(ResultStage(floor.invades))
         self.stages.extend([ResultStage(s) for s in floor.stages])
 
-        self.coins_min = min(floor.coins) if floor.coins else 0
-        self.coins_max = max(floor.coins) if floor.coins else 0
-        self.coins_avg = mean(floor.coins) if floor.coins else 0
-        self.exp_min = min(floor.exp) if floor.exp else 0
-        self.exp_max = max(floor.exp) if floor.exp else 0
-        self.exp_avg = mean(floor.exp) if floor.exp else 0
-        self.mp_avg = mean(floor.mp) if floor.mp else 0
+        def fix(i):
+            return int(round(i))
+
+        self.coins_min = fix(min(floor.coins)) if floor.coins else 0
+        self.coins_max = fix(max(floor.coins)) if floor.coins else 0
+        self.coins_avg = fix(mean(floor.coins)) if floor.coins else 0
+        self.exp_min = fix(min(floor.exp)) if floor.exp else 0
+        self.exp_max = fix(max(floor.exp)) if floor.exp else 0
+        self.exp_avg = fix(mean(floor.exp)) if floor.exp else 0
+        self.mp_avg = fix(mean(floor.mp)) if floor.mp else 0
 
     def boss_monster_id(self) -> Optional[MonsterId]:
         if not self.stages:
@@ -213,7 +216,7 @@ class WaveConverter(object):
         stages = [ProcessedStage(i + 1) for i in sorted(waves_by_stage_and_entry.keys())]
         last_stage_idx = stages[-1].stage_idx
         for stage in stages:
-            waves_for_stage = waves_by_stage_and_entry[stage.stage_idx]
+            waves_for_stage = waves_by_stage_and_entry[stage.stage_idx - 1]
 
             for entry_waves in waves_for_stage.values():
                 if stage.stage_idx != last_stage_idx and entry_waves[0].wave_item.is_invade():

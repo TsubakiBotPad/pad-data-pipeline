@@ -18,7 +18,7 @@ class Encounter(SimpleSqlItem):
                  comment_kr: str = None,
                  amount: int = None,
                  order_idx: int = None,
-                 turn: int = None,
+                 turns: int = None,
                  level: int = None,
                  hp: int = None,
                  atk: int = None,
@@ -35,7 +35,7 @@ class Encounter(SimpleSqlItem):
         self.comment_kr = comment_kr
         self.amount = amount
         self.order_idx = order_idx
-        self.turn = turn
+        self.turns = turns
         self.level = level
         self.hp = hp
         self.atk = atk
