@@ -26,6 +26,7 @@ class DungeonContentProcessor(object):
 
     def _process_dungeon_contents(self, db: DbWrapper):
         for dungeon in self.data.dungeons:
+            logger.warning('scanning dungeon:%s', dungeon.dungeon_id)
             sub_dungeon_items = []
 
             for sub_dungeon in dungeon.sub_dungeons:
@@ -43,8 +44,9 @@ class DungeonContentProcessor(object):
                                      db: DbWrapper,
                                      dungeon: CrossServerDungeon,
                                      sub_dungeon: CrossServerSubDungeon) -> Optional[SubDungeonWaveData]:
+        floor_id = sub_dungeon.sub_dungeon_id % 1000 
         sql = 'SELECT * FROM wave_data WHERE dungeon_id={} and floor_id={}'.format(
-            dungeon.dungeon_id, sub_dungeon.sub_dungeon_id)
+            dungeon.dungeon_id, floor_id)
         wave_items = db.custom_load_multiple_objects(WaveItem, sql)
 
         if not wave_items:
