@@ -131,24 +131,6 @@ def load_data(args):
     # cs_database.card_diagnostics()
 
     print('done')
-    #
-    # logger.info('Connecting to database')
-    # with open(args.db_config) as f:
-    #     db_config = json.load(f)
-    #
-    # db_wrapper = DbWrapper(dry_run)
-    # db_wrapper.connect(db_config)
-    #
-    # cross_server_dungeons = merged_data.build_cross_server_dungeons(jp_database, na_database)
-    # logger.info('Starting JP event diff')
-    # database_diff_events(db_wrapper, jp_database, cross_server_dungeons)
-    #
-    # logger.info('Starting NA event diff')
-    # database_diff_events(db_wrapper, na_database, cross_server_dungeons)
-    #
-    # logger.info('Starting card diff')
-    # database_diff_cards(db_wrapper, jp_database, na_database)
-    #
     # logger.info('Starting egg machine update')
     # try:
     #     database_update_egg_machines(db_wrapper, jp_database, na_database)
@@ -161,11 +143,6 @@ def load_data(args):
     # except Exception as ex:
     #     print('updating news failed', str(ex))
     #
-    # logger.info('Starting tstamp update')
-    # timestamp_processor.update_timestamps(db_wrapper)
-    #
-    # print('done')
-
 
 if __name__ == '__main__':
     args = parse_args()
