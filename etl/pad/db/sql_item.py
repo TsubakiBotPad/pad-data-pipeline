@@ -104,7 +104,7 @@ def _key_and_cols_compare(item: 'SqlItem', cols=None, include_key=True):
 class ExistsStrategy(Enum):
     BY_KEY = 1
     BY_VALUE = 2
-    # CUSTOM = 3 # Is this still necessary?
+    CUSTOM = 3 # Prevents mistaken 'standard' inserts; requires a force method
 
 
 class SqlItem(object):

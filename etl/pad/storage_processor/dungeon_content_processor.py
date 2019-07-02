@@ -1,11 +1,13 @@
 import logging
 from typing import Optional
 
+from pad.common.dungeon_types import RawDungeonType
 from pad.db.db_util import DbWrapper
-from pad.dungeon.wave_converter import WaveConverter
+from pad.dungeon.wave_converter import WaveConverter, ResultFloor, ResultSlot
 from pad.raw_processor import crossed_data
 from pad.raw_processor.crossed_data import CrossServerSubDungeon, CrossServerDungeon
 from pad.storage.dungeon import SubDungeonWaveData, DungeonWaveData
+from pad.storage.encounter import Encounter
 from pad.storage.wave import WaveItem
 
 logger = logging.getLogger('processor')
@@ -20,8 +22,10 @@ class DungeonContentProcessor(object):
         logger.warning('loading dungeon contents')
         self._process_dungeon_contents(db)
         # TODO: support rewards
-        # TODO: support encounters
         # TODO: support drops
+        # TODO: support updates to encounters
+        # TODO: support updates to drops
+
         logger.warning('done loading contents')
 
     def _process_dungeon_contents(self, db: DbWrapper):
@@ -30,20 +34,23 @@ class DungeonContentProcessor(object):
             sub_dungeon_items = []
 
             for sub_dungeon in dungeon.sub_dungeons:
-                item = self._compute_sub_dungeon_content(db, dungeon, sub_dungeon)
-                if item:
+                result_floor = self._compute_result_floor(db, dungeon, sub_dungeon)
+                if result_floor:
+                    item = SubDungeonWaveData.from_waveresult(result_floor, sub_dungeon)
                     db.insert_or_update(item)
                     sub_dungeon_items.append(item)
+
+                    self._maybe_insert_encounters(db, dungeon, sub_dungeon, result_floor)
 
             if sub_dungeon_items:
                 max_sub_dungeon = max(sub_dungeon_items, key=lambda x: x.sub_dungeon_id)
                 item = DungeonWaveData(dungeon_id=dungeon.dungeon_id, icon_id=max_sub_dungeon.icon_id)
                 db.insert_or_update(item)
 
-    def _compute_sub_dungeon_content(self,
-                                     db: DbWrapper,
-                                     dungeon: CrossServerDungeon,
-                                     sub_dungeon: CrossServerSubDungeon) -> Optional[SubDungeonWaveData]:
+    def _compute_result_floor(self,
+                              db: DbWrapper,
+                              dungeon: CrossServerDungeon,
+                              sub_dungeon: CrossServerSubDungeon) -> Optional[ResultFloor]:
         floor_id = sub_dungeon.sub_dungeon_id % 1000 
         sql = 'SELECT * FROM wave_data WHERE dungeon_id={} and floor_id={}'.format(
             dungeon.dungeon_id, floor_id)
@@ -52,8 +59,56 @@ class DungeonContentProcessor(object):
         if not wave_items:
             return None
 
-        result_floor = self.converter.convert(wave_items)
-        return SubDungeonWaveData.from_waveresult(result_floor, sub_dungeon)
+        return self.converter.convert(wave_items)
+
+    def _maybe_insert_encounters(self,
+                                 db: DbWrapper,
+                                 dungeon: CrossServerDungeon,
+                                 sub_dungeon: CrossServerSubDungeon,
+                                 result_floor: ResultFloor):
+        sql = 'SELECT count(*) FROM encounters WHERE dungeon_id={} and sub_dungeon_id={}'.format(
+            dungeon.dungeon_id, sub_dungeon.sub_dungeon_id)
+        encounter_count = db.get_single_value(sql, int)
+        if encounter_count:
+            logger.debug('Skipping encounter insert for {}-{}'.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id))
+            return
+
+        logger.warning('Executing encounter insert for {}-{}'.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id))
+        for stage in result_floor.stages:
+            for slot in stage.slots:
+                csc = self.data.card_by_monster_id(slot.monster_id)
+                card = csc.jp_card.card
+                enemy = card.enemy()
+
+                turns = card.enemy_turns
+                if dungeon.jp_dungeon.full_dungeon_type == RawDungeonType.TECHNICAL and card.enemy_turns_alt:
+                    turns = card.enemy_turns_alt
+
+                sd = sub_dungeon.jp_sub_dungeon
+                hp = int(round(sd.hp_mult * enemy.hp.value_at(slot.monster_level)))
+                atk = int(round(sd.atk_mult * enemy.atk.value_at(slot.monster_level)))
+                defence = int(round(sd.def_mult * enemy.defense.value_at(slot.monster_level)))
+
+                # TODO: add comments based on slot data
+                encounter = Encounter(
+                    dungeon_id=dungeon.dungeon_id,
+                    sub_dungeon_id=sub_dungeon.sub_dungeon_id,
+                    enemy_id=slot.monster_id,
+                    monster_id=slot.visible_monster_id(),
+                    stage=stage.stage_idx,
+                    comment_jp=None,
+                    comment_na=None,
+                    comment_kr=None,
+                    amount=slot.min_spawn if slot.min_spawn==slot.max_spawn else None,
+                    order_idx=slot.order,
+                    turn=turns,
+                    hp=hp,
+                    atk=atk,
+                    defence=defence)
+
+                db.insert_or_update(encounter, force_insert=True)
+
+
 
     # floor_text = floor_text.lower()
     # reward_value = None
@@ -87,68 +142,8 @@ class DungeonContentProcessor(object):
     #         sub_dungeon.resolved_sub_dungeon_reward = dbdungeon.SubDungeonReward()
     #     sub_dungeon.resolved_sub_dungeon_reward.data = reward_text
     #
-    # monster_tree = make_tree_from_cards(monster_id_to_card.values())
-    #
-    # for stage in result_stages:
-    #     existing = filter(lambda dm: dm.floor == stage.stage_idx,
-    #                       sub_dungeon.resolved_dungeon_monsters)
-    #     existing_id_to_monster = {dm.monster_no: dm for dm in existing}
-    #     for slot in stage.slots:
-    #         card = monster_id_to_card[slot.monster_id]
-    #
-    #         # TODO: this might need mapping due to na/jp skew for monster_no
-    #         monster_id = slot.monster_id
-    #         monster_id = monster_id % 10000 if monster_id > 9999 else monster_id
-    #
-    #         if monster_id <= 0:
-    #             raise Exception('Bad monster ID', slot.monster_id, card.card_id, card.base_id)
-    #
-    #         monster = existing_id_to_monster.get(monster_id)
-    #         if not monster:
-    #             monster = dbdungeon.DungeonMonster()
-    #             monster.monster_no = monster_id
-    #             sub_dungeon.resolved_dungeon_monsters.append(monster)
-    #
-    #         enemy_data = card.enemy()
-    #         enemy_level = slot.monster_level
-    #
-    #         # TODO: fix
-    #         monster.amount = 1
-    #
-    #         modifiers = jp_dungeon_floor.modifiers_clean
-    #         monster.atk = int(round(modifiers['atk'] * enemy_data.atk.value_at(enemy_level)))
-    #         monster.defense = int(
-    #             round(modifiers['def'] * enemy_data.defense.value_at(enemy_level)))
-    #         monster.hp = int(round(modifiers['hp'] * enemy_data.hp.value_at(enemy_level)))
-    #         monster.turn = enemy_data.turns
-    #
-    #         monster.tsd_seq = sub_dungeon.tsd_seq
-    #         monster.floor = stage.stage_idx
-    #
-    #         monster.drop_no = 0
-    #         if slot.drops:
-    #             monster_drops = set()
-    #             other_drops = set()
-    #             for drop in slot.drops:
-    #                 if drop in monster_tree[monster_id]:
-    #                     # Drop is an evo of the current monster
-    #                     monster_drops.add(drop)
-    #                 else:
-    #                     # Drop is an alternate, like collab mats
-    #                     other_drops.add(drop)
-    #
-    #             if len(monster_drops) > 1:
-    #                 raise Exception('expected at most one monster drop', monster_drops)
-    #
     #             # Sort the other drops for indexing purposes
     #             other_drops = list(sorted(other_drops))
-    #
-    #             if monster_drops:
-    #                 monster.drop_no = next(iter(monster_drops))
-    #             elif other_drops:
-    #                 # We need drop_no to be set; since the monster didn't drop itself, set the
-    #                 # first other drop
-    #                 monster.drop_no = other_drops.pop(0)
     #
     #             existing_drops = {
     #                 int(ed.monster_no): ed for ed in monster.resolved_dungeon_monster_drops}
@@ -162,13 +157,4 @@ class DungeonContentProcessor(object):
     #                 dmd.monster_no = drop
     #                 dmd.order_idx = drop
     #                 dmd.status = 0
-    #
-    #             if existing_drops:
-    #                 raise Exception('unmatched drop records remain:', existing_drops)
-    #
-    #         monster.order_idx = slot.order
-    #         monster.comment_kr = slot.comment
-    #         monster.comment_jp = slot.comment
-    #         monster.comment_us = slot.comment
-    #
-    #         monster.tstamp = int(time.time()) * 1000
+
