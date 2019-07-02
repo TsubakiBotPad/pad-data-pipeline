@@ -193,8 +193,8 @@ class WaveConverter(object):
                     drop_id = monster_id_mapping.nakr_no_to_monster_id(drop_id)
 
             # Build a structure that merges DB info with wave data.
-            card = self.data.card_by_monster_id(monster_id).jp_card
-            drop = self.data.card_by_monster_id(drop_id).jp_card if drop_id else None
+            card = self.data.card_by_monster_id(monster_id).jp_card.card
+            drop = self.data.card_by_monster_id(drop_id).jp_card.card if drop_id else None
             wave_card = WaveCard(monster_id, card, wave_item, drop)
 
             # Store data for an individual dungeon entry.
