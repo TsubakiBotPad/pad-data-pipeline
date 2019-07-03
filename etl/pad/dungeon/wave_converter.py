@@ -5,16 +5,17 @@ from typing import List, Set, Optional
 from pad.common import monster_id_mapping
 from pad.common.shared_types import Server, MonsterId
 from pad.raw import Card
-from pad.raw_processor.crossed_data import CrossServerDatabase
+from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
+from pad.raw_processor.merged_data import MergedCard
 from pad.storage.wave import WaveItem
 
 
 class WaveCard(object):
     def __init__(self,
                  monster_id: MonsterId,
-                 card: Card,
+                 card: CrossServerCard,
                  wave_item: WaveItem,
-                 drop_card: Card):
+                 drop_card: CrossServerCard):
         self.monster_id = monster_id
         self.card = card
         self.wave_item = wave_item
@@ -38,7 +39,7 @@ class ProcessedFloor(object):
         entry_mp = 0
 
         for wave_card in entry_waves:
-            enemy_data = wave_card.card.enemy()
+            enemy_data = wave_card.card.jp_card.card.enemy()
             enemy_level = wave_card.wave_item.monster_level
 
             entry_coins += wave_card.wave_item.get_coins()
@@ -46,7 +47,7 @@ class ProcessedFloor(object):
             xp += enemy_data.xp.value_at(enemy_level)
 
             if wave_card.drop_card:
-                entry_mp += wave_card.drop_card.sell_mp
+                entry_mp += wave_card.drop_card.jp_card.card.sell_mp
 
         self.entry_count += 1
         self.coins.append(entry_coins)
@@ -161,7 +162,7 @@ class ResultSlot(object):
                  monster_id: MonsterId,
                  monster_level: int,
                  order: int,
-                 drops: Set[int],
+                 drops: Set[CrossServerCard],
                  always_spawns: bool,
                  min_spawn: int,
                  max_spawn: int):
@@ -190,14 +191,27 @@ class WaveConverter(object):
             # Correct for NA server mappings if necessary
             monster_id = wave_item.monster_id
             drop_id = wave_item.get_drop()
+
+            # Stuff in this range is supposedly:
+            # 9900: coins
+            # 9901: stones
+            # 9902: pal points
+            # 9911: gift dungeon
+            # 9912: monster points
+            # 9916: permanent dungeon
+            # 9917: badge
+            # 9999: announcement
+            if drop_id and (9000 < drop_id < 10000):
+                raise ValueError('Special drop detected (not handled yet)')
+
             if wave_item.server != Server.jp:
                 monster_id = monster_id_mapping.nakr_no_to_monster_id(monster_id)
                 if drop_id:
                     drop_id = monster_id_mapping.nakr_no_to_monster_id(drop_id)
 
             # Build a structure that merges DB info with wave data.
-            card = self.data.card_by_monster_id(monster_id).jp_card.card
-            drop = self.data.card_by_monster_id(drop_id).jp_card.card if drop_id else None
+            card = self.data.card_by_monster_id(monster_id)
+            drop = self.data.card_by_monster_id(drop_id) if drop_id else None
             wave_card = WaveCard(monster_id, card, wave_item, drop)
 
             # Store data for an individual dungeon entry.

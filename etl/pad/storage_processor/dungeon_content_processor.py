@@ -7,7 +7,7 @@ from pad.dungeon.wave_converter import WaveConverter, ResultFloor, ResultSlot
 from pad.raw_processor import crossed_data
 from pad.raw_processor.crossed_data import CrossServerSubDungeon, CrossServerDungeon
 from pad.storage.dungeon import SubDungeonWaveData, DungeonWaveData
-from pad.storage.encounter import Encounter
+from pad.storage.encounter import Encounter, Drop
 from pad.storage.wave import WaveItem
 
 logger = logging.getLogger('processor')
@@ -52,7 +52,7 @@ class DungeonContentProcessor(object):
                               db: DbWrapper,
                               dungeon: CrossServerDungeon,
                               sub_dungeon: CrossServerSubDungeon) -> Optional[ResultFloor]:
-        floor_id = sub_dungeon.sub_dungeon_id % 1000 
+        floor_id = sub_dungeon.sub_dungeon_id % 1000
         sql = 'SELECT * FROM wave_data WHERE dungeon_id={} and floor_id={}'.format(
             dungeon.dungeon_id, floor_id)
         wave_items = db.custom_load_multiple_objects(WaveItem, sql)
@@ -100,7 +100,7 @@ class DungeonContentProcessor(object):
                     comment_jp=None,
                     comment_na=None,
                     comment_kr=None,
-                    amount=slot.min_spawn if slot.min_spawn==slot.max_spawn else None,
+                    amount=slot.min_spawn if slot.min_spawn == slot.max_spawn else None,
                     order_idx=slot.order,
                     turns=turns,
                     hp=hp,
@@ -109,7 +109,9 @@ class DungeonContentProcessor(object):
 
                 db.insert_or_update(encounter, force_insert=True)
 
-
+                drops = Drop.from_slot(slot, encounter)
+                for drop in drops:
+                    db.insert_or_update(drop)
 
     # floor_text = floor_text.lower()
     # reward_value = None
@@ -158,4 +160,3 @@ class DungeonContentProcessor(object):
     #                 dmd.monster_no = drop
     #                 dmd.order_idx = drop
     #                 dmd.status = 0
-
