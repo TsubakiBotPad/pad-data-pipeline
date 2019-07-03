@@ -35,11 +35,13 @@ class BonusType(Enum):
     tournament_active = 20
     tournament_closed = 21
     score_announcement = 22
+    pad_metadata = 23
     gift_dungeon_with_reward = 24
     dungeon_special_event = 25
     multiplayer_announcement = 29
     multiplayer_dungeon_text = 31
     tournament_text = 32
+    pad_metadata_2 = 33
     daily_dragons = 36
     monthly_quest_dungeon = 37
     exchange_text = 38
@@ -92,6 +94,8 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.tournament_closed),
     # ?
     BonusTypeEntry(BonusType.score_announcement),
+    # 'mr=10,mc=10,mt=180,frui=2,alrt=15,mrtr=15'
+    BonusTypeEntry(BonusType.pad_metadata),
     # Gift dungeon with special text?
     # e.g. Mysterious Visitors dungeon with [+297] will be added to + Points message
     # Has a huge timestamp range, so reward probably
@@ -106,6 +110,8 @@ ALL_TYPES = [
     # Tournament dungeon announcement?
     # Rank into the top 30% to get a Dragonbound, Rikuu
     BonusTypeEntry(BonusType.tournament_text),
+    # '|22'
+    BonusTypeEntry(BonusType.pad_metadata_2),
     # Daily XP dragon
     BonusTypeEntry(BonusType.daily_dragons),
     # ?

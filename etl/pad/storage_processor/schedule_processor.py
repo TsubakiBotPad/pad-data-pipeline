@@ -11,6 +11,7 @@ from pad.raw_processor.merged_data import MergedBonus
 from pad.storage.schedule import ScheduleEvent
 
 logger = logging.getLogger('processor')
+human_fix_logger = logging.getLogger('human_fix')
 
 SUPPORTED_BONUS_TYPES = [
     # Lists dungeons that are open.
@@ -22,9 +23,6 @@ SUPPORTED_BONUS_TYPES = [
 WARN_BONUS_TYPES = [
     # Nothing should ever be unknown.
     BonusType.unknown,
-
-    # Research what we need these for
-    BonusType.gift_dungeon_with_reward,
 ]
 
 IGNORED_BONUS_TYPES = [
@@ -52,6 +50,8 @@ IGNORED_BONUS_TYPES = [
     BonusType.stone_purchase_text,
     BonusType.daily_dragons,
     BonusType.monthly_quest_dungeon,  # This has a dupe dungeon entry.
+    BonusType.pad_metadata,
+    BonusType.pad_metadata_2,
 
     # Might need this to tag dungeons as tournaments, even closed ones.
     # Probably happens outside this processor though.
@@ -68,6 +68,9 @@ IGNORED_BONUS_TYPES = [
     BonusType.dungeon_floor_text,
     # Lists multiplayer dungeons with special events active?
     BonusType.multiplayer_dungeon_text,
+
+    # This has a variety of stuff, but mostly +X notifications.
+    BonusType.gift_dungeon_with_reward,
 ]
 
 
@@ -87,7 +90,7 @@ class ScheduleProcessor(object):
             bonus_type = bonus.bonus.bonus_info.bonus_type
 
             if bonus_type in WARN_BONUS_TYPES:
-                logger.error('Unexpected bonus: %s', bonus)
+                human_fix_logger.error('Unexpected bonus: %s', bonus)
                 continue
 
             if bonus_type in IGNORED_BONUS_TYPES:
@@ -95,7 +98,7 @@ class ScheduleProcessor(object):
                 continue
 
             if bonus_type not in SUPPORTED_BONUS_TYPES:
-                logger.error('Incorrectly configured bonus: %s', bonus)
+                human_fix_logger.error('Incorrectly configured bonus: %s', bonus)
                 continue
 
             if bonus.open_duration() > timedelta(days=60):
@@ -107,4 +110,4 @@ class ScheduleProcessor(object):
                 event = ScheduleEvent.from_mb(bonus)
                 db.insert_or_update(event)
             else:
-                logger.error('Dungeon with no dungeon attached: %s', bonus)
+                human_fix_logger.error('Dungeon with no dungeon attached: %s', bonus)
