@@ -145,18 +145,4 @@ class DungeonContentProcessor(object):
     #         sub_dungeon.resolved_sub_dungeon_reward = dbdungeon.SubDungeonReward()
     #     sub_dungeon.resolved_sub_dungeon_reward.data = reward_text
     #
-    #             # Sort the other drops for indexing purposes
-    #             other_drops = list(sorted(other_drops))
-    #
-    #             existing_drops = {
-    #                 int(ed.monster_no): ed for ed in monster.resolved_dungeon_monster_drops}
-    #
-    #             for drop in other_drops:
-    #                 if int(drop) in existing_drops:
-    #                     dmd = existing_drops.pop(drop)
-    #                 else:
-    #                     dmd = dbdungeon.DungeonMonsterDrop()
-    #                     monster.resolved_dungeon_monster_drops.append(dmd)
-    #                 dmd.monster_no = drop
-    #                 dmd.order_idx = drop
-    #                 dmd.status = 0
+

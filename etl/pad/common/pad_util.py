@@ -53,6 +53,7 @@ def ghtime(time_str: str, server: str) -> datetime.datetime:
     tz_offsets = {
         'na': '-0800',
         'jp': '+0900',
+        'kr': '+0900',
     }
     timezone_str = '{} {}'.format(time_str, tz_offsets[server])
     return datetime.datetime.strptime(timezone_str, '%y%m%d%H%M%S %z')
@@ -93,6 +94,7 @@ def cur_gh_time(server):
     tz_offsets = {
         'na': NoDstWestern(),
         'jp': pytz.timezone('Asia/Tokyo'),
+        'kr': pytz.timezone('Asia/Tokyo'),
     }
     return datetime_to_gh(datetime.datetime.now(tz_offsets[server]))
 
