@@ -3,16 +3,13 @@ Data from across multiple servers merged together.
 """
 import json
 import logging
-from datetime import datetime
-from typing import List, Any, Optional
+from typing import List, Optional
 
-import pytz
-
-from pad.common.shared_types import MonsterId, MonsterNo, DungeonId
-from pad.common import pad_util, monster_id_mapping, dungeon_types
-from pad.raw import Bonus, Card, MonsterSkill, Dungeon, ESRef
+from pad.common import dungeon_types
+from pad.common.shared_types import MonsterId, DungeonId
+from pad.raw import MonsterSkill, Dungeon
 from pad.raw.dungeon import SubDungeon
-from pad.raw_processor.merged_data import MergedCard, MergedBonus, MergedEnemy
+from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
 fail_logger = logging.getLogger('processor_failures')
@@ -272,7 +269,7 @@ class CrossServerDatabase(object):
 
         self.jp_bonuses = jp_database.bonuses
         self.na_bonuses = na_database.bonuses
-        # self.kr_bonuses = kr_database.bonuses
+        self.kr_bonuses = kr_database.bonuses
 
         self.monster_id_to_card = {c.monster_id: c for c in self.all_cards}
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
@@ -294,6 +291,7 @@ class CrossServerDatabase(object):
         for c in self.all_cards:
             jpc = c.jp_card
             nac = c.na_card
+            krc = c.kr_card
 
             if jpc.card.type_1_id != nac.card.type_1_id:
                 print('type1 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_1_id, nac.card.type_1_id))
@@ -304,19 +302,39 @@ class CrossServerDatabase(object):
             if jpc.card.type_3_id != nac.card.type_3_id:
                 print('type3 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_3_id, nac.card.type_3_id))
 
+            if krc.card.type_1_id != nac.card.type_1_id:
+                print('kr type1 failure: {} - {} {}'.format(nac.card.name, krc.card.type_1_id, nac.card.type_1_id))
+
+            if krc.card.type_2_id != nac.card.type_2_id:
+                print('kr type2 failure: {} - {} {}'.format(nac.card.name, krc.card.type_2_id, nac.card.type_2_id))
+
+            if krc.card.type_3_id != nac.card.type_3_id:
+                print('kr type3 failure: {} - {} {}'.format(nac.card.name, krc.card.type_3_id, nac.card.type_3_id))
+
             jpcas = jpc.active_skill
             nacas = nac.active_skill
+            krcas = krc.active_skill
             if jpcas and nacas and jpcas.skill_id != nacas.skill_id:
                 print('active skill failure: {} - {} / {}'.format(nac.card.name, jpcas.skill_id, nacas.skill_id))
+            if krcas and nacas and krcas.skill_id != nacas.skill_id:
+                print('active skill failure: {} - {} / {}'.format(nac.card.name, krcas.skill_id, nacas.skill_id))
 
             jpcls = jpc.leader_skill
             nacls = nac.leader_skill
+            krcls = krc.leader_skill
             if jpcls and nacls and jpcls.skill_id != nacls.skill_id:
                 print('leader skill failure: {} - {} / {}'.format(nac.card.name, jpcls.skill_id, nacls.skill_id))
+            if krcls and nacls and krcls.skill_id != nacls.skill_id:
+                print('leader skill failure: {} - {} / {}'.format(nac.card.name, krcls.skill_id, nacls.skill_id))
 
             if len(jpc.card.awakenings) != len(nac.card.awakenings):
                 print('awakening : {} - {} / {}'.format(nac.card.name,
                                                         len(jpc.card.awakenings),
+                                                        len(nac.card.awakenings)))
+
+            if len(krc.card.awakenings) != len(nac.card.awakenings):
+                print('awakening : {} - {} / {}'.format(nac.card.name,
+                                                        len(krc.card.awakenings),
                                                         len(nac.card.awakenings)))
 
             if len(jpc.card.super_awakenings) != len(nac.card.super_awakenings):
@@ -324,17 +342,32 @@ class CrossServerDatabase(object):
                                                               len(jpc.card.super_awakenings),
                                                               len(nac.card.super_awakenings)))
 
+            if len(krc.card.super_awakenings) != len(nac.card.super_awakenings):
+                print('super awakening : {} - {} / {}'.format(nac.card.name,
+                                                              len(krc.card.super_awakenings),
+                                                              len(nac.card.super_awakenings)))
+
     def dungeon_diagnostics(self):
         print('checking', len(self.dungeons), 'dungeons')
         for d in self.dungeons:
             jpd = d.jp_dungeon
             nad = d.na_dungeon
+            krd = d.kr_dungeon
 
             if len(jpd.sub_dungeons) != len(nad.sub_dungeons):
                 print('Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
                                                                       len(jpd.sub_dungeons),
                                                                       len(nad.sub_dungeons)))
 
+            if len(krd.sub_dungeons) != len(nad.sub_dungeons):
+                print('Floor count failure: {} / {} - {} / {}'.format(krd.clean_name, nad.clean_name,
+                                                                      len(krd.sub_dungeons),
+                                                                      len(nad.sub_dungeons)))
+
             if jpd.full_dungeon_type != nad.full_dungeon_type:
                 print('Dungeon type failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
                                                                        jpd.full_dungeon_type, nad.full_dungeon_type))
+
+            if krd.full_dungeon_type != nad.full_dungeon_type:
+                print('Dungeon type failure: {} / {} - {} / {}'.format(krd.clean_name, nad.clean_name,
+                                                                       krd.full_dungeon_type, nad.full_dungeon_type))

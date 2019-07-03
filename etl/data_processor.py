@@ -89,12 +89,16 @@ def load_data(args):
     na_database = merged_database.Database(Server.na, input_dir)
     na_database.load_database()
 
-    cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, na_database)
+    kr_database = merged_database.Database(Server.kr, input_dir)
+    kr_database.load_database()
+
+    cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, kr_database)
 
     if not args.skipintermediate:
         logger.info('Storing intermediate data')
         jp_database.save_all(args.output_dir2, args.pretty)
         na_database.save_all(args.output_dir2, args.pretty)
+        kr_database.save_all(args.output_dir2, args.pretty)
 
     # Temporary hack until we have skill loading
     skill_text_file = os.path.join(output_dir, 'jp_calc_skills.json')
