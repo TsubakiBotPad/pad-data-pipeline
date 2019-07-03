@@ -1,4 +1,8 @@
+from typing import List
+
+from pad.common.shared_types import MonsterId
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
+from pad.dungeon.wave_converter import ResultSlot
 
 
 class Encounter(SimpleSqlItem):
@@ -44,3 +48,36 @@ class Encounter(SimpleSqlItem):
 
     def exists_strategy(self):
         return ExistsStrategy.CUSTOM
+
+
+class Drop(SimpleSqlItem):
+    """Dungeon monster drop."""
+    TABLE = 'drops'
+    KEY_COL = 'drop_id'
+
+    @staticmethod
+    def from_slot(o: ResultSlot, e: Encounter) -> List['Drop']:
+        results = []
+        for drop_card in o.drops:
+            results.append(Drop(encounter_id=e.encounter_id,
+                                monster_id=drop_card.monster_id))
+        return results
+
+    def __init__(self,
+                 drop_id: int = None,
+                 encounter_id: int = None,
+                 monster_id: MonsterId = None,
+                 tstamp: int = None):
+        self.drop_id = drop_id
+        self.encounter_id = encounter_id
+        self.monster_id = monster_id
+        self.tstamp = tstamp
+
+    def exists_strategy(self):
+        return ExistsStrategy.BY_VALUE
+
+    def _non_auto_insert_cols(self):
+        return [self._key()]
+
+    def _non_auto_update_cols(self):
+        return [self._key()]
