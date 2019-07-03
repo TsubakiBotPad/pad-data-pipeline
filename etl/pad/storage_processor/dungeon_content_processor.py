@@ -30,7 +30,8 @@ class DungeonContentProcessor(object):
 
     def _process_dungeon_contents(self, db: DbWrapper):
         for dungeon in self.data.dungeons:
-            logger.warning('scanning dungeon:%s', dungeon.dungeon_id)
+            if dungeon.dungeon_id % 250 == 0:
+                logger.warning('scanning dungeon:%s', dungeon.dungeon_id)
             sub_dungeon_items = []
 
             for sub_dungeon in dungeon.sub_dungeons:
