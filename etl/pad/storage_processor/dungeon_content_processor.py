@@ -2,11 +2,14 @@ import logging
 from typing import Optional
 
 from pad.common.dungeon_types import RawDungeonType
+from pad.common.icons import SpecialIcons
+from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
 from pad.dungeon.wave_converter import WaveConverter, ResultFloor, ResultSlot
+from pad.raw.bonus import BonusType
 from pad.raw_processor import crossed_data
 from pad.raw_processor.crossed_data import CrossServerSubDungeon, CrossServerDungeon
-from pad.storage.dungeon import SubDungeonWaveData, DungeonWaveData
+from pad.storage.dungeon import SubDungeonWaveData, DungeonWaveData, SubDungeonRewardData, DungeonRewardData
 from pad.storage.encounter import Encounter, Drop
 from pad.storage.wave import WaveItem
 
@@ -21,8 +24,8 @@ class DungeonContentProcessor(object):
     def process(self, db: DbWrapper):
         logger.warning('loading dungeon contents')
         self._process_dungeon_contents(db)
-        # TODO: support rewards
-        # TODO: support drops
+        self._process_dungeon_rewards(db)
+        # TODO: support multiple rewards
         # TODO: support updates to encounters
         # TODO: support updates to drops
 
@@ -113,36 +116,72 @@ class DungeonContentProcessor(object):
                 for drop in drops:
                     db.insert_or_update(drop)
 
-    # floor_text = floor_text.lower()
-    # reward_value = None
-    # if 'reward' in floor_text or 'first time clear' in floor_text or '初クリア報酬' in floor_text:
-    #     if 'coins' in floor_text or '万コイン' in floor_text:
-    #         reward_value = SpecialIcons.Coin.value
-    #     elif 'pal points' in floor_text or '友情ポイント' in floor_text:
-    #         reward_value = SpecialIcons.Point.value
-    #     elif 'dungeon' in floor_text:
-    #         reward_value = SpecialIcons.QuestionMark.value
-    #     elif '+ points' in floor_text or '+ポイント' in floor_text:
-    #         reward_value = SpecialIcons.StarPlusEgg.value
-    #     elif 'magic stone' in floor_text:
-    #         reward_value = SpecialIcons.MagicStone.value
-    #     else:
-    #         matched_monsters = set()
-    #         for m_name in monster_name_to_id.keys():
-    #             if m_name in floor_text:
-    #                 matched_monsters.add(m_name)
-    #         if matched_monsters:
-    #             best_match = max(matched_monsters, key=len)
-    #             reward_value = monster_name_to_id[best_match].card_id
-    #
-    #     if reward_value is None:
-    #         reward_value = SpecialIcons.RedX.value
-    #
-    # if reward_value:
-    #     # TODO: support 1/2 reward types?
-    #     reward_text = '0/{}'.format(reward_value)
-    #     if sub_dungeon.resolved_sub_dungeon_reward is None:
-    #         sub_dungeon.resolved_sub_dungeon_reward = dbdungeon.SubDungeonReward()
-    #     sub_dungeon.resolved_sub_dungeon_reward.data = reward_text
-    #
+    def _process_dungeon_rewards(self, db):
+        def is_floor_bonus(x):
+            return x.dungeon and x.bonus.bonus_info.bonus_type == BonusType.dungeon_floor_text
 
+        # Get the bonuses from all servers that have a dungeon attached, and 'floor text'.
+        # Might need an additional filter for dungeons, perhaps 'dungeon_special_event'?
+        all_bonuses = self.data.jp_bonuses + self.data.na_bonuses + self.data.kr_bonuses
+        floor_bonuses = list(filter(is_floor_bonus, all_bonuses))
+
+        # Stick all the monster names, from all languages, lowercased, into a lookup map.
+        monster_name_to_id = {x.jp_card.card.name: x for x in self.data.ownable_cards}
+        monster_name_to_id.update({x.na_card.card.name: x for x in self.data.ownable_cards})
+        monster_name_to_id.update({x.kr_card.card.name: x for x in self.data.ownable_cards})
+        monster_name_to_id = {x.lower(): y for x, y in monster_name_to_id.items()}
+
+        for merged_bonus in floor_bonuses:
+            raw_text = merged_bonus.bonus.clean_message
+            text = raw_text.lower()
+            has_reward = any(item in text for item in ['reward', 'first time clear', '初クリア報酬'])
+            if not has_reward:
+                continue
+
+            reward_value = None
+            if 'coins' in text or '万コイン' in text:
+                reward_value = SpecialIcons.Coin.value
+            elif 'pal points' in text or '友情ポイント' in text:
+                reward_value = SpecialIcons.Point.value
+            elif 'dungeon' in text:
+                reward_value = SpecialIcons.QuestionMark.value
+            elif '+ points' in text or '+ポイント' in text:
+                reward_value = SpecialIcons.StarPlusEgg.value
+            elif 'magic stone' in text:
+                reward_value = SpecialIcons.MagicStone.value
+            else:
+                matched_monsters = set()
+                for m_name in monster_name_to_id.keys():
+                    if m_name in text:
+                        matched_monsters.add(m_name)
+                if matched_monsters:
+                    best_match = max(matched_monsters, key=len)
+                    reward_value = monster_name_to_id[best_match].monster_id
+
+            if merged_bonus.bonus.sub_dungeon_id:
+                # Primarily we update sub dungeons.
+                saved_data = db.load_single_object(SubDungeonRewardData, merged_bonus.bonus.sub_dungeon_id)
+                reward_value = reward_value or SpecialIcons.RedX.value
+                saved_data.reward_icon_ids = str(reward_value)
+            else:
+                saved_data = db.load_single_object(DungeonRewardData, merged_bonus.bonus.dungeon_id)
+                # Dungeons shouldn't get X's on parsing failures.
+                # Also shouldn't override if we parsed one previously but this failed.
+                if reward_value:
+                    saved_data.reward_icon_ids = str(reward_value)
+
+            # Fix the proper text for server this bonus is tagged with.
+            if merged_bonus.server == Server.jp:
+                saved_data.reward_jp = raw_text
+            elif merged_bonus.server == Server.na:
+                saved_data.reward_na = raw_text
+            elif merged_bonus.server == Server.kr:
+                saved_data.reward_kr = raw_text
+
+            # Apply overwrites from other servers if we don't have a good one.
+            saved_data.reward_jp = saved_data.reward_jp or saved_data.reward_na or saved_data.reward_kr
+            saved_data.reward_na = saved_data.reward_na or saved_data.reward_jp or saved_data.reward_kr
+            saved_data.reward_kr = saved_data.reward_kr or saved_data.reward_na or saved_data.reward_jp
+
+            # Update the value if necessary.
+            db.insert_or_update(saved_data)

@@ -54,6 +54,27 @@ class DungeonWaveData(SimpleSqlItem):
         self.tstamp = tstamp
 
 
+class DungeonRewardData(SimpleSqlItem):
+    """Dungeon data that can only be computed from bonus floor text."""
+    TABLE = 'dungeons'
+    KEY_COL = 'dungeon_id'
+
+    def __init__(self,
+                 dungeon_id: int = None,
+                 reward_jp: str = None,
+                 reward_na: str = None,
+                 reward_kr: str = None,
+                 reward_icon_ids: str = None,
+                 tstamp: int = None,
+                 **unused_args):
+        self.dungeon_id = dungeon_id
+        self.reward_jp = reward_jp
+        self.reward_na = reward_na
+        self.reward_kr = reward_kr
+        self.reward_icon_ids = reward_icon_ids
+        self.tstamp = tstamp
+
+
 class SubDungeon(SimpleSqlItem):
     """Per-difficulty dungeon section."""
     TABLE = 'sub_dungeons'
@@ -142,4 +163,25 @@ class SubDungeonWaveData(SimpleSqlItem):
         self.exp_avg = exp_avg
         self.mp_avg = mp_avg
         self.icon_id = icon_id
+        self.tstamp = tstamp
+
+
+class SubDungeonRewardData(SimpleSqlItem):
+    """Sub-dungeon data that can only be computed from bonus floor text."""
+    TABLE = 'sub_dungeons'
+    KEY_COL = 'sub_dungeon_id'
+
+    def __init__(self,
+                 sub_dungeon_id: int = None,
+                 reward_jp: str = None,
+                 reward_na: str = None,
+                 reward_kr: str = None,
+                 reward_icon_ids: str = None,
+                 tstamp: int = None,
+                 **unused_args):
+        self.sub_dungeon_id = sub_dungeon_id
+        self.reward_jp = reward_jp
+        self.reward_na = reward_na
+        self.reward_kr = reward_kr
+        self.reward_icon_ids = reward_icon_ids
         self.tstamp = tstamp
