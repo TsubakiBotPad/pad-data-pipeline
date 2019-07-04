@@ -64,9 +64,9 @@ class Card(pad_util.Printable):
         self.unknown_009 = int(raw[9])
 
         self.max_level = int(raw[10])
-        self.feed_xp_at_lvl_4 = int(raw[11])
+        self.feed_xp_per_level = int(raw[11]) // 4
         self.released_status = raw[12] == 100
-        self.sell_price_at_lvl_10 = raw[13]
+        self.sell_gold_per_level = int(raw[13]) // 10
 
         self.min_hp = int(raw[14])
         self.max_hp = int(raw[15])
@@ -103,8 +103,8 @@ class Card(pad_util.Printable):
         self.enemy_def_scale = float(raw[36])
 
         self.enemy_max_level = int(raw[37])
-        self.enemy_coins_at_lvl_2 = int(raw[38])
-        self.enemy_xp_at_lvl_2 = int(raw[39])
+        self.enemy_coins_per_level = int(raw[38]) // 2
+        self.enemy_xp_per_level = int(raw[39]) // 2
 
         self.ancestor_id = MonsterNo(int(raw[40]))
 
@@ -182,8 +182,10 @@ class Card(pad_util.Printable):
         # Number of the voice file, 1-indexed, 0 if no voice
         self.voice_id = int(raw[69])
 
-        # TODO: add orb unlocks from this list
-        self.other_fields = raw[70:]
+        # Number of the orb skin unlocked, 1-indexed, 0 if no orb skin
+        self.orb_skin_id = int(raw[70])
+
+        self.other_fields = raw[71:]
 
     def enemy(self) -> Enemy:
         return Enemy(self.enemy_turns,
@@ -200,9 +202,9 @@ class Card(pad_util.Printable):
                            self.enemy_def_scale,
                            self.enemy_max_level),
                      self.enemy_max_level,
-                     Curve(self.enemy_coins_at_lvl_2 // 2,
+                     Curve(self.enemy_coins_per_level,
                            max_level=self.enemy_max_level),
-                     Curve(self.enemy_xp_at_lvl_2 // 2,
+                     Curve(self.enemy_xp_per_level,
                            max_level=self.enemy_max_level),
                      self.enemy_skill_refs)
 
@@ -217,6 +219,12 @@ class Card(pad_util.Printable):
 
     def xp_curve(self) -> Curve:
         return Curve(0, self.xp_max, self.xp_scale, max_level=99)
+
+    def feed_xp_curve(self) -> Curve:
+        return Curve(self.feed_xp_per_level, max_level=99)
+
+    def sell_gold_curve(self) -> Curve:
+        return Curve(self.sell_gold_per_level, max_level=99)
 
     def __str__(self):
         return 'Card({} - {})'.format(self.monster_no, self.name)
