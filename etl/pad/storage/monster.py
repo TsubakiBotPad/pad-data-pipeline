@@ -93,7 +93,7 @@ class Monster(SimpleSqlItem):
                  exp: int = None,
                  level: int = None,
                  rarity: int = None,
-                 limit_mult: float = None,
+                 limit_mult: int = None,
                  attribute_1_id: int = None,
                  attribute_2_id: int = None,
                  leader_skill_id: int = None,
