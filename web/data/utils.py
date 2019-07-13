@@ -25,7 +25,8 @@ def fix_row(row):
         row_data[fixed_col] = fixed_data
     return row_data
 
-def dump_table(table_name, cursor):
+
+def dump_table(cursor):
     result_json = {'items': []}
     for row in cursor:
         result_json['items'].append(fix_row(row))
@@ -54,7 +55,7 @@ def load_from_db(db_config, table, tstamp):
 
     with connection.cursor() as cursor:
         cursor.execute(sql)
-        data = dump_table(table, cursor)
+        data = dump_table(cursor)
 
     connection.close()
     return data
