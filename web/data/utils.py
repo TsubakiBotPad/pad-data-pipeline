@@ -16,8 +16,10 @@ def fix_row(row):
             fixed_data = max((first, second), key=len)
         elif type(data) is datetime:
             fixed_data = data.isoformat(' ')
-        else:
+        elif type(data) not in [int, float, str]:
             fixed_data = str(data)
+        else:
+            fixed_data = data
 
         fixed_col = col
         row_data[fixed_col] = fixed_data
