@@ -46,7 +46,7 @@ VALID_TABLES = [
 ]
 
 
-@app.route('/serve-table')
+@app.route('/dadguide/api/serve')
 async def serve_table(request):
     table = request.args.get('table')
     if table is None:
