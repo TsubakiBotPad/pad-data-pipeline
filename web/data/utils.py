@@ -11,9 +11,7 @@ def fix_row(row):
         if data is None:
             fixed_data = None
         elif type(data) is Decimal:
-            first = '{}'.format(float(data))
-            second = '{:.1f}'.format(float(data))
-            fixed_data = max((first, second), key=len)
+            fixed_data = float(data)
         elif type(data) is datetime:
             fixed_data = data.isoformat(' ')
         elif type(data) not in [int, float, str]:
@@ -52,6 +50,10 @@ def load_from_db(db_config, table, tstamp):
 
         if table == 'schedule':
             sql += ' AND close_timestamp > UNIX_TIMESTAMP()'
+
+    # Added this to make client updating easier; if the update fails, the lowest-value records will have been inserted,
+    # and the higher value ones will get inserted on the next run.
+    sql += ' ORDER BY tstamp ASC'
 
     with connection.cursor() as cursor:
         cursor.execute(sql)
