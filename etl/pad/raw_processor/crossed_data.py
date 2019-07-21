@@ -3,6 +3,7 @@ Data from across multiple servers merged together.
 """
 import json
 import logging
+import os
 from typing import List, Optional
 
 from pad.common import dungeon_types
@@ -25,6 +26,10 @@ class CrossServerCard(object):
         self.jp_card = jp_card
         self.na_card = na_card
         self.kr_card = kr_card
+
+        # These are optional loaded separately later
+        self.has_hqimage = False
+        self.has_animation = False
 
 
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
@@ -274,6 +279,9 @@ class CrossServerDatabase(object):
         self.monster_id_to_card = {c.monster_id: c for c in self.all_cards}
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
 
+        self.hq_image_monster_ids = []  # type: List[MonsterId]
+        self.animated_monster_ids = []  # type: List[MonsterId]
+
     def card_by_monster_id(self, monster_id: MonsterId) -> CrossServerCard:
         return self.monster_id_to_card.get(monster_id, None)
 
@@ -286,6 +294,23 @@ class CrossServerDatabase(object):
             skills_json = json.load(f)
         self.calculated_skills = {int(k): v for k, v in skills_json.items()}
 
+    def load_extra_image_info(self, media_dir: str):
+        for f in os.listdir(os.path.join(media_dir, 'hq_portraits')):
+            if len(f) == 9 and f[-4:].lower() == '.png':
+                self.hq_image_monster_ids.append(MonsterId(int(f[0:5])))
+
+        for f in os.listdir(os.path.join(media_dir, 'animated_portraits')):
+            if len(f) == 9 and f[-4:].lower() == '.mp4':
+                self.animated_monster_ids.append(MonsterId(int(f[0:5])))
+
+        for csc in self.ownable_cards:
+            if csc.monster_id in self.hq_image_monster_ids:
+                csc.has_hqimage = True
+            if csc.monster_id in self.animated_monster_ids:
+                csc.has_animation = True
+
+    # TODO: move this to another file
+    # TODO: check with KR data
     def card_diagnostics(self):
         print('checking', len(self.all_cards), 'cards')
         for c in self.all_cards:
