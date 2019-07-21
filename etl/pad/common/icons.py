@@ -1,24 +1,25 @@
 from enum import Enum
 
+
 class SpecialIcons(Enum):
     """Special icons used by DadGuide (e.g. icon_99xx.png)."""
-    TwoPointFiveX = 9910
-    SixX = 9911
-    MagicStone = 9981
-    FiveX = 9982
-    FourX = 9983
-    ThreeX = 9984
-    Point = 9985
-    TenXMp = 9986
-    QuestionMark = 9987
-    Half = 9988
-    TwoPointFiveXV2 = 9990
-    Coin = 9991
-    RedX = 9992
-    OnePointFiveX = 9993
-    TwoX = 9994
-    GoldEgg = 9995
-    SilverPlusEgg = 9996
-    StarPlusEgg = 9997
-    ChimeraPlus = 9998
-    MultiColoredKing = 9999
+    TwoPointFiveX = 99910
+    SixX = 99911
+    MagicStone = 99981
+    FiveX = 99982
+    FourX = 99983
+    ThreeX = 99984
+    Point = 99985
+    TenXMp = 99986
+    QuestionMark = 99987
+    Half = 99988
+    TwoPointFiveXV2 = 99990
+    Coin = 99991
+    RedX = 99992
+    OnePointFiveX = 99993
+    TwoX = 99994
+    GoldEgg = 99995
+    SilverPlusEgg = 99996
+    StarPlusEgg = 99997
+    ChimeraPlus = 99998
+    MultiColoredKing = 99999
