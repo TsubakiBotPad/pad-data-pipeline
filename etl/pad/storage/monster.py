@@ -4,6 +4,7 @@ from typing import List, Optional
 from pad.common.shared_types import Server, MonsterId, MonsterNo, JsonType
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
+from pad.storage.series import Series
 
 
 class Monster(SimpleSqlItem):
@@ -71,7 +72,7 @@ class Monster(SimpleSqlItem):
             on_kr=o.kr_card.server == Server.kr and kr_card.released_status,
             pal_egg=False,
             rem_egg=False,
-            series_id=None,
+            series_id=Series.UNSORTED_SERIES_ID,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
             orb_skin_id=orb_skin_id,
