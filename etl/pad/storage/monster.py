@@ -325,24 +325,38 @@ class Evolution(SimpleSqlItem):
     KEY_COL = 'evolution_id'
 
     @staticmethod
-    def from_csm(o: CrossServerCard) -> Optional['Evolution']:
+    def from_csm(o: CrossServerCard, ancestor: CrossServerCard) -> Optional['Evolution']:
         card = o.jp_card.card
-        if not card.ancestor_id:
-            return None
 
         def convert(x: MonsterNo) -> MonsterId:
             return o.jp_card.no_to_id(x)
 
+        def safe_convert(x: MonsterNo) -> MonsterId:
+            return convert(x) if x else None
+
+        reversible = False
+        if card.is_ult and card.un_evo_mat_1 > 0:
+            reversible = True
+        elif 49 in card.awakenings:
+            reversible = True
+
+        if not ancestor.jp_card.card.ancestor_id:
+            evolution_type = 1  # Evo
+        elif reversible:
+            evolution_type = 2  # Ult/Awoken/Assist
+        else:
+            evolution_type = 3  # Reincarn/SuperReincarn
+
         return Evolution(
             evolution_id=None,  # Key that is looked up or inserted
-            evolution_type=0,  # Fix
+            evolution_type=evolution_type,
             from_id=convert(card.ancestor_id),
             to_id=convert(card.monster_no),
-            mat_1_id=convert(card.evo_mat_id_1) if card.evo_mat_id_1 else None,
-            mat_2_id=convert(card.evo_mat_id_2) if card.evo_mat_id_2 else None,
-            mat_3_id=convert(card.evo_mat_id_3) if card.evo_mat_id_3 else None,
-            mat_4_id=convert(card.evo_mat_id_4) if card.evo_mat_id_4 else None,
-            mat_5_id=convert(card.evo_mat_id_5) if card.evo_mat_id_5 else None)
+            mat_1_id=safe_convert(card.evo_mat_id_1),
+            mat_2_id=safe_convert(card.evo_mat_id_2),
+            mat_3_id=safe_convert(card.evo_mat_id_3),
+            mat_4_id=safe_convert(card.evo_mat_id_4),
+            mat_5_id=safe_convert(card.evo_mat_id_5))
 
     def __init__(self,
                  evolution_id: int = None,
@@ -374,3 +388,6 @@ class Evolution(SimpleSqlItem):
 
     def _non_auto_update_cols(self):
         return [self._key()]
+
+    def _lookup_columns(self):
+        return ['from_id', 'to_id']
