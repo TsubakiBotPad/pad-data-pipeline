@@ -88,15 +88,15 @@ def do_migration(csd: crossed_data.CrossServerDatabase, db: DbWrapper):
     monsterno_regdate_map = db.load_to_key_value('monster_no', 'reg_date', 'padguide.monster_list')
 
     for csc in csd.ownable_cards:
-        if csc.monster_id > 9999:
-            continue  # Just skip voltron handle it separately.
-
-        if csc.jp_card.server != Server.jp:
-            continue  # Safety check
-
-        # Since this is a JP card for sure, monster_id == JP monster_no
         monster_id = csc.monster_id
-        monster_no = jp_id_to_monster_no(monster_id)
+        if csc.jp_card.server == Server.na:
+            # Handle Voltron.
+            monster_no = na_id_to_monster_no(monster_id)
+        elif csc.jp_card.server != Server.jp:
+            raise ValueError('Unexpected failure')
+        else:
+            # Since this is a JP card for sure, monster_id == JP monster_no
+            monster_no = jp_id_to_monster_no(monster_id)
 
         # Series processing
         series_id = monsterno_seriesid_map[monster_no]
@@ -132,6 +132,16 @@ def jp_id_to_monster_no(jp_id):
     return jp_id
 
 
+def na_id_to_monster_no(na_id):
+    na_id = int(na_id)
+
+    # Voltron
+    if between(na_id, 2601, 2631):
+        return adjust(na_id, 2601, 9601)
+
+    raise NotImplementedError('only voltron supported')
+
+
 def between(n, bottom, top):
     return bottom <= n <= top
 
@@ -143,4 +153,3 @@ def adjust(n, local_bottom, remote_bottom):
 if __name__ == '__main__':
     args = parse_args()
     load_data(args)
-
