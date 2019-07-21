@@ -104,7 +104,7 @@ def _key_and_cols_compare(item: 'SqlItem', cols=None, include_key=True):
 class ExistsStrategy(Enum):
     BY_KEY = 1
     BY_VALUE = 2
-    CUSTOM = 3 # Prevents mistaken 'standard' inserts; requires a force method
+    CUSTOM = 3  # Prevents mistaken 'standard' inserts; requires a force method
 
 
 class SqlItem(object):
@@ -118,8 +118,8 @@ class SqlItem(object):
         return _key_and_cols_compare(self)
 
     def value_exists_sql(self):
-        update_cols = self._update_columns()
-        return _key_and_cols_compare(self, cols=update_cols, include_key=False)
+        exists_cols = self._lookup_columns()
+        return _key_and_cols_compare(self, cols=exists_cols, include_key=False)
 
     def needs_update_sql(self, include_key=True):
         update_cols = self._update_columns()
@@ -167,6 +167,9 @@ class SqlItem(object):
 
     def _update_columns(self):
         raise NotImplemented('no update columns set')
+
+    def _lookup_columns(self):
+        return self._update_columns()
 
     def _key_lookup_sql(self):
         raise NotImplemented('no key lookup sql')

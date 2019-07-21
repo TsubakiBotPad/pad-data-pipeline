@@ -65,6 +65,11 @@ class MonsterProcessor(object):
     def _process_evolutions(self, db):
         logger.warning('loading evolutions')
         for m in self.data.ownable_cards:
-            item = Evolution.from_csm(m)
+            if not m.jp_card.card.ancestor_id:
+                continue
+
+            ancestor_id = m.jp_card.no_to_id(m.jp_card.card.ancestor_id)
+            ancestor = self.data.card_by_monster_id(ancestor_id)
+            item = Evolution.from_csm(m, ancestor)
             if item:
                 db.insert_or_update(item)

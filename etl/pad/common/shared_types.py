@@ -59,3 +59,9 @@ class StarterGroup(Enum):
     red = 'red'
     blue = 'blue'
     green = 'green'
+
+
+class EvolutionType(Enum):
+    evo = 1
+    reversable = 2
+    non_reversable = 3
