@@ -10,7 +10,6 @@ import os
 from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import merged_database, crossed_data
-
 from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_content_processor import DungeonContentProcessor
@@ -34,7 +33,8 @@ db_logger.setLevel(logging.INFO)
 
 human_fix_logger = logging.getLogger('human_fix')
 if os.name != 'nt':
-    human_fix_logger.addHandler(logging.FileHandler('/tmp/dadguide_pipeline_human_fixes.txt', mode='w'))
+    human_fix_logger.addHandler(
+        logging.FileHandler('/tmp/dadguide_pipeline_human_fixes.txt', mode='w'))
 human_fix_logger.setLevel(logging.INFO)
 
 
@@ -58,6 +58,8 @@ def parse_args():
                             help="Should we run dev processes")
     inputGroup.add_argument("--input_dir", required=True,
                             help="Path to a folder where the input data is")
+    inputGroup.add_argument("--media_dir", required=False,
+                            help="Path to the root folder containing images, voices, etc")
 
     outputGroup = parser.add_argument_group("Output")
     outputGroup.add_argument("--output_dir", required=True,
@@ -93,6 +95,9 @@ def load_data(args):
     kr_database.load_database()
 
     cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, kr_database)
+
+    if args.media_dir:
+        cs_database.load_extra_image_info(args.media_dir)
 
     if not args.skipintermediate:
         logger.info('Storing intermediate data')
@@ -151,6 +156,7 @@ def load_data(args):
     # except Exception as ex:
     #     print('updating news failed', str(ex))
     #
+
 
 if __name__ == '__main__':
     args = parse_args()

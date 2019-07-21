@@ -23,7 +23,9 @@ class Monster(SimpleSqlItem):
         else:
             exp = round(jp_card.xp_curve().value_at(max_level))
 
-        # TODO: fodder_exp and sell_gold
+        orb_skin_id = jp_card.orb_skin_id or None
+        voice_id_jp = jp_card.voice_id or None if o.jp_card.server == Server.jp else None
+        voice_id_na = na_card.voice_id or None if o.na_card.server == Server.na else None
 
         def none_or(value: int):
             return value if value > -1 else None
@@ -69,7 +71,12 @@ class Monster(SimpleSqlItem):
             on_kr=o.kr_card.server == Server.kr and kr_card.released_status,
             pal_egg=False,
             rem_egg=False,
-            series_id=None)
+            series_id=None,
+            has_animation=o.has_animation,
+            has_hqimage=o.has_hqimage,
+            orb_skin_id=orb_skin_id,
+            voice_id_jp=voice_id_jp,
+            voice_id_na=voice_id_na)
 
     def __init__(self,
                  monster_id: int = None,
@@ -113,6 +120,11 @@ class Monster(SimpleSqlItem):
                  pal_egg: bool = None,
                  rem_egg: bool = None,
                  series_id: int = None,
+                 has_animation: bool = None,
+                 has_hqimage: bool = None,
+                 orb_skin_id: int = None,
+                 voice_id_jp: int = None,
+                 voice_id_na: int = None,
                  tstamp: int = None):
         self.monster_id = monster_id
         self.monster_no_jp = monster_no_jp
@@ -155,6 +167,11 @@ class Monster(SimpleSqlItem):
         self.pal_egg = pal_egg
         self.rem_egg = rem_egg
         self.series_id = series_id
+        self.has_animation = has_animation
+        self.has_hqimage = has_hqimage
+        self.orb_skin_id = orb_skin_id
+        self.voice_id_jp = voice_id_jp
+        self.voice_id_na = voice_id_na
         self.tstamp = tstamp
 
         def _non_auto_update_cols(self):
