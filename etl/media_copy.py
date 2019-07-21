@@ -82,13 +82,13 @@ def copy_media(args):
         monster_id = monster_id_mapping.nakr_no_to_monster_id(MonsterNo(na_id))
         monster_id_filled = str(monster_id).zfill(5)
 
-        do_copy(na_icon_input_dir, '{}.png'.format(monster_id),
+        do_copy(na_icon_input_dir, '{}.png'.format(na_id),
                 icon_output_dir, '{}.png'.format(monster_id_filled))
 
-        do_copy(na_portrait_input_dir, '{}.png'.format(monster_id),
+        do_copy(na_portrait_input_dir, '{}.png'.format(na_id),
                 portrait_output_dir, '{}.png'.format(monster_id_filled))
 
-        do_copy(na_voice_input_dir, '{}.wav'.format(monster_id),
+        do_copy(na_voice_input_dir, '{}.wav'.format(na_id),
                 na_voice_output_dir, '{}.wav'.format(monster_id_filled))
 
     for file_name in os.listdir(orb_skins_input_dir):
