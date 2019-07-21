@@ -91,7 +91,7 @@ def do_migration(csd: crossed_data.CrossServerDatabase, db: DbWrapper):
         monster_id = csc.monster_id
         if csc.jp_card.server == Server.na:
             # Handle Voltron.
-            monster_no = na_id_to_monster_no(monster_id)
+            monster_no = na_id_to_monster_no(csc.na_card.card.monster_no)
         elif csc.jp_card.server != Server.jp:
             raise ValueError('Unexpected failure')
         else:
