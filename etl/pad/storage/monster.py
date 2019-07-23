@@ -175,14 +175,14 @@ class Monster(SimpleSqlItem):
         self.voice_id_na = voice_id_na
         self.tstamp = tstamp
 
-        def _non_auto_update_cols(self):
-            return [
-                'buy_mp',
-                'reg_date',
-                'series_id',
-                'pal_egg',
-                'rem_egg',
-            ]
+    def _non_auto_update_cols(self):
+        return [
+            'buy_mp',
+            'reg_date',
+            'series_id',
+            'pal_egg',
+            'rem_egg',
+        ]
 
 
 class ActiveSkill(SimpleSqlItem):
