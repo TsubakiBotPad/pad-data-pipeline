@@ -802,5 +802,17 @@
     "adj_hp": 0,
     "adj_atk": 0,
     "adj_rcv": -2000
+  },
+  {
+    "pad_awakening_id": 72,
+    "name_jp": "Poison Skyfall Up",
+    "name_na": "Poison Skyfall Up",
+    "name_kr": "Poison Skyfall Up",
+    "desc_jp": "Poison orbs will drop at an increased rate",
+    "desc_na": "Poison orbs will drop at an increased rate",
+    "desc_kr": "Poison orbs will drop at an increased rate",
+    "adj_hp": 0,
+    "adj_atk": 0,
+    "adj_rcv": 0
   }
 ]
