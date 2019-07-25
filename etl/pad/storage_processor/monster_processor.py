@@ -1,10 +1,12 @@
 import logging
 
+from pad.common import pad_util
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
 from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution
 
 logger = logging.getLogger('processor')
+fail_logger = logging.getLogger('processor_failures')
 
 
 class MonsterProcessor(object):
@@ -60,7 +62,11 @@ class MonsterProcessor(object):
         for m in self.data.ownable_cards:
             items = Awakening.from_csm(m)
             for item in items:
-                db.insert_or_update(item)
+                try:
+                    db.insert_or_update(item)
+                except Exception as ex:
+                    fail_logger.fatal('Failed to insert item (probably new awakening): %s',
+                                      pad_util.json_string_dump(item, pretty=True))
 
     def _process_evolutions(self, db):
         logger.warning('loading evolutions')
