@@ -6,7 +6,7 @@ from pad.raw_processor import crossed_data
 from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution
 
 logger = logging.getLogger('processor')
-fail_logger = logging.getLogger('processor_failures')
+human_fix_logger = logging.getLogger('human_fix')
 
 
 class MonsterProcessor(object):
@@ -65,8 +65,8 @@ class MonsterProcessor(object):
                 try:
                     db.insert_or_update(item)
                 except Exception as ex:
-                    fail_logger.fatal('Failed to insert item (probably new awakening): %s',
-                                      pad_util.json_string_dump(item, pretty=True))
+                    human_fix_logger.fatal('Failed to insert item (probably new awakening): %s',
+                                           pad_util.json_string_dump(item, pretty=True))
 
     def _process_evolutions(self, db):
         logger.warning('loading evolutions')
