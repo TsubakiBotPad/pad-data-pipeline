@@ -29,6 +29,7 @@ class BonusType(Enum):
     pem_cost = 10
     feed_xp_bonus_chance = 11
     plus_drop_rate_1 = 12
+    unknown_13 = 13
     send_egg_roll = 15
     plus_drop_rate_2 = 16
     feed_skillup_bonus_chance = 17

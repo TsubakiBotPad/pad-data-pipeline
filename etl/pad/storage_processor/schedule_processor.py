@@ -71,6 +71,10 @@ IGNORED_BONUS_TYPES = [
 
     # This has a variety of stuff, but mostly +X notifications.
     BonusType.gift_dungeon_with_reward,
+
+    # Not sure what this does; has no text, no dungeon,
+    # only a value of 10000, runs for a week, spotted in NA.
+    BonusType.unknown_13,
 ]
 
 
