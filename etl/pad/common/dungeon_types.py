@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class RawDungeonType(Enum):
     NORMAL = 0
     SPECIAL = 1
@@ -7,8 +8,9 @@ class RawDungeonType(Enum):
     GIFT = 3
     RANKING = 4
     DEPRECATED = 5 # Not entirely sure of this one but seems like a safe bet
-    SPECIAL_DESCENDED = 6
-    MULTIPLAYER_2 = 7
+    UNUSED_6 = 6
+    MULTIPLAYER = 7
+
 
 class RawRepeatDay(Enum):
     NONE = 0 # Doesn't repeat
