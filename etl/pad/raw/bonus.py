@@ -83,6 +83,8 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.feed_xp_bonus_chance, ghmult_plain),
     # Increased plus rate 1?
     BonusTypeEntry(BonusType.plus_drop_rate_1, ghchance_plain),
+    # Unknown, no text, only value of 10K, multi-day event seen in NA
+    BonusTypeEntry(BonusType.unknown_13),
     # Send a Premium Egg Machine to a Friend and you will get one too!
     BonusTypeEntry(BonusType.send_egg_roll),
     # Increased plus rate 2?
