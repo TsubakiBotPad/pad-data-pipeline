@@ -804,6 +804,42 @@
     "adj_rcv": -2000
   },
   {
+    "pad_awakening_id": 68,
+    "name_jp": "Super Resistance-Dark",
+    "name_na": "Super Resistance-Dark",
+    "name_kr": "Super Resistance-Dark",
+    "desc_jp": "Blocks blinding attacks (100%)",
+    "desc_na": "Blocks blinding attacks (100%)",
+    "desc_kr": "Blocks blinding attacks (100%)",
+    "adj_hp": 0,
+    "adj_atk": 0,
+    "adj_rcv": 0
+  },
+  {
+    "pad_awakening_id": 69,
+    "name_jp": "Super Resistance-Jammers",
+    "name_na": "Super Resistance-Jammers",
+    "name_kr": "Super Resistance-Jammers",
+    "desc_jp": "Blocks jammer attacks (100%)",
+    "desc_na": "Blocks jammer attacks (100%)",
+    "desc_kr": "Blocks jammer attacks (100%)",
+    "adj_hp": 0,
+    "adj_atk": 0,
+    "adj_rcv": 0
+  },
+  {
+    "pad_awakening_id": 69,
+    "name_jp": "Super Resistance-Poison",
+    "name_na": "Super Resistance-Poison",
+    "name_kr": "Super Resistance-Poison",
+    "desc_jp": "Blocks poison attacks (100%)",
+    "desc_na": "Blocks poison attacks (100%)",
+    "desc_kr": "Blocks poison attacks (100%)",
+    "adj_hp": 0,
+    "adj_atk": 0,
+    "adj_rcv": 0
+  },
+  {
     "pad_awakening_id": 72,
     "name_jp": "Poison Skyfall Up",
     "name_na": "Poison Skyfall Up",
