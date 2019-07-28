@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Optional
 
-from pad.common.shared_types import Server, MonsterId, MonsterNo, JsonType
+from pad.common.shared_types import Server, MonsterId, MonsterNo, JsonType, EvolutionType
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
 from pad.storage.series import Series
@@ -356,11 +356,11 @@ class Evolution(SimpleSqlItem):
             reversible = True
 
         if not ancestor.jp_card.card.ancestor_id:
-            evolution_type = 1  # Evo
+            evolution_type =  EvolutionType.evo.value   # Evo
         elif reversible:
-            evolution_type = 2  # Ult/Awoken/Assist
+            evolution_type =  EvolutionType.reversible.value   # Ult/Awoken/Assist
         else:
-            evolution_type = 3  # Reincarn/SuperReincarn
+            evolution_type =  EvolutionType.non_reversible.value   # Reincarn/SuperReincarn
 
         return Evolution(
             evolution_id=None,  # Key that is looked up or inserted

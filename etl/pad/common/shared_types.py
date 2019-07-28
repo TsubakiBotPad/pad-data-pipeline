@@ -63,5 +63,5 @@ class StarterGroup(Enum):
 
 class EvolutionType(Enum):
     evo = 1
-    reversable = 2
-    non_reversable = 3
+    reversible = 2
+    non_reversible = 3
