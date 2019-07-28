@@ -47,6 +47,7 @@ class BonusType(Enum):
     monthly_quest_dungeon = 37
     exchange_text = 38
     dungeon_floor_text = 39
+    unknown_40 = 40
     dungeon_web_info_link = 43
     stone_purchase_text = 44
 
@@ -124,6 +125,8 @@ ALL_TYPES = [
     # Reward: Jewel of Creation
     # Latent TAMADRA (Skill Delay Resist.) invades guaranteed!
     BonusTypeEntry(BonusType.dungeon_floor_text),
+    # Some kind of flag, message is '|23'
+    BonusTypeEntry(BonusType.unknown_40),
     # https://bit.ly/2zWWGPd - #Q#6th Year Anniversary Quest 1
     BonusTypeEntry(BonusType.dungeon_web_info_link),
     # !June Bride bundles available!

@@ -75,6 +75,8 @@ IGNORED_BONUS_TYPES = [
     # Not sure what this does; has no text, no dungeon,
     # only a value of 10000, runs for a week, spotted in NA.
     BonusType.unknown_13,
+    # Not sure what it does, some kind of flag, spotted in JP.
+    BonusType.unknown_40,
 ]
 
 
