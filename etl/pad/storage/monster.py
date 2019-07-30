@@ -185,6 +185,20 @@ class Monster(SimpleSqlItem):
         ]
 
 
+class MonsterWithSeries(SimpleSqlItem):
+    """Monster helper for inserting series."""
+    TABLE = 'monsters'
+    KEY_COL = 'monster_id'
+
+    def __init__(self,
+                 monster_id: int = None,
+                 series_id: int = None,
+                 tstamp: int = None):
+        self.monster_id = monster_id
+        self.series_id = series_id
+        self.tstamp = tstamp
+
+
 class ActiveSkill(SimpleSqlItem):
     """Monster active skill."""
     TABLE = 'active_skills'
