@@ -113,13 +113,13 @@ class ResultFloor(object):
         final_stage = self.stages[-1]
         if not final_stage.slots:
             return None
-        return max(final_stage.slots, key=lambda m: m.monster_id).visible_monster_id()
+        return max(map(lambda m: m.visible_monster_id(), final_stage.slots))
 
 
 class ResultStage(object):
     def __init__(self, processed_stage: ProcessedStage):
         self.stage_idx = processed_stage.stage_idx
-        self.slots = []
+        self.slots = [] # type: List[ResultSlot]
 
         # Chunk the spawns into fixed (always a specific number on the floor) or
         # random (varying number on the floor).
