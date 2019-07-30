@@ -6,6 +6,12 @@ from pad.storage.dungeon import Dungeon, SubDungeon
 
 logger = logging.getLogger('processor')
 
+_ENCOUNTER_VISIBILITY_SQL = """
+UPDATE dungeons 
+SET visible = true, tstamp = UNIX_TIMESTAMP() 
+WHERE dungeon_id IN (select dungeon_id  from encounters group by 1)
+AND visible = false
+"""
 
 class DungeonProcessor(object):
     def __init__(self, data: crossed_data.CrossServerDatabase):
@@ -16,6 +22,11 @@ class DungeonProcessor(object):
         self._process_dungeons(db)
         self._process_subdungeons(db)
         logger.warning('done loading dungeon data')
+
+    def post_encounter_process(self, db: DbWrapper):
+        logger.warning('post-encounter processing')
+        updated_rows = db.update_item(_ENCOUNTER_VISIBILITY_SQL)
+        logger.info('Updated visibility of %s dungeons', updated_rows)
 
     def _process_dungeons(self, db: DbWrapper):
         logger.warning('loading %s dungeons', len(self.data.dungeons))

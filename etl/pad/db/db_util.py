@@ -127,6 +127,18 @@ class DbWrapper(object):
                 raise ValueError('got too many results for insert:', num_rows, sql)
             return cursor.lastrowid
 
+    def update_item(self, sql):
+        with self.connection.cursor() as cursor:
+            if self.dry_run:
+                logger.warn('not running update due to dry run')
+                return 0
+            self.execute(cursor, sql)
+            data = list(cursor.fetchall())
+            num_rows = len(data)
+            if num_rows > 0:
+                raise ValueError('got too many results for update:', num_rows, sql)
+            return cursor.rowcount
+
     def insert_or_update(self, item: SqlItem, force_insert=False):
         try:
             return self._insert_or_update(item, force_insert=force_insert)
