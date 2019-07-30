@@ -137,10 +137,14 @@ def load_data(args):
     series_processor.post_process(db_wrapper)
 
     # Load dungeon data
-    DungeonProcessor(cs_database).process(db_wrapper)
+    dungeon_processor = DungeonProcessor(cs_database)
+    dungeon_processor.process(db_wrapper)
 
     # Load dungeon data derived from wave info
     DungeonContentProcessor(cs_database).process(db_wrapper)
+
+    # Toggle any newly-available dungeons visible
+    dungeon_processor.post_encounter_process(db_wrapper)
 
     # Load event data
     ScheduleProcessor(cs_database).process(db_wrapper)
