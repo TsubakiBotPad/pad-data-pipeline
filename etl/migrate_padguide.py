@@ -63,6 +63,9 @@ def load_data(args):
 
     do_migration(cs_database, db_wrapper)
 
+    print('Not migration, but consider running:')
+    print('UPDATE dungeons SET visible = false WHERE dungeon_id NOT IN (select dungeon_id  from encounters group by 1)')
+
 
 def do_migration(csd: crossed_data.CrossServerDatabase, db: DbWrapper):
     get_series_sql = ('SELECT tsr_seq AS series_id, name_jp, name_us AS name_na, name_kr'
