@@ -24,16 +24,6 @@ _UPDATE_TABLES = [
 ]
 
 
-class Timestamp(SimpleSqlItem):
-    """Table update timestamp."""
-    TABLE = 'timestamps'
-    KEY_COL = 'name'
-
-    def __init__(self, name: str = None, tstamp: int = None):
-        self.name = name
-        self.tstamp = tstamp
-
-
 class TimestampProcessor(object):
     def __init__(self):
         pass
@@ -43,6 +33,9 @@ class TimestampProcessor(object):
         for table in _UPDATE_TABLES:
             max_tstamp_sql = 'SELECT MAX(tstamp) AS tstamp FROM `{}`'.format(table)
             tstamp = db.get_single_value(max_tstamp_sql, op=int)
-
-            db.insert_or_update(Timestamp(table, tstamp))
+            update_sql = "INSERT INTO timestamps (name, tstamp) values ('{}', {}) ON DUPLICATE KEY UPDATE tstamp = {}".format(
+                table, tstamp, tstamp)
+            rows_updated = db.update_item(update_sql)
+            if rows_updated:
+                logger.info('Updated tstamp for {} to {}'.format(table, tstamp))
         logger.warning('done updating timestamps')
