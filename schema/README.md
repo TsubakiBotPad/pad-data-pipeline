@@ -36,29 +36,23 @@ delete from d_attributes;
 delete from d_types;
 ```
 
-## WIP tables
+## Deleting records
 
-### Mostly settled
+Tables with computed IDs will generally be autocreated and shouldn't be deleted,
+instead they should have a column added to hide them from display.a
 
-* active_skills
-* awakenings
-* awoken_skills
-* d_attributes
-* d_types
-* evolutions
-* leader_skills
-* monsters
-* timestamps
-* dungeons
-* sub_dungeons
-* rank_rewards
+For tables that are autoincrement ID keyed, we may need to delete records (e.g.
+for `encounters`).
 
-### Needs work (some, a lot)
+This is done by automatically inserting a row into the `deleted_rows` table via
+a trigger on the table, created like:
 
-* encounters
-* drops
-* dungeon_type
-* news
-* schedule
-* series
-* skill_condition
+```sql
+delimiter #
+CREATE TRIGGER encounters_deleted
+AFTER DELETE ON encounters
+FOR EACH ROW
+BEGIN
+  INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('encounters', OLD.encounter_id, UNIX_TIMESTAMP());
+END#
+```
