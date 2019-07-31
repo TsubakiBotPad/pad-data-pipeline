@@ -13,7 +13,7 @@ logger.setLevel(logging.ERROR)
 
 
 class DbWrapper(object):
-    def __init__(self, dry_run: bool=True):
+    def __init__(self, dry_run: bool = True):
         self.dry_run = dry_run
         self.connection = None
 
@@ -58,7 +58,7 @@ class DbWrapper(object):
             else:
                 return data[0]
 
-    def get_single_value(self, sql, op: Callable=str, fail_on_empty=True):
+    def get_single_value(self, sql, op: Callable = str, fail_on_empty=True):
         with self.connection.cursor() as cursor:
             self.execute(cursor, sql)
             data = list(cursor.fetchall())
@@ -157,7 +157,6 @@ class DbWrapper(object):
                 item.set_key_value(key)
             logger.info('force inserted an item: %s %s', item_type, key)
             return
-
 
         if item.exists_strategy() == ExistsStrategy.BY_KEY:
             if not self.check_existing(item.key_exists_sql()):
