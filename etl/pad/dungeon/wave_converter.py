@@ -4,9 +4,7 @@ from typing import List, Set, Optional
 
 from pad.common import monster_id_mapping
 from pad.common.shared_types import Server, MonsterId
-from pad.raw import Card
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
-from pad.raw_processor.merged_data import MergedCard
 from pad.storage.wave import WaveItem
 
 
@@ -24,8 +22,9 @@ class WaveCard(object):
 
 class ProcessedFloor(object):
     def __init__(self):
-        self.invades = None
-        self.stages = []
+        self.invades = None  # Type: Optional[ProcessedStage]
+        self.common_monsters = None  # Type: Optional[ProcessedStage]
+        self.stages = []  # Type: List[ProcessedStage]
 
         self.entry_count = 0
         self.coins = []
@@ -56,6 +55,9 @@ class ProcessedFloor(object):
 
 
 class ProcessedStage(object):
+    INVADE_IDX = -1
+    COMMON_IDX = 0
+
     def __init__(self, stage_idx):
         self.stage_idx = stage_idx
         self.count = 0
@@ -90,11 +92,43 @@ class ProcessedStage(object):
 
 
 class ResultFloor(object):
-    def __init__(self, floor: ProcessedFloor):
+    def __init__(self, floor: ProcessedFloor, try_common_monsters):
         self.stages = []
         if floor.invades:
             self.stages.append(ResultStage(floor.invades))
-        self.stages.extend([ResultStage(s) for s in floor.stages])
+
+        result_stages = [ResultStage(s) for s in floor.stages]
+
+        if try_common_monsters:
+            # For Normal and Technical dungeons, minimize the stages we output by sticking a
+            # 'common monsters' floor at the start.
+            common_slots = []  # type List[ResultSlot]
+
+            # Find the stages that seem to have common slots vs the ones that are fixed
+            for stage in result_stages:
+                if not any([s.always_spawns for s in stage.slots]):
+                    common_slots.extend(stage.slots)
+                else:
+                    self.stages.append(stage)
+
+            if common_slots:
+                # If we found any common slots, insert a fake record for it.
+                monster_id_to_adjusted_slot = {}
+                for slot in common_slots:
+                    if slot.monster_id not in monster_id_to_adjusted_slot:
+                        slot.max_spawn = None
+                        slot.min_spawn = None
+                        slot.order = slot.visible_monster_id()
+                        slot.always_spawns = False
+                        monster_id_to_adjusted_slot[slot.monster_id] = slot
+                    else:
+                        monster_id_to_adjusted_slot[slot.monster_id].drops.update(slot.drops)
+
+                common_result_stage = ResultStage(ProcessedStage(ProcessedStage.COMMON_IDX))
+                common_result_stage.slots = list(monster_id_to_adjusted_slot.values())
+                self.stages.insert(0, common_result_stage)
+        else:
+            self.stages.extend(result_stages)
 
         def fix(i):
             return int(round(i))
@@ -119,7 +153,7 @@ class ResultFloor(object):
 class ResultStage(object):
     def __init__(self, processed_stage: ProcessedStage):
         self.stage_idx = processed_stage.stage_idx
-        self.slots = [] # type: List[ResultSlot]
+        self.slots = []  # type: List[ResultSlot]
 
         # Chunk the spawns into fixed (always a specific number on the floor) or
         # random (varying number on the floor).
@@ -182,14 +216,12 @@ class WaveConverter(object):
     def __init__(self, data: CrossServerDatabase):
         self.data = data
 
-    def convert(self, wave_items: List[WaveItem]) -> ResultFloor:
+    def convert(self, wave_items: List[WaveItem], try_common_monsters: bool) -> ResultFloor:
         result = ProcessedFloor()
 
         waves_by_entry = defaultdict(list)
         waves_by_stage_and_entry = defaultdict(lambda: defaultdict(list))
         for wave_item in wave_items:
-            # Correct for NA server mappings if necessary
-            monster_id = wave_item.monster_id
             drop_id = wave_item.get_drop()
 
             # Stuff in this range is supposedly:
@@ -204,6 +236,8 @@ class WaveConverter(object):
             if drop_id and (9000 < drop_id < 10000):
                 raise ValueError('Special drop detected (not handled yet)')
 
+            # Correct for NA server mappings if necessary
+            monster_id = wave_item.monster_id
             if wave_item.server != Server.jp:
                 monster_id = monster_id_mapping.nakr_no_to_monster_id(monster_id)
                 if drop_id:
@@ -226,7 +260,7 @@ class WaveConverter(object):
             result.add_entry(entry_waves)
 
         # Calculate stuff at a per-stage level, like spawns and drops.
-        invades = ProcessedStage(0)
+        invades = ProcessedStage(ProcessedStage.INVADE_IDX)
         stages = [ProcessedStage(i + 1) for i in sorted(waves_by_stage_and_entry.keys())]
         last_stage_idx = stages[-1].stage_idx
         for stage in stages:
@@ -234,7 +268,7 @@ class WaveConverter(object):
 
             for entry_waves in waves_for_stage.values():
                 if stage.stage_idx != last_stage_idx and entry_waves[0].wave_item.is_invade():
-                    # Invades happen only on non-boss floors
+                    # Invades happen only on non-boss floors; some bosses represent as invades though.
                     invades.add_wave_group(entry_waves)
                 else:
                     stage.add_wave_group(entry_waves)
@@ -244,4 +278,4 @@ class WaveConverter(object):
 
         result.stages.extend(stages)
 
-        return ResultFloor(result)
+        return ResultFloor(result, try_common_monsters)

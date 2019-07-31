@@ -5,7 +5,7 @@ from pad.common.dungeon_types import RawDungeonType
 from pad.common.icons import SpecialIcons
 from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
-from pad.dungeon.wave_converter import WaveConverter, ResultFloor, ResultSlot
+from pad.dungeon.wave_converter import WaveConverter, ResultFloor
 from pad.raw.bonus import BonusType
 from pad.raw_processor import crossed_data
 from pad.raw_processor.crossed_data import CrossServerSubDungeon, CrossServerDungeon
@@ -63,7 +63,11 @@ class DungeonContentProcessor(object):
         if not wave_items:
             return None
 
-        return self.converter.convert(wave_items)
+        normal_or_tech = dungeon.jp_dungeon.full_dungeon_type in [RawDungeonType.NORMAL,
+                                                                  RawDungeonType.TECHNICAL]
+        try_common_monsters = normal_or_tech and dungeon.jp_dungeon.dungeon_id < 1000
+
+        return self.converter.convert(wave_items, try_common_monsters)
 
     def _maybe_insert_encounters(self,
                                  db: DbWrapper,
