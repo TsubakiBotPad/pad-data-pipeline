@@ -49,7 +49,7 @@ def load_from_db(db_config, table, tstamp):
         sql += ' WHERE tstamp > {}'.format(int(tstamp))
 
         if table == 'schedule':
-            sql += ' AND close_timestamp > UNIX_TIMESTAMP()'
+            sql += ' AND end_timestamp > UNIX_TIMESTAMP()'
 
     # Added this to make client updating easier; if the update fails, the lowest-value records will have been inserted,
     # and the higher value ones will get inserted on the next run.
