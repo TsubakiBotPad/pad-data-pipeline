@@ -52,6 +52,7 @@ IGNORED_BONUS_TYPES = [
     BonusType.monthly_quest_dungeon,  # This has a dupe dungeon entry.
     BonusType.pad_metadata,
     BonusType.pad_metadata_2,
+    BonusType.story_category_text,
 
     # Might need this to tag dungeons as tournaments, even closed ones.
     # Probably happens outside this processor though.
