@@ -50,6 +50,7 @@ class BonusType(Enum):
     unknown_40 = 40
     dungeon_web_info_link = 43
     stone_purchase_text = 44
+    story_category_text = 47
 
 
 class BonusTypeEntry(object):
@@ -131,6 +132,8 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.dungeon_web_info_link),
     # !June Bride bundles available!
     BonusTypeEntry(BonusType.stone_purchase_text),
+    # ソニア編登 - appears above the story dungeon card
+    BonusTypeEntry(BonusType.story_category_text),
 ]
 
 TYPES_MAP = {bte.bonus_type.value: bte for bte in ALL_TYPES}
