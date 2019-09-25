@@ -10,6 +10,7 @@ class RawDungeonType(Enum):
     DEPRECATED = 5 # Not entirely sure of this one but seems like a safe bet
     UNUSED_6 = 6
     MULTIPLAYER = 7
+    STORY = 9
 
 
 class RawRepeatDay(Enum):
