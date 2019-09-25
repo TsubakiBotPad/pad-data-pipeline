@@ -63,6 +63,9 @@ class SubDungeon(pad_util.Printable):
         for field in self.remaining_fields:
             if not 'fc1' in field:
                 continue
+            else:
+                # TODO: this broke, look into re-enabling it
+                continue
             for sub_field in field.split('|'):
                 if not sub_field.startswith('fc'):
                     continue
