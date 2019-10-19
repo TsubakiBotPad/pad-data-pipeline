@@ -88,6 +88,15 @@ def make_cross_server_card(jp_card: MergedCard,
         if source_card is None:
             return dest_card
 
+        # Check if the card isn't available based on the name.
+        new_data_card = _compare_named(source_card.card, dest_card.card)
+        if new_data_card != dest_card.card:
+            dest_card.card = new_data_card
+            # This is kind of gross and makes me think it might be wrong. We're checking the MergedCard.server
+            # when creating the monster to determine where the data was sourced from, so we have to also
+            # overwrite it here.
+            dest_card.server = source_card.server
+
         # Apparently some monsters can be ported to servers before their skills are
         dest_card.leader_skill = _compare_named(source_card.leader_skill, dest_card.leader_skill)
         dest_card.active_skill = _compare_named(source_card.active_skill, dest_card.active_skill)
@@ -111,6 +120,10 @@ def make_cross_server_card(jp_card: MergedCard,
     na_card = override_if_necessary(jp_card, na_card)
     jp_card = override_if_necessary(na_card, jp_card)
     kr_card = override_if_necessary(na_card, kr_card)
+
+    if is_bad_name(jp_card.card.name):
+        # This is a debug monster, or not yet supported
+        return None, 'Debug monster'
 
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
 

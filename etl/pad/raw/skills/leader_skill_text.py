@@ -333,7 +333,6 @@ class LsTextConverter(BaseTextConverter):
     def orb_remain_convert(self, ls):
         skill_text = self.fmt_stats_type_attr_bonus(ls, atk=ls.min_atk)
         if skill_text:
-            print('got one!')
             skill_text += '; '
 
         if ls.base_atk not in [0, 1]:
