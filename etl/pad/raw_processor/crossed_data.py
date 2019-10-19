@@ -6,7 +6,7 @@ import logging
 import os
 from typing import List, Optional
 
-from pad.common import dungeon_types
+from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
 from pad.raw import MonsterSkill, Dungeon
 from pad.raw.dungeon import SubDungeon
@@ -308,6 +308,18 @@ class CrossServerDatabase(object):
                 csc.has_hqimage = True
             if csc.monster_id in self.animated_monster_ids:
                 csc.has_animation = True
+
+    def save(self, output_dir: str, file_name: str, obj: object, pretty: bool):
+        output_file = os.path.join(output_dir, '{}.json'.format(file_name))
+        with open(output_file, 'w') as f:
+            pad_util.json_file_dump(obj, f, pretty)
+
+    def save_all(self, output_dir: str, pretty: bool):
+        self.save(output_dir, 'all_cards', self.all_cards, pretty)
+        self.save(output_dir, 'dungeons', self.dungeons, pretty)
+        self.save(output_dir, 'jp_bonuses', self.jp_bonuses, pretty)
+        self.save(output_dir, 'na_bonuses', self.na_bonuses, pretty)
+        self.save(output_dir, 'kr_bonuses', self.kr_bonuses, pretty)
 
     # TODO: move this to another file
     # TODO: check with KR data

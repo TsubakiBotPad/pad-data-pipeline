@@ -60,14 +60,18 @@ def run_test(args):
     print('merging data')
     cross_db = CrossServerDatabase(jp_db, na_db, kr_db)
 
+    print('saving merged data')
+    cross_db.save_all(new_output_dir, True)
+
     files = {
-        'crossed_cards.json': cross_db.all_cards,
+        'all_cards.json': cross_db.all_cards,
         'dungeons.json': cross_db.dungeons,
         'jp_bonuses.json': cross_db.jp_bonuses,
         'na_bonuses.json': cross_db.na_bonuses,
         'kr_bonuses.json': cross_db.kr_bonuses,
     }
 
+    print('starting diff')
     for file, data in files.items():
         new_file = os.path.join(new_output_dir, file)
         golden_file = os.path.join(golden_output_dir, file)
@@ -76,6 +80,7 @@ def run_test(args):
             shutil.copy(new_file, golden_file)
             continue
 
+        print('diffing', golden_file, 'against', new_file)
         with open(golden_file) as f:
             golden_data = json.load(f)
 
