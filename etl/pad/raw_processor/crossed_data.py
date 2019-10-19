@@ -79,13 +79,17 @@ def make_cross_server_card(jp_card: MergedCard,
         # Card probably exists in JP/NA but not in KR
         kr_card = na_card
 
-    # Apparently some monsters can be ported to NA before their skills are
-    def override_if_necessary(source_card: MergedCard, dest_card: MergedCard):
-        if source_card.leader_skill and not dest_card.leader_skill:
-            dest_card.leader_skill = source_card.leader_skill
+    def compare_named(override, dest):
+        if override and not dest:
+            return override
+        if override and dest and is_bad_name(dest.name) and not is_bad_name(override.name):
+            return override
+        return dest
 
-        if source_card.active_skill and not dest_card.active_skill:
-            dest_card.active_skill = source_card.active_skill
+    # Apparently some monsters can be ported to servers before their skills are
+    def override_if_necessary(source_card: MergedCard, dest_card: MergedCard):
+        dest_card.leader_skill = compare_named(source_card.leader_skill, dest_card.leader_skill)
+        dest_card.active_skill = compare_named(source_card.active_skill, dest_card.active_skill)
 
         if len(source_card.enemy_behavior) != len(dest_card.enemy_behavior):
             dest_card.enemy_behavior = source_card.enemy_behavior
@@ -99,8 +103,9 @@ def make_cross_server_card(jp_card: MergedCard,
                 dest_card.enemy_behavior[idx].jp_name = (source_card.enemy_behavior[idx].name or
                                                          dest_card.enemy_behavior[idx].name)
 
-    # NA takes overrides from JP, and KR from NA
+    # Override priority: JP > NA, NA -> JP, NA -> KR.
     override_if_necessary(jp_card, na_card)
+    override_if_necessary(na_card, jp_card)
     override_if_necessary(na_card, kr_card)
 
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
