@@ -270,12 +270,6 @@ class CrossServerDatabase(object):
         self.dungeons = build_cross_server_dungeons(jp_database,
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
-        self.skills = build_cross_server_skills(jp_database,
-                                                na_database,
-                                                kr_database)  # type: List[CrossServerSkill]
-
-        # Hack to inject calculated skills from old padguide system
-        self.calculated_skills = {}
 
         self.jp_bonuses = jp_database.bonuses
         self.na_bonuses = na_database.bonuses
@@ -292,12 +286,6 @@ class CrossServerDatabase(object):
 
     def dungeon_by_id(self, dungeon_id: DungeonId) -> CrossServerDungeon:
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
-
-    def load_skill_text(self, skills_file_path: str):
-        # This is a hack until we have skill parsing working properly.
-        with open(skills_file_path) as f:
-            skills_json = json.load(f)
-        self.calculated_skills = {int(k): v for k, v in skills_json.items()}
 
     def load_extra_image_info(self, media_dir: str):
         for f in os.listdir(os.path.join(media_dir, 'hq_portraits')):
