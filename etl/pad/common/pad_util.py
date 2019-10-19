@@ -136,12 +136,12 @@ def load_raw_json(data_dir: str = None, json_file: str = None, file_name: str = 
 
 def json_string_dump(obj, pretty=False):
     indent = 4 if pretty else None
-    return json.dumps(obj, indent=indent, sort_keys=True, default=dump_helper)
+    return json.dumps(obj, indent=indent, sort_keys=True, default=dump_helper, ensure_ascii=False)
 
 
 def json_file_dump(obj, f, pretty=False):
     indent = 4 if pretty else None
-    json.dump(obj, f, indent=indent, sort_keys=True, default=dump_helper)
+    json.dump(obj, f, indent=indent, sort_keys=True, default=dump_helper, ensure_ascii=False)
 
 
 def dump_helper(x):
