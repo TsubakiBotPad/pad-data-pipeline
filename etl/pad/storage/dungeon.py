@@ -39,6 +39,9 @@ class Dungeon(SimpleSqlItem):
     def _non_auto_update_cols(self):
         return ['visible']
 
+    def __str__(self):
+        return 'Dungeon({}): {}'.format(self.key_value(), self.name_na)
+
 
 class DungeonWaveData(SimpleSqlItem):
     """Dungeon data that can only be computed from waves."""
@@ -73,6 +76,9 @@ class DungeonRewardData(SimpleSqlItem):
         self.reward_kr = reward_kr
         self.reward_icon_ids = reward_icon_ids
         self.tstamp = tstamp
+
+    def __str__(self):
+        return 'DungeonReward({}): {} - {}'.format(self.key_value(), self.reward_na, self.reward_icon_ids)
 
 
 class SubDungeon(SimpleSqlItem):
@@ -124,6 +130,9 @@ class SubDungeon(SimpleSqlItem):
         self.s_rank = s_rank
         self.tstamp = tstamp
 
+    def __str__(self):
+        return 'SubDungeon({}): {}'.format(self.key_value(), self.name_na)
+
 
 class SubDungeonWaveData(SimpleSqlItem):
     """Sub-dungeon data that can only be computed from waves."""
@@ -165,6 +174,9 @@ class SubDungeonWaveData(SimpleSqlItem):
         self.icon_id = icon_id
         self.tstamp = tstamp
 
+    def __str__(self):
+        return 'SDWaveData({}): {}'.format(self.key_value(), self.icon_id)
+
 
 class SubDungeonRewardData(SimpleSqlItem):
     """Sub-dungeon data that can only be computed from bonus floor text."""
@@ -185,3 +197,6 @@ class SubDungeonRewardData(SimpleSqlItem):
         self.reward_kr = reward_kr
         self.reward_icon_ids = reward_icon_ids
         self.tstamp = tstamp
+
+    def __str__(self):
+        return 'SDRewardData({}): {}'.format(self.key_value(), self.reward_na)

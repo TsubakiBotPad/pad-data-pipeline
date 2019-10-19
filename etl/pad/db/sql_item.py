@@ -3,6 +3,8 @@ import time
 from datetime import datetime, date
 from enum import Enum
 
+from pad.common.pad_util import Printable
+
 
 def _object_to_sql_params(obj):
     d = obj if type(obj) == dict else obj.__dict__
@@ -107,7 +109,7 @@ class ExistsStrategy(Enum):
     CUSTOM = 3  # Prevents mistaken 'standard' inserts; requires a force method
 
 
-class SqlItem(object):
+class SqlItem(Printable):
     def key_value(self):
         return getattr(self, self._key()) if self._key() else None
 
@@ -176,9 +178,6 @@ class SqlItem(object):
 
 
 class SimpleSqlItem(SqlItem):
-    def __repr__(self):
-        return dump(self)
-
     def _table(self):
         return type(self).TABLE
 
