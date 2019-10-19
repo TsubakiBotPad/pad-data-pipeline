@@ -22,34 +22,20 @@ class MonsterProcessor(object):
         logger.warning('done loading monster data')
 
     def _process_skills(self, db: DbWrapper):
-        skill_id_to_crossed_skills = {css.skill_id: css for css in self.data.skills}
-
-        # Identify every skill ID currently in use across all servers.
-        ls_in_use = set()
-        as_in_use = set()
+        logger.warning('loading skills for %s cards', len(self.data.ownable_cards))
+        ls_count = 0
+        as_count = 0
         for m in self.data.ownable_cards:
-            ls_in_use.update(filter(None, [
-                m.jp_card.leader_skill_id,
-                m.na_card.leader_skill_id,
-                m.kr_card.leader_skill_id,
-            ]))
-            as_in_use.update(filter(None, [
-                m.jp_card.active_skill_id,
-                m.na_card.active_skill_id,
-                m.kr_card.active_skill_id,
-            ]))
+            if m.jp_card.leader_skill:
+                ls_count += 1
+                db.insert_or_update(
+                    LeaderSkill.from_ls(m.jp_card.leader_skill, m.na_card.leader_skill, m.kr_card.leader_skill))
+            if m.jp_card.active_skill:
+                as_count += 1
+                db.insert_or_update(
+                    ActiveSkill.from_as(m.jp_card.active_skill, m.na_card.active_skill, m.kr_card.active_skill))
 
-        logger.warning('loading %s in-use leader skills', len(ls_in_use))
-        for ls_skill_id in ls_in_use:
-            ls_css = skill_id_to_crossed_skills[ls_skill_id]
-            calc_skill = self.data.calculated_skills.get(ls_skill_id)
-            db.insert_or_update(LeaderSkill.from_css(ls_css, calc_skill))
-
-        logger.warning('loading %s in-use active skills', len(as_in_use))
-        for as_skill_id in as_in_use:
-            as_css = skill_id_to_crossed_skills[as_skill_id]
-            calc_skill = self.data.calculated_skills.get(as_skill_id)
-            db.insert_or_update(ActiveSkill.from_css(as_css, calc_skill))
+        logger.warning('loaded %s leader skills and %s active skills', ls_count, as_count)
 
     def _process_monsters(self, db):
         logger.warning('loading %s monsters', len(self.data.ownable_cards))
@@ -64,7 +50,7 @@ class MonsterProcessor(object):
             for item in items:
                 try:
                     db.insert_or_update(item)
-                except Exception as ex:
+                except:
                     human_fix_logger.fatal('Failed to insert item (probably new awakening): %s',
                                            pad_util.json_string_dump(item, pretty=True))
 

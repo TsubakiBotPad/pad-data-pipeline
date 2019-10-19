@@ -1,9 +1,13 @@
 from datetime import date
 from typing import List, Optional
 
-from pad.common.shared_types import Server, MonsterId, MonsterNo, JsonType, EvolutionType
+from pad.common.shared_types import Server, MonsterId, MonsterNo, EvolutionType
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
-from pad.raw_processor.crossed_data import CrossServerSkill, CrossServerCard
+from pad.raw.skills.active_skill_info import ActiveSkill as RawActiveSkill
+from pad.raw.skills.active_skill_text import AsTextConverter
+from pad.raw.skills.leader_skill_info import LeaderSkill as RawLeaderSkill
+from pad.raw.skills.leader_skill_text import LsTextConverter
+from pad.raw_processor.crossed_data import CrossServerCard
 from pad.storage.series import Series
 
 
@@ -184,6 +188,9 @@ class Monster(SimpleSqlItem):
             'rem_egg',
         ]
 
+    def __str__(self):
+        return 'Monster({}): {}'.format(self.key_value(), self.name_na)
+
 
 class MonsterWithSeries(SimpleSqlItem):
     """Monster helper for inserting series."""
@@ -198,6 +205,9 @@ class MonsterWithSeries(SimpleSqlItem):
         self.series_id = series_id
         self.tstamp = tstamp
 
+    def __str__(self):
+        return 'Monster({}): {}'.format(self.key_value(), self.series_id)
+
 
 class ActiveSkill(SimpleSqlItem):
     """Monster active skill."""
@@ -205,18 +215,18 @@ class ActiveSkill(SimpleSqlItem):
     KEY_COL = 'active_skill_id'
 
     @staticmethod
-    def from_css(o: CrossServerSkill, calc_skill: JsonType) -> 'ActiveSkill':
-        na_description = calc_skill['description'] if calc_skill else o.na_skill.description
+    def from_as(jp_skill: RawActiveSkill, na_skill: RawActiveSkill, kr_skill: RawActiveSkill) -> 'ActiveSkill':
+        na_description = na_skill.full_text(AsTextConverter())
         return ActiveSkill(
-            active_skill_id=o.skill_id,
-            name_jp=o.jp_skill.name,
-            name_na=o.na_skill.name,
-            name_kr=o.kr_skill.name,
-            desc_jp=o.jp_skill.description,
+            active_skill_id=jp_skill.skill_id,
+            name_jp=jp_skill.name,
+            name_na=na_skill.name,
+            name_kr=kr_skill.name,
+            desc_jp=jp_skill.raw_description,
             desc_na=na_description,
-            desc_kr=o.kr_skill.description,
-            turn_max=o.jp_skill.turn_max,
-            turn_min=o.jp_skill.turn_min)
+            desc_kr=kr_skill.raw_description,
+            turn_max=jp_skill.turn_max,
+            turn_min=jp_skill.turn_min)
 
     def __init__(self,
                  active_skill_id: int = None,
@@ -240,6 +250,9 @@ class ActiveSkill(SimpleSqlItem):
         self.turn_min = turn_min
         self.tstamp = tstamp
 
+    def __str__(self):
+        return 'Active({}): {} -> {}'.format(self.key_value(), self.name_na, self.desc_na)
+
 
 class LeaderSkill(SimpleSqlItem):
     """Monster leader skill."""
@@ -247,22 +260,20 @@ class LeaderSkill(SimpleSqlItem):
     KEY_COL = 'leader_skill_id'
 
     @staticmethod
-    def from_css(o: CrossServerSkill, calc_skill: JsonType) -> 'LeaderSkill':
-        na_description = calc_skill['description'] if calc_skill else o.na_skill.description
-        skill_params = calc_skill['params'] if calc_skill else [1.0, 1.0, 1.0, 0.0]
-        skill_params = list(map(lambda x: round(x, 2), skill_params))
+    def from_ls(jp_skill: RawLeaderSkill, na_skill: RawLeaderSkill, kr_skill: RawLeaderSkill) -> 'LeaderSkill':
+        na_description = na_skill.full_text(LsTextConverter())
         return LeaderSkill(
-            leader_skill_id=o.skill_id,
-            name_jp=o.jp_skill.name,
-            name_na=o.na_skill.name,
-            name_kr=o.kr_skill.name,
-            desc_jp=o.jp_skill.description,
+            leader_skill_id=jp_skill.skill_id,
+            name_jp=jp_skill.name,
+            name_na=na_skill.name,
+            name_kr=kr_skill.name,
+            desc_jp=jp_skill.raw_description,
             desc_na=na_description,
-            desc_kr=o.kr_skill.description,
-            max_hp=skill_params[0],
-            max_atk=skill_params[1],
-            max_rcv=skill_params[2],
-            max_shield=skill_params[3])
+            desc_kr=kr_skill.raw_description,
+            max_hp=jp_skill.hp,
+            max_atk=jp_skill.atk,
+            max_rcv=jp_skill.rcv,
+            max_shield=jp_skill.rcv)
 
     def __init__(self,
                  leader_skill_id: int = None,
@@ -289,6 +300,9 @@ class LeaderSkill(SimpleSqlItem):
         self.max_rcv = max_rcv
         self.max_shield = max_shield
         self.tstamp = tstamp
+
+    def __str__(self):
+        return 'Leader ({}): {} -> {}'.format(self.key_value(), self.name_na, self.desc_na)
 
 
 class Awakening(SimpleSqlItem):
@@ -333,6 +347,10 @@ class Awakening(SimpleSqlItem):
     def _non_auto_update_cols(self):
         return [self._key()]
 
+    def __str__(self):
+        return 'Awakening ({}): {} -> {}, super={}'.format(
+            self.key_value(), self.monster_id, self.awoken_skill_id, self.is_super)
+
 
 class Evolution(SimpleSqlItem):
     """Monster evolution entry."""
@@ -356,11 +374,11 @@ class Evolution(SimpleSqlItem):
             reversible = True
 
         if not ancestor.jp_card.card.ancestor_id:
-            evolution_type =  EvolutionType.evo.value   # Evo
+            evolution_type = EvolutionType.evo.value  # Evo
         elif reversible:
-            evolution_type =  EvolutionType.reversible.value   # Ult/Awoken/Assist
+            evolution_type = EvolutionType.reversible.value  # Ult/Awoken/Assist
         else:
-            evolution_type =  EvolutionType.non_reversible.value   # Reincarn/SuperReincarn
+            evolution_type = EvolutionType.non_reversible.value  # Reincarn/SuperReincarn
 
         return Evolution(
             evolution_id=None,  # Key that is looked up or inserted
@@ -406,3 +424,6 @@ class Evolution(SimpleSqlItem):
 
     def _lookup_columns(self):
         return ['from_id', 'to_id']
+
+    def __str__(self):
+        return 'Evo ({}): {} -> {}, type={}'.format(self.key_value(), self.from_id, self.to_id, self.evolution_type)

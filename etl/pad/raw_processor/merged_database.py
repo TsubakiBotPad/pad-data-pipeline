@@ -10,6 +10,9 @@ from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, 
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, egg_machine
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill
 # from ..processor import enemy_skillset as ess
+from pad.raw.skills.active_skill_info import ActiveSkill
+from pad.raw.skills.leader_skill_info import LeaderSkill
+from pad.raw.skills.skill_parser import SkillParser
 from .merged_data import MergedBonus, MergedCard, MergedEnemy
 
 fail_logger = logging.getLogger('processor_failures')
@@ -41,25 +44,24 @@ def _clean_bonuses(server: Server, bonus_sets, dungeons) -> List[MergedBonus]:
 
 def _clean_cards(server: Server,
                  cards: List[card.Card],
-                 skills: List[skill.MonsterSkill],
-                 enemy_skills: List[MergedEnemy]) -> List[MergedCard]:
-    skills_by_id = {s.skill_id: s for s in skills}
+                 enemy_skills: List[MergedEnemy],
+                 db) -> List[MergedCard]:
     enemy_behavior_by_enemy_id = {int(s.enemy_id): s.behavior for s in enemy_skills}
 
     merged_cards = []
     for card in cards:
-        active_skill = None
-        leader_skill = None
+        active_skill = None  # type: ActiveSkill
+        leader_skill = None  # type: LeaderSkill
         critical_failures = []
 
         if card.active_skill_id:
-            active_skill = skills_by_id.get(card.active_skill_id, None)
+            active_skill = db.active_skill_by_id(card.active_skill_id)
             if active_skill is None:
                 critical_failures.append('Active skill lookup failed: %s - %s'.format(
                     repr(card), card.active_skill_id))
 
         if card.leader_skill_id:
-            leader_skill = skills_by_id.get(card.leader_skill_id, None)
+            leader_skill = db.leader_skill_by_id(card.leader_skill_id)
             if leader_skill is None:
                 critical_failures.append('Leader skill lookup failed: %s - %s'.format(
                     repr(card), card.leader_skill_id))
@@ -103,10 +105,14 @@ class Database(object):
         # Computed from other entries
         self.bonuses = []  # type: List[MergedBonus]
         self.cards = []  # type: List[MergedCard]
+        self.leader_skills = []  # type: List[LeaderSkill]
+        self.active_skills = []  # type: List[ActiveSkill]
         self.enemies = []  # type: List[MergedEnemy]
 
         # Faster lookups
         self.skill_id_to_skill = {}  # type: Dict[SkillId, MonsterSkill]
+        self.skill_id_to_leader_skill = {}  # type: Dict[SkillId, LeaderSkill]
+        self.skill_id_to_active_skill = {}  # type: Dict[SkillId, ActiveSkill]
         self.dungeon_id_to_dungeon = {}  # type: Dict[DungeonId, Dungeon]
         self.monster_no_to_card = {}  # type: Dict[MonsterNo, MergedCard]
         self.monster_id_to_card = {}  # type: Dict[MonsterId, MergedCard]
@@ -125,8 +131,12 @@ class Database(object):
 
         if not skip_skills:
             self.skills = skill.load_skill_data(data_dir=base_dir)
-            self.skill_id_to_skill = {s.skill_id: s for s in self.skills}
-            # TODO: need to compute skill data here
+            parser = SkillParser()
+            parser.parse(self.skills)
+            self.leader_skills = parser.leader_skills
+            self.active_skills = parser.active_skills
+            self.skill_id_to_leader_skill = {s.skill_id: s for s in self.leader_skills}
+            self.skill_id_to_active_skill = {s.skill_id: s for s in self.active_skills}
 
         self.enemy_skills = enemy_skill.load_enemy_skill_data(data_dir=base_dir)
 
@@ -136,7 +146,7 @@ class Database(object):
 
         self.bonuses = _clean_bonuses(self.server, self.bonus_sets, self.dungeons)
         self.enemies = _clean_enemy(raw_cards, self.enemy_skills)
-        self.cards = _clean_cards(self.server, raw_cards, self.skills, self.enemies)
+        self.cards = _clean_cards(self.server, raw_cards, self.enemies, self)
 
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
         self.monster_no_to_card = {c.monster_no: c for c in self.cards}
@@ -155,22 +165,27 @@ class Database(object):
     def save_all(self, output_dir: str, pretty: bool):
         self.save(output_dir, 'dungeons', self.dungeons, pretty)
         self.save(output_dir, 'skills', self.skills, pretty)
+        self.save(output_dir, 'leader_skills', self.leader_skills, pretty)
+        self.save(output_dir, 'active_skills', self.active_skills, pretty)
         self.save(output_dir, 'enemy_skills', self.enemy_skills, pretty)
         self.save(output_dir, 'bonuses', self.bonuses, pretty)
         self.save(output_dir, 'cards', self.cards, pretty)
         self.save(output_dir, 'exchange', self.exchange, pretty)
         self.save(output_dir, 'enemies', self.enemies, pretty)
 
-    def skill_by_id(self, skill_id: SkillId):
-        return self.skill_id_to_skill.get(skill_id, None)
+    def leader_skill_by_id(self, skill_id: SkillId) -> LeaderSkill:
+        return self.skill_id_to_leader_skill.get(skill_id, None)
 
-    def dungeon_by_id(self, dungeon_id: DungeonId):
+    def active_skill_by_id(self, skill_id: SkillId) -> ActiveSkill:
+        return self.skill_id_to_active_skill.get(skill_id, None)
+
+    def dungeon_by_id(self, dungeon_id: DungeonId) -> Dungeon:
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
 
-    def card_by_monster_no(self, monster_no: MonsterNo):
+    def card_by_monster_no(self, monster_no: MonsterNo) -> MergedCard:
         return self.monster_no_to_card.get(monster_no, None)
 
-    def card_by_monster_id(self, monster_id: MonsterId):
+    def card_by_monster_id(self, monster_id: MonsterId) -> MergedCard:
         return self.monster_id_to_card.get(monster_id, None)
 
     def enemy_by_id(self, enemy_id):

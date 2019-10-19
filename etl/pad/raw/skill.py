@@ -44,7 +44,7 @@ class MonsterSkill(pad_util.Printable):
         self.unknown_005 = raw[5]
 
         # Fields used in coordination with skill_type.
-        self.other_fields = raw[6:]
+        self.data = raw[6:]
 
     def __str__(self):
         return str(self.__dict__)
