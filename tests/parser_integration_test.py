@@ -12,10 +12,9 @@ import difflib
 import json
 import os
 import pathlib
-
 import shutil
 
-from pad.common.pad_util import dump_helper
+from pad.common.pad_util import json_string_dump
 from pad.common.shared_types import Server
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase
@@ -95,8 +94,8 @@ def run_test(args):
             gold_row = golden_data[i]
             new_row = data[i]
 
-            gold_str = json.dumps(gold_row, indent=4, sort_keys=True, default=dump_helper)
-            new_str = json.dumps(new_row, indent=4, sort_keys=True, default=dump_helper)
+            gold_str = json_string_dump(gold_row, pretty=True)
+            new_str = json_string_dump(new_row, pretty=True)
 
             if gold_str != new_str:
                 failures.append([gold_str, new_str])
