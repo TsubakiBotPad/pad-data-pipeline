@@ -4,12 +4,14 @@ Data from across multiple servers merged together.
 import json
 import logging
 import os
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
 from pad.raw import MonsterSkill, Dungeon
 from pad.raw.dungeon import SubDungeon
+from pad.raw.skills.active_skill_info import ActiveSkill
+from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
@@ -30,6 +32,10 @@ class CrossServerCard(object):
         # These are optional loaded separately later
         self.has_hqimage = False
         self.has_animation = False
+
+        # This is an initial pass; the more 'correct' versions override later
+        self.leader_skill = make_cross_server_skill(jp_card.leader_skill, na_card.leader_skill, kr_card.leader_skill)
+        self.active_skill = make_cross_server_skill(jp_card.active_skill, na_card.active_skill, kr_card.active_skill)
 
 
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
@@ -56,7 +62,19 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
 
 def is_bad_name(name):
     """Finds names that are currently placeholder data."""
-    return any(x in name for x in ['***', '???']) or name == '無し'
+    return any(x in name for x in ['***', '???', '無し'])
+
+
+def _compare_named(override, dest):
+    """Tries to determine if we should replace dest with override.
+
+    First compares the null-ness of each, and then compares the quality of the 'name' property.
+    """
+    if override and not dest:
+        return override
+    if override and dest and is_bad_name(dest.name) and not is_bad_name(override.name):
+        return override
+    return dest
 
 
 # Creates a CrossServerCard if appropriate.
@@ -64,36 +82,21 @@ def is_bad_name(name):
 def make_cross_server_card(jp_card: MergedCard,
                            na_card: MergedCard,
                            kr_card: MergedCard) -> (CrossServerCard, str):
-    if jp_card is None:
-        # Basically only handles Voltron.
-        jp_card = na_card
-
-    if is_bad_name(jp_card.card.name):
-        return None, 'Skipping debug card: {}'.format(repr(jp_card))
-
-    if na_card is None or is_bad_name(na_card.card.name):
-        # Card probably exists in JP but not in NA
-        na_card = jp_card
-
-    if kr_card is None or is_bad_name(kr_card.card.name):
-        # Card probably exists in JP/NA but not in KR
-        kr_card = na_card
-
-    def compare_named(override, dest):
-        if override and not dest:
-            return override
-        if override and dest and is_bad_name(dest.name) and not is_bad_name(override.name):
-            return override
-        return dest
-
-    # Apparently some monsters can be ported to servers before their skills are
     def override_if_necessary(source_card: MergedCard, dest_card: MergedCard):
-        dest_card.leader_skill = compare_named(source_card.leader_skill, dest_card.leader_skill)
-        dest_card.active_skill = compare_named(source_card.active_skill, dest_card.active_skill)
+        if dest_card is None:
+            return source_card
+        if source_card is None:
+            return dest_card
 
+        # Apparently some monsters can be ported to servers before their skills are
+        dest_card.leader_skill = _compare_named(source_card.leader_skill, dest_card.leader_skill)
+        dest_card.active_skill = _compare_named(source_card.active_skill, dest_card.active_skill)
+
+        # Same concept with enemy skills, first check if we need to bulk overwrite
         if len(source_card.enemy_behavior) != len(dest_card.enemy_behavior):
             dest_card.enemy_behavior = source_card.enemy_behavior
 
+        # Then check if we need to individually overwrite
         for idx in range(len(source_card.enemy_behavior)):
             if type(source_card.enemy_behavior[idx]) != type(dest_card.enemy_behavior[idx]):
                 dest_card.enemy_behavior[idx] = source_card.enemy_behavior[idx]
@@ -102,11 +105,12 @@ def make_cross_server_card(jp_card: MergedCard,
                 # TODO: rename jp_name to alt_name or something
                 dest_card.enemy_behavior[idx].jp_name = (source_card.enemy_behavior[idx].name or
                                                          dest_card.enemy_behavior[idx].name)
+        return dest_card
 
     # Override priority: JP > NA, NA -> JP, NA -> KR.
-    override_if_necessary(jp_card, na_card)
-    override_if_necessary(na_card, jp_card)
-    override_if_necessary(na_card, kr_card)
+    na_card = override_if_necessary(jp_card, na_card)
+    jp_card = override_if_necessary(na_card, jp_card)
+    kr_card = override_if_necessary(na_card, kr_card)
 
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
 
@@ -208,24 +212,34 @@ def make_cross_server_sub_dungeons(jp_dungeon: Dungeon,
     return results
 
 
+EitherSkillType = Union[ActiveSkill, LeaderSkill]
+
+
 class CrossServerSkill(object):
-    def __init__(self, jp_skill: MonsterSkill, na_skill: MonsterSkill, kr_skill: MonsterSkill):
+    def __init__(self, jp_skill: EitherSkillType, na_skill: EitherSkillType, kr_skill: EitherSkillType):
         self.skill_id = jp_skill.skill_id
         self.jp_skill = jp_skill
         self.na_skill = na_skill
         self.kr_skill = kr_skill
 
 
-def build_cross_server_skills(jp_database: Database,
-                              na_database: Database,
-                              kr_database: Database) -> List[CrossServerSkill]:
-    results = []  # type: List[CrossServerSkill]
-    jp_ids = [skill.skill_id for skill in jp_database.skills]
+def build_cross_server_skills(jp_skills: List[EitherSkillType],
+                              na_skills: List[EitherSkillType],
+                              kr_skills: List[EitherSkillType]) -> List[CrossServerSkill]:
+    jp_map = {skill.skill_id: skill for skill in jp_skills}
+    na_map = {skill.skill_id: skill for skill in na_skills}
+    kr_map = {skill.skill_id: skill for skill in kr_skills}
 
-    for skill_id in jp_ids:
-        jp_skill = jp_database.skill_by_id(skill_id)
-        na_skill = na_database.skill_by_id(skill_id)
-        kr_skill = kr_database.skill_by_id(skill_id)
+    all_ids = set()
+    all_ids.update(jp_map.keys())
+    all_ids.update(na_map.keys())
+    all_ids.update(kr_map.keys())
+
+    results = []  # type: List[CrossServerSkill]
+    for skill_id in all_ids:
+        jp_skill = jp_map.get(skill_id, None)
+        na_skill = na_map.get(skill_id, None)
+        kr_skill = kr_map.get(skill_id, None)
 
         combined_skill = make_cross_server_skill(jp_skill, na_skill, kr_skill)
         if combined_skill:
@@ -234,29 +248,18 @@ def build_cross_server_skills(jp_database: Database,
     return results
 
 
-def make_cross_server_skill(jp_skill: MonsterSkill,
-                            na_skill: MonsterSkill,
-                            kr_skill: MonsterSkill) -> Optional[CrossServerSkill]:
-    jp_skill = jp_skill
-    na_skill = na_skill or jp_skill
-    kr_skill = kr_skill or na_skill
+def make_cross_server_skill(jp_skill: EitherSkillType,
+                            na_skill: EitherSkillType,
+                            kr_skill: EitherSkillType) -> Optional[CrossServerSkill]:
+    # Override priority: JP > NA, NA -> JP, NA -> KR.
+    na_skill = _compare_named(jp_skill, na_skill)
+    jp_skill = _compare_named(na_skill, jp_skill)
+    kr_skill = _compare_named(na_skill, kr_skill)
 
-    if is_bad_name(jp_skill.name) and is_bad_name(na_skill.name):
-        # Probably a debug skill
+    if na_skill or jp_skill or kr_skill:
+        return CrossServerSkill(jp_skill, na_skill, kr_skill)
+    else:
         return None
-
-    if is_bad_name(jp_skill.name):
-        jp_skill = na_skill
-
-    if is_bad_name(na_skill.name):
-        # skill probably exists in JP but not in NA
-        na_skill = jp_skill
-
-    if is_bad_name(kr_skill.name):
-        # skill probably exists in JP but not in KR
-        kr_skill = na_skill
-
-    return CrossServerSkill(jp_skill, na_skill, kr_skill)
 
 
 class CrossServerDatabase(object):
@@ -267,6 +270,14 @@ class CrossServerDatabase(object):
         self.ownable_cards = list(
             filter(lambda c: 0 < c.monster_id < 19999, self.all_cards))  # type: List[CrossServerCard]
 
+        self.leader_skills = build_cross_server_skills(jp_database.leader_skills,
+                                                       na_database.leader_skills,
+                                                       kr_database.leader_skills)
+
+        self.active_skills = build_cross_server_skills(jp_database.active_skills,
+                                                       na_database.active_skills,
+                                                       kr_database.active_skills)
+
         self.dungeons = build_cross_server_dungeons(jp_database,
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
@@ -276,10 +287,18 @@ class CrossServerDatabase(object):
         self.kr_bonuses = kr_database.bonuses
 
         self.monster_id_to_card = {c.monster_id: c for c in self.all_cards}
+        self.leader_id_to_leader = {s.skill_id: s for s in self.leader_skills}
+        self.active_id_to_active = {s.skill_id: s for s in self.active_skills}
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
 
         self.hq_image_monster_ids = []  # type: List[MonsterId]
         self.animated_monster_ids = []  # type: List[MonsterId]
+
+        for csc in self.ownable_cards:
+            if csc.leader_skill:
+                csc.leader_skill = self.leader_id_to_leader[csc.leader_skill.skill_id]
+            if csc.active_skill:
+                csc.active_skill = self.active_id_to_active[csc.active_skill.skill_id]
 
     def card_by_monster_id(self, monster_id: MonsterId) -> CrossServerCard:
         return self.monster_id_to_card.get(monster_id, None)

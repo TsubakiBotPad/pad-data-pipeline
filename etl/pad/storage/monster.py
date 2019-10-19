@@ -77,8 +77,6 @@ class Monster(SimpleSqlItem):
             pal_egg=False,
             rem_egg=False,
             series_id=Series.UNSORTED_SERIES_ID,
-            has_animation=o.has_animation,
-            has_hqimage=o.has_hqimage,
             orb_skin_id=orb_skin_id,
             voice_id_jp=voice_id_jp,
             voice_id_na=voice_id_na)
@@ -125,8 +123,6 @@ class Monster(SimpleSqlItem):
                  pal_egg: bool = None,
                  rem_egg: bool = None,
                  series_id: int = None,
-                 has_animation: bool = None,
-                 has_hqimage: bool = None,
                  orb_skin_id: int = None,
                  voice_id_jp: int = None,
                  voice_id_na: int = None,
@@ -172,8 +168,8 @@ class Monster(SimpleSqlItem):
         self.pal_egg = pal_egg
         self.rem_egg = rem_egg
         self.series_id = series_id
-        self.has_animation = has_animation
-        self.has_hqimage = has_hqimage
+        self.has_animation = False
+        self.has_hqimage = False
         self.orb_skin_id = orb_skin_id
         self.voice_id_jp = voice_id_jp
         self.voice_id_na = voice_id_na
@@ -186,6 +182,8 @@ class Monster(SimpleSqlItem):
             'series_id',
             'pal_egg',
             'rem_egg',
+            'has_animation',
+            'has_hqimage',
         ]
 
     def __str__(self):
@@ -207,6 +205,25 @@ class MonsterWithSeries(SimpleSqlItem):
 
     def __str__(self):
         return 'Monster({}): {}'.format(self.key_value(), self.series_id)
+
+
+class MonsterWithExtraImageInfo(SimpleSqlItem):
+    """Monster helper for updating the image-related info."""
+    TABLE = 'monsters'
+    KEY_COL = 'monster_id'
+
+    def __init__(self,
+                 monster_id: int = None,
+                 has_animation: bool = None,
+                 has_hqimage: bool = None,
+                 tstamp: int = None):
+        self.monster_id = monster_id
+        self.has_animation = has_animation
+        self.has_hqimage = has_hqimage
+        self.tstamp = tstamp
+
+    def __str__(self):
+        return 'MonsterImage({}): animated={} hq={}'.format(self.key_value(), self.has_animation, self.has_hqimage)
 
 
 class ActiveSkill(SimpleSqlItem):
@@ -262,18 +279,23 @@ class LeaderSkill(SimpleSqlItem):
     @staticmethod
     def from_ls(jp_skill: RawLeaderSkill, na_skill: RawLeaderSkill, kr_skill: RawLeaderSkill) -> 'LeaderSkill':
         na_description = na_skill.full_text(LsTextConverter())
+
+        # In the event that we don't have KR data, use the NA name and calculated description.
+        kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
+        kr_desc = kr_skill.raw_description if jp_skill != kr_skill else na_description
+
         return LeaderSkill(
             leader_skill_id=jp_skill.skill_id,
             name_jp=jp_skill.name,
             name_na=na_skill.name,
-            name_kr=kr_skill.name,
+            name_kr=kr_name,
             desc_jp=jp_skill.raw_description,
             desc_na=na_description,
-            desc_kr=kr_skill.raw_description,
+            desc_kr=kr_desc,
             max_hp=jp_skill.hp,
             max_atk=jp_skill.atk,
             max_rcv=jp_skill.rcv,
-            max_shield=jp_skill.rcv)
+            max_shield=jp_skill.shield)
 
     def __init__(self,
                  leader_skill_id: int = None,
