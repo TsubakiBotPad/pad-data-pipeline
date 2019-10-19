@@ -39,7 +39,7 @@ delete from d_types;
 ## Deleting records
 
 Tables with computed IDs will generally be autocreated and shouldn't be deleted,
-instead they should have a column added to hide them from display.a
+instead they should have a column added to hide them from display.
 
 For tables that are autoincrement ID keyed, we may need to delete records (e.g.
 for `encounters`).
