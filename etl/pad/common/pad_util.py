@@ -2,13 +2,14 @@ import datetime
 import json
 import os
 import re
-from enum import Enum
 
 import pytz
 
-from pad.common.shared_types import JsonType, Printable, Server
+from pad.common.shared_types import JsonType, Printable, Server, dump_helper
 
+# Re-exporting these types; should fix imports
 Printable = Printable
+dump_helper = dump_helper
 
 
 def strip_colors(message: str) -> str:
@@ -142,14 +143,3 @@ def json_string_dump(obj, pretty=False):
 def json_file_dump(obj, f, pretty=False):
     indent = 4 if pretty else None
     json.dump(obj, f, indent=indent, sort_keys=True, default=dump_helper, ensure_ascii=False)
-
-
-def dump_helper(x):
-    if callable(x):
-        return 'fn_obj'
-    elif isinstance(x, Enum):
-        return str(x)
-    elif hasattr(x, '__dict__'):
-        return vars(x)
-    else:
-        return repr(x)

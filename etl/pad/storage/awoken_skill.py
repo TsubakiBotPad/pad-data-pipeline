@@ -42,3 +42,6 @@ class AwokenSkill(SimpleSqlItem):
         self.adj_atk = adj_atk
         self.adj_rcv = adj_rcv
         self.tstamp = tstamp
+
+    def __str__(self):
+        return 'AwokenSkill({}): {}'.format(self.key_value(), self.name_na)

@@ -18,3 +18,6 @@ class Series(SimpleSqlItem):
         self.name_na = name_na
         self.name_kr = name_kr
         self.tstamp = tstamp
+
+    def __str__(self):
+        return 'Series ({}): {}'.format(self.key_value(), self.name_na)

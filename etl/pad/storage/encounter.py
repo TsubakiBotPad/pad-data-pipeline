@@ -49,6 +49,9 @@ class Encounter(SimpleSqlItem):
     def exists_strategy(self):
         return ExistsStrategy.CUSTOM
 
+    def __str__(self):
+        return 'Encounter({}): {} -> {}'.format(self.key_value(), self.sub_dungeon_id, self.enemy_id)
+
 
 class Drop(SimpleSqlItem):
     """Dungeon monster drop."""
@@ -81,3 +84,6 @@ class Drop(SimpleSqlItem):
 
     def _non_auto_update_cols(self):
         return [self._key()]
+
+    def __str__(self):
+        return 'Encounter({}): {} -> {}'.format(self.key_value(), self.encounter_id, self.monster_id)

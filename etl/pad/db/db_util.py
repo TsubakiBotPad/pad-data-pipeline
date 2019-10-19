@@ -155,15 +155,15 @@ class DbWrapper(object):
             if not key:
                 key = new_key
                 item.set_key_value(key)
-            logger.info('force inserted an item: %s %s', item_type, key)
+            logger.info('force inserted an item: %s', item)
             return
 
         if item.exists_strategy() == ExistsStrategy.BY_KEY:
             if not self.check_existing(item.key_exists_sql()):
-                logger.info('item needed insert: %s %s', item_type, key)
+                logger.info('item needed insert: %s', item)
                 self.insert_item(item.insert_sql())
             elif not self.check_existing(item.needs_update_sql()):
-                logger.info('item needed update: %s %s', item_type, key)
+                logger.info('item needed update: %s', item)
                 self.insert_item(item.update_sql())
 
         elif item.exists_strategy() == ExistsStrategy.BY_VALUE:
@@ -173,12 +173,12 @@ class DbWrapper(object):
             if not key:
                 key = self.insert_item(item.insert_sql())
                 item.set_key_value(key)
-                logger.info('item needed by-value insert: %s %s', item_type, key)
+                logger.info('item needed by-value insert: %s', item)
             elif not self.check_existing(item.needs_update_sql()):
-                logger.info('item needed by-value update: %s %s', item_type, key)
+                logger.info('item needed by-value update: %s', item)
                 self.insert_item(item.update_sql())
 
         elif item.exists_strategy() == ExistsStrategy.CUSTOM:
-            raise ValueError('Item cannot be upserted: {}'.format(item_type))
+            raise ValueError('Item cannot be upserted: {}'.format(item))
 
         return key

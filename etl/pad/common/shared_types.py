@@ -21,7 +21,7 @@ class Printable(object):
     """Simple way to make an object printable."""
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.__dict__)
+        return '{}({})'.format(self.__class__.__name__, dump_helper(self))
 
     def __str__(self):
         return self.__repr__()
@@ -61,3 +61,14 @@ class EvolutionType(Enum):
     evo = 1
     reversible = 2
     non_reversible = 3
+
+
+def dump_helper(x):
+    if callable(x):
+        return 'fn_obj'
+    elif isinstance(x, Enum):
+        return str(x)
+    elif hasattr(x, '__dict__'):
+        return vars(x)
+    else:
+        return repr(x)
