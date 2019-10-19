@@ -106,10 +106,6 @@ def load_data(args):
         na_database.save_all(args.output_dir2, args.pretty)
         kr_database.save_all(args.output_dir2, args.pretty)
 
-    # Temporary hack until we have skill loading
-    skill_text_file = os.path.join(output_dir, 'jp_calc_skills.json')
-    cs_database.load_skill_text(skill_text_file)
-
     logger.info('Connecting to database')
     with open(args.db_config) as f:
         db_config = json.load(f)
