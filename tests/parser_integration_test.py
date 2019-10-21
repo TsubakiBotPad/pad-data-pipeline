@@ -62,12 +62,13 @@ def run_test(args):
     print('saving merged data')
     cross_db.save_all(new_output_dir, True)
 
+    # Add sort by something, bonuses seem to be non-deterministicly ordered.
     files = {
         'all_cards.json': cross_db.all_cards,
         'dungeons.json': cross_db.dungeons,
-        'jp_bonuses.json': cross_db.jp_bonuses,
-        'na_bonuses.json': cross_db.na_bonuses,
-        'kr_bonuses.json': cross_db.kr_bonuses,
+        # 'jp_bonuses.json': cross_db.jp_bonuses,
+        # 'na_bonuses.json': cross_db.na_bonuses,
+        # 'kr_bonuses.json': cross_db.kr_bonuses,
     }
 
     print('starting diff')
