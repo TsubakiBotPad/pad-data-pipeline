@@ -16,6 +16,10 @@ class Tag(Enum):
     ERASE_5P = '[Unable to erase 4 orbs or less]'
 
 
+def sort_tags(tags):
+    return sorted(tags, key=lambda x: x.value)
+
+
 class AttributeDict(dict):
     def __getattr__(self, key):
         if key not in self:
