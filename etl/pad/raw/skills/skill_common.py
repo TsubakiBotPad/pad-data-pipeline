@@ -14,6 +14,7 @@ def multi_getattr(o, *args):
 
 
 class BaseTextConverter(object):
+    """Contains code shared across AS and LS converters."""
     ATTRIBUTES = {0: 'Fire',
                   1: 'Water',
                   2: 'Wood',

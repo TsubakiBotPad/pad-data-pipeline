@@ -1,9 +1,6 @@
 from pad.raw.skills.skill_common import BaseTextConverter
 
 
-# from pad_etl.common.padguide_values import AWAKENING_MAP
-
-
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
 

@@ -1,8 +1,8 @@
 from collections import OrderedDict
 from typing import List
 
-from pad.raw.skills.active_skill_text import AsTextConverter
 from pad.raw.skill import MonsterSkill
+from pad.raw.skills.active_skill_text import AsTextConverter
 
 
 def cc(x): return x

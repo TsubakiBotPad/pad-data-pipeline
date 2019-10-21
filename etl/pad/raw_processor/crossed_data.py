@@ -1,16 +1,17 @@
 """
 Data from across multiple servers merged together.
 """
-import json
 import logging
 import os
 from typing import List, Optional, Union
 
 from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
-from pad.raw import MonsterSkill, Dungeon
+from pad.raw import Dungeon
 from pad.raw.dungeon import SubDungeon
 from pad.raw.skills.active_skill_info import ActiveSkill
+from pad.raw.skills.en_active_skill_text import EnAsTextConverter
+from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
@@ -36,6 +37,14 @@ class CrossServerCard(object):
         # This is an initial pass; the more 'correct' versions override later
         self.leader_skill = make_cross_server_skill(jp_card.leader_skill, na_card.leader_skill, kr_card.leader_skill)
         self.active_skill = make_cross_server_skill(jp_card.active_skill, na_card.active_skill, kr_card.active_skill)
+
+        # This is mostly just for integration test purposes. Should really be fixed a different way.
+        self.en_ls_text = None
+        self.en_as_text = None
+
+    def load_text(self):
+        self.en_ls_text = self.leader_skill.jp_skill.full_text(EnLsTextConverter()) if self.leader_skill else None
+        self.en_as_text = self.active_skill.jp_skill.full_text(EnAsTextConverter()) if self.active_skill else None
 
 
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
@@ -312,6 +321,7 @@ class CrossServerDatabase(object):
                 csc.leader_skill = self.leader_id_to_leader[csc.leader_skill.skill_id]
             if csc.active_skill:
                 csc.active_skill = self.active_id_to_active[csc.active_skill.skill_id]
+            csc.load_text()
 
     def card_by_monster_id(self, monster_id: MonsterId) -> CrossServerCard:
         return self.monster_id_to_card.get(monster_id, None)
