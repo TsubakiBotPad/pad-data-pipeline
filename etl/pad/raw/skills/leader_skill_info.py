@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.leader_skill_common import ThresholdType, Tag
+from pad.raw.skills.leader_skill_common import ThresholdType, Tag, sort_tags
 from pad.raw.skills.leader_skill_text import LsTextConverter
 
 
@@ -78,7 +78,7 @@ class LeaderSkill(object):
 
     def tag_text(self, converter: LsTextConverter) -> str:
         tags = getattr(self, 'tags', [])
-        return ''.join([converter.TAGS[x] for x in tags])
+        return ''.join([converter.TAGS[x] for x in sort_tags(tags)])
 
     def full_text(self, converter: LsTextConverter) -> str:
         text = self.text(converter) or ''
@@ -988,7 +988,7 @@ class TwoPartLeaderSkill(LeaderSkill):
         for cs in self.parts:
             tags.update(getattr(cs, 'tags', []))
 
-        return ''.join([converter.TAGS[x] for x in tags])
+        return ''.join([converter.TAGS[x] for x in sort_tags(tags)])
 
 
 class HpMultiConditionalAtkBoost(LeaderSkill):
