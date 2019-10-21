@@ -159,11 +159,11 @@ class BaseTextConverter(object):
 
         return output
 
-    def fmt_reduct_text(self, shield, reduct_att=[0, 1, 2, 3, 4]):
+    def fmt_reduct_text(self, shield, reduct_att=None):
         if shield == 0:
             return None
         shield_text = fmt_mult(shield * 100)
-        if reduct_att == [0, 1, 2, 3, 4] or not reduct_att:
+        if reduct_att in [None, [], [0, 1, 2, 3, 4]]:
             return self.reduce_all_pct(shield_text)
         else:
             color_text = self.attributes_format(reduct_att)
