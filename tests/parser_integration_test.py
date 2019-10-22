@@ -71,6 +71,9 @@ def run_test(args):
         # 'kr_bonuses.json': cross_db.kr_bonuses,
     }
 
+    failed_comparisons = 0
+    bad_records = 0
+
     print('starting diff')
     for file, data in files.items():
         new_file = os.path.join(new_output_dir, file)
@@ -88,6 +91,7 @@ def run_test(args):
             print('ERROR')
             print('ERROR: file lengths differed, indicates old golden data for', file)
             print('ERROR')
+            failed_comparisons += 1
             continue
 
         failures = []
@@ -108,6 +112,9 @@ def run_test(args):
         disp_count = min(fail_count, 3)
         print('encountered', fail_count, 'errors, displaying the first', disp_count)
 
+        failed_comparisons += 1
+        bad_records += fail_count
+
         for i in range(disp_count):
             gold_str = failures[i][0]
             new_str = failures[i][1]
@@ -118,6 +125,10 @@ def run_test(args):
                 gold_str.split('\n'), new_str.split('\n'), fromfile='golden', tofile='new', n=1)
             print('\n'.join(diff_lines))
 
+    if failed_comparisons:
+        print('Bad files:', failed_comparisons)
+        print('Bad records:', bad_records)
+        exit(1)
 
 if __name__ == '__main__':
     args = parse_args()
