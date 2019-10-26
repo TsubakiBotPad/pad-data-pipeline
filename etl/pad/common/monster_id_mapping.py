@@ -38,4 +38,8 @@ def nakr_no_to_monster_id(na_id: MonsterNo) -> MonsterId:
     if between(na_id, 2601, 2631):
         return adjust(na_id, 2601, 2601 + 10000)
 
+    # Power Rangers
+    if between(na_id, 4949, 4987):
+        return adjust(na_id, 4949, 4949 + 10000)
+
     return MonsterId(na_id)
