@@ -239,7 +239,7 @@ EitherSkillType = Union[ActiveSkill, LeaderSkill]
 
 class CrossServerSkill(object):
     def __init__(self, jp_skill: EitherSkillType, na_skill: EitherSkillType, kr_skill: EitherSkillType):
-        self.skill_id = jp_skill.skill_id
+        self.skill_id = jp_skill.skill_id if jp_skill else na_skill.skill_id
         self.jp_skill = jp_skill
         self.na_skill = na_skill
         self.kr_skill = kr_skill
