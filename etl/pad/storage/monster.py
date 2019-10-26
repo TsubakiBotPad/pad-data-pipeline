@@ -4,7 +4,7 @@ from typing import List, Optional
 from pad.common.shared_types import Server, MonsterId, MonsterNo, EvolutionType
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw.skills.active_skill_info import ActiveSkill as RawActiveSkill
-from pad.raw.skills.active_skill_text import AsTextConverter
+from pad.raw.skills.en_active_skill_text import EnAsTextConverter
 from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill as RawLeaderSkill
 from pad.raw_processor.crossed_data import CrossServerCard
