@@ -233,7 +233,7 @@ class ActiveSkill(SimpleSqlItem):
 
     @staticmethod
     def from_as(jp_skill: RawActiveSkill, na_skill: RawActiveSkill, kr_skill: RawActiveSkill) -> 'ActiveSkill':
-        na_description = na_skill.full_text(AsTextConverter())
+        na_description = na_skill.full_text(EnAsTextConverter())
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
             name_jp=jp_skill.name,
