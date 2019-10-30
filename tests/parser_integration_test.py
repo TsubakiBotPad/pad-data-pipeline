@@ -109,18 +109,24 @@ def run_test(args):
             continue
 
         fail_count = len(failures)
-        disp_count = min(fail_count, 3)
+        disp_count = min(fail_count, 6)
         print('encountered', fail_count, 'errors, displaying the first', disp_count)
 
         failed_comparisons += 1
         bad_records += fail_count
 
+        failure_ids = []
+        for failure in failures:
+            gold_str = failure[0]
+            failure_ids.append(find_ids(gold_str))
+
+        print('All failing ids:\n' + '\n'.join(failure_ids))
+
         for i in range(disp_count):
             gold_str = failures[i][0]
             new_str = failures[i][1]
 
-            id_text = '\n'.join(filter(lambda x: '_id' in x, gold_str.split('\n')))
-            print('row identifiers:\n{}\n'.format(id_text))
+            print('row identifiers:\n{}\n'.format(find_ids(gold_str)))
             diff_lines = difflib.context_diff(
                 gold_str.split('\n'), new_str.split('\n'), fromfile='golden', tofile='new', n=1)
             print('\n'.join(diff_lines))
@@ -129,6 +135,13 @@ def run_test(args):
         print('Bad files:', failed_comparisons)
         print('Bad records:', bad_records)
         exit(1)
+
+
+def find_ids(gold_str):
+    id_hits = filter(lambda x: 'monster_no' in x or 'dungeon_id' in x, gold_str.split('\n'))
+    id_info = set(map(str.strip, id_hits))
+    return '\n'.join(id_info)
+
 
 if __name__ == '__main__':
     args = parse_args()
