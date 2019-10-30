@@ -70,6 +70,9 @@ class LsTextConverter(BaseTextConverter):
             if max_mult > min_mult:
                 skill_text += ' up to {}x at 5 colors+heal'.format(
                     fmt_mult(max_mult), min_attr - 1)
+        elif max_attr > min_attr and max_mult != min_mult:
+            attr_text = self.attributes_format(attr)
+            skill_text += ' when matchin {} of {} up to {}x when matching {}'.format(str(min_attr), attr_text, fmt_mult(max_mult), len(attr))
         elif min_attr == max_attr and len(attr) > min_attr:
             attr_text = self.attributes_format(attr)
             skill_text += ' when matching ' + str(min_attr) + '+ of {} at once'.format(attr_text)
