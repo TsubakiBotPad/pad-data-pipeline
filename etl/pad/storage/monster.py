@@ -2,6 +2,7 @@ from datetime import date
 from typing import List, Optional
 
 from pad.common.shared_types import Server, MonsterId, MonsterNo, EvolutionType
+from pad.db import sql_item
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw.skills.active_skill_info import ActiveSkill as RawActiveSkill
 from pad.raw.skills.en_active_skill_text import EnAsTextConverter
@@ -362,6 +363,13 @@ class Awakening(SimpleSqlItem):
 
     def exists_strategy(self):
         return ExistsStrategy.BY_VALUE
+
+    def value_exists_sql(self):
+        sql = """
+        SELECT awakening_id FROM awakenings
+        WHERE monster_id = {monster_id} and order_idx = {order_idx}
+        """.format(**sql_item._object_to_sql_params(self))
+        return sql
 
     def _non_auto_insert_cols(self):
         return [self._key()]
