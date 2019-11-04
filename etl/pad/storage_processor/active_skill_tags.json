@@ -1,0 +1,331 @@
+[
+  {
+    "active_tag_id": 2,
+    "name_jp": "ドロップ強化",
+    "name_kr": "드롭 강화",
+    "name_na": "Enhanced Orbs",
+    "order_idx": 19
+  },
+  {
+    "active_tag_id": 3,
+    "name_jp": "エンハンス",
+    "name_kr": "공격 강화",
+    "name_na": "Enhanced Attack",
+    "order_idx": 20
+  },
+  {
+    "active_tag_id": 4,
+    "name_jp": "防御力減少",
+    "name_kr": "방어력 감소",
+    "name_na": "Reduce Defense",
+    "order_idx": 21
+  },
+  {
+    "active_tag_id": 5,
+    "name_jp": "グラビティ",
+    "name_kr": "그라비티",
+    "name_na": "Gravity",
+    "order_idx": 23
+  },
+  {
+    "active_tag_id": 7,
+    "name_jp": "攻撃態勢",
+    "name_kr": "공격 태세",
+    "name_na": "Attack Stance",
+    "order_idx": 10
+  },
+  {
+    "active_tag_id": 8,
+    "name_jp": "防御態勢",
+    "name_kr": "방어 태세",
+    "name_na": "Guard Stance",
+    "order_idx": 11
+  },
+  {
+    "active_tag_id": 9,
+    "name_jp": "威嚇",
+    "name_kr": "위협",
+    "name_na": "Menace",
+    "order_idx": 22
+  },
+  {
+    "active_tag_id": 10,
+    "name_jp": "時間停止",
+    "name_kr": "시간 정지",
+    "name_na": "Stop Time",
+    "order_idx": 24
+  },
+  {
+    "active_tag_id": 11,
+    "name_jp": "ダメージ減少",
+    "name_kr": "데미지 감소",
+    "name_na": "Reduce Damage",
+    "order_idx": 32
+  },
+  {
+    "active_tag_id": 12,
+    "name_jp": "ダメージ無効化",
+    "name_kr": "데미지 무효화",
+    "name_na": "Void Damage",
+    "order_idx": 33
+  },
+  {
+    "active_tag_id": 13,
+    "name_jp": "単一対象攻撃",
+    "name_kr": "단일 대상 공격",
+    "name_na": "Single-Target Attack",
+    "order_idx": 0
+  },
+  {
+    "active_tag_id": 14,
+    "name_jp": "全体攻撃",
+    "name_kr": "전체 공격",
+    "name_na": "Massive Attack",
+    "order_idx": 1
+  },
+  {
+    "active_tag_id": 15,
+    "name_jp": "毒",
+    "name_kr": "독",
+    "name_na": "Poison",
+    "order_idx": 4
+  },
+  {
+    "active_tag_id": 16,
+    "name_jp": "反撃",
+    "name_kr": "반격",
+    "name_na": "Counterattack",
+    "order_idx": 3
+  },
+  {
+    "active_tag_id": 17,
+    "name_jp": "恨みの一撃",
+    "name_kr": "원망의 일격",
+    "name_na": "Grudge Strike",
+    "order_idx": 2
+  },
+  {
+    "active_tag_id": 18,
+    "name_jp": "回復",
+    "name_kr": "회복",
+    "name_na": "Heal",
+    "order_idx": 30
+  },
+  {
+    "active_tag_id": 19,
+    "name_jp": "ドロップ変換",
+    "name_kr": "드롭 변환",
+    "name_na": "Orb Convert",
+    "order_idx": 12
+  },
+  {
+    "active_tag_id": 20,
+    "name_jp": "攻撃後回復",
+    "name_kr": "공격 후 회복",
+    "name_na": "Attack & Heal",
+    "order_idx": 6
+  },
+  {
+    "active_tag_id": 21,
+    "name_jp": "回復強化",
+    "name_kr": "회복 강화",
+    "name_na": "Enhanced Heal",
+    "order_idx": 31
+  },
+  {
+    "active_tag_id": 22,
+    "name_jp": "リーダーチェンジ",
+    "name_kr": "리더 체인지",
+    "name_na": "The Switch",
+    "order_idx": 41
+  },
+  {
+    "active_tag_id": 23,
+    "name_jp": "全体攻撃転換",
+    "name_kr": "전체 공격 전환",
+    "name_na": "Attack Changer",
+    "order_idx": 40
+  },
+  {
+    "active_tag_id": 24,
+    "name_jp": "属性攻撃",
+    "name_kr": "속성 공격",
+    "name_na": "Attribute Attack",
+    "order_idx": 5
+  },
+  {
+    "active_tag_id": 38,
+    "name_jp": "ダブルドロップ変換",
+    "name_kr": "더블 드롭 변환",
+    "name_na": "Double Orbs Convert",
+    "order_idx": 13
+  },
+  {
+    "active_tag_id": 39,
+    "name_jp": "全ドロップ変換",
+    "name_kr": "전체 드롭 변환",
+    "name_na": "All Orbs Convert",
+    "order_idx": 14
+  },
+  {
+    "active_tag_id": 40,
+    "name_jp": "自爆",
+    "name_kr": "자폭",
+    "name_na": "Suicide",
+    "order_idx": 50
+  },
+  {
+    "active_tag_id": 41,
+    "name_jp": "バインド回復",
+    "name_kr": "바인드 회복",
+    "name_na": "Recover Bind",
+    "order_idx": 60
+  },
+  {
+    "active_tag_id": 50,
+    "name_jp": "ドロップ確率",
+    "name_kr": "드랍 확률",
+    "name_na": "Drop Chance",
+    "order_idx": 70
+  },
+  {
+    "active_tag_id": 60,
+    "name_jp": "固定ダメージ",
+    "name_kr": "고정 데미지",
+    "name_na": "Fixed Damage",
+    "order_idx": 80
+  },
+  {
+    "active_tag_id": 70,
+    "name_jp": "列ドロップ変換",
+    "name_kr": "줄 드롭 변환",
+    "name_na": "Line Orbs Converter",
+    "order_idx": 16
+  },
+  {
+    "active_tag_id": 80,
+    "name_jp": "ドロップ移動時間延長",
+    "name_kr": "드롭 이동 시간 연장",
+    "name_na": "Extends time",
+    "order_idx": 90
+  },
+  {
+    "active_tag_id": 100,
+    "name_jp": "属性変化",
+    "name_kr": "속성 변화",
+    "name_na": "Change Attribute",
+    "order_idx": 100
+  },
+  {
+    "active_tag_id": 110,
+    "name_jp": "スキルターン減少",
+    "name_kr": "스킬 턴 감소",
+    "name_na": "Reduce Skill Turn",
+    "order_idx": 110
+  },
+  {
+    "active_tag_id": 120,
+    "name_jp": "ロック",
+    "name_kr": "잠금",
+    "name_na": "Lock",
+    "order_idx": 120
+  },
+  {
+    "active_tag_id": 130,
+    "name_jp": "ドロップリフレッシュ",
+    "name_kr": "드롭 리프레쉬",
+    "name_na": "Orb Refresh",
+    "order_idx": 15
+  },
+  {
+    "active_tag_id": 140,
+    "name_jp": "敵の属性変化",
+    "name_kr": "적의 속성 변화",
+    "name_na": "Change Enemies' Attribute",
+    "order_idx": 140
+  },
+  {
+    "active_tag_id": 160,
+    "name_jp": "コンボ加算",
+    "name_kr": "콤보 추가",
+    "name_na": "Add Combo",
+    "order_idx": 160
+  },
+  {
+    "active_tag_id": 180,
+    "name_jp": "最大HP比例ダメージ",
+    "name_kr": "최대 HP 비례 데미지",
+    "name_na": "New Gravity",
+    "order_idx": 180
+  },
+  {
+    "active_tag_id": 190,
+    "name_jp": "回復 & バインド回復",
+    "name_kr": "회복 & 바인드회복",
+    "name_na": "Heal & Bind Recovery",
+    "order_idx": 190
+  },
+  {
+    "active_tag_id": 215,
+    "name_jp": "覚醒無効回復",
+    "name_kr": "각성무효회복",
+    "name_na": "Awoken Invalid Recovery",
+    "order_idx": 215
+  },
+  {
+    "active_tag_id": 220,
+    "name_jp": "バインド&覚醒無効回復",
+    "name_kr": "바인드 & 각성무효회복",
+    "name_na": "Bind & Awoken Invalid Recovery",
+    "order_idx": 220
+  },
+  {
+    "active_tag_id": 230,
+    "name_jp": "ロック状態解除",
+    "name_kr": "잠금상태해제",
+    "name_na": "Remove Lock",
+    "order_idx": 230
+  },
+  {
+    "active_tag_id": 240,
+    "name_jp": "ダメージ吸収無効化",
+    "name_kr": "데미지 흡수 무효화",
+    "name_na": "Void damage absorbs",
+    "order_idx": 240
+  },
+  {
+    "active_tag_id": 250,
+    "name_jp": "属性吸収無効化",
+    "name_kr": "속성 흡수 무효화",
+    "name_na": "Void Att. Absorbs",
+    "order_idx": 250
+  },
+  {
+    "active_tag_id": 260,
+    "name_jp": "落ちコン無効化",
+    "name_kr": "낙차 콤보 무효화",
+    "name_na": "Void Skyfalls",
+    "order_idx": 260
+  },
+  {
+    "active_tag_id": 270,
+    "name_jp": "ドロップ ロック",
+    "name_kr": "드롭 잠금",
+    "name_na": "Orb Lock",
+    "order_idx": 270
+  },
+  {
+    "active_tag_id": 280,
+    "name_jp": "ルート表示",
+    "name_kr": "루트 표시",
+    "name_na": "Combo Root",
+    "order_idx": 280
+  },
+  {
+    "active_tag_id": 999,
+    "name_jp": "その他",
+    "name_kr": "기타",
+    "name_na": "Etc",
+    "order_idx": 999
+  }
+]

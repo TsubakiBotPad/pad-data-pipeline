@@ -1,0 +1,142 @@
+[
+  {
+    "leader_tag_id": 1,
+    "name_jp": "自動回復",
+    "name_kr": "자동 회복",
+    "name_na": "Auto Heal",
+    "order_idx": 10
+  },
+  {
+    "leader_tag_id": 25,
+    "name_jp": "HP強化",
+    "name_kr": "HP 강화",
+    "name_na": "Enhanced HP",
+    "order_idx": 1
+  },
+  {
+    "leader_tag_id": 26,
+    "name_jp": "攻撃強化",
+    "name_kr": "공격 강화",
+    "name_na": "Enhanced ATK",
+    "order_idx": 2
+  },
+  {
+    "leader_tag_id": 27,
+    "name_jp": "回復強化",
+    "name_kr": "회복 강화",
+    "name_na": "Enhanced RCV",
+    "order_idx": 3
+  },
+  {
+    "leader_tag_id": 28,
+    "name_jp": "HP/攻撃 強化",
+    "name_kr": "HP/공격 강화",
+    "name_na": "Enhanced HP/ATK",
+    "order_idx": 4
+  },
+  {
+    "leader_tag_id": 29,
+    "name_jp": "HP/回復 強化",
+    "name_kr": "HP/회복 강화",
+    "name_na": "Enhanced HP/RCV",
+    "order_idx": 5
+  },
+  {
+    "leader_tag_id": 30,
+    "name_jp": "攻撃/回復 強化",
+    "name_kr": "공격/회복 강화",
+    "name_na": "Enhanced ATK/RCV",
+    "order_idx": 6
+  },
+  {
+    "leader_tag_id": 31,
+    "name_jp": "HP/攻撃/回復 強化",
+    "name_kr": "HP/공격/회복 강화",
+    "name_na": "Enhanced HP/ATK/RCV",
+    "order_idx": 7
+  },
+  {
+    "leader_tag_id": 32,
+    "name_jp": "ダメージ減少",
+    "name_kr": "데미지 감소",
+    "name_na": "Reduce Damage",
+    "order_idx": 11
+  },
+  {
+    "leader_tag_id": 33,
+    "name_jp": "デュアルダメージ減少",
+    "name_kr": "듀얼 데미지 감소",
+    "name_na": "Dual Damage Reduction",
+    "order_idx": 12
+  },
+  {
+    "leader_tag_id": 34,
+    "name_jp": "追加攻撃",
+    "name_kr": "추가 공격",
+    "name_na": "Additional Attack",
+    "order_idx": 13
+  },
+  {
+    "leader_tag_id": 35,
+    "name_jp": "反撃",
+    "name_kr": "반격",
+    "name_na": "Counterattack",
+    "order_idx": 14
+  },
+  {
+    "leader_tag_id": 36,
+    "name_jp": "根性",
+    "name_kr": "근성",
+    "name_na": "Resolve",
+    "order_idx": 15
+  },
+  {
+    "leader_tag_id": 37,
+    "name_jp": "時間延長",
+    "name_kr": "시간 연장",
+    "name_na": "Extend Time",
+    "order_idx": 16
+  },
+  {
+    "leader_tag_id": 150,
+    "name_jp": "コイン",
+    "name_kr": "코인",
+    "name_na": "Coin",
+    "order_idx": 100
+  },
+  {
+    "leader_tag_id": 160,
+    "name_jp": "Egg Rate+",
+    "name_kr": "Egg Rate+",
+    "name_na": "Egg Rate+",
+    "order_idx": 110
+  },
+  {
+    "leader_tag_id": 170,
+    "name_jp": "経験値",
+    "name_kr": "경험치",
+    "name_na": "Exp",
+    "order_idx": 170
+  },
+  {
+    "leader_tag_id": 200,
+    "name_jp": "盤面変化【7x6マス】",
+    "name_kr": "드롭판 변경 [7x6]",
+    "name_na": "Board Change [7x6]",
+    "order_idx": 200
+  },
+  {
+    "leader_tag_id": 210,
+    "name_jp": "落ちコンなし",
+    "name_kr": "낙차콤보없음",
+    "name_na": "No Skyfall Combos",
+    "order_idx": 210
+  },
+  {
+    "leader_tag_id": 999,
+    "name_jp": "その他",
+    "name_kr": "기타",
+    "name_na": "Etc",
+    "order_idx": 999
+  }
+]
