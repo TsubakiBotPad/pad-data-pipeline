@@ -14,6 +14,7 @@ from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en_active_skill_text import EnAsTextConverter
 from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
+from pad.raw.skills.skill_text_typing import AsCondition, LsCondition
 from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
@@ -246,7 +247,7 @@ class CrossServerSkill(object):
         self.kr_skill = kr_skill
 
         self.en_text = None
-        self.skill_type_tags = []
+        self.skill_type_tags = []  # type: List[Union[LsCondition, AsCondition]]
 
 
 def build_cross_server_skills(jp_skills: List[EitherSkillType],
