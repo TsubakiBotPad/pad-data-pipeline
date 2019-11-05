@@ -30,11 +30,11 @@ class MonsterProcessor(object):
             card_ls = csc.leader_skill
             if card_ls:
                 ls_count += 1
-                db.insert_or_update(LeaderSkill.from_ls(card_ls.jp_skill, card_ls.na_skill, card_ls.kr_skill))
+                db.insert_or_update(LeaderSkill.from_css(card_ls))
             card_as = csc.active_skill
             if card_as:
                 as_count += 1
-                db.insert_or_update(ActiveSkill.from_as(card_as.jp_skill, card_as.na_skill, card_as.kr_skill))
+                db.insert_or_update(ActiveSkill.from_css(card_as))
 
         logger.warning('loaded %s leader skills and %s active skills', ls_count, as_count)
 

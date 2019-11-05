@@ -18,6 +18,7 @@ from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
 from pad.storage_processor.schedule_processor import ScheduleProcessor
 from pad.storage_processor.series_processor import SeriesProcessor
+from pad.storage_processor.skill_tag_processor import SkillTagProcessor
 from pad.storage_processor.timestamp_processor import TimestampProcessor
 
 logging.basicConfig()
@@ -121,6 +122,9 @@ def load_data(args):
 
     # Ensure awakenings
     AwakeningProcessor().process(db_wrapper)
+
+    # Ensure tags
+    SkillTagProcessor().process(db_wrapper)
 
     # Load basic series data
     series_processor = SeriesProcessor(cs_database)

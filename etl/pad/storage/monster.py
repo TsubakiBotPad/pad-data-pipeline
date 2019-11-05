@@ -8,7 +8,7 @@ from pad.raw.skills.active_skill_info import ActiveSkill as RawActiveSkill
 from pad.raw.skills.en_active_skill_text import EnAsTextConverter
 from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill as RawLeaderSkill
-from pad.raw_processor.crossed_data import CrossServerCard
+from pad.raw_processor.crossed_data import CrossServerCard, CrossServerSkill
 from pad.storage.series import Series
 
 
@@ -233,16 +233,25 @@ class ActiveSkill(SimpleSqlItem):
     KEY_COL = 'active_skill_id'
 
     @staticmethod
-    def from_as(jp_skill: RawActiveSkill, na_skill: RawActiveSkill, kr_skill: RawActiveSkill) -> 'ActiveSkill':
-        na_description = na_skill.full_text(EnAsTextConverter())
+    def from_css(css: CrossServerSkill) -> 'ActiveSkill':
+        jp_skill = css.jp_skill
+        na_skill = css.na_skill
+        kr_skill = css.kr_skill
+
+        na_description = css.en_text
+
+        # In the event that we don't have KR data, use the NA name and calculated description.
+        kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
+        kr_desc = kr_skill.raw_description if jp_skill != kr_skill else na_description
+
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
             name_jp=jp_skill.name,
             name_na=na_skill.name,
-            name_kr=kr_skill.name,
+            name_kr=kr_name,
             desc_jp=jp_skill.raw_description,
             desc_na=na_description,
-            desc_kr=kr_skill.raw_description,
+            desc_kr=kr_desc,
             turn_max=jp_skill.turn_max,
             turn_min=jp_skill.turn_min)
 
@@ -278,8 +287,12 @@ class LeaderSkill(SimpleSqlItem):
     KEY_COL = 'leader_skill_id'
 
     @staticmethod
-    def from_ls(jp_skill: RawLeaderSkill, na_skill: RawLeaderSkill, kr_skill: RawLeaderSkill) -> 'LeaderSkill':
-        na_description = jp_skill.full_text(EnLsTextConverter())
+    def from_css(css: CrossServerSkill) -> 'LeaderSkill':
+        jp_skill = css.jp_skill
+        na_skill = css.na_skill
+        kr_skill = css.kr_skill
+
+        na_description = css.en_text
 
         # In the event that we don't have KR data, use the NA name and calculated description.
         kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
