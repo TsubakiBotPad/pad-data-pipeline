@@ -279,7 +279,7 @@ class LeaderSkill(SimpleSqlItem):
 
     @staticmethod
     def from_ls(jp_skill: RawLeaderSkill, na_skill: RawLeaderSkill, kr_skill: RawLeaderSkill) -> 'LeaderSkill':
-        na_description = na_skill.full_text(EnLsTextConverter())
+        na_description = jp_skill.full_text(EnLsTextConverter())
 
         # In the event that we don't have KR data, use the NA name and calculated description.
         kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
