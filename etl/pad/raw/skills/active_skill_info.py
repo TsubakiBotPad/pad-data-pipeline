@@ -51,7 +51,7 @@ class ActiveSkill(object):
         self.skill_id = ms.skill_id
 
         self.name = ms.name
-        self.raw_description = ms.description
+        self.raw_description = ms.clean_description
         self.skill_type = ms.skill_type
         self.levels = ms.levels
         self.turn_max = ms.turn_max

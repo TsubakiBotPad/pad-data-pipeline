@@ -47,7 +47,7 @@ class LeaderSkill(object):
         self.skill_type = ms.skill_type
 
         self.name = ms.name
-        self.raw_description = ms.description
+        self.raw_description = ms.clean_description
         self._hp = round(hp, 2)
         self._atk = round(atk, 2)
         self._rcv = round(rcv, 2)
