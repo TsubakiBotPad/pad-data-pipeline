@@ -72,7 +72,8 @@ class LsTextConverter(BaseTextConverter):
                     fmt_mult(max_mult), min_attr - 1)
         elif max_attr > min_attr and max_mult != min_mult:
             attr_text = self.attributes_format(attr)
-            skill_text += ' when matching {} of {} up to {}x when matching {}'.format(str(min_attr), attr_text, fmt_mult(max_mult), len(attr))
+            skill_text += ' when matching {} of {} up to {}x when matching {}'.format(str(min_attr), attr_text,
+                                                                                      fmt_mult(max_mult), len(attr))
         elif min_attr == max_attr and len(attr) > min_attr:
             attr_text = self.attributes_format(attr)
             skill_text += ' when matching ' + str(min_attr) + '+ of {} at once'.format(attr_text)
@@ -420,6 +421,8 @@ class LsTextConverter(BaseTextConverter):
             77: 'Kamen Rider Collab',
             78: 'Yo-kai Watch World Collab',
             83: 'Shaman King Collab',
+            85: 'Samurai Spirits',
+            86: 'Power Rangers',
             10001: 'Dragonbounds & Dragon Callers',
         }
 
@@ -427,7 +430,7 @@ class LsTextConverter(BaseTextConverter):
         if collab_id not in COLLAB_MAP:
             print('Missing collab name for', collab_id)
 
-        collab_name = COLLAB_MAP.get(collab_id, '<not populated>')
+        collab_name = COLLAB_MAP.get(collab_id, '<not populated:{}>'.format(collab_id))
         skill_text = self.fmt_stats_type_attr_bonus(ls) + ' when all cards are from ' + collab_name
 
         return skill_text
