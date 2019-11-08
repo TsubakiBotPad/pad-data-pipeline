@@ -66,9 +66,6 @@ def parse_args():
     outputGroup = parser.add_argument_group("Output")
     outputGroup.add_argument("--output_dir", required=True,
                              help="Path to a folder where output should be saved")
-    # TODO: remove this
-    outputGroup.add_argument("--output_dir2", required=True,
-                             help="Path to a folder where output should be saved")
     outputGroup.add_argument("--pretty", default=False, action="store_true",
                              help="Controls pretty printing of results")
 
@@ -103,9 +100,9 @@ def load_data(args):
 
     if not args.skipintermediate:
         logger.info('Storing intermediate data')
-        jp_database.save_all(args.output_dir2, args.pretty)
-        na_database.save_all(args.output_dir2, args.pretty)
-        kr_database.save_all(args.output_dir2, args.pretty)
+        jp_database.save_all(args.output_dir, args.pretty)
+        na_database.save_all(args.output_dir, args.pretty)
+        kr_database.save_all(args.output_dir, args.pretty)
 
     logger.info('Connecting to database')
     with open(args.db_config) as f:
