@@ -86,7 +86,7 @@ def run_test(args):
             continue
 
         print('diffing', golden_file, 'against', new_file)
-        with open(golden_file) as f:
+        with open(golden_file, encoding="utf-8") as f:
             golden_data = json.load(f)
 
         if len(golden_data) != len(data):
