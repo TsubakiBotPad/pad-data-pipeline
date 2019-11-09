@@ -7,10 +7,14 @@ import os
 import time
 from typing import Dict, List, Any
 
+from bs4 import BeautifulSoup
+
+from pad.api.pad_api import PadApiClient
 from pad.common import pad_util
 
 # The typical JSON file name for this data.
 from pad.common.shared_types import Server, JsonType
+from pad.raw.bonus import Bonus
 
 FILE_NAME = 'extra_egg_machines.json'
 
@@ -82,3 +86,62 @@ def load_data(data_dir: str = None,
                 egg_machines.append(ExtraEggMachine(em, server, gtype))
         gtype += 10
     return egg_machines
+
+
+def machine_from_bonuses(server: Server,
+                         bonus_data: List[Bonus],
+                         machine_code: str,
+                         machine_name: str) -> List[ExtraEggMachine]:
+    """Extracts pem and rem info from the bonus listing."""
+    m_events = [x for x in bonus_data if x.bonus_name == machine_code and x.is_open()]
+    # Probably should only be one of these
+    em_events = []
+    for event in m_events:
+        em_events.append({
+            'name': machine_name,
+            'comment': event.message,
+            'start': event.start_time_str,
+            'end': event.end_time_str,
+            'row': event.egg_machine_id,
+            'type': 1 if event.bonus_name == 'pem_event' else 2,
+            # pri can actually be found in another event but it's probably safe to fix it.
+            'pri': 500 if event.bonus_name == 'pem_event' else 5,
+        })
+
+    return [ExtraEggMachine(em, server, em['type']) for em in em_events]
+
+
+def scrape_machine_contents(api_client: PadApiClient, egg_machine: ExtraEggMachine):
+    """Pulls the HTML page with egg machine contents and scrapes out the monsters/rates."""
+    grow = egg_machine.egg_machine_row
+    gtype = egg_machine.egg_machine_type
+    has_rate = egg_machine.name != 'Pal Egg Machine'
+    min_cols = 2 if has_rate else 1
+
+    page = api_client.get_egg_machine_page(gtype, grow)
+    soup = BeautifulSoup(page, 'html.parser')
+    table = soup.table
+
+    if not table:
+        print('Egg machine scrape failed:', gtype, grow)
+        print(page)
+        return
+
+    rows = table.find_all('tr')
+    for row in rows:
+        cols = row.find_all('td')
+        if len(cols) < min_cols:
+            continue
+
+        if has_rate:
+            # Some rows can be size 3 (left header)
+            name_chunk = cols[-2].a['href']
+            rate_chunk = cols[-1].text.replace('%', '')
+            rate = round(float(rate_chunk) / 100, 4)
+        else:
+            # Some rows can be size 2 (left header)
+            name_chunk = cols[-1].a['href']
+            rate = 0
+
+        name_id = name_chunk[name_chunk.rfind('=') + 1:]
+        egg_machine.contents[int(name_id)] = rate

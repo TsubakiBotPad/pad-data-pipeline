@@ -7,13 +7,11 @@ import argparse
 import json
 import os
 
-from bs4 import BeautifulSoup
-
+from pad.api import pad_api
 from pad.common import pad_util
 from pad.common.shared_types import Server
 from pad.raw import bonus, extra_egg_machine
-
-from pad.api import pad_api
+from pad.raw.extra_egg_machine import machine_from_bonuses, scrape_machine_contents
 
 parser = argparse.ArgumentParser(description="Extracts PAD API data.", add_help=False)
 
@@ -62,7 +60,7 @@ def pull_and_write_endpoint(api_client, action, file_name_suffix=''):
     output_file = os.path.join(output_dir, file_name)
     print('writing', file_name)
     with open(output_file, 'w') as outfile:
-        json.dump(action_json, outfile, sort_keys=True, indent=4)
+        pad_util.json_file_dump(action_json, outfile)
 
 
 pull_and_write_endpoint(api_client, pad_api.EndpointAction.DOWNLOAD_LIMITED_BONUS_DATA,
@@ -89,69 +87,14 @@ egg_machines = extra_egg_machine.load_data(
     data_json=player_data.egg_data,
     server=server)
 
+egg_machines.extend(machine_from_bonuses(server, bonus_data, 'rem_event', 'Rare Egg Machine'))
+egg_machines.extend(machine_from_bonuses('pem_event', 'Pal Egg Machine'))
 
-def extract_event(machine_code, machine_name):
-    # TODO: Move out of here
-    m_events = [x for x in bonus_data if x.bonus_name == machine_code and x.is_open()]
-    # Probably should only be one of these
-    em_events = []
-    for event in m_events:
-        em_events.append({
-            'name': machine_name,
-            'comment': event.message,
-            'start': event.start_time_str,
-            'end': event.end_time_str,
-            'row': event.egg_machine_id,
-            'type': 1 if event.bonus_name == 'pem_event' else 2,
-            # pri can actually be found in another event but it's probably safe to fix it.
-            'pri': 500 if event.bonus_name == 'pem_event' else 5,
-        })
-
-    return [extra_egg_machine.ExtraEggMachine(em, server, em['type']) for em in em_events]
-
-
-egg_machines.extend(extract_event('rem_event', 'Rare Egg Machine'))
-egg_machines.extend(extract_event('pem_event', 'Pal Egg Machine'))
-
-# TODO: Move out of here
 for em in egg_machines:
     if not em.is_open():
         # Can only pull rates when the machine is live.
         continue
-
-    grow = em.egg_machine_row
-    gtype = em.egg_machine_type
-    has_rate = em.name != 'Pal Egg Machine'
-    min_cols = 2 if has_rate else 1
-
-    page = api_client.get_egg_machine_page(gtype, grow)
-    soup = BeautifulSoup(page, 'html.parser')
-    table = soup.table
-
-    if not table:
-        print('Egg machine scrape failed:', gtype, grow)
-        print(page)
-        print(player_data.egg_data)
-        continue
-
-    rows = table.find_all('tr')
-    for row in rows:
-        cols = row.find_all('td')
-        if len(cols) < min_cols:
-            continue
-
-        if has_rate:
-            # Some rows can be size 3 (left header)
-            name_chunk = cols[-2].a['href']
-            rate_chunk = cols[-1].text.replace('%', '')
-            rate = round(float(rate_chunk) / 100, 4)
-        else:
-            # Some rows can be size 2 (left header)
-            name_chunk = cols[-1].a['href']
-            rate = 0
-
-        name_id = name_chunk[name_chunk.rfind('=') + 1:]
-        em.contents[int(name_id)] = rate
+    scrape_machine_contents(api_client, em)
 
 output_file = os.path.join(output_dir, 'egg_machines.json')
 with open(output_file, 'w') as outfile:
