@@ -50,11 +50,11 @@ def run_test(args):
     kr_db = merged_database.Database(Server.kr, input_dir)
 
     print('loading JP')
-    jp_db.load_database()
+    jp_db.load_database(skip_extra=True)
     print('loading NA')
-    na_db.load_database()
+    na_db.load_database(skip_extra=True)
     print('loading KR')
-    kr_db.load_database()
+    kr_db.load_database(skip_extra=True)
 
     print('merging data')
     cross_db = CrossServerDatabase(jp_db, na_db, kr_db)
@@ -64,9 +64,9 @@ def run_test(args):
 
     # Add sort by something, bonuses seem to be non-deterministicly ordered.
     files = {
-        # 'all_cards.json': cross_db.all_cards,
-        # 'dungeons.json': cross_db.dungeons,
-        # 'active_skills.json': cross_db.active_skills,
+        'all_cards.json': cross_db.all_cards,
+        'dungeons.json': cross_db.dungeons,
+        'active_skills.json': cross_db.active_skills,
         'leader_skills.json': cross_db.leader_skills,
         # 'jp_bonuses.json': cross_db.jp_bonuses,
         # 'na_bonuses.json': cross_db.na_bonuses,
