@@ -88,7 +88,7 @@ egg_machines = extra_egg_machine.load_data(
     server=server)
 
 egg_machines.extend(machine_from_bonuses(server, bonus_data, 'rem_event', 'Rare Egg Machine'))
-egg_machines.extend(machine_from_bonuses('pem_event', 'Pal Egg Machine'))
+egg_machines.extend(machine_from_bonuses(server, bonus_data, 'pem_event', 'Pal Egg Machine'))
 
 for em in egg_machines:
     if not em.is_open():
