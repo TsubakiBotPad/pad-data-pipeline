@@ -9,6 +9,7 @@ import os
 
 from bs4 import BeautifulSoup
 
+from pad.common import pad_util
 from pad.common.shared_types import Server
 from pad.raw import bonus, extra_egg_machine
 
@@ -154,4 +155,4 @@ for em in egg_machines:
 
 output_file = os.path.join(output_dir, 'egg_machines.json')
 with open(output_file, 'w') as outfile:
-    json.dump(egg_machines, outfile, sort_keys=True, indent=4, default=lambda x: x.__dict__)
+    pad_util.json_file_dump(egg_machines, outfile, pretty=True)
