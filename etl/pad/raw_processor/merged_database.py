@@ -141,7 +141,7 @@ class Database(object):
         self.enemy_skills = enemy_skill.load_enemy_skill_data(data_dir=base_dir)
 
         if not skip_extra:
-            self.exchange = exchange.load_data(data_dir=base_dir)
+            self.exchange = exchange.load_data(self.server, data_dir=base_dir)
             self.egg_machines = egg_machine.load_data(data_dir=base_dir)
 
         self.bonuses = _clean_bonuses(self.server, self.bonus_sets, self.dungeons)
