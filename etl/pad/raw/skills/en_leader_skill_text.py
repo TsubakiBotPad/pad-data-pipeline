@@ -81,28 +81,78 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         10001: 'Dragonbounds & Dragon Callers',
     }
 
-    def n_or_more_attr(self, attr, n_attr, format_string):
-        if n_attr == 6:
-            return '5 colors+heal'
+    def n_attr_or_heal(self, attr, n_attr, format_string, is_range=False):
         if attr == [0, 1, 2, 3, 4]:
             return format_string.format(n_attr) + ' colors'
         elif attr == [0, 1, 2, 3, 4, 5]:
             return format_string.format(n_attr) + ' colors ({}+heal)'.format(n_attr - 1)
         attr_text = self.attributes_format(attr)
-        if len(attr) > n_attr:
+        if len(attr) > n_attr and is_range:
+            return '{} of {}'.format(str(n_attr), attr_text)
+        elif len(attr) > n_attr:
             return '{}+ of {} at once'.format(str(n_attr), attr_text)
         return '{} at once'.format(attr_text)
     
-    def matching_n_or_more_attr(self, attr, min_attr):
-        return ' when matching ' + self.n_or_more_attr(attr, min_attr, '{} or more')
+    def matching_n_or_more_attr(self, attr, min_attr, is_range=False):
+        return ' when matching ' + self.n_attr_or_heal(attr, min_attr, '{} or more', is_range=is_range)
     
-    def up_to_n_or_more_attr(self, attr, max_attr, mult):
+    def up_to_n_attr(self, attr, max_attr, mult):
+        if attr == [0, 1, 2, 3, 4, 5]:
+            return ' up to {}x at 5 colors+heal'.format(mult)
         if max_attr < 5 and (len(attr) < 5 or 5 in attr):
             return ' up to {}x when matching {}'.format(mult, max_attr)
-        return ' up to {}x at '.format(mult) + self.n_or_more_attr(attr, max_attr, '{}')
+        return ' up to {}x at '.format(mult) + self.n_attr_or_heal(attr, max_attr, '{}')
+
+    def threshold_stats_text(self, intro, above, threshold, is_100):
+        skill_text = intro
+        if is_100:
+            skill_text += ' when HP is'
+            if not above:
+                skill_text += ' not'
+            skill_text += ' full'
+        else:
+            skill_text += ' when above ' if above else ' when below '
+            skill_text += threshold + '% HP'
+        return skill_text
+
+    def combo_match_text(self, intro, min_combos, max_combos, up_to, max_mult):
+        skill_text = intro
+        skill_text += ' when {} or more combos'.format(min_combos)
+        if up_to:
+            skill_text += ' up to {}x at {} combos'.format(max_mult, max_combos)
+        return skill_text
 
     def attribute_match_text(self, intro, attr_text, max_attr_text):
         return intro + attr_text + max_attr_text
+
+    def egg_drop_text(self, mult):
+        return '{}x Egg Drop rate'.format(mult)
+    
+    def coin_drop_text(self, mult):
+        return '{}x Coin Drop rate'.format(mult)
+    
+    def skill_used_text(self, intro):
+        return intro + ' on the turn a skill is used'
+    
+    def exact_combo_text(self, mult, combos):
+        return '{}x ATK when exactly {} combos'.format(mult, combos)
+    
+    def passive_stats_type_atk_all_hp_text(self, hp_pct, atk_mult, type_text):
+        skill_text = 'Reduce total HP by {}%; {}x ATK for '.format(hp_pct, atk_mult)
+        skill_text += type_text + ' type'
+        return skill_text
+    
+    def team_build_bonus_text(self, intro, card):
+        return intro + ' if {} is on the team'.format(card)
+
+    def rank_exp_rate_text(self, mult):
+        return '{}x Rank EXP'.format(mult)
+
+    def heart_tpa_stats_text(self, mult):
+        return '{}x RCV when matching 4 Heal orbs'.format(mult)
+    
+    def five_orb_one_enhance_text(self, mult):
+        return '{}x ATK for matched Att. when matching 5 Orbs with 1+ enhanced'.format(mult)
 
     def get_collab_name(self, collab_id):
         if collab_id not in self._COLLAB_MAP:
