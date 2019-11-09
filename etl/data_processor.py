@@ -48,30 +48,30 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Patches the DadGuide database.", add_help=False)
     parser.register('type', 'bool', str2bool)
 
-    inputGroup = parser.add_argument_group("Input")
-    inputGroup.add_argument("--doupdates", default=False,
-                            action="store_true", help="Enables actions")
-    inputGroup.add_argument("--logsql", default=False,
-                            action="store_true", help="Logs sql commands")
-    inputGroup.add_argument("--skipintermediate", default=False,
-                            action="store_true", help="Skips the slow intermediate storage")
-    inputGroup.add_argument("--db_config", required=True, help="JSON database info")
-    inputGroup.add_argument("--dev", default=False, action="store_true",
-                            help="Should we run dev processes")
-    inputGroup.add_argument("--input_dir", required=True,
-                            help="Path to a folder where the input data is")
-    inputGroup.add_argument("--media_dir", required=False,
-                            help="Path to the root folder containing images, voices, etc")
+    input_group = parser.add_argument_group("Input")
+    input_group.add_argument("--doupdates", default=False,
+                             action="store_true", help="Enables actions")
+    input_group.add_argument("--logsql", default=False,
+                             action="store_true", help="Logs sql commands")
+    input_group.add_argument("--skipintermediate", default=False,
+                             action="store_true", help="Skips the slow intermediate storage")
+    input_group.add_argument("--db_config", required=True, help="JSON database info")
+    input_group.add_argument("--dev", default=False, action="store_true",
+                             help="Should we run dev processes")
+    input_group.add_argument("--input_dir", required=True,
+                             help="Path to a folder where the input data is")
+    input_group.add_argument("--media_dir", required=False,
+                             help="Path to the root folder containing images, voices, etc")
 
-    outputGroup = parser.add_argument_group("Output")
-    outputGroup.add_argument("--output_dir", required=True,
-                             help="Path to a folder where output should be saved")
-    outputGroup.add_argument("--pretty", default=False, action="store_true",
-                             help="Controls pretty printing of results")
+    output_group = parser.add_argument_group("Output")
+    output_group.add_argument("--output_dir", required=True,
+                              help="Path to a folder where output should be saved")
+    output_group.add_argument("--pretty", default=False, action="store_true",
+                              help="Controls pretty printing of results")
 
-    helpGroup = parser.add_argument_group("Help")
-    helpGroup.add_argument("-h", "--help", action="help",
-                           help="Displays this help message and exits.")
+    help_group = parser.add_argument_group("Help")
+    help_group.add_argument("-h", "--help", action="help",
+                            help="Displays this help message and exits.")
     return parser.parse_args()
 
 
