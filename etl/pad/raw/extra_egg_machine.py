@@ -2,18 +2,15 @@
 Parses the extra egg machine data.
 """
 
-import json
-import os
 import time
 from typing import Dict, List, Any
 
 from bs4 import BeautifulSoup
 
-from pad.api.pad_api import PadApiClient
+# from pad.api.pad_api import PadApiClient
 from pad.common import pad_util
-
 # The typical JSON file name for this data.
-from pad.common.shared_types import Server, JsonType
+from pad.common.shared_types import Server
 from pad.raw.bonus import Bonus
 
 FILE_NAME = 'egg_machines.json'
@@ -112,21 +109,18 @@ def machine_from_bonuses(server: Server,
     return [ExtraEggMachine(em, server) for em in em_events]
 
 
-def scrape_machine_contents(api_client: PadApiClient, egg_machine: ExtraEggMachine):
+def scrape_machine_contents(page: str, egg_machine: ExtraEggMachine):
     """Pulls the HTML page with egg machine contents and scrapes out the monsters/rates."""
-    grow = egg_machine.egg_machine_row
-    gtype = egg_machine.egg_machine_type
-    has_rate = egg_machine.name != 'Pal Egg Machine'
-    min_cols = 2 if has_rate else 1
-
-    page = api_client.get_egg_machine_page(gtype, grow)
     soup = BeautifulSoup(page, 'html.parser')
     table = soup.table
 
     if not table:
-        print('Egg machine scrape failed:', gtype, grow)
+        print('Egg machine scrape failed:', egg_machine.egg_machine_row, egg_machine.egg_machine_type)
         print(page)
         return
+
+    has_rate = egg_machine.name != 'Pal Egg Machine'
+    min_cols = 2 if has_rate else 1
 
     rows = table.find_all('tr')
     for row in rows:
