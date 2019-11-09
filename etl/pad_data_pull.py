@@ -89,7 +89,11 @@ for em in egg_machines:
     if not em.is_open():
         # Can only pull rates when the machine is live.
         continue
-    extra_egg_machine.scrape_machine_contents(api_client, em)
+
+    grow = em.egg_machine_row
+    gtype = em.egg_machine_type
+    page = api_client.get_egg_machine_page(gtype, grow)
+    extra_egg_machine.scrape_machine_contents(page, em)
 
 output_file = os.path.join(output_dir, extra_egg_machine.FILE_NAME)
 with open(output_file, 'w') as outfile:
