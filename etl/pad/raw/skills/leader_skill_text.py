@@ -19,25 +19,24 @@ class LsTextConverter(BaseTextConverter):
     def passive_stats_convert(self, ls):
         return self.fmt_stats_type_attr_bonus(ls)
 
-    def n_or_more_attr(self, attr, n_attr, format_string):
+    def n_attr_or_heal(self, attr, n_attr, format_string, is_range=False):
         raise I13NotImplemented()
 
-    def matching_n_or_more_attr(self, attr, min_attr):
+    def matching_n_or_more_attr(self, attr, min_attr, is_range=False):
         raise I13NotImplemented()
 
-    def up_to_n_or_more_attr(self, attr, max_attr, mult):
+    def up_to_n_attr(self, attr, max_attr, mult):
         raise I13NotImplemented()
 
     def threshold_stats_convert(self, ls):
+        intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True)
         above = ls.threshold_type == ThresholdType.ABOVE
-        skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True)
-        if ls.threshold != 1:
-            skill_text += ' when above ' if above else ' when below '
-            skill_text += fmt_mult(ls.threshold * 100) + '% HP'
-        else:
-            skill_text += ' when '
-            skill_text += 'HP is full' if above else 'HP is not full'
-        return skill_text
+        threshold = fmt_mult(ls.threshold * 100)
+        is_100 = ls.threshold == 1
+        return self.threshold_stats_text(intro, above, threshold, is_100)
+    
+    def threshold_stats_text(self, intro, above, threshold, is_100):
+        raise I13NotImplemented()
 
     def combo_match_convert(self, ls):
         min_combos = ls.min_combos
@@ -47,18 +46,16 @@ class LsTextConverter(BaseTextConverter):
 
         if ls.atk == 1 and ls.rcv == 1 and min_combos == 0:
             return None
-
-        skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True, atk=min_atk_mult,
+        intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True, atk=min_atk_mult,
                                                     rcv=min_rcv_mult)
-        skill_text += ' when {} or more combos'.format(min_combos)
-
-        if min_combos != max_combos:
-            skill_text += ' up to {}x at {} combos'.format(fmt_mult(ls.atk), max_combos)
-
-        return skill_text
+        up_to = min_combos != max_combos
+        max_mult = fmt_mult(ls.atk)
+        return self.combo_match_text(intro, min_combos, max_combos, up_to, max_mult)
+    
+    def combo_match_text(self, intro, min_combos, max_combos, up_to, max_mult):
+        raise I13NotImplemented()
 
     def attribute_match_convert(self, ls):
-
         min_attr = ls.min_attr
         max_attr = getattr(ls, 'max_attr', min_attr)
         attr = multi_getattr(ls, 'match_attributes', 'attributes')
@@ -68,9 +65,8 @@ class LsTextConverter(BaseTextConverter):
 
         intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
                                                     atk=min_mult, rcv=min_rcv_mult)
-        
-        attr_text = self.matching_n_or_more_attr(attr, min_attr)
-        max_attr_text = self.up_to_n_or_more_attr(attr, max_attr, fmt_mult(max_mult)) if max_mult > min_mult else ''
+        attr_text = self.matching_n_or_more_attr(attr, min_attr, is_range=max_attr > min_attr)
+        max_attr_text = self.up_to_n_attr(attr, max_attr, fmt_mult(max_mult)) if max_mult > min_mult else ''
 
         return self.attribute_match_text(intro, attr_text, max_attr_text)
     
@@ -176,49 +172,67 @@ class LsTextConverter(BaseTextConverter):
         return skill_text
 
     def egg_drop_convert(self, ls):
-        skill_text = fmt_mult(ls.multiplier) + 'x Egg Drop rate'
-        return skill_text
+        return self.egg_drop_text(fmt_mult(ls.multiplier))
+    
+    def egg_drop_text(self, mult):
+        raise I13NotImplemented()
 
     def coin_drop_convert(self, ls):
-        skill_text = fmt_mult(ls.multiplier) + 'x Coin Drop rate'
-        return skill_text
+        return self.coin_drop_text(fmt_mult(ls.multiplier))
+    
+    def coin_drop_text(self, mult):
+        raise I13NotImplemented()
 
     def skill_used_convert(self, ls):
-        skill_text = self.fmt_stats_type_attr_bonus(ls, skip_attr_all=True)
-        skill_text += ' on the turn a skill is used'
-        return skill_text
-
+        intro = self.fmt_stats_type_attr_bonus(ls, skip_attr_all=True)
+        return self.skill_used_text(intro)
+    
+    def skill_used_text(self, intro):
+        raise I13NotImplemented()
+    
     def exact_combo_convert(self, ls):
-        skill_text = fmt_mult(ls.atk) + 'x ATK when exactly ' + str(ls.combos) + ' combos'
-        return skill_text
+        return self.exact_combo_text(fmt_mult(ls.atk), str(ls.combos))
+    
+    def exact_combo_text(self, mult, combos):
+        raise I13NotImplemented()
 
     def passive_stats_type_atk_all_hp_convert(self, ls):
         hp_pct = fmt_mult((1 - ls.hp) * 100)
         atk_mult = fmt_mult(ls.atk)
-        skill_text = 'Reduce total HP by ' + hp_pct + '%; ' + atk_mult + 'x ATK for '
+        type_text = ''
         for i in ls.types[:-1]:
-            skill_text += self.TYPES[i] + ', '
-        skill_text += self.TYPES[int(ls.types[-1])] + ' type'
-
-        return skill_text
+            type_text += self.TYPES[i] + ', '
+        type_text += self.TYPES[int(ls.types[-1])]
+        return self.passive_stats_type_atk_all_hp_text(hp_pct, atk_mult, type_text)
+    
+    def passive_stats_type_atk_all_hp_text(self, hp_pct, atk_mult, type_text):
+        raise I13NotImplemented()
 
     def team_build_bonus_convert(self, ls):
-        skill_text = self.fmt_stats_type_attr_bonus(ls)
-        id_text = '[{}]'.format(', '.join(map(str, ls.monster_ids)))
-        skill_text += ' if ' + id_text + ' is on the team'
-        return skill_text
+        intro = self.fmt_stats_type_attr_bonus(ls)
+        card = '[{}]'.format(', '.join(map(str, ls.monster_ids)))
+        return self.team_build_bonus_text(intro, card)
+    
+    def team_build_bonus_text(self, intro, card):
+        raise I13NotImplemented()
 
     def rank_exp_rate_convert(self, ls):
-        skill_text = fmt_mult(ls.multiplier) + 'x Rank EXP'
-        return skill_text
+        return self.rank_exp_rate_text(fmt_mult(ls.multiplier))
+
+    def rank_exp_rate_text(self, mult):
+        raise I13NotImplemented()
 
     def heart_tpa_stats_convert(self, ls):
-        skill_text = fmt_mult(ls.rcv) + 'x RCV when matching 4 Heal orbs'
-        return skill_text
+        return self.heart_tpa_stats_text(fmt_mult(ls.rcv))
+    
+    def heart_tpa_stats_text(self, mult):
+        raise I13NotImplemented()
 
     def five_orb_one_enhance_convert(self, ls):
-        skill_text = fmt_mult(ls.atk) + 'x ATK for matched Att. when matching 5 Orbs with 1+ enhanced'
-        return skill_text
+        return self.five_orb_one_enhance_text(fmt_mult(ls.atk))
+    
+    def five_orb_one_enhance_text(self, mult):
+        raise I13NotImplemented()
 
     def heart_cross_convert(self, ls):
         skill_text = ''
