@@ -131,7 +131,7 @@ def load_raw_json(data_dir: str = None, json_file: str = None, file_name: str = 
     if json_file is None:
         json_file = os.path.join(data_dir, file_name)
 
-    with open(json_file) as f:
+    with open(json_file, encoding='utf-8') as f:
         return json.load(f)
 
 
