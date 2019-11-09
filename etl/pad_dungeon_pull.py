@@ -14,23 +14,23 @@ from pad.storage.wave import WaveItem
 def parse_args():
     parser = argparse.ArgumentParser(description="Extracts PAD dungeon data.", add_help=False)
 
-    inputGroup = parser.add_argument_group("Input")
-    inputGroup.add_argument("--server", required=True, help="One of [NA, JP]")
-    inputGroup.add_argument("--user_uuid", required=True, help="Account UUID")
-    inputGroup.add_argument("--user_intid", required=True, help="Account code")
+    input_group = parser.add_argument_group("Input")
+    input_group.add_argument("--server", required=True, help="One of [NA, JP]")
+    input_group.add_argument("--user_uuid", required=True, help="Account UUID")
+    input_group.add_argument("--user_intid", required=True, help="Account code")
 
-    inputGroup.add_argument("--dungeon_id", required=True, help="Dungeon ID")
-    inputGroup.add_argument("--floor_id", required=True, help="Floor ID")
-    inputGroup.add_argument("--loop_count", type=int, default=100, help="Number of entry attempts")
+    input_group.add_argument("--dungeon_id", required=True, help="Dungeon ID")
+    input_group.add_argument("--floor_id", required=True, help="Floor ID")
+    input_group.add_argument("--loop_count", type=int, default=100, help="Number of entry attempts")
 
-    outputGroup = parser.add_argument_group("Output")
-    outputGroup.add_argument("--db_config", required=True, help="JSON database info")
-    outputGroup.add_argument("--logsql", default=False,
-                             action="store_true", help="Logs sql commands")
+    output_group = parser.add_argument_group("Output")
+    output_group.add_argument("--db_config", required=True, help="JSON database info")
+    output_group.add_argument("--logsql", default=False,
+                              action="store_true", help="Logs sql commands")
 
-    helpGroup = parser.add_argument_group("Help")
-    helpGroup.add_argument("-h", "--help", action="help",
-                           help="Displays this help message and exits.")
+    help_group = parser.add_argument_group("Help")
+    help_group.add_argument("-h", "--help", action="help",
+                            help="Displays this help message and exits.")
 
     return parser.parse_args()
 

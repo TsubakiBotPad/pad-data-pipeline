@@ -12,13 +12,13 @@ from pad.common.shared_types import MonsterNo
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Creates DadGuide image repository.", add_help=False)
-    inputGroup = parser.add_argument_group("Input")
-    inputGroup.add_argument("--base_dir", required=True, help="Miru image base dir")
-    inputGroup.add_argument("--alt_base_dir", required=True, help="Miru other files base dir")
+    input_group = parser.add_argument_group("Input")
+    input_group.add_argument("--base_dir", required=True, help="Miru image base dir")
+    input_group.add_argument("--alt_base_dir", required=True, help="Miru other files base dir")
 
-    outputGroup = parser.add_argument_group("Output")
-    outputGroup.add_argument("--output_dir", required=True,
-                             help="Dir to write dadguide-formatted media to")
+    output_group = parser.add_argument_group("Output")
+    output_group.add_argument("--output_dir", required=True,
+                              help="Dir to write dadguide-formatted media to")
 
     return parser.parse_args()
 
