@@ -81,10 +81,7 @@ bonus_data = bonus.load_bonus_data(data_dir=output_dir,
                                    server=server)
 
 # Egg machine extraction
-egg_machines = extra_egg_machine.load_data(
-    data_json=player_data.egg_data,
-    server=server)
-
+egg_machines = extra_egg_machine.load_from_player_data(data_json=player_data.egg_data, server=server)
 egg_machines.extend(extra_egg_machine.machine_from_bonuses(server, bonus_data, 'rem_event', 'Rare Egg Machine'))
 egg_machines.extend(extra_egg_machine.machine_from_bonuses(server, bonus_data, 'pem_event', 'Pal Egg Machine'))
 

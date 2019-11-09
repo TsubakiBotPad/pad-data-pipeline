@@ -1,6 +1,6 @@
 import math
 from enum import Enum
-from typing import NewType, Dict, Any
+from typing import NewType, Dict, Any, List
 
 # Raw data types
 AttrId = NewType('AttrId', int)
@@ -15,6 +15,7 @@ MonsterId = NewType('MonsterId', int)
 
 # General purpose types
 JsonType = Dict[str, Any]
+ListJsonType = List[Dict[str, Any]]
 
 
 class Printable(object):

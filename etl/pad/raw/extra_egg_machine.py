@@ -22,7 +22,7 @@ FILE_NAME = 'egg_machines.json'
 class ExtraEggMachine(pad_util.Printable):
     """Egg machines extracted from the player data json."""
 
-    def __init__(self, raw: Dict[str, Any], server: Server, gtype: int):
+    def __init__(self, raw: Dict[str, Any], server: Server):
         self.name = str(raw['name'])
         self.server = server
         self.clean_name = pad_util.strip_colors(self.name)
@@ -44,10 +44,7 @@ class ExtraEggMachine(pad_util.Printable):
 
         # The egg machine ID used in the API call param gtype
         # Corresponds to the ordering of the item in egatya3
-        self.egg_machine_type = gtype
-
-        # Not sure exactly how this is used
-        self.alt_egg_machine_type = int(raw['type'])
+        self.egg_machine_type = int(raw['egg_machine_type'])
 
         # Stone or pal point cost
         self.cost = int(raw['pri'])
@@ -69,23 +66,28 @@ class ExtraEggMachine(pad_util.Printable):
         return self.__dict__ == other.__dict__
 
 
-def load_data(data_dir: str = None,
-              json_file: str = None,
-              data_json: JsonType = None,
-              server: Server = None) -> List[ExtraEggMachine]:
-    """Load ExtraEggMachine objects from the json file."""
-    # We get some data from the player info struct instead of a file
-    if data_json is None:
-        data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
+def load_from_player_data(
+        data_json=None,
+        server: Server = None) -> List[ExtraEggMachine]:
+    """Load ExtraEggMachine objects from the player data json file."""
     egg_machines = []
     # gtype starts at 52 and goes up by 10 for every egg machine slot.
     gtype = 52
     for outer in data_json:
         if outer:
             for em in outer:
-                egg_machines.append(ExtraEggMachine(em, server, gtype))
+                em['egg_machine_type'] = gtype
+                egg_machines.append(ExtraEggMachine(em, server))
         gtype += 10
     return egg_machines
+
+
+def load_data(data_dir: str = None,
+              json_file: str = None,
+              server: Server = None) -> List[ExtraEggMachine]:
+    """Load ExtraEggMachine objects from the saved json file."""
+    data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
+    return [ExtraEggMachine(item, server) for item in data_json]
 
 
 def machine_from_bonuses(server: Server,
@@ -103,12 +105,12 @@ def machine_from_bonuses(server: Server,
             'start': event.start_time_str,
             'end': event.end_time_str,
             'row': event.egg_machine_id,
-            'type': 1 if event.bonus_name == 'pem_event' else 2,
+            'egg_machine_type': 1 if event.bonus_name == 'pem_event' else 2,
             # pri can actually be found in another event but it's probably safe to fix it.
             'pri': 500 if event.bonus_name == 'pem_event' else 5,
         })
 
-    return [ExtraEggMachine(em, server, em['type']) for em in em_events]
+    return [ExtraEggMachine(em, server) for em in em_events]
 
 
 def scrape_machine_contents(api_client: PadApiClient, egg_machine: ExtraEggMachine):
