@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: dadguide
 -- ------------------------------------------------------
--- Server version	5.7.27-0ubuntu0.16.04.1
+-- Server version	5.7.27-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,25 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `active_skill_tags`
+--
+
+DROP TABLE IF EXISTS `active_skill_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `active_skill_tags` (
+  `active_skill_tag_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name_jp` text NOT NULL,
+  `name_na` text NOT NULL,
+  `name_kr` text NOT NULL,
+  `order_idx` int(11) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`active_skill_tag_id`),
+  KEY `tstamp_idx` (`tstamp`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `active_skills`
@@ -58,7 +77,7 @@ CREATE TABLE `awakenings` (
   KEY `awoken_skill_id_idx` (`awoken_skill_id`),
   CONSTRAINT `awakenings_fk_awoken_skill_id` FOREIGN KEY (`awoken_skill_id`) REFERENCES `awoken_skills` (`awoken_skill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `awakenings_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=95789 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=98749 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,6 +161,23 @@ CREATE TABLE `d_types` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `deleted_rows`
+--
+
+DROP TABLE IF EXISTS `deleted_rows`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `deleted_rows` (
+  `deleted_row_id` int(11) NOT NULL AUTO_INCREMENT,
+  `table_name` text NOT NULL,
+  `table_row_id` int(11) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`deleted_row_id`),
+  KEY `tstamp` (`tstamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `drops`
 --
 
@@ -159,7 +195,7 @@ CREATE TABLE `drops` (
   KEY `monster_id` (`monster_id`),
   CONSTRAINT `drops_fk_encounter_id` FOREIGN KEY (`encounter_id`) REFERENCES `encounters` (`encounter_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `drops_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=30655 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=34005 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +265,7 @@ CREATE TABLE `encounters` (
   `amount` int(11) DEFAULT NULL,
   `order_idx` int(11) NOT NULL,
   `turns` int(11) NOT NULL,
-  `level` int(11) DEFAULT NULL,
+  `level` int(11) NOT NULL,
   `hp` bigint(20) NOT NULL,
   `atk` bigint(20) NOT NULL,
   `defence` bigint(20) NOT NULL,
@@ -242,7 +278,7 @@ CREATE TABLE `encounters` (
   CONSTRAINT `encounters_fk_dungeon_id` FOREIGN KEY (`dungeon_id`) REFERENCES `dungeons` (`dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `encounters_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `encounters_fk_sub_dungeon_id` FOREIGN KEY (`sub_dungeon_id`) REFERENCES `sub_dungeons` (`sub_dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=69736 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=73339 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +315,26 @@ CREATE TABLE `evolutions` (
   CONSTRAINT `evolutions_fk_mat_4_id` FOREIGN KEY (`mat_4_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_mat_5_id` FOREIGN KEY (`mat_5_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_to_id` FOREIGN KEY (`to_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=30408 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=30516 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `leader_skill_tags`
+--
+
+DROP TABLE IF EXISTS `leader_skill_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `leader_skill_tags` (
+  `leader_skill_tag_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name_jp` text NOT NULL,
+  `name_na` text NOT NULL,
+  `name_kr` text NOT NULL,
+  `order_idx` int(11) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`leader_skill_tag_id`),
+  KEY `tstamp_idx` (`tstamp`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +503,7 @@ CREATE TABLE `schedule` (
   CONSTRAINT `schedule_fk_dungeon_id` FOREIGN KEY (`dungeon_id`) REFERENCES `dungeons` (`dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `schedule_fk_event_type_id` FOREIGN KEY (`event_type_id`) REFERENCES `d_event_types` (`event_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `schedule_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4392 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10143 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -571,7 +626,7 @@ CREATE TABLE `wave_data` (
   `friend_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `dungeon_id` (`dungeon_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1232943 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1446304 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -583,4 +638,4 @@ CREATE TABLE `wave_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-28 12:23:45
+-- Dump completed on 2019-11-09 13:28:23
