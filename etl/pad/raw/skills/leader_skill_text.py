@@ -12,8 +12,6 @@ class LsTextConverter(BaseTextConverter):
         Tag.ERASE_4P: '[Unable to erase 3 orbs or less]',
         Tag.ERASE_5P: '[Unable to erase 4 orbs or less]',
     }
-    
-    _COLLAB_MAP = {}
 
     def tag_only_convert(self, ls):
         return None
@@ -350,41 +348,28 @@ class LsTextConverter(BaseTextConverter):
         return skill_text
 
     def collab_bonus_convert(self, ls):
-        collab_id = ls.collab_id
-        if collab_id not in self._COLLAB_MAP:
-            print('Missing collab name for', collab_id)
-        
-        bonus = self.fmt_stats_type_attr_bonus(ls)
-        name = self._COLLAB_MAP.get(collab_id, '<not populated:{}>'.format(collab_id))
+        return self.collab_bonus_text(self.fmt_stats_type_attr_bonus(ls), self.get_collab_name(ls.collab_id))
     
-        return self.collab_bonus_text(bonus, name)
+    def get_collab_name(self, collab_id):
+        raise I13NotImplemented()
     
     def collab_bonus_text(self, bonus, name):
         raise I13NotImplemented()
 
     def multi_mass_match_convert(self, ls):
-        if ls.atk not in [0, 1]:
-            skill_text = self.fmt_multiplier_text(1, ls.atk, 1) + ' and increase '
-        else:
-            skill_text = 'Increase '
-        skill_text += 'combo by {} when matching {} or more connected'.format(ls.bonus_combo, ls.min_match)
-        skill_text += self.fmt_multi_attr(ls.attributes, conjunction='and') + ' orbs at once'
-
-        return skill_text
+        return self.multi_mass_match_text(ls.atk, ls.bonus_combo, ls.min_match, ls.attributes)
+    
+    def multi_mass_match_text(self, atk, bonus_combo, min_match, num_attr):
+        raise I13NotImplemented()
 
     def l_match_convert(self, ls):
         mult_text = self.fmt_multiplier_text(1, ls.atk, ls.rcv)
         reduct_text = self.fmt_reduct_text(ls.shield)
-        if mult_text:
-            skill_text = mult_text
-            if reduct_text:
-                skill_text += ' and ' + reduct_text
-        elif reduct_text:
-            skill_text = mult_text
-        else:
-            skill_text = '???'
-        skill_text += ' when matching 5' + self.fmt_multi_attr(ls.attributes) + ' orbs in L shape'
-        return skill_text
+        attr = self.fmt_multi_attr(ls.attributes)
+        return self.l_match_text(mult_text, reduct_text, attr)
+    
+    def l_match_text(self, mult_text, reduct_text, attr):
+        raise I13NotImplemented()
 
     def add_combo_att_convert(self, ls):
         attr = ls.attributes
