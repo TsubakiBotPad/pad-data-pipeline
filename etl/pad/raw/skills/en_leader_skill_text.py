@@ -103,6 +103,10 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
             return ' up to {}x when matching {}'.format(mult, max_attr)
         return ' up to {}x at '.format(mult) + self.n_attr_or_heal(attr, max_attr, '{}')
 
+    @staticmethod
+    def concat_list(list_to_concat):
+        return ', '.join(list_to_concat)
+
     def threshold_stats_text(self, intro, above, threshold, is_100):
         skill_text = intro
         if is_100:
@@ -124,7 +128,25 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
     def attribute_match_text(self, intro, attr_text, max_attr_text):
         return intro + attr_text + max_attr_text
-
+    
+    def after_attack_text(self, mult):
+        return '{}x ATK additional damage when matching orbs'.format(mult)
+    
+    def heal_on_text(self, mult):
+        return '{}x RCV additional heal when matching orbs'.format(mult)
+    
+    def resolve_text(self, percent):
+        return 'May survive when HP is reduced to 0 (HP>{}%)'.format(percent)
+    
+    def bonus_time_text(self, intro, time):
+        skill_text = intro + '; ' if intro else ''
+        return skill_text + 'Increase orb movement time by {} seconds'.format(time)
+    
+    def counter_attack_text(self, is_guaranteed, chance, mult, attribute):
+        if is_guaranteed:
+            return '{}x {} counterattack'.format(mult, attribute)
+        return '{}% chance to counterattack with {}x {} damage'.format(chance, mult, attribute)
+    
     def egg_drop_text(self, mult):
         return '{}x Egg Drop rate'.format(mult)
     
@@ -153,6 +175,25 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
     
     def five_orb_one_enhance_text(self, mult):
         return '{}x ATK for matched Att. when matching 5 Orbs with 1+ enhanced'.format(mult)
+
+    def heart_cross_text(self, multiplier_text, reduct_text):
+        skill_text = multiplier_text if multiplier_text else ''
+        skill_text += ' and ' + reduct_text if multiplier_text else reduct_text.capitalize()
+        skill_text += ' when matching 5 Heal orbs in a cross formation'
+        return skill_text
+
+    def multi_play_text(self, mult):
+        return '{} when in multiplayer mode'.format(mult)
+
+    def color_cross_text(self, atk, attrs):
+        return '{}x ATK for each cross of 5 {} orbs'.format(atk, self.concat_list(attrs))
+
+    def orb_remain_text(self, intro, base_atk, orb_count, max_atk):
+        skill_text = intro + '; ' if intro else ''
+        skill_text += '{}x ATK when there are {} or fewer orbs remaining'.format(base_atk, orb_count)
+        if max_atk:
+            skill_text += ' up to {}x ATK when 0 orbs left'.format(max_atk)
+        return skill_text
 
     def get_collab_name(self, collab_id):
         if collab_id not in self._COLLAB_MAP:

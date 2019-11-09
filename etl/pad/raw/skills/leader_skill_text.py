@@ -27,6 +27,10 @@ class LsTextConverter(BaseTextConverter):
 
     def up_to_n_attr(self, attr, max_attr, mult):
         raise I13NotImplemented()
+    
+    @staticmethod
+    def concat_list(list_to_concat):
+        raise I13NotImplemented()
 
     def threshold_stats_convert(self, ls):
         intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True)
@@ -137,39 +141,42 @@ class LsTextConverter(BaseTextConverter):
         return skill_text
 
     def after_attack_convert(self, ls):
-        skill_text = fmt_mult(ls.multiplier) + 'x ATK additional damage when matching orbs'
-        return skill_text
+        return self.after_attack_text(fmt_mult(ls.multiplier))
+
+    def after_attack_text(self, mult):
+        raise I13NotImplemented()
 
     def heal_on_convert(self, ls):
-        skill_text = fmt_mult(ls.multiplier) + 'x RCV additional heal when matching orbs'
-        return skill_text
+        return self.heal_on_text(fmt_mult(ls.multiplier))
+
+    def heal_on_text(self, mult):
+        raise I13NotImplemented()
 
     def resolve_convert(self, ls):
-        skill_text = 'May survive when HP is reduced to 0 (HP>' + str(ls.threshold * 100).rstrip('0').rstrip('.') + '%)'
-        return skill_text
+        return self.resolve_text(str(ls.threshold * 100).rstrip('0').rstrip('.'))
+    
+    def resolve_text(self, percent):
+        raise I13NotImplemented()
 
     def bonus_time_convert(self, ls):
-        skill_text = self.fmt_stats_type_attr_bonus(ls)
-
-        if ls.time:
-            if skill_text:
-                skill_text += '; '
-
-            skill_text += 'Increase orb movement time by ' + fmt_mult(ls.time) + ' seconds'
-
-        return skill_text
+        intro = self.fmt_stats_type_attr_bonus(ls)
+        if not ls.time:
+            return intro
+        time = fmt_mult(ls.time)
+        return self.bonus_time_text(intro, time)
+    
+    def bonus_time_text(self, intro, time):
+        raise I13NotImplemented()
 
     def counter_attack_convert(self, ls):
         attribute = self.ATTRIBUTES[ls.attributes[0]]
-        if ls.chance == 1:
-            skill_text = fmt_mult(ls.multiplier) + \
-                         'x ' + attribute + ' counterattack'
-        else:
-            mult = str(ls.multiplier).rstrip('0').rstrip('.')
-            skill_text = fmt_mult(
-                ls.chance * 100) + '% chance to counterattack with ' + mult + 'x ' + attribute + ' damage'
-
-        return skill_text
+        is_guaranteed = ls.chance == 1
+        mult = str(ls.multiplier).rstrip('0').rstrip('.')
+        chance = fmt_mult(ls.chance * 100)
+        return self.counter_attack_text(is_guaranteed, chance, mult, attribute)
+    
+    def counter_attack_text(self, is_guaranteed, chance, mult, attribute):
+        raise I13NotImplemented()
 
     def egg_drop_convert(self, ls):
         return self.egg_drop_text(fmt_mult(ls.multiplier))
@@ -235,23 +242,18 @@ class LsTextConverter(BaseTextConverter):
         raise I13NotImplemented()
 
     def heart_cross_convert(self, ls):
-        skill_text = ''
-
         multiplier_text = self.fmt_multiplier_text(1, ls.atk, ls.rcv)
-        if multiplier_text:
-            skill_text += multiplier_text
-
         reduct_text = self.fmt_reduct_text(ls.shield)
-        if reduct_text:
-            skill_text += ' and ' + reduct_text if skill_text else reduct_text.capitalize()
-
-        skill_text += ' when matching 5 Heal orbs in a cross formation'
-
-        return skill_text
+        return self.heart_cross_text(multiplier_text, reduct_text)
+    
+    def heart_cross_text(self, multiplier_text, reduct_text):
+        raise I13NotImplemented()
 
     def multi_play_convert(self, ls):
-        skill_text = self.fmt_stats_type_attr_bonus(ls) + ' when in multiplayer mode'
-        return skill_text
+        return self.multi_play_text(self.fmt_stats_type_attr_bonus(ls))
+    
+    def multi_play_text(self, mult):
+        raise I13NotImplemented()
 
     def dual_passive_stat_convert(self, ls):
         c1 = AttributeDict({
@@ -326,34 +328,28 @@ class LsTextConverter(BaseTextConverter):
         return skill_text
 
     def color_cross_convert(self, ls):
-        if len(ls.crosses) == 1:
-            skill_text = fmt_mult(ls.crosses[0].atk) + 'x ATK for each cross of 5 ' + \
-                         self.ATTRIBUTES[ls.crosses[0].attribute] + ' orbs'
+        atk = fmt_mult(ls.crosses[0].atk)
+        attr_list = [self.ATTRIBUTES[ls.crosses[i].attribute] for i in range(0, len(ls.crosses))]
+        return self.color_cross_text(atk, attr_list)
 
-        else:
-            skill_text = fmt_mult(ls.crosses[0].atk) + 'x ATK for each cross of 5 '
-            for i in range(0, len(ls.crosses))[:-1]:
-                skill_text += self.ATTRIBUTES[ls.crosses[i].attribute] + ', '
-            skill_text += self.ATTRIBUTES[ls.crosses[-1].attribute] + ' orbs'
-
-        return skill_text
+    def color_cross_text(self, atk, attr_list):
+        raise I13NotImplemented()
 
     def minimum_orb_convert(self, ls):
         skill_text = self.fmt_stats_type_attr_bonus(ls)
         return skill_text
 
     def orb_remain_convert(self, ls):
-        skill_text = self.fmt_stats_type_attr_bonus(ls, atk=ls.min_atk)
-        if skill_text:
-            skill_text += '; '
-
-        if ls.base_atk not in [0, 1]:
-            skill_text += fmt_mult(ls.base_atk) + 'x ATK when there are ' + \
-                          str(ls.orb_count) + ' or fewer orbs remaining'
-            if ls.bonus_atk != 0:
-                skill_text += ' up to ' + fmt_mult(ls.atk) + 'x ATK when 0 orbs left'
-
-        return skill_text
+        intro = self.fmt_stats_type_attr_bonus(ls, atk=ls.min_atk)
+        if ls.base_atk in [0, 1]:
+            return intro
+        base_atk = fmt_mult(ls.base_atk)
+        orb_count = str(ls.orb_count)
+        max_atk = fmt_mult(ls.atk) if ls.bonus_atk != 0 else None
+        return self.orb_remain_text(intro, base_atk, orb_count, max_atk)
+    
+    def orb_remain_text(self, intro, base_atk, orb_count, max_atk):
+        raise I13NotImplemented()
 
     def collab_bonus_convert(self, ls):
         return self.collab_bonus_text(self.fmt_stats_type_attr_bonus(ls), self.get_collab_name(ls.collab_id))
