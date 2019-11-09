@@ -12,6 +12,8 @@ class LsTextConverter(BaseTextConverter):
         Tag.ERASE_4P: '[Unable to erase 3 orbs or less]',
         Tag.ERASE_5P: '[Unable to erase 4 orbs or less]',
     }
+    
+    _COLLAB_MAP = {}
 
     def tag_only_convert(self, ls):
         return None
@@ -348,6 +350,16 @@ class LsTextConverter(BaseTextConverter):
         return skill_text
 
     def collab_bonus_convert(self, ls):
+        collab_id = ls.collab_id
+        if collab_id not in self._COLLAB_MAP:
+            print('Missing collab name for', collab_id)
+        
+        bonus = self.fmt_stats_type_attr_bonus(ls)
+        name = self._COLLAB_MAP.get(collab_id, '<not populated:{}>'.format(collab_id))
+    
+        return self.collab_bonus_text(bonus, name)
+    
+    def collab_bonus_text(self, bonus, name):
         raise I13NotImplemented()
 
     def multi_mass_match_convert(self, ls):

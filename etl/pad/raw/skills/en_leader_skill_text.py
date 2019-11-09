@@ -80,13 +80,6 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         86: 'Power Rangers',
         10001: 'Dragonbounds & Dragon Callers',
     }
-    
-    def collab_bonus_convert(self, ls):
-        collab_id = ls.collab_id
-        if collab_id not in self._COLLAB_MAP:
-            print('Missing collab name for', collab_id)
-    
-        collab_name = self._COLLAB_MAP.get(collab_id, '<not populated:{}>'.format(collab_id))
-        skill_text = self.fmt_stats_type_attr_bonus(ls) + ' when all cards are from ' + collab_name
-    
-        return skill_text
+
+    def collab_bonus_text(self, bonus, name):
+        return '{} when all cards are from {}'.format(bonus, name)
