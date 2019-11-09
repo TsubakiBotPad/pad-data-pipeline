@@ -81,5 +81,34 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         10001: 'Dragonbounds & Dragon Callers',
     }
 
+    def get_collab_name(self, collab_id):
+        if collab_id not in self._COLLAB_MAP:
+            print('Missing collab name for', collab_id)
+        return self._COLLAB_MAP.get(collab_id, '<not populated:{}>'.format(collab_id))
+
     def collab_bonus_text(self, bonus, name):
         return '{} when all cards are from {}'.format(bonus, name)
+
+    def multi_mass_match_text(self, atk, bonus_combo, min_match, num_attr):
+        if atk not in [0, 1]:
+            skill_text = self.fmt_multiplier_text(1, atk, 1) + ' and increase '
+        else:
+            skill_text = 'Increase '
+        skill_text += 'combo by {} when matching {} or more connected'.format(
+            bonus_combo,
+            min_match
+        )
+        skill_text += self.fmt_multi_attr(num_attr, conjunction='and') + ' orbs at once'
+        return skill_text
+
+    def l_match_text(self, mult_text, reduct_text, attr):
+        if mult_text:
+            skill_text = mult_text
+            if reduct_text:
+                skill_text += ' and ' + reduct_text
+        elif reduct_text:
+            skill_text = mult_text
+        else:
+            skill_text = '???'
+        skill_text += ' when matching 5' + attr + ' orbs in L shape'
+        return skill_text
