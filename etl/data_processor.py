@@ -80,17 +80,14 @@ def load_data(args):
         logging.getLogger('database').setLevel(logging.DEBUG)
     dry_run = not args.doupdates
 
-    input_dir = args.input_dir
-    output_dir = args.output_dir
-
     logger.info('Loading data')
-    jp_database = merged_database.Database(Server.jp, input_dir)
+    jp_database = merged_database.Database(Server.jp, args.input_dir)
     jp_database.load_database()
 
-    na_database = merged_database.Database(Server.na, input_dir)
+    na_database = merged_database.Database(Server.na, args.input_dir)
     na_database.load_database()
 
-    kr_database = merged_database.Database(Server.kr, input_dir)
+    kr_database = merged_database.Database(Server.kr, args.input_dir)
     kr_database.load_database()
 
     cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, kr_database)
