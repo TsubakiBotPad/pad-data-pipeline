@@ -24,15 +24,14 @@ class ExtraEggMachine(pad_util.Printable):
 
     def __init__(self, raw: Dict[str, Any], server: Server):
         self.name = str(raw['name'])
-        self.server = server
         self.clean_name = pad_util.strip_colors(self.name)
 
         # Start time as gungho time string
-        self.start_time_str = str(raw['start'])
+        self.start_time_str = str(raw.get('start', raw['start_time_str']))
         self.start_timestamp = pad_util.gh_to_timestamp_2(self.start_time_str, server)
 
         # End time as gungho time string
-        self.end_time_str = str(raw['end'])
+        self.end_time_str = str(raw.get('end', raw['end_time_str']))
         self.end_timestamp = pad_util.gh_to_timestamp_2(self.end_time_str, server)
 
         # TODO: extra egg machine parser needs to pull out comment
@@ -40,14 +39,14 @@ class ExtraEggMachine(pad_util.Printable):
         self.clean_comment = pad_util.strip_colors(self.comment)
 
         # The egg machine ID used in the API call param grow
-        self.egg_machine_row = int(raw['row'])
+        self.egg_machine_row = int(raw.get('row', raw['egg_machine_row']))
 
         # The egg machine ID used in the API call param gtype
         # Corresponds to the ordering of the item in egatya3
         self.egg_machine_type = int(raw['egg_machine_type'])
 
         # Stone or pal point cost
-        self.cost = int(raw['pri'])
+        self.cost = int(raw.get('pri', raw['cost']))
 
         # Monster ID to %
         self.contents = {}
