@@ -10,13 +10,15 @@ from pad.common import pad_util
 from pad.common.pad_util import Printable
 
 # The typical JSON file name for this data.
+from pad.common.shared_types import Server
+
 FILE_NAME = 'mdatadl.json'
 
 
 class Exchange(Printable):
     """Exchangeable monsters, options to exhange, and any event text."""
 
-    def __init__(self, raw: List[str], server: str):
+    def __init__(self, raw: List[str], server: Server):
         self.unknown_000 = str(raw[0])  # Seems to always be 'A'
 
         # Seems to be the unique ID for the trade?
@@ -36,20 +38,20 @@ class Exchange(Printable):
 
         # Trade availability start time string
         self.start_time_str = str(raw[7])
-        self.start_timestamp = pad_util.gh_to_timestamp(self.start_time_str, server)
+        self.start_timestamp = pad_util.gh_to_timestamp_2(self.start_time_str, server)
 
         # Trade availability end time string
         self.end_time_str = str(raw[8])
-        self.end_timestamp = pad_util.gh_to_timestamp(self.end_time_str, server)
+        self.end_timestamp = pad_util.gh_to_timestamp_2(self.end_time_str, server)
 
         # Start time string for the announcement text, probably?
         self.announcement_start_time_str = str(raw[9])
-        self.announcement_start_timestamp = pad_util.gh_to_timestamp(
+        self.announcement_start_timestamp = pad_util.gh_to_timestamp_2(
             self.announcement_start_time_str, server) if self.announcement_start_time_str else ''
 
         # End time string for the announcement text, probably?
         self.announcement_end_time_str = str(raw[10])
-        self.announcement_end_timestamp = pad_util.gh_to_timestamp(
+        self.announcement_end_timestamp = pad_util.gh_to_timestamp_2(
             self.announcement_end_time_str, server) if self.announcement_end_time_str else ''
 
         # Optional text that appears above monster name, for limited time events
@@ -73,13 +75,7 @@ class Exchange(Printable):
                                                   self.start_time_str, self.end_time_str)
 
 
-def load_data(data_dir: str = None, json_file: str = None, server: str = None) -> List[Exchange]:
-    """Load Exchange objects from the PAD json file."""
-    if json_file is None:
-        json_file = os.path.join(data_dir, FILE_NAME)
-    server = pad_util.identify_server(json_file, server)
-
-    with open(json_file) as f:
-        data_json = json.load(f)
-
+def load_data(server: Server, data_dir: str = None, json_file: str = None) -> List[Exchange]:
+    """Load Card objects from PAD JSON file."""
+    data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
     return [Exchange(item.split(','), server) for item in data_json['d'].split('\n')]
