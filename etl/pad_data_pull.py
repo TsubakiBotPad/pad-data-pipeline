@@ -4,14 +4,12 @@ Pulls data files for specified account/server.
 Requires padkeygen which is not checked in.
 """
 import argparse
-import json
 import os
 
 from pad.api import pad_api
 from pad.common import pad_util
 from pad.common.shared_types import Server
 from pad.raw import bonus, extra_egg_machine
-from pad.raw.extra_egg_machine import machine_from_bonuses, scrape_machine_contents
 
 parser = argparse.ArgumentParser(description="Extracts PAD API data.", add_help=False)
 
@@ -87,15 +85,15 @@ egg_machines = extra_egg_machine.load_data(
     data_json=player_data.egg_data,
     server=server)
 
-egg_machines.extend(machine_from_bonuses(server, bonus_data, 'rem_event', 'Rare Egg Machine'))
-egg_machines.extend(machine_from_bonuses(server, bonus_data, 'pem_event', 'Pal Egg Machine'))
+egg_machines.extend(extra_egg_machine.machine_from_bonuses(server, bonus_data, 'rem_event', 'Rare Egg Machine'))
+egg_machines.extend(extra_egg_machine.machine_from_bonuses(server, bonus_data, 'pem_event', 'Pal Egg Machine'))
 
 for em in egg_machines:
     if not em.is_open():
         # Can only pull rates when the machine is live.
         continue
-    scrape_machine_contents(api_client, em)
+    extra_egg_machine.scrape_machine_contents(api_client, em)
 
-output_file = os.path.join(output_dir, 'egg_machines.json')
+output_file = os.path.join(output_dir, extra_egg_machine.FILE_NAME)
 with open(output_file, 'w') as outfile:
     pad_util.json_file_dump(egg_machines, outfile, pretty=True)

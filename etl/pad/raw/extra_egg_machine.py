@@ -16,7 +16,7 @@ from pad.common import pad_util
 from pad.common.shared_types import Server, JsonType
 from pad.raw.bonus import Bonus
 
-FILE_NAME = 'extra_egg_machines.json'
+FILE_NAME = 'egg_machines.json'
 
 
 class ExtraEggMachine(pad_util.Printable):
