@@ -363,7 +363,7 @@ class CrossServerDatabase(object):
 
     def save(self, output_dir: str, file_name: str, obj: object, pretty: bool):
         output_file = os.path.join(output_dir, '{}.json'.format(file_name))
-        with open(output_file, 'w') as f:
+        with open(output_file, 'w', encoding='utf-8') as f:
             pad_util.json_file_dump(obj, f, pretty)
 
     def save_all(self, output_dir: str, pretty: bool):
