@@ -19,6 +19,15 @@ class LsTextConverter(BaseTextConverter):
     def passive_stats_convert(self, ls):
         return self.fmt_stats_type_attr_bonus(ls)
 
+    def n_or_more_attr(self, attr, n_attr, format_string):
+        raise I13NotImplemented()
+
+    def matching_n_or_more_attr(self, attr, min_attr):
+        raise I13NotImplemented()
+
+    def up_to_n_or_more_attr(self, attr, max_attr, mult):
+        raise I13NotImplemented()
+
     def threshold_stats_convert(self, ls):
         above = ls.threshold_type == ThresholdType.ABOVE
         skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True)
@@ -57,31 +66,16 @@ class LsTextConverter(BaseTextConverter):
         min_rcv_mult = getattr(ls, 'min_rcv', ls.rcv)
         max_mult = getattr(ls, 'max_atk', ls.atk)
 
-        skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
+        intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
                                                     atk=min_mult, rcv=min_rcv_mult)
+        
+        attr_text = self.matching_n_or_more_attr(attr, min_attr)
+        max_attr_text = self.up_to_n_or_more_attr(attr, max_attr, fmt_mult(max_mult)) if max_mult > min_mult else ''
 
-        if attr == [0, 1, 2, 3, 4]:
-            skill_text += ' when matching {} or more colors'.format(min_attr)
-            if max_mult > min_mult:
-                skill_text += ' up to {}x at {} colors'.format(fmt_mult(max_mult), max_attr)
-        elif attr == [0, 1, 2, 3, 4, 5]:
-            skill_text += ' when matching {} or more colors ({}+heal)'.format(
-                min_attr, min_attr - 1)
-            if max_mult > min_mult:
-                skill_text += ' up to {}x at 5 colors+heal'.format(
-                    fmt_mult(max_mult), min_attr - 1)
-        elif max_attr > min_attr and max_mult != min_mult:
-            attr_text = self.attributes_format(attr)
-            skill_text += ' when matching {} of {} up to {}x when matching {}'.format(str(min_attr), attr_text,
-                                                                                      fmt_mult(max_mult), len(attr))
-        elif min_attr == max_attr and len(attr) > min_attr:
-            attr_text = self.attributes_format(attr)
-            skill_text += ' when matching ' + str(min_attr) + '+ of {} at once'.format(attr_text)
-        else:
-            attr_text = self.attributes_format(attr)
-            skill_text += ' when matching {} at once'.format(attr_text)
-
-        return skill_text
+        return self.attribute_match_text(intro, attr_text, max_attr_text)
+    
+    def attribute_match_text(self, intro, attr_text, max_attr_text):
+        raise I13NotImplemented()
 
     def multi_attribute_match_convert(self, ls):
         attributes = multi_getattr(ls, 'match_attributes', 'attributes')
@@ -372,78 +366,38 @@ class LsTextConverter(BaseTextConverter):
         raise I13NotImplemented()
 
     def add_combo_att_convert(self, ls):
-        attr = ls.attributes
-        min_attr = ls.min_attr
+        attr_condition_text = self.matching_n_or_more_attr(ls.attributes, ls.min_attr)
+        return self.add_combo_att_text(attr_condition_text, ls.atk, ls.bonus_combo)
 
-        if ls.atk not in [0, 1]:
-            skill_text = self.fmt_multiplier_text(1, ls.atk, 1) + ' and increase combo by {}'.format(
-                ls.bonus_combo)
-        else:
-            skill_text = 'Increase combo by {}'.format(ls.bonus_combo)
-        if attr == [0, 1, 2, 3, 4]:
-            skill_text += ' when matching {} or more colors'.format(min_attr)
-        elif attr == [0, 1, 2, 3, 4, 5]:
-            skill_text += ' when matching {} or more colors ({}+heal)'.format(min_attr,
-                                                                              min_attr - 1)
-        else:
-            attr_text = self.attributes_format(attr)
-            skill_text += ' when matching {} at once'.format(attr_text)
-
-        return skill_text
+    def add_combo_att_text(self, attr_condition_text, atk, bonus_combo):
+        raise I13NotImplemented()
 
     def orb_heal_convert(self, ls):
-        skill_text = ''
-
-        if ls.atk != 1 and ls.atk != 0:
-            skill_text += self.fmt_multiplier_text(1, ls.atk, 1)
-
-        if ls.shield != 0:
-            reduct_text = self.fmt_reduct_text(ls.shield)
-            if skill_text:
-                if ls.unbind_amt == 0:
-                    skill_text += ' and '
-                else:
-                    skill_text += ', '
-                skill_text += reduct_text
-            else:
-                skill_text += reduct_text[0].upper() + reduct_text[1:]
-
-        if ls.unbind_amt != 0:
-            skill_text += ' and reduce' if skill_text else 'Reduce'
-            skill_text += ' awoken skill binds by {} turns'.format(ls.unbind_amt)
-
-        skill_text += ' when recovering more than {} HP from Heal orbs'.format(ls.heal_amt)
-
-        return skill_text
+        atk = ls.atk
+        mult = self.fmt_multiplier_text(1, atk, 1)
+        shield = ls.shield
+        reduct_text = self.fmt_reduct_text(shield) if shield != 0 else None
+        return self.orb_heal_text(atk, mult, shield, reduct_text, ls.unbind_amt, ls.heal_amt)
+    
+    def orb_heal_text(self, atk, mult, shield, reduct_text, unbind_amt, heal_amt):
+        raise I13NotImplemented()
 
     def rainbow_bonus_damage_convert(self, ls):
-        skill_text = '{} additional damage'.format(ls.bonus_damage)
-
-        attr = ls.attributes
-        min_attr = ls.min_attr
-
-        if attr == [0, 1, 2, 3, 4]:
-            skill_text += ' when matching {} or more colors'.format(min_attr)
-        elif attr == [0, 1, 2, 3, 4, 5]:
-            skill_text += ' when matching {} or more colors ({}+heal)'.format(
-                min_attr, min_attr - 1)
-        elif min_attr == ls.max_attr and len(attr) > min_attr:
-            attr_text = self.attributes_format(attr)
-            skill_text += ' when matching ' + str(min_attr) + '+ of {} at once'.format(attr_text)
-        else:
-            attr_text = self.attributes_format(attr)
-            skill_text += ' when matching {} at once'.format(attr_text)
-        return skill_text
+        attr_condition_text = self.matching_n_or_more_attr(ls.attributes, ls.min_attr)
+        return self.rainbow_bonus_damage_text(ls.bonus_damage, attr_condition_text)
+    
+    def rainbow_bonus_damage_text(self, bonus_damage, attr_condition_text):
+        raise I13NotImplemented()
 
     def mass_match_bonus_damage_convert(self, ls):
-        skill_text = '{} additional damage when matching {} or more'.format(ls.bonus_damage, ls.min_match)
         attr_text = self.fmt_multi_attr(ls.attributes)
-        if attr_text:
-            skill_text += '{} orbs'.format(attr_text)
-        else:
-            skill_text += ' orbs'
-
-        return skill_text
+        return self.mass_match_bonus_damage_text(ls.bonus_damage, ls.min_match, attr_text)
+    
+    def mass_match_bonus_damage_text(self, bonus_damage, min_match, attr_text):
+        raise I13NotImplemented()
 
     def taiko_convert(self, ls):
-        return 'Turn orb sound effects into Taiko noises'
+        return self.taiko_text()
+    
+    def taiko_text(self):
+        raise I13NotImplemented()

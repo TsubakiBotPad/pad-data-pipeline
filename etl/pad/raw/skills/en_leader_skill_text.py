@@ -81,6 +81,29 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         10001: 'Dragonbounds & Dragon Callers',
     }
 
+    def n_or_more_attr(self, attr, n_attr, format_string):
+        if n_attr == 6:
+            return '5 colors+heal'
+        if attr == [0, 1, 2, 3, 4]:
+            return format_string.format(n_attr) + ' colors'
+        elif attr == [0, 1, 2, 3, 4, 5]:
+            return format_string.format(n_attr) + ' colors ({}+heal)'.format(n_attr - 1)
+        attr_text = self.attributes_format(attr)
+        if len(attr) > n_attr:
+            return '{}+ of {} at once'.format(str(n_attr), attr_text)
+        return '{} at once'.format(attr_text)
+    
+    def matching_n_or_more_attr(self, attr, min_attr):
+        return ' when matching ' + self.n_or_more_attr(attr, min_attr, '{} or more')
+    
+    def up_to_n_or_more_attr(self, attr, max_attr, mult):
+        if max_attr < 5 and (len(attr) < 5 or 5 in attr):
+            return ' up to {}x when matching {}'.format(mult, max_attr)
+        return ' up to {}x at '.format(mult) + self.n_or_more_attr(attr, max_attr, '{}')
+
+    def attribute_match_text(self, intro, attr_text, max_attr_text):
+        return intro + attr_text + max_attr_text
+
     def get_collab_name(self, collab_id):
         if collab_id not in self._COLLAB_MAP:
             print('Missing collab name for', collab_id)
@@ -112,3 +135,53 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
             skill_text = '???'
         skill_text += ' when matching 5' + attr + ' orbs in L shape'
         return skill_text
+    
+    def add_combo_att_text(self, attr_condition_text, atk, bonus_combo):
+        if atk not in [0, 1]:
+            skill_text = self.fmt_multiplier_text(1, atk, 1) + ' and increase combo by {}'.format(
+                bonus_combo)
+        else:
+            skill_text = 'Increase combo by {}'.format(bonus_combo)
+        skill_text += attr_condition_text
+        return skill_text
+
+    def orb_heal_text(self, atk, mult, shield, reduct_text, unbind_amt, heal_amt):
+        skill_text = ''
+
+        if atk != 1 and atk != 0:
+            skill_text += mult
+
+        if shield != 0:
+            if skill_text:
+                if unbind_amt == 0:
+                    skill_text += ' and '
+                else:
+                    skill_text += ', '
+                skill_text += reduct_text
+            else:
+                skill_text += reduct_text[0].upper() + reduct_text[1:]
+
+        if unbind_amt != 0:
+            skill_text += ' and reduce' if skill_text else 'Reduce'
+            skill_text += ' awoken skill binds by {} turns'.format(unbind_amt)
+
+        skill_text += ' when recovering more than {} HP from Heal orbs'.format(heal_amt)
+
+        return skill_text
+
+    def rainbow_bonus_damage_text(self, bonus_damage, attr_condition_text):
+        skill_text = '{} additional damage{}'.format(bonus_damage, attr_condition_text)
+        return skill_text
+
+    def mass_match_bonus_damage_text(self, bonus_damage, min_match, attr_text):
+        skill_text = '{} additional damage when matching {} or more'.format(bonus_damage, min_match)
+        
+        if attr_text:
+            skill_text += '{} orbs'.format(attr_text)
+        else:
+            skill_text += ' orbs'
+
+        return skill_text
+
+    def taiko_text(self):
+        return 'Turn orb sound effects into Taiko noises'
