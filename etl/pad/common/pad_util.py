@@ -60,13 +60,6 @@ def ghtime(time_str: str, server: str) -> datetime.datetime:
     return datetime.datetime.strptime(timezone_str, '%y%m%d%H%M%S %z')
 
 
-# TODO: delete this
-def gh_to_timestamp(time_str: str, server: str) -> int:
-    """Converts a time string to a timestamp."""
-    dt = ghtime(time_str, server)
-    return int(dt.timestamp())
-
-
 def gh_to_timestamp_2(time_str: str, server: Server) -> int:
     """Converts a time string to a timestamp."""
     dt = ghtime(time_str, server.name)

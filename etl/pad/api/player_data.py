@@ -1,7 +1,7 @@
 from ..common import pad_util
 
 
-class PlayerDataResponse(pad_util.JsonDictEncodable):
+class PlayerDataResponse(pad_util.Printable):
     def __init__(self, data):
         self.cur_deck_id = data['curDeck']  # int
         self.decksb = data['decksb']
@@ -63,13 +63,13 @@ class PlayerDataResponse(pad_util.JsonDictEncodable):
         return results
 
 
-class RecommendedHelpersResponse(pad_util.JsonDictEncodable):
+class RecommendedHelpersResponse(pad_util.Printable):
     def __init__(self, data):
         print(data)
         self.helpers = [FriendEntry(f) for f in data['helpers']]
 
 
-class CardEntry(pad_util.JsonDictEncodable):
+class CardEntry(pad_util.Printable):
     def __init__(self, row_values):
         self.card_uuid = row_values[0]
         self.exp = row_values[1]
@@ -91,7 +91,7 @@ class CardEntry(pad_util.JsonDictEncodable):
         return str(self.__dict__)
 
 
-class FriendEntry(pad_util.JsonDictEncodable):
+class FriendEntry(pad_util.Printable):
     BASE_SIZE = 16
 
     def __init__(self, row_values):
@@ -104,7 +104,8 @@ class FriendEntry(pad_util.JsonDictEncodable):
 
         if len(row_values) > FriendEntry.BASE_SIZE + 2 * FriendLeader.SIZE:
             self.leader_3 = FriendLeader(
-                row_values[FriendEntry.BASE_SIZE + 2 * FriendLeader.SIZE: FriendEntry.BASE_SIZE + 3 * FriendLeader.SIZE])
+                row_values[
+                FriendEntry.BASE_SIZE + 2 * FriendLeader.SIZE: FriendEntry.BASE_SIZE + 3 * FriendLeader.SIZE])
         else:
             self.leader_3 = None
 
@@ -112,7 +113,7 @@ class FriendEntry(pad_util.JsonDictEncodable):
         return str(self.__dict__)
 
 
-class FriendLeader(pad_util.JsonDictEncodable):
+class FriendLeader(pad_util.Printable):
     SIZE = 15
 
     def __init__(self, row_values):
