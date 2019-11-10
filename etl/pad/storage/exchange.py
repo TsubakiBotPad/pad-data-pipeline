@@ -11,13 +11,12 @@ class Exchange(SimpleSqlItem):
 
     @staticmethod
     def from_raw_exchange(o):
-        # exchange_id = int('{:<07}{}'.format(o.trade_id, o.server.value))
-        if o.server == Server.na or o.server == Server.kr:
-            id_mapper = nakr_no_to_monster_id
-        else:
+        if o.server == Server.jp:
             id_mapper = jp_no_to_monster_id
+        else:
+            id_mapper = nakr_no_to_monster_id
         target_monster_id = id_mapper(o.monster_id)
-        req_monster_csv_str = ','.join([str(id_mapper(idx)) for idx in o.required_monsters])
+        req_monster_csv_str = ','.join(['({})'.format(id_mapper(idx)) for idx in o.required_monsters])
         permanent = int(timedelta(seconds=(o.end_timestamp-o.start_timestamp)) > timedelta(days=60))
         return Exchange(trade_id=o.trade_id,
                         server_id=o.server.value,
