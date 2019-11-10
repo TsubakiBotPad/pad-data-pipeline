@@ -15,6 +15,7 @@ from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_content_processor import DungeonContentProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.exchange_processor import ExchangeProcessor
+from pad.storage_processor.egg_machine_processor import EggMachineProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
 from pad.storage_processor.schedule_processor import ScheduleProcessor
@@ -130,6 +131,9 @@ def load_data(args):
 
     # Auto-assign monster series
     series_processor.post_process(db_wrapper)
+
+    # Egg machines
+    EggMachineProcessor(cs_database).process(db_wrapper)
 
     # Load dungeon data
     dungeon_processor = DungeonProcessor(cs_database)
