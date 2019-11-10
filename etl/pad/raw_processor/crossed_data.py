@@ -7,7 +7,7 @@ from typing import List, Optional, Union
 
 from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
-from pad.raw import Dungeon, EnemySkill
+from pad.raw import Dungeon, EnemySkill, ESRef
 from pad.raw.dungeon import SubDungeon
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
@@ -15,7 +15,7 @@ from pad.raw.skills.en_active_skill_text import EnAsTextConverter
 from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw.skills.skill_text_typing import AsCondition, LsCondition
-from pad.raw_processor.merged_data import MergedCard
+from pad.raw_processor.merged_data import MergedCard, MergedEnemySkill
 from pad.raw_processor.merged_database import Database
 
 fail_logger = logging.getLogger('processor_failures')
@@ -39,6 +39,8 @@ class CrossServerCard(object):
         # This is an initial pass; the more 'correct' versions override later
         self.leader_skill = make_cross_server_skill(jp_card.leader_skill, na_card.leader_skill, kr_card.leader_skill)
         self.active_skill = make_cross_server_skill(jp_card.active_skill, na_card.active_skill, kr_card.active_skill)
+
+        self.enemy_behavior = make_cross_server_enemy_behavior(jp_card.enemy_skills, na_card.enemy_skills)
 
         # This is mostly just for integration test purposes. Should really be fixed a different way.
         self.en_ls_text = None
@@ -112,19 +114,6 @@ def make_cross_server_card(jp_card: MergedCard,
         dest_card.leader_skill = _compare_named(source_card.leader_skill, dest_card.leader_skill)
         dest_card.active_skill = _compare_named(source_card.active_skill, dest_card.active_skill)
 
-        # Same concept with enemy skills, first check if we need to bulk overwrite
-        if len(source_card.enemy_behavior) != len(dest_card.enemy_behavior):
-            dest_card.enemy_behavior = source_card.enemy_behavior
-
-        # Then check if we need to individually overwrite
-        for idx in range(len(source_card.enemy_behavior)):
-            if type(source_card.enemy_behavior[idx]) != type(dest_card.enemy_behavior[idx]):
-                dest_card.enemy_behavior[idx] = source_card.enemy_behavior[idx]
-            else:
-                # Fill the source name in as a hack.
-                # TODO: rename jp_name to alt_name or something
-                dest_card.enemy_behavior[idx].jp_name = (source_card.enemy_behavior[idx].name or
-                                                         dest_card.enemy_behavior[idx].name)
         return dest_card
 
     # Override priority: JP > NA, NA -> JP, NA -> KR.
@@ -137,6 +126,34 @@ def make_cross_server_card(jp_card: MergedCard,
         return None, 'Debug monster'
 
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
+
+
+def make_cross_server_enemy_behavior(jp_skills: List[MergedEnemySkill],
+                                     na_skills: List[MergedEnemySkill]) -> List[ESRef]:
+    """Creates enemy data by combining the JP enemy info with the NA enemy info."""
+    jp_skills = list(jp_skills) or []
+    na_skills = list(na_skills) or []
+
+    if len(jp_skills) > len(na_skills):
+        return jp_skills
+    elif len(na_skills) > len(jp_skills):
+        return na_skills
+    elif not na_skills and not jp_skills:
+        return []
+
+    def override_if_necessary(override_skills: List[MergedEnemySkill], dest_skills: List[MergedEnemySkill]):
+        # Then check if we need to individually overwrite
+        for idx in range(len(override_skills)):
+            override_skill = override_skills[idx].enemy_skill
+            dest_skill = dest_skills[idx].enemy_skill
+            if override_skill == _compare_named(override_skill, dest_skill):
+                dest_skills[idx] = override_skills[idx]
+
+    # Override priority: JP > NA, NA -> JP
+    override_if_necessary(jp_skills, na_skills)
+    override_if_necessary(na_skills, jp_skills)
+
+    return list(map(lambda s: s.enemy_skill_ref, jp_skills))
 
 
 class CrossServerDungeon(object):

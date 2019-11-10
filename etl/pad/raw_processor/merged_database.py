@@ -1,7 +1,5 @@
-import json
 import logging
 import os
-from enum import Enum
 from typing import List, Dict
 
 from pad.common import pad_util
@@ -9,11 +7,10 @@ from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill, extra_egg_machine
-# from ..processor import enemy_skillset as ess
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw.skills.skill_parser import SkillParser
-from .merged_data import MergedBonus, MergedCard, MergedEnemy
+from .merged_data import MergedBonus, MergedCard, MergedEnemy, MergedEnemySkill
 
 fail_logger = logging.getLogger('processor_failures')
 
@@ -44,9 +41,9 @@ def _clean_bonuses(server: Server, bonus_sets, dungeons) -> List[MergedBonus]:
 
 def _clean_cards(server: Server,
                  cards: List[card.Card],
-                 enemy_skills: List[MergedEnemy],
+                 enemies: List[MergedEnemy],
                  db) -> List[MergedCard]:
-    enemy_behavior_by_enemy_id = {int(s.enemy_id): s.behavior for s in enemy_skills}
+    enemy_by_enemy_id = {e.enemy_id: e for e in enemies}
 
     merged_cards = []
     for card in cards:
@@ -66,25 +63,25 @@ def _clean_cards(server: Server,
                 critical_failures.append('Leader skill lookup failed: %s - %s'.format(
                     repr(card), card.leader_skill_id))
 
-        enemy_behavior = enemy_behavior_by_enemy_id.get(card.monster_no, [])
+        enemy = enemy_by_enemy_id.get(card.monster_no)
+        enemy_skills = enemy.enemy_skills if enemy else []
 
-        result = MergedCard(server, card, active_skill, leader_skill, enemy_behavior)
+        result = MergedCard(server, card, active_skill, leader_skill, enemy_skills)
         result.critical_failures.extend(critical_failures)
         merged_cards.append(result)
 
     return merged_cards
 
 
-def _clean_enemy(cards, enemy_skills) -> List[MergedEnemy]:
-    # TODO: enemy stuff
-    # ess.enemy_skill_map = {s.enemy_skill_id: s for s in enemy_skills}
+def _clean_enemy(cards: List[Card], enemy_skills: List[EnemySkill]) -> List[MergedEnemy]:
+    enemy_skill_map = {s.enemy_skill_id: s for s in enemy_skills}
     merged_enemies = []
-    # for card in cards:
-    #     if len(card.enemy_skill_refs) == 0:
-    #         continue
-    #     enemy_skillset = [x for x in card.enemy_skill_refs]
-    #     behavior = ess.extract_behavior(card, enemy_skillset)
-    #     merged_enemies.append(MergedEnemy(card.card_id, behavior))
+    for c in cards:
+        if not c.enemy_skill_refs:
+            continue
+
+        merged_skills = [MergedEnemySkill(x, enemy_skill_map[x.enemy_skill_id]) for x in c.enemy_skill_refs if x]
+        merged_enemies.append(MergedEnemy(c.monster_no, c.enemy(), merged_skills))
     return merged_enemies
 
 
