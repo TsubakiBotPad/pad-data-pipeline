@@ -7,7 +7,7 @@ from typing import List, Optional, Union
 
 from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
-from pad.raw import Dungeon
+from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
@@ -73,7 +73,7 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
 
 def is_bad_name(name):
     """Finds names that are currently placeholder data."""
-    return any(x in name for x in ['***', '???', '無し'])
+    return any([x in name for x in ['***', '???']]) or any([x == name for x in ['None', '無し', '없음', 'なし']])
 
 
 def _compare_named(override, dest):
@@ -289,6 +289,43 @@ def make_cross_server_skill(jp_skill: EitherSkillType,
         return None
 
 
+class CrossServerEnemySkill(object):
+    def __init__(self, jp_skill: EnemySkill, na_skill: EnemySkill, kr_skill: EnemySkill):
+        self.enemy_skill_id = (jp_skill or na_skill or kr_skill).enemy_skill_id
+        self.jp_skill = jp_skill
+        self.na_skill = na_skill
+        self.kr_skill = kr_skill
+
+
+def build_cross_server_enemy_skills(jp_skills: List[EnemySkill],
+                                    na_skills: List[EnemySkill],
+                                    kr_skills: List[EnemySkill]) -> List[CrossServerEnemySkill]:
+    jp_map = {skill.enemy_skill_id: skill for skill in jp_skills}
+    na_map = {skill.enemy_skill_id: skill for skill in na_skills}
+    kr_map = {skill.enemy_skill_id: skill for skill in kr_skills}
+
+    all_ids = set()
+    all_ids.update(jp_map.keys())
+    all_ids.update(na_map.keys())
+    all_ids.update(kr_map.keys())
+
+    results = []  # type: List[CrossServerEnemySkill]
+    for skill_id in all_ids:
+        jp_skill = jp_map.get(skill_id, None)
+        na_skill = na_map.get(skill_id, None)
+        kr_skill = kr_map.get(skill_id, None)
+
+        # Override priority: JP > NA, NA -> JP, NA -> KR.
+        na_skill = _compare_named(jp_skill, na_skill)
+        jp_skill = _compare_named(na_skill, jp_skill)
+        kr_skill = _compare_named(na_skill, kr_skill)
+
+        if na_skill or jp_skill or kr_skill:
+            results.append(CrossServerEnemySkill(jp_skill, na_skill, kr_skill))
+
+    return results
+
+
 class CrossServerDatabase(object):
     def __init__(self, jp_database: Database, na_database: Database, kr_database: Database):
         self.all_cards = build_cross_server_cards(jp_database,
@@ -320,6 +357,10 @@ class CrossServerDatabase(object):
         self.dungeons = build_cross_server_dungeons(jp_database,
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
+
+        self.enemy_skills = build_cross_server_enemy_skills(jp_database.enemy_skills,
+                                                            na_database.enemy_skills,
+                                                            kr_database.enemy_skills)
 
         self.jp_bonuses = jp_database.bonuses
         self.na_bonuses = na_database.bonuses
@@ -375,6 +416,7 @@ class CrossServerDatabase(object):
         self.save(output_dir, 'dungeons', self.dungeons, pretty)
         self.save(output_dir, 'active_skills', self.active_skills, pretty)
         self.save(output_dir, 'leader_skills', self.leader_skills, pretty)
+        self.save(output_dir, 'enemy_skills', self.enemy_skills, pretty)
         self.save(output_dir, 'jp_bonuses', self.jp_bonuses, pretty)
         self.save(output_dir, 'na_bonuses', self.na_bonuses, pretty)
         self.save(output_dir, 'kr_bonuses', self.kr_bonuses, pretty)

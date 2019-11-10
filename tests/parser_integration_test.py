@@ -68,6 +68,7 @@ def run_test(args):
         'dungeons.json': cross_db.dungeons,
         'active_skills.json': cross_db.active_skills,
         'leader_skills.json': cross_db.leader_skills,
+        'enemy_skills.json': cross_db.enemy_skills,
         # 'jp_bonuses.json': cross_db.jp_bonuses,
         # 'na_bonuses.json': cross_db.na_bonuses,
         # 'kr_bonuses.json': cross_db.kr_bonuses,
