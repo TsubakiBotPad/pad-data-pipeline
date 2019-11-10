@@ -325,6 +325,10 @@ class CrossServerDatabase(object):
         self.na_bonuses = na_database.bonuses
         self.kr_bonuses = kr_database.bonuses
 
+        self.jp_exchange = jp_database.exchange
+        self.na_exchange = na_database.exchange
+        self.kr_exchange = kr_database.exchange
+
         self.monster_id_to_card = {c.monster_id: c for c in self.all_cards}
         self.leader_id_to_leader = {s.skill_id: s for s in self.leader_skills}
         self.active_id_to_active = {s.skill_id: s for s in self.active_skills}
