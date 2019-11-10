@@ -74,7 +74,7 @@ D_SERVERS = [
 
 
 class DEventType(SimpleSqlItem):
-    """Monster types."""
+    """Event types."""
     TABLE = 'd_event_types'
     KEY_COL = 'event_type_id'
 
@@ -85,6 +85,23 @@ class DEventType(SimpleSqlItem):
 
 D_EVENT_TYPES = [
     DEventType(0, 'General'),
+]
+
+
+class DEggMachinesType(SimpleSqlItem):
+    """Egg machine categories."""
+    TABLE = 'd_egg_machine_types'
+    KEY_COL = 'egg_machine_type_id'
+
+    def __init__(self, egg_machine_type_id: int = None, name: str = None):
+        self.egg_machine_type_id = egg_machine_type_id
+        self.name = name
+
+
+D_EGG_MACHINE_TYPES = [
+    DEggMachinesType(0, 'Special'),
+    DEggMachinesType(1, 'REM'),
+    DEggMachinesType(2, 'PEM'),
 ]
 
 
@@ -100,4 +117,6 @@ class DimensionProcessor(object):
         for item in D_SERVERS:
             db.insert_or_update(item)
         for item in D_EVENT_TYPES:
+            db.insert_or_update(item)
+        for item in D_EGG_MACHINE_TYPES:
             db.insert_or_update(item)

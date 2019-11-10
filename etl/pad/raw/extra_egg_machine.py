@@ -46,7 +46,8 @@ class ExtraEggMachine(pad_util.Printable):
         self.cost = int(raw.get('pri', raw.get('cost')))
 
         # Monster ID to %
-        self.contents = {}
+        contents = raw.get('contents', {})
+        self.contents = {int(k): v for k, v in contents.items()}
 
     def is_open(self):
         current_time = int(time.time())
