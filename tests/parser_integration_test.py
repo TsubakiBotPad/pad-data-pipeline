@@ -91,7 +91,8 @@ def run_test(args):
 
         if len(golden_data) != len(data):
             print('ERROR')
-            print('ERROR: file lengths differed, indicates old golden data for', file)
+            print('ERROR: file lengths differed ({} vs {}), indicates old golden data for {}'.format(
+                len(golden_data), len(data), file))
             print('ERROR')
             failed_comparisons += 1
             continue
