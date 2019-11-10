@@ -68,6 +68,7 @@ def run_test(args):
         'dungeons.json': cross_db.dungeons,
         'active_skills.json': cross_db.active_skills,
         'leader_skills.json': cross_db.leader_skills,
+        'enemy_skills.json': cross_db.enemy_skills,
         # 'jp_bonuses.json': cross_db.jp_bonuses,
         # 'na_bonuses.json': cross_db.na_bonuses,
         # 'kr_bonuses.json': cross_db.kr_bonuses,
@@ -91,7 +92,8 @@ def run_test(args):
 
         if len(golden_data) != len(data):
             print('ERROR')
-            print('ERROR: file lengths differed, indicates old golden data for', file)
+            print('ERROR: file lengths differed ({} vs {}), indicates old golden data for {}'.format(
+                len(golden_data), len(data), file))
             print('ERROR')
             failed_comparisons += 1
             continue
