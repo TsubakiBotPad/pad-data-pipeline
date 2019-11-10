@@ -14,7 +14,9 @@ from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_content_processor import DungeonContentProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
+from pad.storage_processor.exchange_processor import ExchangeProcessor
 from pad.storage_processor.egg_machine_processor import EggMachineProcessor
+from pad.storage_processor.exchange_processor import ExchangeProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
 from pad.storage_processor.schedule_processor import ScheduleProcessor
@@ -147,6 +149,9 @@ def load_data(args):
     # Load event data
     ScheduleProcessor(cs_database).process(db_wrapper)
 
+    # Load exchange data
+    ExchangeProcessor(cs_database).process(db_wrapper)
+    
     # Update timestamps
     TimestampProcessor().process(db_wrapper)
 

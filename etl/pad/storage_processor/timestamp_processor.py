@@ -1,4 +1,5 @@
 import logging
+import datetime
 
 from pad.db.db_util import DbWrapper
 from pad.storage.awoken_skill import AwokenSkill
@@ -8,6 +9,7 @@ from pad.storage.monster import Monster, ActiveSkill, LeaderSkill, Awakening, Ev
 from pad.storage.rank_reward import RankReward
 from pad.storage.schedule import ScheduleEvent
 from pad.storage.skill_tag import ActiveSkillTag, LeaderSkillTag
+from pad.storage.exchange import Exchange
 
 logger = logging.getLogger('processor')
 
@@ -19,6 +21,7 @@ _UPDATE_TABLES = [
     Dungeon.TABLE,
     Encounter.TABLE,
     Evolution.TABLE,
+    Exchange.TABLE,
     LeaderSkill.TABLE,
     LeaderSkillTag.TABLE,
     Monster.TABLE,
