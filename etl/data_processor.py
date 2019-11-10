@@ -16,6 +16,7 @@ from pad.storage_processor.dungeon_content_processor import DungeonContentProces
 from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.exchange_processor import ExchangeProcessor
 from pad.storage_processor.egg_machine_processor import EggMachineProcessor
+from pad.storage_processor.exchange_processor import ExchangeProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
 from pad.storage_processor.schedule_processor import ScheduleProcessor
