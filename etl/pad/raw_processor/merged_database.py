@@ -7,8 +7,8 @@ from typing import List, Dict
 from pad.common import pad_util
 from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
-from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, egg_machine
-from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill
+from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange
+from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill, extra_egg_machine
 # from ..processor import enemy_skillset as ess
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
@@ -142,7 +142,7 @@ class Database(object):
 
         if not skip_extra:
             self.exchange = exchange.load_data(data_dir=base_dir, server=self.server)
-            self.egg_machines = egg_machine.load_data(data_dir=base_dir)
+            self.egg_machines = extra_egg_machine.load_data(data_dir=base_dir, server=self.server)
 
         self.bonuses = _clean_bonuses(self.server, self.bonus_sets, self.dungeons)
         self.enemies = _clean_enemy(raw_cards, self.enemy_skills)

@@ -50,11 +50,11 @@ def run_test(args):
     kr_db = merged_database.Database(Server.kr, input_dir)
 
     print('loading JP')
-    jp_db.load_database()
+    jp_db.load_database(skip_extra=True)
     print('loading NA')
-    na_db.load_database()
+    na_db.load_database(skip_extra=True)
     print('loading KR')
-    kr_db.load_database()
+    kr_db.load_database(skip_extra=True)
 
     print('merging data')
     cross_db = CrossServerDatabase(jp_db, na_db, kr_db)
@@ -140,7 +140,10 @@ def run_test(args):
 
 
 def find_ids(gold_str):
-    id_hits = filter(lambda x: 'monster_no' in x or 'dungeon_id' in x, gold_str.split('\n'))
+    def is_id_line(line):
+        return any(x in line for x in ['monster_no', 'dungeon_id', 'leader_skill_id', 'active_skill_id'])
+
+    id_hits = filter(is_id_line, gold_str.split('\n'))
     id_info = set(map(str.strip, id_hits))
     return '\n'.join(id_info)
 
