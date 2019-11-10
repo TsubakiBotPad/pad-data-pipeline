@@ -2,10 +2,11 @@ import datetime
 import json
 import os
 import re
+from typing import Union
 
 import pytz
 
-from pad.common.shared_types import JsonType, Printable, Server, dump_helper
+from pad.common.shared_types import JsonType, Printable, Server, dump_helper, ListJsonType
 
 # Re-exporting these types; should fix imports
 Printable = Printable
@@ -119,7 +120,7 @@ def identify_server(json_file: str, server: str) -> str:
     raise Exception('Server not supplied and not automatically detected from path')
 
 
-def load_raw_json(data_dir: str = None, json_file: str = None, file_name: str = None) -> JsonType:
+def load_raw_json(data_dir: str = None, json_file: str = None, file_name: str = None) -> Union[JsonType, ListJsonType]:
     """Load JSON file."""
     if json_file is None:
         json_file = os.path.join(data_dir, file_name)
