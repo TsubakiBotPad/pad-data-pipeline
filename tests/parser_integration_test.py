@@ -50,11 +50,11 @@ def run_test(args):
     kr_db = merged_database.Database(Server.kr, input_dir)
 
     print('loading JP')
-    jp_db.load_database()
+    jp_db.load_database(skip_extra=True)
     print('loading NA')
-    na_db.load_database()
+    na_db.load_database(skip_extra=True)
     print('loading KR')
-    kr_db.load_database()
+    kr_db.load_database(skip_extra=True)
 
     print('merging data')
     cross_db = CrossServerDatabase(jp_db, na_db, kr_db)
