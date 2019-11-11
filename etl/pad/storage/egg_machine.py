@@ -33,6 +33,7 @@ class EggMachine(SimpleSqlItem):
             machine_row=eem.egg_machine_row,
             machine_type=eem.egg_machine_type,
             name=eem.clean_name,
+            cost=eem.cost,
             contents=contents
         )
 
@@ -45,6 +46,7 @@ class EggMachine(SimpleSqlItem):
                  machine_row: int = None,
                  machine_type: int = None,
                  name: str = None,
+                 cost: int = None,
                  contents: str = None,
                  tstamp: int = None):
         self.egg_machine_id = egg_machine_id
@@ -55,6 +57,7 @@ class EggMachine(SimpleSqlItem):
         self.machine_row = machine_row
         self.machine_type = machine_type
         self.name = name
+        self.cost = cost
         self.contents = contents
         self.tstamp = tstamp
 
