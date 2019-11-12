@@ -103,20 +103,24 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
             return ' up to {}x when matching {}'.format(mult, max_attr)
         return ' up to {}x at '.format(mult) + self.n_attr_or_heal(attr, max_attr, '{}')
 
-    @staticmethod
-    def concat_list(list_to_concat):
-        return ', '.join(list_to_concat)
-
     def threshold_stats_text(self, intro, above, threshold, is_100):
         skill_text = intro
         if is_100:
-            skill_text += ' when HP is'
-            if not above:
-                skill_text += ' not'
-            skill_text += ' full'
+            skill_text += ' when HP is {}'.format('full' if above else 'not full')
         else:
             skill_text += ' when above ' if above else ' when below '
             skill_text += threshold + '% HP'
+        return skill_text
+
+    def dual_threshold_stats_part_full_hp_text(self, intro, above):
+        skill_text = intro
+        skill_text += ' when HP {} full'.format('is' if above else 'is not')
+        return skill_text
+
+    def dual_threshold_stats_part_threshold_text(self, intro, above, threshold):
+        skill_text = intro
+        skill_text += ' when {} '.format('above' if above else 'below')
+        skill_text += '{}% HP'.format(threshold)
         return skill_text
 
     def combo_match_text(self, intro, min_combos, max_combos, up_to, max_mult):
@@ -128,6 +132,37 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
     def attribute_match_text(self, intro, attr_text, max_attr_text):
         return intro + attr_text + max_attr_text
+    
+    def multi_of_one_attribute_match_text(self, intro, min_match, attr_text, max_mult, max_match):
+        skill_text = intro
+        skill_text += ' when matching {}'.format(min_match)
+        if not max_mult:
+            skill_text += '+'
+        skill_text += ' {} combos'.format(attr_text)
+        if not max_mult:
+            return skill_text
+        skill_text += ', up to {}x at {} {} combos'.format(max_mult, max_match, attr_text)
+        return skill_text
+    
+    def multi_of_dif_attribute_match_text(self, intro, min_colors, alt_colors, max_mult, all_colors):
+        skill_text = intro
+        skill_text += ' when matching {}'.format(min_colors)
+        if alt_colors:
+            skill_text += '({})'.format(alt_colors)
+        if max_mult:
+            skill_text += ' up to {}x when matching {}'.format(max_mult, all_colors)
+        return skill_text
+
+    def mass_match_text(self, intro, min_count, or_more, attr, max_count, max_mult):
+        skill_text = intro
+        skill_text += ' when matching {}'.format(min_count)
+        if or_more:
+            skill_text += ' or more connected'
+        skill_text += '{} orbs'.format(attr)
+        if not max_mult:
+            return skill_text
+        skill_text += ' up to {}x at {} orbs'.format(max_mult, max_count)
+        return skill_text
     
     def after_attack_text(self, mult):
         return '{}x ATK additional damage when matching orbs'.format(mult)
@@ -177,23 +212,31 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         return '{}x ATK for matched Att. when matching 5 Orbs with 1+ enhanced'.format(mult)
 
     def heart_cross_text(self, multiplier_text, reduct_text):
-        skill_text = multiplier_text if multiplier_text else ''
-        skill_text += ' and ' + reduct_text if multiplier_text else reduct_text.capitalize()
-        skill_text += ' when matching 5 Heal orbs in a cross formation'
-        return skill_text
+        skill_parts = [
+            multiplier_text,
+            reduct_text + ' when matching 5 Heal orbs in a cross formation'
+        ]
+        return self.concat_list_and(skill_parts)
 
     def multi_play_text(self, mult):
         return '{} when in multiplayer mode'.format(mult)
+
+    def dual_passive_stat_text(self, bonus1, bonus2, both_atk):
+        skill_parts = [
+            bonus1,
+            bonus2,
+            '{}x ATK for allies with both Att.'.format(both_atk) if both_atk else None
+        ]
+        return self.concat_list_semicolons(skill_parts)
 
     def color_cross_text(self, atk, attrs):
         return '{}x ATK for each cross of 5 {} orbs'.format(atk, self.concat_list(attrs))
 
     def orb_remain_text(self, intro, base_atk, orb_count, max_atk):
-        skill_text = intro + '; ' if intro else ''
-        skill_text += '{}x ATK when there are {} or fewer orbs remaining'.format(base_atk, orb_count)
+        skill_text = '{}x ATK when there are {} or fewer orbs remaining'.format(base_atk, orb_count)
         if max_atk:
             skill_text += ' up to {}x ATK when 0 orbs left'.format(max_atk)
-        return skill_text
+        return self.concat_list_semicolons([intro, skill_text])
 
     def get_collab_name(self, collab_id):
         if collab_id not in self._COLLAB_MAP:
@@ -227,37 +270,20 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         skill_text += ' when matching 5' + attr + ' orbs in L shape'
         return skill_text
     
-    def add_combo_att_text(self, attr_condition_text, atk, bonus_combo):
-        if atk not in [0, 1]:
-            skill_text = self.fmt_multiplier_text(1, atk, 1) + ' and increase combo by {}'.format(
-                bonus_combo)
-        else:
-            skill_text = 'Increase combo by {}'.format(bonus_combo)
-        skill_text += attr_condition_text
-        return skill_text
+    def add_combo_att_text(self, mult, attr_condition_text, bonus_combo):
+        skill_parts = [
+            mult,
+            'increase combo by {}{}'.format(bonus_combo, attr_condition_text)
+        ]
+        return self.concat_list_and(skill_parts)
 
-    def orb_heal_text(self, atk, mult, shield, reduct_text, unbind_amt, heal_amt):
-        skill_text = ''
-
-        if atk != 1 and atk != 0:
-            skill_text += mult
-
-        if shield != 0:
-            if skill_text:
-                if unbind_amt == 0:
-                    skill_text += ' and '
-                else:
-                    skill_text += ', '
-                skill_text += reduct_text
-            else:
-                skill_text += reduct_text[0].upper() + reduct_text[1:]
-
-        if unbind_amt != 0:
-            skill_text += ' and reduce' if skill_text else 'Reduce'
-            skill_text += ' awoken skill binds by {} turns'.format(unbind_amt)
-
+    def orb_heal_text(self, atk, mult, reduct_text, unbind_amt, heal_amt):
+        skill_parts = [mult, reduct_text]
+        if unbind_amt:
+            unbind_text = 'reduce awoken skill binds by {} turns'.format(unbind_amt)
+            skill_parts.append(unbind_text)
+        skill_text = self.concat_list_and(skill_parts)
         skill_text += ' when recovering more than {} HP from Heal orbs'.format(heal_amt)
-
         return skill_text
 
     def rainbow_bonus_damage_text(self, bonus_damage, attr_condition_text):

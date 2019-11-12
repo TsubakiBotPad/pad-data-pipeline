@@ -27,10 +27,6 @@ class LsTextConverter(BaseTextConverter):
 
     def up_to_n_attr(self, attr, max_attr, mult):
         raise I13NotImplemented()
-    
-    @staticmethod
-    def concat_list(list_to_concat):
-        raise I13NotImplemented()
 
     def threshold_stats_convert(self, ls):
         intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True)
@@ -87,35 +83,26 @@ class LsTextConverter(BaseTextConverter):
         min_match = multi_getattr(ls, 'min_attr', 'min_combo', 'min_match')
         max_mult = multi_getattr(ls, 'max_atk', 'atk')
 
-        skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
+        intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
                                                     atk=min_atk_mult,
                                                     rcv=min_rcv_mult)
 
         if all(x == attributes[0] for x in attributes):
-            match_or_more = len(attributes) == min_match
-            skill_text += ' when matching {}'.format(min_match)
-            if match_or_more:
-                skill_text += '+'
-            try:
-                skill_text += ' {} combos'.format(self.ATTRIBUTES[attributes[0]])
-            except Exception as ex:
-                print(ex)
-            if not match_or_more:
-                skill_text += ', up to {}x at {} {} combos'.format(
-                    fmt_mult(max_mult), len(attributes), self.ATTRIBUTES[attributes[0]])
+            attr_text = self.ATTRIBUTES[attributes[0]]
+            max_mult = fmt_mult(max_mult) if len(attributes) != min_match else None
+            max_match = len(attributes)
+            return self.multi_of_one_attribute_match_text(intro, min_match, attr_text, max_mult, max_match)
+        min_colors = self.attributes_format(attributes[:min_match], sep='+')
+        alt_colors = self.attributes_format(attributes[1:], sep='+') if len(attributes) > min_match else None
+        all_colors = self.attributes_format(attributes, sep='+')
+        max_mult = fmt_mult(max_mult) if max_mult > min_atk_mult else None
+        return self.multi_of_dif_attribute_match_text(intro, min_colors, alt_colors, max_mult, all_colors)
 
-        else:
-            min_colors = '+'.join([self.ATTRIBUTES[a] for a in attributes[:min_match]])
-            skill_text += ' when matching {}'.format(min_colors)
-            if len(attributes) > min_match:
-                alt_colors = '+'.join([self.ATTRIBUTES[a] for a in attributes[1:min_match + 1]])
-                skill_text += '({})'.format(alt_colors)
-
-            if max_mult > min_atk_mult:
-                all_colors = '+'.join([self.ATTRIBUTES[a] for a in attributes])
-                skill_text += ' up to {}x when matching {}'.format(fmt_mult(max_mult), all_colors)
-
-        return skill_text
+    def multi_of_one_attribute_match_text(self, intro, min_match, attr_text, max_mult, max_match):
+        raise I13NotImplemented()
+    
+    def multi_of_dif_attribute_match_text(self, intro, min_colors, alt_colors, max_mult, all_colors):
+        raise I13NotImplemented()
 
     def mass_match_convert(self, ls):
         min_count = ls.min_count
@@ -126,19 +113,15 @@ class LsTextConverter(BaseTextConverter):
         max_atk = ls.atk
         attributes = multi_getattr(ls, 'match_attributes', 'attributes')
 
-        skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
+        intro = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
                                                     atk=min_atk_mult, rcv=min_rcv_mult)
+        or_more = max_count != min_count
+        attr = self.fmt_multi_attr(attributes)
+        max_mult = fmt_mult(max_atk) if max_count != min_count and max_count > 0 else None
+        return self.mass_match_text(intro, min_count, or_more, attr, max_count, max_mult)
 
-        skill_text += ' when matching ' + str(min_count)
-        if max_count != min_count:
-            skill_text += ' or more connected'
-
-        skill_text += self.fmt_multi_attr(attributes) + ' orbs'
-
-        if max_count != min_count and max_count > 0:
-            skill_text += ' up to {}x at {} orbs'.format(fmt_mult(max_atk), max_count)
-
-        return skill_text
+    def mass_match_text(self, intro, min_count, or_more, attr, max_count, max_mult):
+        raise I13NotImplemented()
 
     def after_attack_convert(self, ls):
         return self.after_attack_text(fmt_mult(ls.multiplier))
@@ -272,11 +255,14 @@ class LsTextConverter(BaseTextConverter):
             'rcv': ls.rcv_2,
             'shield': 0,
         })
-        skill_text = self.fmt_stats_type_attr_bonus(c1) + '; ' + self.fmt_stats_type_attr_bonus(c2)
-        if not c1.types and not c1.types and c1.atk != 1 and c2.atk != 1:
-            skill_text += '; ' + fmt_mult(ls.atk) + 'x ATK for allies with both Att.'
-
-        return skill_text
+        bonus1 = self.fmt_stats_type_attr_bonus(c1)
+        bonus2 = self.fmt_stats_type_attr_bonus(c2)
+        has_both_condition = not c1.types and not c1.types and c1.atk != 1 and c2.atk != 1
+        both_atk = fmt_mult(ls.atk) if has_both_condition else None
+        return self.dual_passive_stat_text(bonus1, bonus2, both_atk)
+    
+    def dual_passive_stat_text(self, bonus1, bonus2, both_atk):
+        raise I13NotImplemented()
 
     def dual_threshold_stats_convert(self, ls):
         c1 = AttributeDict({
@@ -300,33 +286,31 @@ class LsTextConverter(BaseTextConverter):
             'rcv': getattr(ls, 'rcv_2', ls.rcv),
             'shield': getattr(ls, 'shield_2', ls.shield),
         })
-
-        # TODO: this could use some cleanup
-        skill_text = ''
+        
+        skill_parts = []
         if c1.atk != 0 or c1.rcv != 1 or c1.shield != 0:
             if c1.atk == 0:
                 c1.atk = 1
-            if c1.threshold == 1:
-                skill_text = self.fmt_stats_type_attr_bonus(c1, reduce_join_txt=' and ', skip_attr_all=True)
-                skill_text += ' when HP is full' if c1.above else ' when HP is not full'
-            else:
-                skill_text = self.fmt_stats_type_attr_bonus(c1, reduce_join_txt=' and ', skip_attr_all=True)
-                skill_text += ' when above ' if c1.above else ' when below '
-                skill_text += fmt_mult(c1.threshold * 100) + '% HP'
+            skill_parts.append(self.dual_threshold_stats_part_convert(c1))
 
         if c2.threshold != 0:
-            if skill_text != '':
-                skill_text += '; '
-            if c2.threshold == 1:
-                skill_text += self.fmt_stats_type_attr_bonus(c2, reduce_join_txt=' and ', skip_attr_all=True)
-                skill_text += ' when HP is full' if c2.above else ' when HP is not full'
-            else:
-                skill_text += self.fmt_stats_type_attr_bonus(c2, reduce_join_txt=' and ', skip_attr_all=True)
-                skill_text += ' when above ' if c2.above else ' when below '
-                skill_text += fmt_mult(c2.threshold * 100) + '% HP'
+            skill_parts.append(self.dual_threshold_stats_part_convert(c2))
 
-        return skill_text
+        return self.concat_list_semicolons(skill_parts)
+    
+    def dual_threshold_stats_part_convert(self, c):
+        intro = self.fmt_stats_type_attr_bonus(c, reduce_join_txt=' and ', skip_attr_all=True)
+        if c.threshold == 1:
+            return self.dual_threshold_stats_part_full_hp_text(intro, c.above)
+        threshold = fmt_mult(c.threshold * 100)
+        return self.dual_threshold_stats_part_threshold_text(intro, c.above, threshold)
+        
+    def dual_threshold_stats_part_full_hp_text(self, intro, above):
+        raise I13NotImplemented()
 
+    def dual_threshold_stats_part_threshold_text(self, intro, above, threshold):
+        raise I13NotImplemented()
+    
     def color_cross_convert(self, ls):
         atk = fmt_mult(ls.crosses[0].atk)
         attr_list = [self.ATTRIBUTES[ls.crosses[i].attribute] for i in range(0, len(ls.crosses))]
@@ -377,19 +361,20 @@ class LsTextConverter(BaseTextConverter):
 
     def add_combo_att_convert(self, ls):
         attr_condition_text = self.matching_n_or_more_attr(ls.attributes, ls.min_attr)
-        return self.add_combo_att_text(attr_condition_text, ls.atk, ls.bonus_combo)
+        mult = self.fmt_multiplier_text(1, ls.atk, 1) if ls.atk not in [0, 1] else None
+        return self.add_combo_att_text(mult, attr_condition_text, ls.bonus_combo)
 
-    def add_combo_att_text(self, attr_condition_text, atk, bonus_combo):
+    def add_combo_att_text(self, mult, attr_condition_text, bonus_combo):
         raise I13NotImplemented()
 
     def orb_heal_convert(self, ls):
         atk = ls.atk
-        mult = self.fmt_multiplier_text(1, atk, 1)
-        shield = ls.shield
-        reduct_text = self.fmt_reduct_text(shield) if shield != 0 else None
-        return self.orb_heal_text(atk, mult, shield, reduct_text, ls.unbind_amt, ls.heal_amt)
+        mult = self.fmt_multiplier_text(1, atk, 1) if atk and atk != 1 else None
+        reduct_text = self.fmt_reduct_text(ls.shield) if ls.shield else None
+        unbind_amt = ls.unbind_amt if ls.unbind_amt != 0 else None
+        return self.orb_heal_text(atk, mult, reduct_text, unbind_amt, ls.heal_amt)
     
-    def orb_heal_text(self, atk, mult, shield, reduct_text, unbind_amt, heal_amt):
+    def orb_heal_text(self, atk, mult, reduct_text, unbind_amt, heal_amt):
         raise I13NotImplemented()
 
     def rainbow_bonus_damage_convert(self, ls):
