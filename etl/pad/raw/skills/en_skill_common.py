@@ -131,3 +131,20 @@ class EnBaseTextConverter(BaseTextConverter):
 
     def reduce_attr_pct(self, attr_text, shield_text):
         return 'reduce damage taken from {} Att. by {}%'.format(attr_text, shield_text)
+
+    @staticmethod
+    def concat_list(list_to_concat):
+        return ', '.join(list_to_concat)
+
+    @staticmethod
+    def concat_list_and(list_to_concat):
+        filtered_list = list(filter(None, list_to_concat))
+        if len(filtered_list) == 1:
+            return filtered_list[0][0].upper() + filtered_list[0][1:]
+        if len(filtered_list) == 2:
+            return ' and '.join(filtered_list)
+        return ', '.join(filtered_list[:-1]) + ', and ' + filtered_list[-1]
+
+    @staticmethod
+    def concat_list_semicolons(list_to_concat):
+        return '; '.join(list(filter(None, list_to_concat)))
