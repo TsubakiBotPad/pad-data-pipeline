@@ -231,7 +231,7 @@ def parse_as_conditions(skill_text: str) -> List[AsCondition]:
     if 'increase combo count' in skill_text:
         results.add(AsCondition.ADD_COMBO)
 
-    if 'enemies max hp' in skill_text:
+    if "enemies' max hp" in skill_text:
         results.add(AsCondition.NEW_GRAVITY)
 
     if 'unlock' in skill_text:
