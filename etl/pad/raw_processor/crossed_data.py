@@ -9,13 +9,14 @@ from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
 from pad.raw import Dungeon, EnemySkill, ESRef
 from pad.raw.dungeon import SubDungeon
+from pad.raw.enemy_skills.enemy_skill_info import EsInstance
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en_active_skill_text import EnAsTextConverter
 from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw.skills.skill_text_typing import AsCondition, LsCondition
-from pad.raw_processor.merged_data import MergedCard, MergedEnemySkill
+from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
 fail_logger = logging.getLogger('processor_failures')
@@ -128,8 +129,8 @@ def make_cross_server_card(jp_card: MergedCard,
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
 
 
-def make_cross_server_enemy_behavior(jp_skills: List[MergedEnemySkill],
-                                     na_skills: List[MergedEnemySkill]) -> List[ESRef]:
+def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
+                                     na_skills: List[EsInstance]) -> List[EsInstance]:
     """Creates enemy data by combining the JP enemy info with the NA enemy info."""
     jp_skills = list(jp_skills) or []
     na_skills = list(na_skills) or []
@@ -141,11 +142,11 @@ def make_cross_server_enemy_behavior(jp_skills: List[MergedEnemySkill],
     elif not na_skills and not jp_skills:
         return []
 
-    def override_if_necessary(override_skills: List[MergedEnemySkill], dest_skills: List[MergedEnemySkill]):
+    def override_if_necessary(override_skills: List[EsInstance], dest_skills: List[EsInstance]):
         # Then check if we need to individually overwrite
         for idx in range(len(override_skills)):
-            override_skill = override_skills[idx].enemy_skill
-            dest_skill = dest_skills[idx].enemy_skill
+            override_skill = override_skills[idx].behavior
+            dest_skill = dest_skills[idx].behavior
             if override_skill == _compare_named(override_skill, dest_skill):
                 dest_skills[idx] = override_skills[idx]
 
@@ -153,7 +154,7 @@ def make_cross_server_enemy_behavior(jp_skills: List[MergedEnemySkill],
     override_if_necessary(jp_skills, na_skills)
     override_if_necessary(na_skills, jp_skills)
 
-    return list(map(lambda s: s.enemy_skill_ref, jp_skills))
+    return jp_skills
 
 
 class CrossServerDungeon(object):
@@ -375,9 +376,9 @@ class CrossServerDatabase(object):
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
 
-        self.enemy_skills = build_cross_server_enemy_skills(jp_database.enemy_skills,
-                                                            na_database.enemy_skills,
-                                                            kr_database.enemy_skills)
+        self.enemy_skills = build_cross_server_enemy_skills(jp_database.raw_enemy_skills,
+                                                            na_database.raw_enemy_skills,
+                                                            kr_database.raw_enemy_skills)
 
         self.jp_bonuses = jp_database.bonuses
         self.na_bonuses = na_database.bonuses
@@ -390,7 +391,7 @@ class CrossServerDatabase(object):
         self.jp_egg_machines = jp_database.egg_machines
         self.na_egg_machines = na_database.egg_machines
         self.kr_egg_machines = kr_database.egg_machines
-        
+
         self.jp_exchange = jp_database.exchange
         self.na_exchange = na_database.exchange
         self.kr_exchange = kr_database.exchange

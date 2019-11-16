@@ -143,7 +143,7 @@ class Describe:
         if len(attributes) == 1:
             return 'Change own attribute to ' + attributes[0]
         else:
-            return 'Change own attribute to random one of ' + ', '.join(attributes)
+            return 'Change own attribute to random one of ' + ', '.join(map(str, attributes))
 
     @staticmethod
     def gravity(percent):
@@ -190,22 +190,22 @@ class Describe:
     @staticmethod
     def row_col_spawn(position_type, positions, attributes):
         return 'Change {:s} {:s} to {:s} orbs'.format(
-            ', '.join([ordinal(x) for x in positions]), position_type, ', '.join(attributes))
+            ', '.join([ordinal(x) for x in positions]), position_type, ', '.join(map(str, attributes)))
 
     @staticmethod
     def board_change(attributes):
-        return 'Change all orbs to {:s}'.format(', '.join(attributes))
+        return 'Change all orbs to {:s}'.format(', '.join(map(str, attributes)))
 
     @staticmethod
     def random_orb_spawn(count, attributes):
         if count == 42:
             return Describe.board_change(attributes)
         else:
-            return 'Spawn random {:d} {:s} orbs'.format(count, ', '.join(attributes))
+            return 'Spawn random {:d} {:s} orbs'.format(count, ', '.join(map(str, attributes)))
 
     @staticmethod
     def fixed_orb_spawn(attributes):
-        return 'Spawn {:s} orbs in the specified positions'.format(', '.join(attributes))
+        return 'Spawn {:s} orbs in the specified positions'.format(', '.join(map(str, attributes)))
 
     @staticmethod
     def skill_delay(min_turns, max_turns):
@@ -219,9 +219,9 @@ class Describe:
     @staticmethod
     def orb_lock(count, attributes):
         if count == 42:
-            return 'Lock all {:s} orbs'.format(', '.join(attributes))
+            return 'Lock all {:s} orbs'.format(', '.join(map(str, attributes)))
         else:
-            return 'Lock {:d} random {:s} orbs'.format(count, ', '.join(attributes))
+            return 'Lock {:d} random {:s} orbs'.format(count, ', '.join(map(str, attributes)))
 
     @staticmethod
     def orb_seal(turns, position_type, positions):
@@ -253,7 +253,7 @@ class Describe:
 
     @staticmethod
     def attribute_block(turns, attributes):
-        return 'Unable to match {:s} orbs for {:d} turns'.format(', '.join(attributes), turns)
+        return 'Unable to match {:s} orbs for {:d} turns'.format(', '.join(map(str, attributes)), turns)
 
     @staticmethod
     def spinners(turns, speed, position_description):

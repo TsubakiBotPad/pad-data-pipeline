@@ -7,10 +7,12 @@ from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill, extra_egg_machine
+from pad.raw.enemy_skills.enemy_skill_info import EsInstance, ESBehavior
+from pad.raw.enemy_skills.enemy_skill_parser import BehaviorParser
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw.skills.skill_parser import SkillParser
-from .merged_data import MergedBonus, MergedCard, MergedEnemy, MergedEnemySkill
+from .merged_data import MergedBonus, MergedCard, MergedEnemy
 
 fail_logger = logging.getLogger('processor_failures')
 
@@ -73,14 +75,14 @@ def _clean_cards(server: Server,
     return merged_cards
 
 
-def _clean_enemy(cards: List[Card], enemy_skills: List[EnemySkill]) -> List[MergedEnemy]:
+def _clean_enemy(cards: List[Card], enemy_skills: List[ESBehavior]) -> List[MergedEnemy]:
     enemy_skill_map = {s.enemy_skill_id: s for s in enemy_skills}
     merged_enemies = []
     for c in cards:
         if not c.enemy_skill_refs:
             continue
 
-        merged_skills = [MergedEnemySkill(x, enemy_skill_map[x.enemy_skill_id]) for x in c.enemy_skill_refs if x]
+        merged_skills = [EsInstance(enemy_skill_map[ref.enemy_skill_id], ref) for ref in c.enemy_skill_refs if ref]
         merged_enemies.append(MergedEnemy(c.monster_no, c.enemy(), merged_skills))
     return merged_enemies
 
@@ -95,7 +97,7 @@ class Database(object):
         self.dungeons = []  # type: List[Dungeon]
         self.bonus_sets = {}  # type: Dict[str, List[Bonus]]
         self.skills = []  # type: List[MonsterSkill]
-        self.enemy_skills = []  # type: List[EnemySkill]
+        self.raw_enemy_skills = []  # type: List[EnemySkill]
         self.exchange = []  # type: List[Exchange]
         self.egg_machines = []
 
@@ -104,12 +106,14 @@ class Database(object):
         self.cards = []  # type: List[MergedCard]
         self.leader_skills = []  # type: List[LeaderSkill]
         self.active_skills = []  # type: List[ActiveSkill]
+        self.enemy_skills = []  # type: List[EsInstance]
         self.enemies = []  # type: List[MergedEnemy]
 
         # Faster lookups
         self.skill_id_to_skill = {}  # type: Dict[SkillId, MonsterSkill]
         self.skill_id_to_leader_skill = {}  # type: Dict[SkillId, LeaderSkill]
         self.skill_id_to_active_skill = {}  # type: Dict[SkillId, ActiveSkill]
+        self.es_id_to_enemy_skill = {}  # type: Dict[int, ESBehavior]
         self.dungeon_id_to_dungeon = {}  # type: Dict[DungeonId, Dungeon]
         self.monster_no_to_card = {}  # type: Dict[MonsterNo, MergedCard]
         self.monster_id_to_card = {}  # type: Dict[MonsterId, MergedCard]
@@ -135,7 +139,10 @@ class Database(object):
             self.skill_id_to_leader_skill = {s.skill_id: s for s in self.leader_skills}
             self.skill_id_to_active_skill = {s.skill_id: s for s in self.active_skills}
 
-        self.enemy_skills = enemy_skill.load_enemy_skill_data(data_dir=base_dir)
+        self.raw_enemy_skills = enemy_skill.load_enemy_skill_data(data_dir=base_dir)
+        es_parser = BehaviorParser()
+        es_parser.parse(self.raw_enemy_skills)
+        self.enemy_skills = es_parser.enemy_behaviors
 
         if not skip_extra:
             self.exchange = exchange.load_data(data_dir=base_dir, server=self.server)
@@ -164,7 +171,7 @@ class Database(object):
         self.save(output_dir, 'skills', self.skills, pretty)
         self.save(output_dir, 'leader_skills', self.leader_skills, pretty)
         self.save(output_dir, 'active_skills', self.active_skills, pretty)
-        self.save(output_dir, 'enemy_skills', self.enemy_skills, pretty)
+        self.save(output_dir, 'enemy_skills', self.raw_enemy_skills, pretty)
         self.save(output_dir, 'bonuses', self.bonuses, pretty)
         self.save(output_dir, 'cards', self.cards, pretty)
         self.save(output_dir, 'exchange', self.exchange, pretty)

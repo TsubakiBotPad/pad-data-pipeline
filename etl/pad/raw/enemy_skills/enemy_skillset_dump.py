@@ -115,7 +115,7 @@ class EnemySummary(object):
 
 
 def behavior_to_skillrecord(record_type: RecordType, action: Union[ESAction, ESSkillSet], note='') -> SkillRecord:
-    name = action.name
+    name = action._name
     jp_name = action.jp_name
     description = action.full_description()
     min_damage = None
