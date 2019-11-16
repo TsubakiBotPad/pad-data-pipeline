@@ -2,7 +2,7 @@ import logging
 from typing import List, Dict, Optional
 
 from pad.raw import EnemySkill
-from pad.raw.enemy_skills.enemy_skill_info import ESBehavior, BEHAVIOR_MAP, EnemySkillUnknown
+from pad.raw.enemy_skills.enemy_skill_info import ESBehavior, BEHAVIOR_MAP, EnemySkillUnknown, ESSkillSet
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -29,7 +29,16 @@ class BehaviorParser(object):
             # inject_implicit_onetime(card, behavior)
 
             self.enemy_behaviors.append(new_es)
-            self.behaviors_by_id[es_id] = new_es
+
+        self.behaviors_by_id = {es.enemy_skill_id: es for es in self.enemy_behaviors}
+
+        for es in self.enemy_behaviors:
+            if isinstance(es, ESSkillSet):
+                for sub_es_id in es.skill_ids:
+                    if sub_es_id in self.behaviors_by_id:
+                        es.skills.append(self.behaviors_by_id[sub_es_id])
+                    else:
+                        print('failed to look up enemy skill:', sub_es_id)
 
         if len(self.enemy_behaviors) != len(self.behaviors_by_id):
             human_fix_logger.error('Error, enemy behavior size does not match: %d - %d',
