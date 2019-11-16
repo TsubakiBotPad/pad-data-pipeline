@@ -4,6 +4,7 @@ from enum import Enum
 from math import ceil, log
 from typing import List, Optional
 
+from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import ESRef, Card
 from pad.raw.enemy_skills.enemy_skill_text import Describe
@@ -179,7 +180,7 @@ class ESAttack(object):
         return Describe.attack(self.atk_multiplier, self.min_hits, self.max_hits)
 
 
-class ESBehavior(object):
+class ESBehavior(Printable):
     """Base class for any kind of enemy behavior, including logic, passives, and actions"""
 
     def __init__(self, skill: EnemySkill):
@@ -200,6 +201,10 @@ class ESBehavior(object):
 
     def description(self):
         return Describe.not_set()
+
+    def __str__(self):
+        return '{}({} - {}: {})'.format(self.__class__.__name__,
+                                        self.enemy_skill_id, self.type, self.name)
 
 
 # Action
@@ -1086,7 +1091,7 @@ class ESNoSkyfall(ESAction):
 
 
 # Passive
-class ESPassive(ABC, ESBehavior):
+class ESPassive(ESBehavior):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1334,7 +1339,7 @@ class EnemySkillUnknown(ESBehavior):
         super().__init__(skill)
 
 
-class EsInstance(object):
+class EsInstance(Printable):
     def __init__(self, behavior: ESBehavior, ref: ESRef):
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
@@ -1360,10 +1365,17 @@ class EsInstance(object):
         if ref.enemy_ai > 0 or ref.enemy_rnd > 0:
             self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, behavior.params)
 
+    @property
+    def btype(self):
+        return type(self.behavior)
+
     def description(self):
         msg = self.condition.description() if self.condition else ''
         msg += self.behavior.description()
         return msg.strip()
+
+    def __str__(self):
+        return 'EsInstance - {} | {}'.format(self.behavior, self.ref)
 
 
 BEHAVIOR_MAP = {
