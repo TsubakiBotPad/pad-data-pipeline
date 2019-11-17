@@ -886,8 +886,8 @@ def clean_skillset(moveset: Moveset, hp_actions: List[HpActions]):
 
     def extract_and_clear_action(skills, action_type):
         """Clears an action by type from the skill list and returns any matches."""
-        actions = [s for s in skills if type(s) == action_type]
-        skills[:] = [s for s in skills if type(s) != action_type]
+        actions = [s for s in skills if s.btype == action_type]
+        skills[:] = [s for s in skills if s.btype != action_type]
         return actions
 
     # Extract special hoisted actions if present, clearing them in their home sets.

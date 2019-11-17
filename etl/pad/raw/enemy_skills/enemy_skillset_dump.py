@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 from typing import TextIO
 
 import yaml
@@ -302,8 +303,9 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> SkillRecordList
         process_moveset(er_moveset)
 
     for item in skillset.death_actions:
+        behavior = item.behavior
         # We ignore death cries, and only output 'useful' skillsets on death
-        if type(item) == ESSkillSetOnDeath and item.has_action():
+        if type(behavior) == ESSkillSetOnDeath and behavior.has_action():
             records.append(create_divider("On death"))
             records.append(behavior_to_skillrecord(RecordType.ACTION, item))
 
