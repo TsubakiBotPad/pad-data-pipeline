@@ -6,7 +6,7 @@ from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Sta
 
 def simple_dump_obj(o):
     def fmt_cond(c):
-        msg = 'Condition: {} (ai:{} rnd:{})'.format(c.description, c._ai, c._rnd)
+        msg = 'Condition: {} (ai:{} rnd:{})'.format(c.description(), c._ai, c._rnd)
         if c.one_time:
             msg += ' (one-time: {})'.format(c.one_time)
         elif c.forced_one_time:
@@ -16,22 +16,20 @@ def simple_dump_obj(o):
     def fmt_action_name(a):
         return '{}({}:{}) -> {}'.format(type(a).__name__, a.type, a.enemy_skill_id, a.name)
 
-    if isinstance(o, ESSkillSet):
+    if isinstance(o.behavior, ESSkillSet):
         msg = 'SkillSet:'
-        if o.condition.description:
+        if o.condition and o.condition.description():
             msg += '\n\t{}'.format(fmt_cond(o.condition))
-        for idx, behavior in enumerate(o.skill_list):
+        for idx, behavior in enumerate(o.behavior.skills):
             msg += '\n\t[{}] {}'.format(idx, fmt_action_name(behavior))
-            msg += '\n\t{}'.format(behavior.full_description())
+            msg += '\n\t{}'.format(behavior.description())
         return msg
     else:
-        msg = fmt_action_name(o)
-        if hasattr(o, 'condition') and (o.condition.description or o.condition.one_time or o.condition.forced_one_time):
+        msg = fmt_action_name(o.behavior)
+        if o.condition and (o.condition.description() or o.condition.one_time or o.condition.forced_one_time):
             msg += '\n\t{}'.format(fmt_cond(o.condition))
-        if issubclass(type(o), ESAction):
-            msg += '\n{}'.format(o.full_description())
-        else:
-            msg += '\n{}'.format(o.description)
+
+        msg += '\n{}'.format(o.behavior.description())
         return msg
 
 

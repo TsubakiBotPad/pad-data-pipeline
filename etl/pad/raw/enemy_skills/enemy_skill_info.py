@@ -57,6 +57,8 @@ class TargetType(Enum):
     both_leader = 2
     friend_leader = 3
     subs = 4
+    attributes = 5
+    types = 6
 
 
 def bind_bitmap(bits) -> List[TargetType]:
@@ -222,10 +224,16 @@ class ESBehaviorAttack(ESAction):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
+    def description(self):
+        return Describe.attack(self.attack.atk_multiplier, self.attack.min_hits, self.attack.max_hits)
+
 
 class ESInactivity(ESAction):
     def __init__(self, skill):
         super().__init__(skill)
+
+    def description(self):
+        return Describe.skip()
 
 
 class ESDeathCry(ESAction):
@@ -268,6 +276,11 @@ class ESBind(ESAction):
         self.min_turns = self.params[2]
         self.max_turns = self.params[3]
         self.target_count = None
+        self.targets = ['<targets unset>']
+
+    def description(self):
+        return Describe.bind(self.min_turns, self.max_turns,
+                             self.target_count, ', '.join(map(str, self.targets)))
 
 
 class ESBindAttack(ESBehaviorAttack, ESBind):
@@ -282,24 +295,27 @@ class ESBindRandom(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_count = self.params[1]
+        self.targets = [TargetType.random]
 
 
 class ESBindTarget(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        targets = bind_bitmap(self.params[1])
-        self.target_count = len(targets)
+        self.targets = bind_bitmap(self.params[1])
+        self.target_count = len(self.targets)
 
 
 class ESBindRandomSub(ESBindRandom):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
+        self.targets = [TargetType.subs]
 
 
 class ESBindAttribute(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_attribute = self.params[1]
+        self.targets = [TargetType.attributes]
 
     def is_conditional(self):
         return True
@@ -309,6 +325,7 @@ class ESBindTyping(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_typing = self.params[1]
+        self.targets = [TargetType.types]
 
     def is_conditional(self):
         return True
@@ -645,7 +662,7 @@ class ESAbsorbAttribute(ESAbsorb):
         self.attributes = attribute_bitmap(self.params[3])
 
     def description(self):
-        source = ', '.join(self.attributes)
+        source = ', '.join(map(str, self.attributes))
         return Describe.absorb(source, self.min_turns, self.max_turns)
 
 
@@ -899,12 +916,6 @@ class ESSkillSet(ESAction):
     def ends_battle(self):
         return any([s.ends_battle() for s in self.skills])
 
-    # def full_description(self):
-    #     output = ' + '.join(map(lambda s: s.full_description(), self.skill_list))
-    #     if self.extra_description:
-    #         output += ', {:s}'.format(self.extra_description)
-    #     return output
-
 
 class ESSkillSetOnDeath(ESSkillSet):
     def __init__(self, skill: EnemySkill):
@@ -1107,7 +1118,7 @@ class ESAttributeResist(ESPassive):
 
     def description(self):
         return Describe.damage_reduction(
-            ', '.join(self.attributes), percent=self.shield_percent)
+            ', '.join(map(str, self.attributes)), percent=self.shield_percent)
 
 
 class ESResolve(ESPassive):
@@ -1137,7 +1148,7 @@ class ESTypeResist(ESPassive):
 
     def description(self):
         return Describe.damage_reduction(
-            ', '.join(self.types), percent=self.shield_percent)
+            ', '.join(map(str, self.types)), percent=self.shield_percent)
 
 
 # Logic

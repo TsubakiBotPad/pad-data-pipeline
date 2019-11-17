@@ -141,7 +141,7 @@ class Describe:
     @staticmethod
     def change_attribute(attributes):
         if len(attributes) == 1:
-            return 'Change own attribute to ' + attributes[0]
+            return 'Change own attribute to {}'.format(attributes[0])
         else:
             return 'Change own attribute to random one of ' + ', '.join(map(str, attributes))
 
@@ -160,10 +160,10 @@ class Describe:
     def skyfall(orbs, chance, min_turns, max_turns=None, locked=False):
         lock = 'Locked ' if locked else ''
         if max_turns is None or min_turns == max_turns:
-            return '{:s}{:s} skyfall +{:d}% for {:d} turns'.format(lock, ', '.join(orbs), chance, min_turns)
+            return '{:s}{:s} skyfall +{:d}% for {:d} turns'.format(lock, ', '.join(map(str, orbs)), chance, min_turns)
         else:
             return '{:s}{:s} skyfall +{:d}% for {:d}~{:d} turns' \
-                .format(lock, ', '.join(orbs), chance, min_turns, max_turns)
+                .format(lock, ', '.join(map(str, orbs)), chance, min_turns, max_turns)
 
     @staticmethod
     def void(threshold, turns):

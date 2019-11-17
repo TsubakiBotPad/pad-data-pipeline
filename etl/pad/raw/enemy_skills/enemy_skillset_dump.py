@@ -1,5 +1,5 @@
 import os
-from typing import TextIO, Union
+from typing import TextIO
 
 import yaml
 
@@ -114,10 +114,11 @@ class EnemySummary(object):
         return next(filter(lambda d: d.level == selected_level, self.data))
 
 
-def behavior_to_skillrecord(record_type: RecordType, action: Union[ESAction, ESSkillSet], note='') -> SkillRecord:
-    name = action._name
-    jp_name = action.jp_name
-    description = action.full_description()
+def behavior_to_skillrecord(record_type: RecordType, instance: EsInstance, note='') -> SkillRecord:
+    action = instance.behavior
+    name = action.name
+    jp_name = name
+    description = action.description()
     min_damage = None
     max_damage = None
     usage_pct = 100
@@ -139,7 +140,7 @@ def behavior_to_skillrecord(record_type: RecordType, action: Union[ESAction, ESS
         min_damage = attack.min_damage_pct()
         max_damage = attack.max_damage_pct()
 
-    cond = getattr(action, 'condition', None)
+    cond = instance.condition
     if cond is not None:
         usage_pct = cond.use_chance()
         if cond.one_time:
@@ -404,7 +405,7 @@ def dump_summary_to_file(card: Card, enemy_summary: EnemySummary, enemy_behavior
 
         f.write('{}\n'.format(_header('ES Modifiers')))
         f.write('# [{}] {} - monster size?\n'.format(9, card.unknown_009))
-        f.write('# [{}] {} - use new AI\n'.format(52, 'true' if card.unknown_052 else 'false'))
+        f.write('# [{}] {} - use new AI\n'.format(52, 'true' if card.use_new_ai else 'false'))
         f.write('# [{}] {} - starting/max counter\n'.format(53, card.enemy_skill_max_counter))
         f.write('# [{}] {} - counter increment\n'.format(54, card.enemy_skill_counter_increment))
 
