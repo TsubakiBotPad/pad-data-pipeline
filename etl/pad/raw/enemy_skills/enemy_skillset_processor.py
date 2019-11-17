@@ -2,7 +2,6 @@
 Contains code to convert a list of enemy behavior logic into a flattened structure
 called a ProcessedSkillset.
 """
-
 from typing import Set, Tuple, Dict
 
 from pad.raw.enemy_skills.enemy_skill_info import *
@@ -189,12 +188,12 @@ class Context(object):
         """Check context to see if a skill is allowed to be used, and update flag accordingly"""
         b_type = type(behavior)
         if issubclass(b_type, ESEnrageAttackUp):
-            if b_type == ESEnrageAttackUpRemainingEnemies \
+            if b_type == ESAttackUPRemainingEnemies \
                     and behavior.enemy_count is not None \
                     and self.enemies > behavior.enemy_count:
                 return False
             if self.enraged is None:
-                if b_type == ESEnrageAttackUpCooldown and behavior.turn_cooldown is not None:
+                if b_type == ESAttackUPCooldown and behavior.turn_cooldown is not None:
                     self.enraged = -behavior.turn_cooldown + 1
                     return False
                 else:
@@ -255,12 +254,12 @@ class Context(object):
         """Check context to see if a skill is allowed to be used"""
         b_type = type(behavior)
         if issubclass(b_type, ESEnrageAttackUp):
-            if b_type == ESEnrageAttackUpRemainingEnemies \
+            if b_type == ESAttackUPRemainingEnemies \
                     and behavior.enemy_count is not None \
                     and self.enemies > behavior.enemy_count:
                 return False
             if self.enraged is None:
-                if b_type == ESEnrageAttackUpCooldown and behavior.turn_cooldown is not None:
+                if b_type == ESAttackUPCooldown and behavior.turn_cooldown is not None:
                     return False
                 else:
                     return True
@@ -631,7 +630,7 @@ def info_from_behaviors(behaviors: List[EsInstance]):
             card_checkpoints.add(tuple(es.branch_list_value))
 
         # Find checks for specific amounts of enemies.
-        if es_type in [ESBranchRemainingEnemies, ESEnrageAttackUpRemainingEnemies, ESRecoverEnemyAlly]:
+        if es_type in [ESBranchRemainingEnemies, ESAttackUPRemainingEnemies, ESRecoverEnemyAlly]:
             has_enemy_remaining_branch = True
 
     return base_abilities, hp_checkpoints, card_checkpoints, has_enemy_remaining_branch, death_actions
@@ -774,7 +773,7 @@ def compute_enemy_actions(ctx: Context, behaviors: List[EsInstance], hp_checkpoi
                     x.hp_range = comp_hp
                 comp_repeating.clear()
 
-    return list(hp_to_actions.values())
+    return list(sorted(hp_to_actions.values(), key=lambda x: x.hp, reverse=True))
 
 
 def convert(card: Card, enemy_behavior: List[EsInstance], level: int):

@@ -22,14 +22,14 @@ def simple_dump_obj(o):
             msg += '\n\t{}'.format(fmt_cond(o.condition))
         for idx, behavior in enumerate(o.behavior.skills):
             msg += '\n\t[{}] {}'.format(idx, fmt_action_name(behavior))
-            msg += '\n\t{}'.format(behavior.description())
+            msg += '\n\t{}'.format(behavior.full_description())
         return msg
     else:
         msg = fmt_action_name(o.behavior)
         if o.condition and (o.condition.description() or o.condition.one_time or o.condition.forced_one_time):
             msg += '\n\t{}'.format(fmt_cond(o.condition))
 
-        msg += '\n{}'.format(o.behavior.description())
+        msg += '\n{}'.format(o.behavior.full_description())
         return msg
 
 
