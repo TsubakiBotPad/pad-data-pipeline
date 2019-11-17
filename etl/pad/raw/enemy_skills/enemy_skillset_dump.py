@@ -52,10 +52,10 @@ class SkillRecord(yaml.YAMLObject):
         # For actions, the name that is displayed in-game.
         # For dividers, contains the divider text.
         self.name_en = name_en
-        self.name_jp = name_jp
+        # self.name_jp = name_jp
         # A description of what occurs when this skill is triggered.
         self.desc_en = desc_en
-        self.desc_jp = desc_jp
+        # self.desc_jp = desc_jp
         # None if no attack, or the damage % expressed as an integer.
         # e.g. 100 for one hit with normal damage, 200 for two hits with normal damage,
         # 300 for one hit with 3x damage.
@@ -89,7 +89,7 @@ class EntryInfo(yaml.YAMLObject):
                  reviewed_by='unreviewed', comments: str = None):
         self.monster_id = monster_id
         self.monster_name_en = monster_name_en
-        self.monster_name_jp = monster_name_jp
+        # self.monster_name_jp = monster_name_jp
         self.reviewed_by = reviewed_by
         self.comments = comments
         self.warnings = []  # List[str]
