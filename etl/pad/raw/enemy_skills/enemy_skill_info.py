@@ -1310,7 +1310,7 @@ class ESBranchCard(ESBranch):
         super().__init__(skill)
         self.branch_condition = 'player_cards'
         self.compare = 'HAS'
-        self.branch_value = list(filter(None, self.params))
+        self.branch_list_value = list(filter(None, self.params))
 
 
 class ESBranchCombo(ESBranch):
@@ -1347,7 +1347,7 @@ class EsInstance(Printable):
         if isinstance(self.behavior, ESSetCounter):
             self.behavior.counter = ref.enemy_ai if self.behavior.type == 25 else 1
 
-        if isinstance(self.behavior, ESBranch):
+        if isinstance(self.behavior, ESSetCounterIf):
             self.behavior.counter_is = ref.enemy_ai
             self.behavior.counter = ref.enemy_rnd
 
