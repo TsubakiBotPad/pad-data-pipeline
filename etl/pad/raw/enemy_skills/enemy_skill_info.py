@@ -536,7 +536,7 @@ class ESEnrageAttackUpRemainingEnemies(ESEnrageAttackUp):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.enemy_count = self.params[1]
-        self.multiplier = self.params[3],
+        self.multiplier = self.params[3]
         self.turns = self.params[2]
 
     def description(self):
@@ -546,7 +546,7 @@ class ESEnrageAttackUpRemainingEnemies(ESEnrageAttackUp):
 class ESEnrageAttackUpStatus(ESEnrageAttackUp):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.multiplier = self.params[2],
+        self.multiplier = self.params[2]
         self.turns = self.params[1]
 
     def description(self):
@@ -559,7 +559,7 @@ class ESEnrageAttackUpCooldown(ESEnrageAttackUp):
         # enrage cannot trigger until this many turns have passed
         cooldown_value = self.params[1] or 0
         self.turn_cooldown = cooldown_value if cooldown_value > 1 else None
-        self.multiplier = self.params[3],
+        self.multiplier = self.params[3]
         self.turns = self.params[2]
 
     def description(self):
@@ -580,10 +580,10 @@ class ESDebuffMovetime(ESDebuff):
         self.unit = '?'
 
         if self.params[2] is not None:
-            self.amount = -self.params[2] / 10,
+            self.amount = -self.params[2] / 10
             self.unit = 's'
         elif self.params[3] is not None:
-            self.amount = self.params[3],
+            self.amount = self.params[3]
             self.unit = '%'
         else:
             print('unexpected debuff movetime skill')
@@ -961,13 +961,13 @@ class ESOrbSeal(ABC, ESAction):
 class ESOrbSealColumn(ESOrbSeal):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.position_type = 'column',
+        self.position_type = 'column'
 
 
 class ESOrbSealRow(ESOrbSeal):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.position_type = 'row',
+        self.position_type = 'row'
 
 
 class ESCloud(ESAction):
@@ -1149,7 +1149,6 @@ class ESLogic(ESBehavior):
     def name(self):
         return type(self).__name__
 
-    @property
     def description(self):
         return 'Unset logic'
 
@@ -1158,7 +1157,6 @@ class ESNone(ESLogic):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
-    @property
     def description(self):
         return 'No action'
 
@@ -1177,7 +1175,6 @@ class ESFlagOperation(ESLogic):
         self.flag_bin = None
         self.operation = self.FLAG_OPERATION_MAP[skill.type]
 
-    @property
     def description(self):
         return 'flag {} {}'.format(self.operation, self.flag_bin)
 
@@ -1194,7 +1191,6 @@ class ESSetCounter(ESLogic):
         self.counter = None
         self.set = self.COUNTER_SET_MAP[skill.type]
 
-    @property
     def description(self):
         return 'counter {} {}'.format(self.set, self.counter)
 
@@ -1205,7 +1201,6 @@ class ESSetCounterIf(ESLogic):
         self.counter_is = None
         self.counter = None
 
-    @property
     def description(self):
         return 'set counter = {} if counter == {}'.format(self.counter, self.counter_is)
 
@@ -1218,7 +1213,6 @@ class ESBranch(ESLogic):
         self.branch_value = None
         self.target_round = None
 
-    @property
     def description(self):
         return Describe.branch(self.branch_condition, self.compare, self.branch_value, self.target_round)
 
@@ -1226,7 +1220,7 @@ class ESBranch(ESLogic):
 class ESBranchFlag(ESBranch):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'flag',
+        self.branch_condition = 'flag'
         self.compare = '&'
 
 
@@ -1238,7 +1232,7 @@ class ESBranchHP(ESBranch):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'hp',
+        self.branch_condition = 'hp'
         self.compare = self.HP_COMPARE_MAP[skill.type]
 
 
@@ -1251,7 +1245,7 @@ class ESBranchCounter(ESBranch):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'counter',
+        self.branch_condition = 'counter'
         self.compare = self.COUNTER_COMPARE_MAP[skill.type]
 
 
@@ -1264,7 +1258,7 @@ class ESBranchLevel(ESBranch):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'level',
+        self.branch_condition = 'level'
         self.compare = self.LEVEL_COMPARE_MAP[skill.type]
 
 
@@ -1307,7 +1301,6 @@ class ESPreemptive(ESLogic):
         super().__init__(skill)
         self.level = self.params[1]
 
-    @property
     def description(self):
         return 'Enable preempt if level {}'.format(self.level)
 
@@ -1315,7 +1308,7 @@ class ESPreemptive(ESLogic):
 class ESBranchCard(ESBranch):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'player_cards',
+        self.branch_condition = 'player_cards'
         self.compare = 'HAS'
         self.branch_value = list(filter(None, self.params))
 
@@ -1341,21 +1334,22 @@ class EnemySkillUnknown(ESBehavior):
 
 class EsInstance(Printable):
     def __init__(self, behavior: ESBehavior, ref: ESRef):
+        self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
 
         # This seems bad but I'm not sure how to improve
         # Start terrible badness
         if isinstance(self.behavior, ESFlagOperation):
-            self.flag = ref.enemy_ai
-            self.flag_bin = bin(self.flag)
+            self.behavior.flag = ref.enemy_ai
+            self.behavior.flag_bin = bin(ref.enemy_ai)
 
         if isinstance(self.behavior, ESSetCounter):
-            self.counter = ref.enemy_ai if behavior.type == 25 else 1
+            self.behavior.counter = ref.enemy_ai if self.behavior.type == 25 else 1
 
         if isinstance(self.behavior, ESBranch):
-            self.counter_is = ref.enemy_ai
-            self.counter = ref.enemy_rnd
+            self.behavior.counter_is = ref.enemy_ai
+            self.behavior.counter = ref.enemy_rnd
 
         if isinstance(self.behavior, ESBranch):
             self.behavior.branch_value = ref.enemy_ai
@@ -1363,14 +1357,19 @@ class EsInstance(Printable):
         # End terrible badness
 
         if ref.enemy_ai > 0 or ref.enemy_rnd > 0:
-            self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, behavior.params)
+            self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
 
     @property
     def btype(self):
         return type(self.behavior)
 
+    @property
+    def name(self):
+        return self.behavior.name
+
     def description(self):
         msg = self.condition.description() if self.condition else ''
+        msg = msg or ''
         msg += self.behavior.description()
         return msg.strip()
 
