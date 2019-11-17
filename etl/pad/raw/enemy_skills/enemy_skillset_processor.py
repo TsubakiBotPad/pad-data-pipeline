@@ -2,12 +2,10 @@
 Contains code to convert a list of enemy behavior logic into a flattened structure
 called a ProcessedSkillset.
 """
-import collections
-import copy
 
-from etl.pad.raw.card import Card
-from etl.pad.raw.enemy_skills.enemy_skill_info import *
-from typing import List, Any, Set, Tuple, Optional, Dict
+from typing import Set, Tuple, Dict
+
+from pad.raw.enemy_skills.enemy_skill_info import *
 
 # This is a hack that accounts for the fact that some monsters seem to be zero-indexed
 # rather than 1-indexed for jumps. Not obvious why this occurs yet.
@@ -187,7 +185,7 @@ class Context(object):
         if self.time_debuff > 0:
             self.time_debuff -= 1
 
-    def apply_skill_effects(self, behavior) -> bool:
+    def apply_skill_effects(self, behavior: ESBehavior) -> bool:
         """Check context to see if a skill is allowed to be used, and update flag accordingly"""
         b_type = type(behavior)
         if issubclass(b_type, ESEnrageAttackUp):
@@ -253,7 +251,7 @@ class Context(object):
 
         return True
 
-    def check_no_apply_skill_effects(self, behavior) -> bool:
+    def check_no_apply_skill_effects(self, behavior: ESBehavior) -> bool:
         """Check context to see if a skill is allowed to be used"""
         b_type = type(behavior)
         if issubclass(b_type, ESEnrageAttackUp):
@@ -313,7 +311,7 @@ class Context(object):
 #     return ESDefaultAttack()
 
 
-def loop_through(ctx, behaviors: List[Optional[ESBehavior]]) -> List[ESAction]:
+def loop_through(ctx, behaviors: List[Optional[EsInstance]]) -> List[EsInstance]:
     original_ctx = ctx.clone()
     results, card_branches, combo_branches = loop_through_inner(ctx, behaviors)
 
@@ -367,7 +365,8 @@ def loop_through(ctx, behaviors: List[Optional[ESBehavior]]) -> List[ESAction]:
     return results
 
 
-def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> List[ESAction]:
+def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
+        Tuple[List[EsInstance], List[int], List[int]]:
     """Executes a single turn through the simulator.
 
     This is called multiple times with varying Context values to probe the action set
@@ -380,9 +379,9 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
     traversed = []
 
     # If any BranchCard instructions were spotted
-    card_branches = []
+    card_branches = []  # type: List[int]
     # If any BranchCombo instructions were spotted
-    combo_branches = []
+    combo_branches = []  # type: List[int]
 
     # The current spot in the behavior array.
     idx = 0
@@ -401,13 +400,15 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
         traversed.append(idx)
 
         # Extract the current behavior and its type.
-        b = behaviors[idx]
-        b_type = type(b)
-
-        # The current action could be None because we nulled it out in preprocessing, just continue.
-        if b is None or b_type == ESNone:
+        instance = behaviors[idx]
+        if instance is None or instance.btype == ESNone:
+            # The current action could be None because we nulled it out in preprocessing, just continue.
             idx += 1
             continue
+
+        b = instance.behavior
+        b_type = type(b)
+        cond = instance.condition
 
         # Detection for preempts, null the behavior afterwards so we don't trigger it again.
         if b_type == ESPreemptive:
@@ -421,12 +422,12 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
             behaviors[idx] = None
             ctx.is_preemptive = True
             ctx.do_preemptive = True
-            results.append(b)
+            results.append(instance)
             return results, card_branches, combo_branches
 
         if b_type == ESEnrageAttackUpStatus:
             # This is a special case; it's not a terminal action unlike other enrages.
-            results.append(b)
+            results.append(instance)
             idx += 1
             continue
 
@@ -434,8 +435,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
         # items into results.
         if b_type == EnemySkillUnknown or issubclass(b_type, ESAction):
             # Check if we should execute this action at all.
-            if skill_has_condition(b):
-                cond = b.condition
+            if cond:
                 # HP based checks.
                 if cond.hp_threshold and ctx.hp >= cond.hp_threshold:
                     idx += 1
@@ -449,7 +449,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
                     if not ctx.apply_skill_effects(b):
                         idx += 1
                         continue
-                    results.append(b)
+                    results.append(instance)
                     if b.is_conditional():
                         idx += 1
                         continue
@@ -457,7 +457,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
                 else:
                     # Not a terminal action, so accumulate it and continue.
                     if ctx.check_skill_use(cond) and ctx.check_no_apply_skill_effects(b):
-                        results.append(b)
+                        results.append(instance)
                     idx += 1
                     continue
             else:
@@ -536,7 +536,10 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
         if b_type == ESCountdown:
             ctx.counter -= 1
             if ctx.counter > 0:
-                results.append(ESCountdownMessage(b.enemy_skill_id, ctx.counter))
+                fake_behavior = ESCountdownMessage(b.enemy_skill_id, ctx.counter)
+                fake_ref = ESRef(b.enemy_skill_id, 100, 0)
+                fake_instance = EsInstance(fake_behavior, fake_ref)
+                results.append(fake_instance)
                 return results, card_branches, combo_branches
             else:
                 idx += 1
@@ -557,9 +560,9 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
 
         if b_type == ESBranchCard:
             # Branch if it's checking for a card we have on the team.
-            card_on_team = any([card in ctx.cards for card in b.branch_value])
+            card_on_team = any([card in ctx.cards for card in b.branch_list_value])
             idx = b.target_round if card_on_team else idx + 1
-            card_branches.append(b.branch_value)
+            card_branches.append(b.branch_list_value)
             continue
 
         if b_type == ESBranchCombo:
@@ -583,7 +586,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESBehavior]]) -> L
     return results, card_branches, combo_branches
 
 
-def info_from_behaviors(behaviors: List[ESBehavior]):
+def info_from_behaviors(behaviors: List[EsInstance]):
     """Extract some static info from the behavior list and clean it up where necessary."""
     base_abilities = []
     death_actions = []
@@ -593,45 +596,48 @@ def info_from_behaviors(behaviors: List[ESBehavior]):
     card_checkpoints = set()
     has_enemy_remaining_branch = False
 
-    # TODO: Null out useless on-death skills
+    for idx, instance in enumerate(behaviors):
+        if instance is None:
+            continue
 
-    for idx, es in enumerate(behaviors):
+        cond = instance.condition
+        es = instance.behavior
+        es_type = instance.btype
+
         # Extract the passives and null them out to simplify processing
-        if issubclass(type(es), ESPassive):
-            base_abilities.append(es)
+        if issubclass(es_type, ESPassive):
+            base_abilities.append(instance)
             behaviors[idx] = None
             continue
 
         # Extract death actions and null them out
-        if type(es) in [ESDeathCry, ESSkillSetOnDeath]:
-            death_actions.append(es)
+        if es_type in [ESDeathCry, ESSkillSetOnDeath]:
+            death_actions.append(instance)
             behaviors[idx] = None
             continue
 
         # Find candidate branch HP values
-        if type(es) == ESBranchHP:
+        if es_type == ESBranchHP:
             hp_checkpoints.add(es.branch_value)
             hp_checkpoints.add(es.branch_value - 1)
 
         # Find candidate action HP values
-        if skill_has_condition(es):
-            cond = es.condition
-            if cond and cond.hp_threshold:
-                hp_checkpoints.add(cond.hp_threshold)
-                hp_checkpoints.add(cond.hp_threshold - 1)
+        if cond and cond.hp_threshold:
+            hp_checkpoints.add(cond.hp_threshold)
+            hp_checkpoints.add(cond.hp_threshold - 1)
 
         # Find checks for specific cards.
-        if type(es) == ESBranchCard:
-            card_checkpoints.add(tuple(es.branch_value))
+        if es_type == ESBranchCard:
+            card_checkpoints.add(tuple(es.branch_list_value))
 
         # Find checks for specific amounts of enemies.
-        if type(es) in [ESBranchRemainingEnemies, ESEnrageAttackUpRemainingEnemies, ESRecoverEnemyAlly]:
+        if es_type in [ESBranchRemainingEnemies, ESEnrageAttackUpRemainingEnemies, ESRecoverEnemyAlly]:
             has_enemy_remaining_branch = True
 
     return base_abilities, hp_checkpoints, card_checkpoints, has_enemy_remaining_branch, death_actions
 
 
-def extract_preemptives(ctx: Context, behaviors: List[Any], card_checkpoints: Set[Tuple[int]]):
+def extract_preemptives(ctx: Context, behaviors: List[EsInstance], card_checkpoints: Set[Tuple[int]]):
     """Simulate the initial run through the behaviors looking for preemptives.
 
     If we find a preemptive, continue onwards. If not, roll the context back.
@@ -647,7 +653,7 @@ def extract_preemptives(ctx: Context, behaviors: List[Any], card_checkpoints: Se
     return ctx, cur_loop
 
 
-def extract_turn_behaviors(ctx: Context, behaviors: List[ESBehavior], hp_checkpoint: int) -> List[List[ESBehavior]]:
+def extract_turn_behaviors(ctx: Context, behaviors: List[EsInstance], hp_checkpoint: int) -> List[List[EsInstance]]:
     """Simulate the first 20 turns at a specific hp checkpoint."""
     hp_ctx = ctx.clone()
     hp_ctx.hp = hp_checkpoint
@@ -718,7 +724,7 @@ def extract_loop_skills(hp: int, turn_data: list, loop_start: int, loop_end: int
     return HpActions(hp, timed_skill_groups, repeating_skill_groups)
 
 
-def compute_enemy_actions(ctx: Context, behaviors: List[ESBehavior], hp_checkpoints: List[int]) -> List[HpActions]:
+def compute_enemy_actions(ctx: Context, behaviors: List[EsInstance], hp_checkpoints: List[int]) -> List[HpActions]:
     # Compute turn behaviors for every hp checkpoint
     hp_to_turn_behaviors = {hp: extract_turn_behaviors(ctx, behaviors, hp) for hp in hp_checkpoints}
 
@@ -771,7 +777,7 @@ def compute_enemy_actions(ctx: Context, behaviors: List[ESBehavior], hp_checkpoi
     return list(hp_to_actions.values())
 
 
-def convert(card: Card, enemy_behavior: List[ESBehavior], level: int):
+def convert(card: Card, enemy_behavior: List[EsInstance], level: int):
     force_one_enemy = int(card.unknown_009) == 5
     enemy_skill_max_counter = card.enemy_skill_max_counter
     enemy_skill_counter_increment = card.enemy_skill_counter_increment
@@ -779,10 +785,10 @@ def convert(card: Card, enemy_behavior: List[ESBehavior], level: int):
     skillset = ProcessedSkillset(level)
 
     # Behavior is 1-indexed, so stick a fake row in to start
-    behaviors = [None] + list(enemy_behavior)  # type: List[ESBehavior]
+    behaviors = [None] + list(enemy_behavior)  # type: List[EsInstance]
 
     # Fix some monsters that seem to be 0-indexed
-    if card.card_id in ZERO_INDEXED_MONSTERS:
+    if card.monster_no in ZERO_INDEXED_MONSTERS:
         behaviors.pop(0)
 
     (base_abilities, hp_checkpoints, card_checkpoints,
@@ -805,7 +811,7 @@ def convert(card: Card, enemy_behavior: List[ESBehavior], level: int):
 
     if preemptives is not None:
         skillset.preemptives = preemptives
-        if any([p.ends_battle() for p in preemptives]):
+        if any([p.behavior.ends_battle() for p in preemptives]):
             # This monster terminates the battle immediately.
             return skillset
 
@@ -925,22 +931,16 @@ def clean_skillset(moveset: Moveset, hp_actions: List[HpActions]):
             timed.skills = [x for x in timed.skills if x not in hp_action.repeating[0].skills]
 
 
-def extract_levels(enemy_behavior: List[Any]):
+def extract_levels(enemy_behavior: List[EsInstance]):
     """Scan through the behavior list and compile a list of level values, always including 1."""
     levels = set()
     levels.add(1)
     for b in enemy_behavior:
-        if type(b) == ESBranchLevel:
-            levels.add(b.branch_value)
-        elif hasattr(b, 'level'):
-            levels.add(b.level)
+        if b.btype == ESBranchLevel:
+            levels.add(b.behavior.branch_value)
+        elif hasattr(b.behavior, 'level'):
+            levels.add(b.behavior.level)
     return levels
-
-
-def skill_has_condition(es):
-    if not hasattr(es, 'condition'):
-        return False
-    return es.condition is not None
 
 
 def find_action_by_hp(hp: int, actions: List[HpActions]) -> Optional[HpActions]:
