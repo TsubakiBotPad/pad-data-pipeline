@@ -49,12 +49,12 @@ class TargetType(Enum):
 
 TARGET_NAMES = {
     TargetType.random: 'random cards',
-    TargetType.self_leader: 'self leader',
+    TargetType.self_leader: 'own leader',
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
-    TargetType.subs: 'subs',
+    TargetType.subs: 'random subs',
     TargetType.attributes: 'attributes',
-    TargetType.types: 'random',
+    TargetType.types: 'types',
 }
 
 
@@ -117,7 +117,7 @@ class Describe:
         return ' for '.join(output)
 
     @staticmethod
-    def orb_change(orb_from, orb_to):
+    def orb_change(orb_from, orb_to, random_count=None):
         if type(orb_from) != list:
             orb_from = [orb_from]
         if type(orb_to) != list:
@@ -125,9 +125,11 @@ class Describe:
 
         output = 'Change '
         output += attributes_to_str(orb_from)
+        if random_count:
+            output += ' {}'.format(random_count)
         output += ' to '
         output += attributes_to_str(orb_to)
-        
+
         return output
 
     @staticmethod

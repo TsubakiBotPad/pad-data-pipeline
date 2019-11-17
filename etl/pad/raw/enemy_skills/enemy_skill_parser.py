@@ -25,9 +25,6 @@ class BehaviorParser(object):
                 human_fix_logger.error('Failed to parse enemy skill: %d/%d: %s', es_id, es_type, es.name)
                 new_es = EnemySkillUnknown(es)
 
-            # TODO: This got left out in port, what do?
-            # inject_implicit_onetime(card, behavior)
-
             self.enemy_behaviors.append(new_es)
 
         self.behaviors_by_id = {es.enemy_skill_id: es for es in self.enemy_behaviors}

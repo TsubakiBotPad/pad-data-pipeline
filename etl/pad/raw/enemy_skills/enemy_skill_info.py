@@ -135,6 +135,11 @@ class ESCondition(object):
         # If set, this only executes when a specified number of enemies remain.
         self.enemies_remaining = None
 
+        # If set, this only executes when the enemy is defeated.
+        self.on_death = None
+
+        self.condition_attributes = None
+
     def use_chance(self):
         """Returns the likelihood that this condition will be used.
 
@@ -145,8 +150,24 @@ class ESCondition(object):
         return max(self._ai, self._rnd)
 
     def description(self):
-        return Describe.condition(max(self._ai, self._rnd), self.hp_threshold,
+        desc = Describe.condition(max(self._ai, self._rnd), self.hp_threshold,
                                   self.one_time is not None or self.forced_one_time is not None)
+        # TODO: figure out if this is still needed
+        if self.enemies_remaining:
+            desc = desc + ', ' if desc else ''
+            desc += 'when <= {} enemies remain'.format(self.enemies_remaining)
+        if self.on_death:
+            desc = desc + ', ' if desc else ''
+            desc += 'on death'
+
+        if self.condition_attributes:
+            if desc:
+                desc += " & " + Describe.attribute_exists(self.condition_attributes)
+            else:
+                desc = Describe.attribute_exists(self.condition_attributes).capitalize()
+
+        desc = desc.capitalize() if desc else None
+        return desc
 
 
 class ESAttack(object):
@@ -194,9 +215,15 @@ class ESBehavior(Printable):
     def description(self):
         return Describe.not_set()
 
+    def full_description(self):
+        return self.description()
+
     def __str__(self):
         return '{}({} - {}: {})'.format(self.__class__.__name__,
                                         self.enemy_skill_id, self.type, self.name)
+
+    def __eq__(self, other):
+        return other and self.enemy_skill_id == other.enemy_skill_id
 
 
 # Action
@@ -206,8 +233,13 @@ class ESAction(ESBehavior):
         self.attack = attack if attack is not None else ESAttack.new_instance(self.params[14])
         # param 15 controls displaying sprites on screen, used by Gintama
 
-    def __eq__(self, other):
-        return other and self.enemy_skill_id == other.enemy_skill_id
+    def full_description(self):
+        if isinstance(self, ESBehaviorAttack):
+            return self.description()
+        elif self.attack:
+            return '{}, {:s}'.format(self.description(), self.attack.describe())
+        else:
+            return self.description()
 
 
 class ESBehaviorAttack(ESAction):
@@ -273,7 +305,7 @@ class ESBind(ESAction):
                              self.target_count, targets_to_str(self.targets))
 
 
-class ESBindAttack(ESBehaviorAttack, ESBind):
+class ESBindAttack(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = bind_bitmap(self.params[4])
@@ -350,19 +382,22 @@ class ESBindAwoken(ESAction):
     def is_conditional(self):
         return True
 
+    def description(self):
+        return Describe.bind(self.turns, None, None, 'awoken skills')
+
 
 class ESOrbChange(ESAction):
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill)
         self.orb_from = orb_from
         self.orb_to = orb_to
+        self.random_count = None
 
     def is_conditional(self):
-        # TODO: shouldn't this be != -1 ?
-        return self.orb_from == -1
+        return self.orb_from != -1
 
     def description(self):
-        return Describe.orb_change(self.orb_from, self.orb_to)
+        return Describe.orb_change(self.orb_from, self.orb_to, random_count=self.random_count)
 
 
 class ESOrbChangeConditional(ABC, ESOrbChange):
@@ -403,10 +438,10 @@ class ESJammerChangeSingle(ESOrbChangeConditional):
 
 class ESJammerChangeRandom(ESOrbChange):
     def __init__(self, skill: EnemySkill):
-        self.random_count = int(skill.params[1])
         from_attr = -1
         to_attr = 6
         super().__init__(skill, from_attr, to_attr)
+        self.random_count = int(skill.params[1])
 
 
 class ESPoisonChangeSingle(ESOrbChangeConditional):
@@ -418,22 +453,21 @@ class ESPoisonChangeSingle(ESOrbChangeConditional):
 
 class ESPoisonChangeRandom(ESOrbChange):
     def __init__(self, skill: EnemySkill):
-        self.random_count = int(skill.params[1])
         from_attr = -1
-        # from_attr = 'Random {:d}'.format(self.random_count)
         to_attr = 7
         # TODO: This skill (and possibly others) seem to have an 'excludes hearts'
         # clause; either it's innate to this skill, or it's in params[2] (many monsters have
         # a 1 in that slot, not all though).
         super().__init__(skill, from_attr, to_attr)
+        self.random_count = int(skill.params[1])
 
 
 class ESMortalPoisonChangeRandom(ESOrbChange):
     def __init__(self, skill: EnemySkill):
-        self.random_count = int(skill.params[1])
         from_attr = -1
         to_attr = 8
         super().__init__(skill, from_attr, to_attr)
+        self.random_count = int(skill.params[1])
 
 
 class ESOrbChangeAttack(ESOrbChange):
@@ -446,10 +480,10 @@ class ESOrbChangeAttack(ESOrbChange):
 
 class ESPoisonChangeRandomAttack(ESOrbChangeAttack):
     def __init__(self, skill: EnemySkill):
-        self.random_count = int(skill.params[2])
         from_attr = -1
         to_attr = 7
         super().__init__(skill, orb_from=from_attr, orb_to=to_attr)
+        self.random_count = int(skill.params[2])
 
     def is_conditional(self):
         return False
@@ -556,7 +590,7 @@ class ESEnrageAttackUp(ABC, ESEnrage):
         super().__init__(skill)
 
 
-class ESEnrageAttackUpRemainingEnemies(ESEnrageAttackUp):
+class ESAttackUPRemainingEnemies(ESEnrageAttackUp):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.enemy_count = self.params[1]
@@ -564,7 +598,9 @@ class ESEnrageAttackUpRemainingEnemies(ESEnrageAttackUp):
         self.turns = self.params[2]
 
     def description(self):
-        return super().description() + ' when <= {} enemies remain'.format(self.enemy_count)
+        # TODO: review this
+        # return super().description() + ' when <= {} enemies remain'.format(self.enemy_count)
+        return super().description()
 
 
 class ESEnrageAttackUpStatus(ESEnrageAttackUp):
@@ -574,10 +610,11 @@ class ESEnrageAttackUpStatus(ESEnrageAttackUp):
         self.turns = self.params[1]
 
     def description(self):
-        return super().description() + ' after being affected by a status effect'
+        # return super().description() + ' after being affected by a status effect'
+        return super().description()
 
 
-class ESEnrageAttackUpCooldown(ESEnrageAttackUp):
+class ESAttackUPCooldown(ESEnrageAttackUp):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         # enrage cannot trigger until this many turns have passed
@@ -588,8 +625,8 @@ class ESEnrageAttackUpCooldown(ESEnrageAttackUp):
 
     def description(self):
         desc = super().description()
-        if self.turn_cooldown:
-            desc += ' after {} turns'.format(self.turn_cooldown)
+        # if self.turn_cooldown:
+        #     desc += ' after {} turns'.format(self.turn_cooldown)
         return desc
 
 
@@ -602,7 +639,7 @@ class ESDebuff(ABC, ESAction):
 class ESDebuffMovetime(ESDebuff):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.type = 'movetime'
+        self.debuff_type = 'movetime'
         self.amount = 0
         self.unit = '?'
 
@@ -616,18 +653,18 @@ class ESDebuffMovetime(ESDebuff):
             print('unexpected debuff movetime skill')
 
     def description(self):
-        return Describe.debuff(self.type, self.amount, self.unit, self.turns)
+        return Describe.debuff(self.debuff_type, self.amount, self.unit, self.turns)
 
 
 class ESDebuffRCV(ESDebuff):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.type = 'RCV'
+        self.debuff_type = 'RCV'
         self.amount = self.params[2]
         self.unit = '%'
 
     def description(self):
-        return Describe.debuff(self.type, self.amount, self.unit, self.turns)
+        return Describe.debuff(self.debuff_type, self.amount, self.unit, self.turns)
 
 
 class ESEndBattle(ESAction):
@@ -921,7 +958,7 @@ class ESSkillSet(ESAction):
         return ' + '.join(map(lambda s: s.name, self.skills))
 
     def description(self):
-        return ' + '.join(map(lambda s: s.description(), self.skills))
+        return ' + '.join(map(lambda s: s.full_description(), self.skills))
 
     def ends_battle(self):
         return any([s.ends_battle() for s in self.skills])
@@ -930,9 +967,6 @@ class ESSkillSet(ESAction):
 class ESSkillSetOnDeath(ESSkillSet):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-
-    def description(self):
-        return 'On death, perform multiple skills'
 
     def has_action(self) -> bool:
         """Helper that determines if the skillset does stuff other than emote."""
@@ -1179,7 +1213,8 @@ class ESNone(ESLogic):
         super().__init__(skill)
 
     def description(self):
-        return 'No action'
+        # return 'No action'
+        return 'nothing'
 
 
 class ESFlagOperation(ESLogic):
@@ -1379,6 +1414,21 @@ class EsInstance(Printable):
         if isinstance(self.behavior, ESBranch):
             self.behavior.branch_value = ref.enemy_ai
             self.behavior.target_round = ref.enemy_rnd
+
+        if self.btype in [ESRecoverEnemyAlly, ESAttackUPRemainingEnemies]:
+            if self.condition:
+                self.condition.enemies_remaining = 1
+
+        if self.btype in [ESSkillSetOnDeath]:
+            self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
+            if self.condition:
+                self.condition.on_death = True
+
+        if self.btype in [ESRandomSpawn]:
+            if not self.condition:
+                self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
+            self.condition.condition_attributes = self.behavior.condition_attributes
+
         # End terrible badness
 
     @property
@@ -1398,6 +1448,9 @@ class EsInstance(Printable):
     def __str__(self):
         return 'EsInstance - {} | {}'.format(self.behavior, self.ref)
 
+    def __eq__(self, other):
+        return other and self.enemy_skill_id == other.enemy_skill_id
+
 
 BEHAVIOR_MAP = {
     # SKILLS
@@ -1415,9 +1468,9 @@ BEHAVIOR_MAP = {
     14: ESBindSkill,
     15: ESAttackMultihit,
     16: ESInactivity,
-    17: ESEnrageAttackUpRemainingEnemies,
+    17: ESAttackUPRemainingEnemies,
     18: ESEnrageAttackUpStatus,
-    19: ESEnrageAttackUpCooldown,
+    19: ESAttackUPCooldown,
     20: ESStatusShield,
     39: ESDebuffMovetime,
     40: ESEndBattle,
@@ -1519,7 +1572,7 @@ BEHAVIOR_MAP = {
 }
 
 
-def inject_implicit_onetime(card: Card, behavior: List[ESAction]):
+def inject_implicit_onetime(card: Card, behavior: List[EsInstance]):
     """Injects one_time values into specific categories of skills.
 
     Currently only ESBindRandom but other early skills may need this.
@@ -1530,9 +1583,9 @@ def inject_implicit_onetime(card: Card, behavior: List[ESAction]):
     if card.enemy_skill_counter_increment != 0:
         # This seems unlikely to be correct.
         return
-    max_flag = max([0] + [x.condition.one_time for x in behavior if hasattr(x, 'condition') and x.condition.one_time])
+    max_flag = max([0] + [x.condition.one_time for x in behavior if x.condition and x.condition.one_time])
     next_flag = pow(2, ceil(log(max_flag + 1) / log(2)))
     for b in behavior:
-        if type(b) in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition.use_chance() == 100:
+        if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition.use_chance() == 100:
             b.condition.forced_one_time = next_flag
             next_flag = next_flag << 1
