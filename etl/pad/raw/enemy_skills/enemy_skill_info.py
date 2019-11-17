@@ -1,13 +1,13 @@
 import copy
 from abc import ABC
-from enum import Enum
+from builtins import issubclass
 from math import ceil, log
 from typing import List, Optional
 
 from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import ESRef, Card
-from pad.raw.enemy_skills.enemy_skill_text import Describe
+from pad.raw.enemy_skills.enemy_skill_text import Describe, TargetType, targets_to_str, typing_to_str, attributes_to_str
 
 
 class DictWithAttributeAccess(dict):
@@ -49,16 +49,6 @@ def typing_bitmap(bits):
             types.append(offset)
         offset += 1
     return types
-
-
-class TargetType(Enum):
-    random = 0
-    self_leader = 1
-    both_leader = 2
-    friend_leader = 3
-    subs = 4
-    attributes = 5
-    types = 6
 
 
 def bind_bitmap(bits) -> List[TargetType]:
@@ -280,7 +270,7 @@ class ESBind(ESAction):
 
     def description(self):
         return Describe.bind(self.min_turns, self.max_turns,
-                             self.target_count, ', '.join(map(str, self.targets)))
+                             self.target_count, targets_to_str(self.targets))
 
 
 class ESBindAttack(ESBehaviorAttack, ESBind):
@@ -320,6 +310,10 @@ class ESBindAttribute(ESBind):
     def is_conditional(self):
         return True
 
+    def description(self):
+        target_type = '{:s} cards'.format(attributes_to_str([self.target_attribute]))
+        return Describe.bind(self.min_turns, self.max_turns, target_type=target_type)
+
 
 class ESBindTyping(ESBind):
     def __init__(self, skill: EnemySkill):
@@ -330,6 +324,10 @@ class ESBindTyping(ESBind):
     def is_conditional(self):
         return True
 
+    def description(self):
+        target_type = '{:s} cards'.format(typing_to_str([self.target_typing]))
+        return Describe.bind(self.min_turns, self.max_turns, target_type=target_type)
+
 
 class ESBindSkill(ESAction):
     def __init__(self, skill: EnemySkill):
@@ -339,6 +337,9 @@ class ESBindSkill(ESAction):
 
     def is_conditional(self):
         return True
+
+    def description(self):
+        return Describe.bind(self.min_turns, self.max_turns, target_type='active skills')
 
 
 class ESBindAwoken(ESAction):
@@ -359,6 +360,9 @@ class ESOrbChange(ESAction):
     def is_conditional(self):
         # TODO: shouldn't this be != -1 ?
         return self.orb_from == -1
+
+    def description(self):
+        return Describe.orb_change(self.orb_from, self.orb_to)
 
 
 class ESOrbChangeConditional(ABC, ESOrbChange):
@@ -456,6 +460,9 @@ class ESBlind(ESAction):
         super().__init__(skill)
         self.attack = ESAttack.new_instance(self.params[1])
 
+    def description(self):
+        return Describe.blind()
+
 
 class ESBlindStickyRandom(ESAction):
     def __init__(self, skill: EnemySkill):
@@ -537,7 +544,7 @@ class ESEnrage(ESAction):
         return Describe.enrage(self.multiplier, self.turns)
 
 
-class ESEnragePass(ESEnrage):
+class ESStorePower(ESEnrage):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.multiplier = 100 + self.params[1]
@@ -580,7 +587,10 @@ class ESEnrageAttackUpCooldown(ESEnrageAttackUp):
         self.turns = self.params[2]
 
     def description(self):
-        return super().description() + ' after {} turns'.format(self.turn_cooldown)
+        desc = super().description()
+        if self.turn_cooldown:
+            desc += ' after {} turns'.format(self.turn_cooldown)
+        return desc
 
 
 class ESDebuff(ABC, ESAction):
@@ -662,7 +672,7 @@ class ESAbsorbAttribute(ESAbsorb):
         self.attributes = attribute_bitmap(self.params[3])
 
     def description(self):
-        source = ', '.join(map(str, self.attributes))
+        source = attributes_to_str(self.attributes)
         return Describe.absorb(source, self.min_turns, self.max_turns)
 
 
@@ -849,7 +859,7 @@ class ESBombRandomSpawn(ESAction):
         self.locked = self.params[8] == 1
 
     def description(self):
-        spawn_type = ['locked Bomb'] if self.locked else ['Bomb']
+        spawn_type = [-9] if self.locked else [9]
         return Describe.random_orb_spawn(self.count, spawn_type)
 
 
@@ -864,7 +874,7 @@ class ESBombFixedSpawn(ESAction):
         self.whole_board = all_rows and all_cols
 
     def description(self):
-        spawn_type = ['locked Bomb'] if self.locked else ['Bomb']
+        spawn_type = [-9] if self.locked else [9]
         if self.whole_board:
             return Describe.board_change(spawn_type)
         else:
@@ -1118,7 +1128,7 @@ class ESAttributeResist(ESPassive):
 
     def description(self):
         return Describe.damage_reduction(
-            ', '.join(map(str, self.attributes)), percent=self.shield_percent)
+            attributes_to_str(self.attributes), percent=self.shield_percent)
 
 
 class ESResolve(ESPassive):
@@ -1148,7 +1158,7 @@ class ESTypeResist(ESPassive):
 
     def description(self):
         return Describe.damage_reduction(
-            ', '.join(map(str, self.types)), percent=self.shield_percent)
+            typing_to_str(self.types), percent=self.shield_percent)
 
 
 # Logic
@@ -1278,7 +1288,7 @@ class ESEndPath(ESLogic):
         super().__init__(skill)
 
     def description(self):
-        return 'end turn'
+        return 'end_turn'
 
 
 class ESCountdown(ESLogic):
@@ -1349,6 +1359,10 @@ class EsInstance(Printable):
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
 
+        if not issubclass(self.btype, ESLogic):
+            if ref.enemy_ai > 0 or ref.enemy_rnd > 0:
+                self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
+
         # This seems bad but I'm not sure how to improve
         # Start terrible badness
         if isinstance(self.behavior, ESFlagOperation):
@@ -1366,9 +1380,6 @@ class EsInstance(Printable):
             self.behavior.branch_value = ref.enemy_ai
             self.behavior.target_round = ref.enemy_rnd
         # End terrible badness
-
-        if ref.enemy_ai > 0 or ref.enemy_rnd > 0:
-            self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
 
     @property
     def btype(self):
@@ -1397,7 +1408,7 @@ BEHAVIOR_MAP = {
     5: ESBlind,
     6: ESDispel,
     7: ESRecoverEnemy,
-    8: ESEnragePass,
+    8: ESStorePower,
     # type 9 skills are unused, but there's 3 and they seem to buff defense
     12: ESJammerChangeSingle,
     13: ESJammerChangeRandom,

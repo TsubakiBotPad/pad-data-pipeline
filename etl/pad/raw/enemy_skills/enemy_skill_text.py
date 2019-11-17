@@ -1,4 +1,7 @@
+from enum import Enum
+
 ATTRIBUTE_MAP = {
+    -9: 'Locked Bomb',
     -1: 'Random',
     None: 'Fire',
     0: 'Fire',
@@ -13,6 +16,11 @@ ATTRIBUTE_MAP = {
     9: 'Bomb',
 }
 
+
+def attributes_to_str(attributes):
+    return ', '.join([ATTRIBUTE_MAP[x] for x in attributes])
+
+
 TYPING_MAP = {
     1: 'Balanced',
     2: 'Physical',
@@ -23,6 +31,35 @@ TYPING_MAP = {
     7: 'Devil',
     8: 'Machine',
 }
+
+
+def typing_to_str(types):
+    return ', '.join([TYPING_MAP[x] for x in types])
+
+
+class TargetType(Enum):
+    random = 0
+    self_leader = 1
+    both_leader = 2
+    friend_leader = 3
+    subs = 4
+    attributes = 5
+    types = 6
+
+
+TARGET_NAMES = {
+    TargetType.random: 'random cards',
+    TargetType.self_leader: 'self leader',
+    TargetType.both_leader: 'both leaders',
+    TargetType.friend_leader: 'friend leader',
+    TargetType.subs: 'subs',
+    TargetType.attributes: 'attributes',
+    TargetType.types: 'random',
+}
+
+
+def targets_to_str(targets):
+    return ' and '.join([TARGET_NAMES[x] for x in targets])
 
 
 def ordinal(n):
@@ -81,16 +118,16 @@ class Describe:
 
     @staticmethod
     def orb_change(orb_from, orb_to):
+        if type(orb_from) != list:
+            orb_from = [orb_from]
+        if type(orb_to) != list:
+            orb_to = [orb_to]
+
         output = 'Change '
-        if type(orb_from) == list:
-            output += ', '.join(orb_from)
-        else:
-            output += orb_from
+        output += attributes_to_str(orb_from)
         output += ' to '
-        if type(orb_to) == list:
-            output += ', '.join(orb_to)
-        else:
-            output += orb_to
+        output += attributes_to_str(orb_to)
+        
         return output
 
     @staticmethod
@@ -143,7 +180,7 @@ class Describe:
         if len(attributes) == 1:
             return 'Change own attribute to {}'.format(attributes[0])
         else:
-            return 'Change own attribute to random one of ' + ', '.join(map(str, attributes))
+            return 'Change own attribute to random one of ' + attributes_to_str(attributes)
 
     @staticmethod
     def gravity(percent):
@@ -157,13 +194,14 @@ class Describe:
             return 'Absorb {:s} damage for {:d}~{:d} turns'.format(source, min_turns, max_turns)
 
     @staticmethod
-    def skyfall(orbs, chance, min_turns, max_turns=None, locked=False):
+    def skyfall(attributes, chance, min_turns, max_turns=None, locked=False):
         lock = 'Locked ' if locked else ''
+        orbs = attributes_to_str(attributes)
         if max_turns is None or min_turns == max_turns:
-            return '{:s}{:s} skyfall +{:d}% for {:d} turns'.format(lock, ', '.join(map(str, orbs)), chance, min_turns)
+            return '{:s}{:s} skyfall +{:d}% for {:d} turns'.format(lock, orbs, chance, min_turns)
         else:
             return '{:s}{:s} skyfall +{:d}% for {:d}~{:d} turns' \
-                .format(lock, ', '.join(map(str, orbs)), chance, min_turns, max_turns)
+                .format(lock, orbs, chance, min_turns, max_turns)
 
     @staticmethod
     def void(threshold, turns):
@@ -190,22 +228,22 @@ class Describe:
     @staticmethod
     def row_col_spawn(position_type, positions, attributes):
         return 'Change {:s} {:s} to {:s} orbs'.format(
-            ', '.join([ordinal(x) for x in positions]), position_type, ', '.join(map(str, attributes)))
+            ', '.join([ordinal(x) for x in positions]), position_type, attributes_to_str(attributes))
 
     @staticmethod
     def board_change(attributes):
-        return 'Change all orbs to {:s}'.format(', '.join(map(str, attributes)))
+        return 'Change all orbs to {:s}'.format(attributes_to_str(attributes))
 
     @staticmethod
     def random_orb_spawn(count, attributes):
         if count == 42:
             return Describe.board_change(attributes)
         else:
-            return 'Spawn random {:d} {:s} orbs'.format(count, ', '.join(map(str, attributes)))
+            return 'Spawn random {:d} {:s} orbs'.format(count, attributes_to_str(attributes))
 
     @staticmethod
     def fixed_orb_spawn(attributes):
-        return 'Spawn {:s} orbs in the specified positions'.format(', '.join(map(str, attributes)))
+        return 'Spawn {:s} orbs in the specified positions'.format(attributes_to_str(attributes))
 
     @staticmethod
     def skill_delay(min_turns, max_turns):
@@ -219,9 +257,9 @@ class Describe:
     @staticmethod
     def orb_lock(count, attributes):
         if count == 42:
-            return 'Lock all {:s} orbs'.format(', '.join(map(str, attributes)))
+            return 'Lock all {:s} orbs'.format(attributes_to_str(attributes))
         else:
-            return 'Lock {:d} random {:s} orbs'.format(count, ', '.join(map(str, attributes)))
+            return 'Lock {:d} random {:s} orbs'.format(count, attributes_to_str(attributes))
 
     @staticmethod
     def orb_seal(turns, position_type, positions):
@@ -253,7 +291,7 @@ class Describe:
 
     @staticmethod
     def attribute_block(turns, attributes):
-        return 'Unable to match {:s} orbs for {:d} turns'.format(', '.join(map(str, attributes)), turns)
+        return 'Unable to match {:s} orbs for {:d} turns'.format(attributes_to_str(attributes), turns)
 
     @staticmethod
     def spinners(turns, speed, position_description):
@@ -275,7 +313,7 @@ class Describe:
 
     @staticmethod
     def attribute_exists(atts):
-        return 'when {:s} orbs are on the board'.format(', '.join(atts))
+        return 'when {:s} orbs are on the board'.format(attributes_to_str(atts))
 
     @staticmethod
     def countdown(counter):
