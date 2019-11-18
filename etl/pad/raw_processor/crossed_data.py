@@ -7,7 +7,7 @@ from typing import List, Optional, Union
 
 from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
-from pad.raw import Dungeon, EnemySkill, ESRef
+from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
 from pad.raw.enemy_skills.enemy_skill_info import EsInstance
 from pad.raw.skills import skill_text_typing
@@ -41,7 +41,9 @@ class CrossServerCard(object):
         self.leader_skill = make_cross_server_skill(jp_card.leader_skill, na_card.leader_skill, kr_card.leader_skill)
         self.active_skill = make_cross_server_skill(jp_card.active_skill, na_card.active_skill, kr_card.active_skill)
 
-        self.enemy_behavior = make_cross_server_enemy_behavior(jp_card.enemy_skills, na_card.enemy_skills)
+        (jp_behavior, na_behavior) = make_cross_server_enemy_behavior(jp_card.enemy_skills, na_card.enemy_skills)
+        self.enemy_behavior_jp = jp_behavior
+        self.enemy_behavior = na_behavior
 
         # This is mostly just for integration test purposes. Should really be fixed a different way.
         self.en_ls_text = None
@@ -136,25 +138,26 @@ def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
     na_skills = list(na_skills) or []
 
     if len(jp_skills) > len(na_skills):
-        return jp_skills
+        return jp_skills, jp_skills
     elif len(na_skills) > len(jp_skills):
-        return na_skills
+        return na_skills, na_skills
     elif not na_skills and not jp_skills:
-        return []
+        return [], []
 
     def override_if_necessary(override_skills: List[EsInstance], dest_skills: List[EsInstance]):
         # Then check if we need to individually overwrite
         for idx in range(len(override_skills)):
             override_skill = override_skills[idx].behavior
+
             dest_skill = dest_skills[idx].behavior
-            if override_skill == _compare_named(override_skill, dest_skill):
+            if override_skill is _compare_named(override_skill, dest_skill):
                 dest_skills[idx] = override_skills[idx]
 
     # Override priority: JP > NA, NA -> JP
     override_if_necessary(jp_skills, na_skills)
     override_if_necessary(na_skills, jp_skills)
 
-    return jp_skills
+    return jp_skills, na_skills
 
 
 class CrossServerDungeon(object):

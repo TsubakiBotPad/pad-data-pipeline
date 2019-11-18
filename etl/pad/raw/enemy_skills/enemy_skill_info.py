@@ -1,6 +1,7 @@
 import copy
 from abc import ABC
 from builtins import issubclass
+from collections import OrderedDict
 from math import ceil, log
 from typing import List, Optional
 
@@ -155,18 +156,20 @@ class ESCondition(object):
         # TODO: figure out if this is still needed
         if self.enemies_remaining:
             desc = desc + ', ' if desc else ''
-            desc += 'when <= {} enemies remain'.format(self.enemies_remaining)
+            enemies = 1 if self.enemies_remaining > 10 else self.enemies_remaining
+            desc += 'when <= {} enemies remain'.format(enemies)
         if self.on_death:
             desc = desc + ', ' if desc else ''
             desc += 'on death'
+            desc = desc.capitalize()
 
         if self.condition_attributes:
             if desc:
                 desc += " & " + Describe.attribute_exists(self.condition_attributes)
             else:
                 desc = Describe.attribute_exists(self.condition_attributes).capitalize()
+            desc = desc.capitalize()
 
-        desc = desc.capitalize() if desc else None
         return desc
 
 
@@ -262,6 +265,9 @@ class ESDeathCry(ESAction):
     def __init__(self, skill):
         super().__init__(skill)
         self.message = self.params[0]
+
+    def description(self):
+        return Describe.death_cry(self.message)
 
 
 class ESAttackSinglehit(ESBehaviorAttack):
@@ -556,8 +562,7 @@ class ESRecoverEnemy(ESRecover):
 class ESRecoverEnemyAlly(ESRecover):
     def __init__(self, skill):
         super().__init__(skill, target='enemy ally')
-        # if self.condition:
-        #     self.condition.enemies_remaining = 1
+        self.enemy_count = 1
 
     def conditions(self):
         return 'When enemy ally is killed'
@@ -603,7 +608,7 @@ class ESAttackUPRemainingEnemies(ESEnrageAttackUp):
         return super().description()
 
 
-class ESEnrageAttackUpStatus(ESEnrageAttackUp):
+class ESAttackUpStatus(ESEnrageAttackUp):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.multiplier = self.params[2]
@@ -681,7 +686,8 @@ class ESEndBattle(ESAction):
 class ESChangeAttribute(ESAction):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.attributes = list(filter(None, self.params[1:6]))
+        self.attributes = list(OrderedDict.fromkeys(self.params[1:6]))
+        # self.attributes = list(filter(None, self.params[1:6]))
 
     def description(self):
         return Describe.change_attribute(self.attributes)
@@ -918,7 +924,7 @@ class ESBombFixedSpawn(ESAction):
             return Describe.fixed_orb_spawn(spawn_type)
 
 
-class ESBoardChange(ABC, ESAction):
+class ESBaseBoardChange(ABC, ESAction):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = []
@@ -927,20 +933,20 @@ class ESBoardChange(ABC, ESAction):
         return Describe.board_change(self.attributes)
 
 
-class ESBasicBoardChange(ESBoardChange):
+class ESBoardChange(ESBaseBoardChange):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[1])
 
 
-class ESBoardChangeAttackFlat(ESBoardChange):
+class ESBoardChangeAttackFlat(ESBaseBoardChange):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = self.params[2:self.params.index(-1)]
         self.attack = ESAttack.new_instance(self.params[1])
 
 
-class ESBoardChangeAttackBits(ESBoardChange):
+class ESBoardChangeAttackBits(ESBaseBoardChange):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[2])
@@ -1331,7 +1337,9 @@ class ESCountdown(ESLogic):
         super().__init__(skill)
 
     def description(self):
-        return 'countdown and end turn'
+        # return 'countdown and end turn'
+        # TODO: fix for tieout
+        return 'countdown'
 
 
 class ESCountdownMessage(ESBehavior):
@@ -1367,6 +1375,7 @@ class ESBranchCard(ESBranch):
         self.branch_condition = 'player_cards'
         self.compare = 'HAS'
         self.branch_list_value = list(filter(None, self.params))
+        self.branch_value = self.branch_list_value
 
 
 class ESBranchCombo(ESBranch):
@@ -1417,9 +1426,9 @@ class EsInstance(Printable):
 
         if self.btype in [ESRecoverEnemyAlly, ESAttackUPRemainingEnemies]:
             if self.condition:
-                self.condition.enemies_remaining = 1
+                self.condition.enemies_remaining = self.behavior.enemy_count
 
-        if self.btype in [ESSkillSetOnDeath]:
+        if self.btype in [ESSkillSetOnDeath, ESDeathCry]:
             self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
             if self.condition:
                 self.condition.on_death = True
@@ -1428,7 +1437,6 @@ class EsInstance(Printable):
             if not self.condition:
                 self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
             self.condition.condition_attributes = self.behavior.condition_attributes
-
         # End terrible badness
 
     @property
@@ -1469,7 +1477,7 @@ BEHAVIOR_MAP = {
     15: ESAttackMultihit,
     16: ESInactivity,
     17: ESAttackUPRemainingEnemies,
-    18: ESEnrageAttackUpStatus,
+    18: ESAttackUpStatus,
     19: ESAttackUPCooldown,
     20: ESStatusShield,
     39: ESDebuffMovetime,
@@ -1503,7 +1511,7 @@ BEHAVIOR_MAP = {
     81: ESBoardChangeAttackFlat,
     82: ESAttackSinglehit,  # called "Disable Skill" in EN but "Normal Attack" in JP
     83: ESSkillSet,
-    84: ESBasicBoardChange,
+    84: ESBoardChange,
     85: ESBoardChangeAttackBits,
     86: ESRecoverEnemy,
     87: ESAbsorbThreshold,
