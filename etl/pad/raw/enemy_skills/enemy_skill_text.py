@@ -1,7 +1,8 @@
 from enum import Enum
 
 ATTRIBUTE_MAP = {
-    -9: 'Locked Bomb',
+    # TODO: tieout
+    -9: 'locked Bomb',
     -1: 'Random',
     None: 'Fire',
     0: 'Fire',
@@ -199,6 +200,9 @@ class Describe:
     def skyfall(attributes, chance, min_turns, max_turns=None, locked=False):
         lock = 'Locked ' if locked else ''
         orbs = attributes_to_str(attributes)
+        # TODO: tieout
+        if lock and orbs == 'Random':
+            orbs = 'random'
         if max_turns is None or min_turns == max_turns:
             return '{:s}{:s} skyfall +{:d}% for {:d} turns'.format(lock, orbs, chance, min_turns)
         else:

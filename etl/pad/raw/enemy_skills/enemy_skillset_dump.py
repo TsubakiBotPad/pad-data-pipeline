@@ -152,6 +152,10 @@ def behavior_to_skillrecord(record_type: RecordType, instance: EsInstance, note=
     if note:
         description += ' ({})'.format(note)
 
+    # TODO: For tieout, remove
+    if instance.btype == ESCountdownMessage:
+        usage_pct = 0
+
     return SkillRecord(record_type=record_type,
                        name_en=name,
                        name_jp=jp_name,

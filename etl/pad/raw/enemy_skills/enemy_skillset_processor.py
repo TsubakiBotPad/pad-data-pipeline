@@ -424,7 +424,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
             results.append(instance)
             return results, card_branches, combo_branches
 
-        if b_type == ESEnrageAttackUpStatus:
+        if b_type == ESAttackUpStatus:
             # This is a special case; it's not a terminal action unlike other enrages.
             results.append(instance)
             idx += 1
@@ -894,11 +894,11 @@ def clean_skillset(moveset: Moveset, hp_actions: List[HpActions]):
     dispel_skills = []
     for hp_action in hp_actions:
         for t in hp_action.timed:
-            status_skills.extend(extract_and_clear_action(t.skills, ESEnrageAttackUpStatus))
+            status_skills.extend(extract_and_clear_action(t.skills, ESAttackUpStatus))
             dispel_skills.extend(extract_and_clear_action(t.skills, ESDispel))
 
         for r in hp_action.repeating:
-            status_skills.extend(extract_and_clear_action(r.skills, ESEnrageAttackUpStatus))
+            status_skills.extend(extract_and_clear_action(r.skills, ESAttackUpStatus))
             dispel_skills.extend(extract_and_clear_action(r.skills, ESDispel))
 
     # If we found anything, set them. These are lists but they should just contain the
