@@ -168,7 +168,9 @@ class ESCondition(object):
                 desc += " & " + Describe.attribute_exists(self.condition_attributes)
             else:
                 desc = Describe.attribute_exists(self.condition_attributes).capitalize()
-            desc = desc.capitalize()
+
+            # TODO: tieout
+            # desc = desc.capitalize()
 
         return desc
 
@@ -204,6 +206,8 @@ class ESBehavior(Printable):
         self._name = skill.name
         self.type = skill.type
         self.params = skill.params
+
+        self.extra_description = None
 
     @property
     def name(self):
@@ -1377,6 +1381,9 @@ class ESBranchCard(ESBranch):
         self.branch_list_value = list(filter(None, self.params))
         self.branch_value = self.branch_list_value
 
+    def description(self):
+        return Describe.branch(self.branch_condition, self.compare, self.branch_list_value, self.target_round)
+
 
 class ESBranchCombo(ESBranch):
     def __init__(self, skill: EnemySkill):
@@ -1402,6 +1409,7 @@ class EsInstance(Printable):
         self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
+        self.extra_description = None
 
         if not issubclass(self.btype, ESLogic):
             if ref.enemy_ai > 0 or ref.enemy_rnd > 0:
