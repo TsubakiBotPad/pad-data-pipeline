@@ -172,6 +172,10 @@ class Describe:
 
     @staticmethod
     def debuff(d_type, amount, unit, turns):
+        d_type = d_type or ''
+        amount = amount or 0
+        unit = unit or '?'
+        turns = turns or 0
         return '{:s} {:.0f}{:s} for {:d} turns'.format(d_type, amount, unit, turns).capitalize()
 
     @staticmethod
@@ -181,7 +185,7 @@ class Describe:
     @staticmethod
     def change_attribute(attributes):
         if len(attributes) == 1:
-            return 'Change own attribute to {}'.format(attributes[0])
+            return 'Change own attribute to {}'.format(ATTRIBUTE_MAP[attributes[0]])
         else:
             return 'Change own attribute to random one of ' + attributes_to_str(attributes)
 

@@ -152,9 +152,18 @@ def behavior_to_skillrecord(record_type: RecordType, instance: EsInstance, note=
     if note:
         description += ' ({})'.format(note)
 
+    # TODO: tieout hack
+    if instance.extra_description:
+        description += ', ' + instance.extra_description
+
     # TODO: For tieout, remove
     if instance.btype == ESCountdownMessage:
         usage_pct = 0
+
+    # TODO: this should move earlier in pipeline
+    if issubclass(type(action), ESPassive):
+        usage_pct = 100
+        one_time = 0
 
     return SkillRecord(record_type=record_type,
                        name_en=name,
