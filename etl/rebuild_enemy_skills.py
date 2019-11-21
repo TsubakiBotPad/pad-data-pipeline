@@ -36,9 +36,9 @@ def parse_args():
     return parser.parse_args()
 
 
-def process_card(mcard: CrossServerCard):
-    enemy_behavior = mcard.enemy_behavior
-    card = mcard.na_card.card
+def process_card(csc: CrossServerCard):
+    enemy_behavior = csc.enemy_behavior
+    card = csc.na_card.card
     if not enemy_behavior:
         return
 
@@ -72,7 +72,7 @@ def process_card(mcard: CrossServerCard):
             unused_actions.append(b)
 
     entry_info = enemy_skillset_dump.EntryInfo(
-        card.monster_no, card.name, 'not yet populated')
+        csc.monster_id, card.name, 'not yet populated')
     if unused_actions:
         entry_info.warnings.append('Found {} unused actions'.format(len(unused_actions)))
 
@@ -108,7 +108,7 @@ def run(args):
     for csc in combined_cards:
         merged_card = csc.na_card
         card = merged_card.card
-        if fixed_card_id and card.monster_no != int(fixed_card_id):
+        if fixed_card_id and csc.monster_id != int(fixed_card_id):
             continue
         try:
             count += 1
