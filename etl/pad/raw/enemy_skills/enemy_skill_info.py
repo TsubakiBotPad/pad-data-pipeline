@@ -982,7 +982,7 @@ class ESSkillSetOnDeath(ESSkillSet):
         """Helper that determines if the skillset does stuff other than emote."""
         for x in self.skills:
             if isinstance(x, ESSkillSet):
-                if any([isinstance(y, ESInactivity) for y in x.skills]):
+                if any([not isinstance(y, ESInactivity) for y in x.skills]):
                     return True
             elif type(x) != ESInactivity:
                 return True
