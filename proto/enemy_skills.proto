@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+message BehaviorGroup {
+    enum GroupType {
+        UNSPECIFIED = 0;
+    }
+}
+
+message BehaviorItem {
+    Condition condition = 1;
+
+    //    oneof
+    BehaviorItem group = 2;
+
+    // If 0, the BehaviorDetails should fill the entire info.
+    int32 enemy_skill_id = 3;
+}
+
+
+message Condition {
+    int32 hp_threshold = 1;
+
+    int32 use_chance = 2;
+
+    bool one_time = 3;
+    bool global_one_time = 8;
+
+    int32 enemies_remaining = 4;
+
+    bool on_death = 5;
+
+    bool orb_limited = 6;
+
+    repeated int32 trigger_monsters = 7;
+}
