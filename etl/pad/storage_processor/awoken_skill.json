@@ -146,7 +146,7 @@
   {
     "adj_atk": 0,
     "adj_hp": 0,
-    "adj_rcv": "1000",
+    "adj_rcv": "0",
     "desc_jp": "ドロップを消したらHPが1000回復",
     "desc_jp_official": "ドロップを消したターン、HPが回復する",
     "desc_kr": "드롭을 지운 턴에서 HP가 회복한다 (1000HP)",
