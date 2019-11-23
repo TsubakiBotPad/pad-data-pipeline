@@ -18,8 +18,8 @@ def jp_no_to_monster_id(jp_id: MonsterNo) -> MonsterId:
 
 # Fixes for early collabs, and adjusting voltron to a new range.
 def nakr_no_to_monster_id(na_id: MonsterNo) -> MonsterId:
-    if na_id > 99_999:
-        sub_id = MonsterNo(na_id % 100_000)
+    if na_id > 99999:
+        sub_id = MonsterNo(na_id % 100000)
         na_id -= sub_id
         na_id += _nakr_no_to_monster_id(sub_id)
     else:
