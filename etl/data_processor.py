@@ -71,6 +71,8 @@ def parse_args():
                               help="Path to a folder where output should be saved")
     output_group.add_argument("--pretty", default=False, action="store_true",
                               help="Controls pretty printing of results")
+    output_group.add_argument("--skiplong", default=False, action="store_true",
+                              help="Skip slow-running loaders")
 
     help_group = parser.add_argument_group("Help")
     help_group.add_argument("-h", "--help", action="help",
@@ -140,8 +142,9 @@ def load_data(args):
     dungeon_processor = DungeonProcessor(cs_database)
     dungeon_processor.process(db_wrapper)
 
-    # Load dungeon data derived from wave info
-    DungeonContentProcessor(cs_database).process(db_wrapper)
+    if not args.skip_long:
+        # Load dungeon data derived from wave info
+        DungeonContentProcessor(cs_database).process(db_wrapper)
 
     # Toggle any newly-available dungeons visible
     dungeon_processor.post_encounter_process(db_wrapper)
@@ -151,7 +154,7 @@ def load_data(args):
 
     # Load exchange data
     ExchangeProcessor(cs_database).process(db_wrapper)
-    
+
     # Update timestamps
     TimestampProcessor().process(db_wrapper)
 
@@ -159,12 +162,6 @@ def load_data(args):
     # cs_database.card_diagnostics()
 
     print('done')
-    # logger.info('Starting egg machine update')
-    # try:
-    #     database_update_egg_machines(db_wrapper, jp_database, na_database)
-    # except Exception as ex:
-    #     print('updating egg machines failed', str(ex))
-    #
     # logger.info('Starting news update')
     # try:
     #     database_update_news(db_wrapper)
