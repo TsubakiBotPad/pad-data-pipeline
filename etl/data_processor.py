@@ -71,7 +71,7 @@ def parse_args():
                               help="Path to a folder where output should be saved")
     output_group.add_argument("--pretty", default=False, action="store_true",
                               help="Controls pretty printing of results")
-    output_group.add_argument("--skiplong", default=False, action="store_true",
+    output_group.add_argument("--skip_long", default=False, action="store_true",
                               help="Skip slow-running loaders")
 
     help_group = parser.add_argument_group("Help")
