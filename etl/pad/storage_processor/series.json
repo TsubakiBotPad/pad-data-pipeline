@@ -1,0 +1,1088 @@
+[
+  {
+    "name_jp": "Unsorted",
+    "name_kr": "Unsorted",
+    "name_na": "Unsorted",
+    "series_id": 0
+  },
+  {
+    "name_jp": "御三家",
+    "name_kr": "시작용",
+    "name_na": "Starter Dragon",
+    "series_id": 1
+  },
+  {
+    "name_jp": "カラードラゴン",
+    "name_kr": "칼라용",
+    "name_na": "Ripper Dragon",
+    "series_id": 2
+  },
+  {
+    "name_jp": "りん",
+    "name_kr": "슬라임",
+    "name_na": "Slime",
+    "series_id": 3
+  },
+  {
+    "name_jp": "カーバンクル",
+    "name_kr": "카벙클",
+    "name_na": "Carbuncle",
+    "series_id": 4
+  },
+  {
+    "name_jp": "ゴブリン",
+    "name_kr": "고블린",
+    "name_na": "Goblin",
+    "series_id": 5
+  },
+  {
+    "name_jp": "オーガ",
+    "name_kr": "오우거",
+    "name_na": "Ogre",
+    "series_id": 6
+  },
+  {
+    "name_jp": "ファイター",
+    "name_kr": "파이터",
+    "name_na": "Knight",
+    "series_id": 7
+  },
+  {
+    "name_jp": "ゴーレム",
+    "name_kr": "골렘",
+    "name_na": "Golem",
+    "series_id": 8
+  },
+  {
+    "name_jp": "女の子",
+    "name_kr": "여친",
+    "name_na": "Healer Girl",
+    "series_id": 9
+  },
+  {
+    "name_jp": "魔剣士",
+    "name_kr": "마검사",
+    "name_na": "Mystic Knight",
+    "series_id": 10
+  },
+  {
+    "name_jp": "攻撃態勢組",
+    "name_kr": "공격 태세",
+    "name_na": "Attack Stance",
+    "series_id": 11
+  },
+  {
+    "name_jp": "ガチャ龍",
+    "name_kr": "만성용",
+    "name_na": "Late Bloomer Dragon",
+    "series_id": 12
+  },
+  {
+    "name_jp": "西洋神",
+    "name_kr": "그리스로마신",
+    "name_na": "Greco-Roman God",
+    "series_id": 13
+  },
+  {
+    "name_jp": "和神",
+    "name_kr": "일본신",
+    "name_na": "Japanese God",
+    "series_id": 14
+  },
+  {
+    "name_jp": "伝説龍",
+    "name_kr": "전설용",
+    "name_na": "Legendary Dragon",
+    "series_id": 15
+  },
+  {
+    "name_jp": "進化素材",
+    "name_kr": "진화재료",
+    "name_na": "Evo Material",
+    "series_id": 16
+  },
+  {
+    "name_jp": "メタドラ",
+    "name_kr": "메탈 드래곤",
+    "name_na": "Metal Dragon",
+    "series_id": 20
+  },
+  {
+    "name_jp": "ポリン",
+    "name_kr": "포링",
+    "name_na": "Poring",
+    "series_id": 21
+  },
+  {
+    "name_jp": "降臨",
+    "name_kr": "강림",
+    "name_na": "Descended",
+    "series_id": 22
+  },
+  {
+    "name_jp": "デーモン",
+    "name_kr": "데몬",
+    "name_na": "Devil",
+    "series_id": 23
+  },
+  {
+    "name_jp": "天空龍",
+    "name_kr": "천공용",
+    "name_na": "Sky Dragon",
+    "series_id": 24
+  },
+  {
+    "name_jp": "限定モンスター",
+    "name_kr": "한정판 몬스터",
+    "name_na": "Special Gift",
+    "series_id": 25
+  },
+  {
+    "name_jp": "東洋の神",
+    "name_kr": "인도신",
+    "name_na": "Indian God",
+    "series_id": 26
+  },
+  {
+    "name_jp": "キメラ",
+    "name_kr": "키메라",
+    "name_na": "Chimera",
+    "series_id": 27
+  },
+  {
+    "name_jp": "太鼓の達人",
+    "name_kr": "태고의 달인",
+    "name_na": "Taiko no Tatsujin Collab",
+    "series_id": 28
+  },
+  {
+    "name_jp": "機械龍",
+    "name_kr": "기계룡",
+    "name_na": "Mech Dragon",
+    "series_id": 29
+  },
+  {
+    "name_jp": "玩具龍",
+    "name_kr": "완구룡",
+    "name_na": "Toy Dragon",
+    "series_id": 30
+  },
+  {
+    "name_jp": "ペンドラ",
+    "name_kr": "펭공",
+    "name_na": "Pengdra",
+    "series_id": 31
+  },
+  {
+    "name_jp": "ECOコラボ",
+    "name_kr": "ECO 콜라보",
+    "name_na": "ECO Collab",
+    "series_id": 32
+  },
+  {
+    "name_jp": "精霊",
+    "name_kr": "정령",
+    "name_na": "Elemental",
+    "series_id": 33
+  },
+  {
+    "name_jp": "ゴッドフェス限定",
+    "name_kr": "갓페스 한정",
+    "name_na": "GodFestival",
+    "series_id": 34
+  },
+  {
+    "name_jp": "北欧神",
+    "name_kr": "북유럽신",
+    "name_na": "Norse God",
+    "series_id": 35
+  },
+  {
+    "name_jp": "ライダー",
+    "name_kr": "라이더",
+    "name_na": "Rider",
+    "series_id": 36
+  },
+  {
+    "name_jp": "幻獣",
+    "name_kr": "환수",
+    "name_na": "Mythical Beast",
+    "series_id": 37
+  },
+  {
+    "name_jp": "女の子ガチャ",
+    "name_kr": "소녀 에그",
+    "name_na": "Pink REM",
+    "series_id": 38
+  },
+  {
+    "name_jp": "ぐんまコラボ",
+    "name_kr": "군마 콜라보",
+    "name_na": "Gunma Collab",
+    "series_id": 39
+  },
+  {
+    "name_jp": "歴龍",
+    "name_kr": "역룡",
+    "name_na": "Ancient Dragon",
+    "series_id": 40
+  },
+  {
+    "name_jp": "CDコラボ",
+    "name_kr": "CD 콜라보",
+    "name_na": "CD Collab",
+    "series_id": 41
+  },
+  {
+    "name_jp": "エジプトの神",
+    "name_kr": "이집트신",
+    "name_na": "Egyptian God",
+    "series_id": 43
+  },
+  {
+    "name_jp": "ケリ姫コラボ",
+    "name_kr": "발차기 공주 콜라보",
+    "name_na": "Princess Punt Collab",
+    "series_id": 44
+  },
+  {
+    "name_jp": "ノエル",
+    "name_kr": "노엘 드래곤",
+    "name_na": "Snow Dome Dragon",
+    "series_id": 45
+  },
+  {
+    "name_jp": "ムギドラ",
+    "name_kr": "보리용",
+    "name_na": "Moltdra",
+    "series_id": 46
+  },
+  {
+    "name_jp": "戦国龍",
+    "name_kr": "무사룡",
+    "name_na": "War Dragon",
+    "series_id": 47
+  },
+  {
+    "name_jp": "忍者",
+    "name_kr": "닌자",
+    "name_na": "Ninja",
+    "series_id": 48
+  },
+  {
+    "name_jp": "新西洋神",
+    "name_kr": "그리스로마신 II",
+    "name_na": "Greco-Roman God II",
+    "series_id": 50
+  },
+  {
+    "name_jp": "妖精",
+    "name_kr": "요정",
+    "name_na": "Fairy",
+    "series_id": 51
+  },
+  {
+    "name_jp": "カピバラさんコラボ",
+    "name_kr": "카피바라상 콜라보",
+    "name_na": "Capybara-san Collab",
+    "series_id": 53
+  },
+  {
+    "name_jp": "天使",
+    "name_kr": "천사",
+    "name_na": "Archangel",
+    "series_id": 54
+  },
+  {
+    "name_jp": "悪魔",
+    "name_kr": "악마",
+    "name_na": "Archdemon",
+    "series_id": 55
+  },
+  {
+    "name_jp": "その他",
+    "name_kr": "기타",
+    "name_na": "Others",
+    "series_id": 57
+  },
+  {
+    "name_jp": "ガンホーコラボダンジョン",
+    "name_kr": "겅호 콜라보",
+    "name_na": "Gungho Collab",
+    "series_id": 58
+  },
+  {
+    "name_jp": "神羅万象チョココラボ",
+    "name_kr": "신라만상 초콜렛 콜라보",
+    "name_na": "Shinra Bansho Collab",
+    "series_id": 60
+  },
+  {
+    "name_jp": "エヴァコラボ",
+    "name_kr": "에반게리온 콜라보",
+    "name_na": "Eva Collab",
+    "series_id": 61
+  },
+  {
+    "name_jp": "妖怪",
+    "name_kr": "요괴",
+    "name_na": "Japanese Myth",
+    "series_id": 62
+  },
+  {
+    "name_jp": "CoC コラボ",
+    "name_kr": "Clash of Clans 콜라보",
+    "name_na": "Clash of Clans Dungeon",
+    "series_id": 63
+  },
+  {
+    "name_jp": "魔石龍",
+    "name_kr": "마석용",
+    "name_na": "Stone Dragon",
+    "series_id": 64
+  },
+  {
+    "name_jp": "四神",
+    "name_kr": "사방신",
+    "name_na": "Chinese God",
+    "series_id": 65
+  },
+  {
+    "name_jp": "グルーヴコースター ゼロ コラボ",
+    "name_kr": "GROOVE COASTER 콜라보",
+    "name_na": "GROOVE COASTER Collab",
+    "series_id": 66
+  },
+  {
+    "name_jp": "神秘龍",
+    "name_kr": "신비용",
+    "name_na": "Mystic Dragon",
+    "series_id": 67
+  },
+  {
+    "name_jp": "新和神",
+    "name_kr": "일본신 II",
+    "name_na": "Japanese God II",
+    "series_id": 68
+  },
+  {
+    "name_jp": "ラグオデA コラボ",
+    "name_kr": "라그오디A 콜라보",
+    "name_na": "Ragnarok Odyssey Ace Collab ",
+    "series_id": 69
+  },
+  {
+    "name_jp": "高岡市コラボ",
+    "name_kr": "타카오카시 콜라보",
+    "name_na": "Takaoka Collab",
+    "series_id": 70
+  },
+  {
+    "name_jp": "ドラゴンズドグマ クエストコラボ",
+    "name_kr": "드래곤즈 도그마 퀘스트 콜라보",
+    "name_na": "DDQ Collab",
+    "series_id": 71
+  },
+  {
+    "name_jp": "モンスターハンター4G コラボ ",
+    "name_kr": "몬스터 헌터 4G 콜라보",
+    "name_na": "Monster Hunter 4G Collab",
+    "series_id": 72
+  },
+  {
+    "name_jp": "バットマン コラボ",
+    "name_kr": "배트맨 콜라보",
+    "name_na": "Batman Collab",
+    "series_id": 74
+  },
+  {
+    "name_jp": "サーティワン コラボ",
+    "name_kr": "배스킨라빈스 31 콜라보",
+    "name_na": "Baskin-Robbins 31 Collab",
+    "series_id": 75
+  },
+  {
+    "name_jp": "アングリーバード コラボ",
+    "name_kr": "앵그리 버드 콜라보",
+    "name_na": "Angry Birds Collab",
+    "series_id": 76
+  },
+  {
+    "name_jp": "海賊龍",
+    "name_kr": "해적룡",
+    "name_na": "Pirates Dragon",
+    "series_id": 77
+  },
+  {
+    "name_jp": "西洋妖怪",
+    "name_kr": "그리스로마 신화",
+    "name_na": "Greco-Roman Myth",
+    "series_id": 78
+  },
+  {
+    "name_jp": "パズドラＺ コラボ",
+    "name_kr": "퍼즐앤드래곤 Z 콜라보",
+    "name_na": "Puzzle & Dragons Z Collab",
+    "series_id": 79
+  },
+  {
+    "name_jp": "英雄神",
+    "name_kr": "영웅신",
+    "name_na": "Heroic God",
+    "series_id": 80
+  },
+  {
+    "name_jp": "フルーツドラゴン",
+    "name_kr": "과일용",
+    "name_na": "Fruit Dragon",
+    "series_id": 81
+  },
+  {
+    "name_jp": "HUNTER×HUNTER コラボ",
+    "name_kr": "헌터×헌터 콜라보",
+    "name_na": "HUNTER×HUNTER Collab",
+    "series_id": 82
+  },
+  {
+    "name_jp": "海賊",
+    "name_kr": "해적",
+    "name_na": "Pirates",
+    "series_id": 83
+  },
+  {
+    "name_jp": "ハローキティ コラボ",
+    "name_kr": "헬로키티 콜라보",
+    "name_na": "Hello Kitty Collab",
+    "series_id": 84
+  },
+  {
+    "name_jp": "華龍",
+    "name_kr": "화룡",
+    "name_na": "Flower Dragon",
+    "series_id": 85
+  },
+  {
+    "name_jp": "その他スキル アップ モンスター",
+    "name_kr": "기타 스킬업 몬스터",
+    "name_na": "Misc Skill Up Monsters",
+    "series_id": 86
+  },
+  {
+    "name_jp": "スペシャルモンスター",
+    "name_kr": "스페셜 몬스터",
+    "name_na": "Special Monster",
+    "series_id": 87
+  },
+  {
+    "name_jp": "三国の神",
+    "name_kr": "삼국지신",
+    "name_na": "Three Kingdoms",
+    "series_id": 88
+  },
+  {
+    "name_jp": "パズバト コラボ",
+    "name_kr": "퍼드 배틀토너먼트 콜라보",
+    "name_na": "PAD Battle Tournament Collab",
+    "series_id": 89
+  },
+  {
+    "name_jp": "ＲＯコラボ",
+    "name_kr": "라그나로크 온라인 콜라보",
+    "name_na": "Ragnarok Online Collab",
+    "series_id": 90
+  },
+  {
+    "name_jp": "BEAMS コラボ",
+    "name_kr": "BEAMS 콜라보",
+    "name_na": "BEAMS Collab",
+    "series_id": 91
+  },
+  {
+    "name_jp": "ドラゴンボールコラボ",
+    "name_kr": "드래곤볼 콜라보",
+    "name_na": "Dragon Ball Collab",
+    "series_id": 92
+  },
+  {
+    "name_jp": "龍騎姫",
+    "name_kr": "용기희",
+    "name_na": "Dragon Rider Girl",
+    "series_id": 93
+  },
+  {
+    "name_jp": "チェイサー",
+    "name_kr": "체이서",
+    "name_na": "Chaser",
+    "series_id": 94
+  },
+  {
+    "name_jp": "聖闘士星矢 コラボ",
+    "name_kr": "세인트 세이야 콜라보",
+    "name_na": "Saint Seiya Collab",
+    "series_id": 95
+  },
+  {
+    "name_jp": "童話",
+    "name_kr": "동화",
+    "name_na": "Fairy Tale",
+    "series_id": 96
+  },
+  {
+    "name_jp": "東洋の神 II",
+    "name_kr": "인도신 II",
+    "name_na": "Indian God II",
+    "series_id": 97
+  },
+  {
+    "name_jp": "龍剣士",
+    "name_kr": "용검사",
+    "name_na": "Dragon Swordman",
+    "series_id": 98
+  },
+  {
+    "name_jp": "ビックリマン コラボ",
+    "name_kr": "빅쿠리맨 콜라보",
+    "name_na": "Bikkuriman Collab",
+    "series_id": 99
+  },
+  {
+    "name_jp": "能力覚醒",
+    "name_kr": "능력 각성",
+    "name_na": "Awoken Material",
+    "series_id": 100
+  },
+  {
+    "name_jp": "スキルレベルアップ",
+    "name_kr": "스킬 레벨 업",
+    "name_na": "Skill Level Up",
+    "series_id": 101
+  },
+  {
+    "name_jp": "蟲龍",
+    "name_kr": "곤충룡",
+    "name_na": "Insect Dragon",
+    "series_id": 102
+  },
+  {
+    "name_jp": "マジシャン",
+    "name_kr": "매지션",
+    "name_na": "Magician",
+    "series_id": 103
+  },
+  {
+    "name_jp": "鎧騎士",
+    "name_kr": "갑옷 기사",
+    "name_na": "Armor Knight",
+    "series_id": 104
+  },
+  {
+    "name_jp": "エジプトの神 II",
+    "name_kr": "이집트신 II",
+    "name_na": "Egyptian God II",
+    "series_id": 105
+  },
+  {
+    "name_jp": "ジャスティス・リーグ",
+    "name_kr": "저스티스 리그",
+    "name_na": "Justice League",
+    "series_id": 106
+  },
+  {
+    "name_jp": "三国テンカトリガー",
+    "name_kr": "삼국천하 트리거",
+    "name_na": "Three Kindoms Tenka Trigger",
+    "series_id": 107
+  },
+  {
+    "name_jp": "魔導書",
+    "name_kr": "마도서",
+    "name_na": "Grimoire",
+    "series_id": 108
+  },
+  {
+    "name_jp": "クリスマスガチャ (2014)",
+    "name_kr": "크리스마스 에그 (2014)",
+    "name_na": "Christmas REM (2014)",
+    "series_id": 109
+  },
+  {
+    "name_jp": "丼龍",
+    "name_kr": "덮밥용",
+    "name_na": "Bowl Dragon",
+    "series_id": 110
+  },
+  {
+    "name_jp": "勇士",
+    "name_kr": "용사",
+    "name_na": "Weapons/Braves",
+    "series_id": 111
+  },
+  {
+    "name_jp": "天使 II",
+    "name_kr": "천사 II",
+    "name_na": "Angel II",
+    "series_id": 112
+  },
+  {
+    "name_jp": "北斗の拳",
+    "name_kr": "북두의권",
+    "name_na": "Fist of the North Star",
+    "series_id": 113
+  },
+  {
+    "name_jp": "私立パズドラ学園",
+    "name_kr": "사립 퍼드 학원",
+    "name_na": "Private PAD School",
+    "series_id": 114
+  },
+  {
+    "name_jp": "猫龍",
+    "name_kr": "고양이용",
+    "name_na": "Cat Dragon",
+    "series_id": 115
+  },
+  {
+    "name_jp": "ファイナルファンタジー コラボ",
+    "name_kr": "파이널 판타지 콜라보",
+    "name_na": "Final Fantasy Collab",
+    "series_id": 116
+  },
+  {
+    "name_jp": "ガンホーコラボ友情ガチャ",
+    "name_kr": "겅호 콜라보 우정 에그",
+    "name_na": "GungHo Collab Pal Egg",
+    "series_id": 117
+  },
+  {
+    "name_jp": "攻殻機動隊コラボ",
+    "name_kr": "공각기동대 콜라보",
+    "name_na": "Ghost in the Shell Collab",
+    "series_id": 118
+  },
+  {
+    "name_jp": "デュエル・マスターズ コラボ",
+    "name_kr": "듀얼 마스터즈 콜라보",
+    "name_na": "Duel Masters Collab",
+    "series_id": 119
+  },
+  {
+    "name_jp": "機導龍",
+    "name_kr": "기도룡",
+    "name_na": "Cyber Dragon",
+    "series_id": 120
+  },
+  {
+    "name_jp": "機導獣",
+    "name_kr": "기도수",
+    "name_na": "Mech Beast",
+    "series_id": 121
+  },
+  {
+    "name_jp": "潜在覚醒",
+    "name_kr": "잠재각성",
+    "name_na": "Potential Awoken",
+    "series_id": 122
+  },
+  {
+    "name_jp": "戦国の神",
+    "name_kr": "대장군",
+    "name_na": "Samurai God",
+    "series_id": 123
+  },
+  {
+    "name_jp": "モンスターポイント",
+    "name_kr": "몬스터 포인트",
+    "name_na": "Monster Point",
+    "series_id": 124
+  },
+  {
+    "name_jp": "夏休み",
+    "name_kr": "여름방학",
+    "name_na": "Summer Vacation",
+    "series_id": 125
+  },
+  {
+    "name_jp": "人形使",
+    "name_kr": "인형사",
+    "name_na": "Marionette",
+    "series_id": 126
+  },
+  {
+    "name_jp": "機甲龍",
+    "name_kr": "기갑룡",
+    "name_na": "Armor Dragon",
+    "series_id": 127
+  },
+  {
+    "name_jp": "進撃の巨人",
+    "name_kr": "진격의 거인",
+    "name_na": "Attack on Titan",
+    "series_id": 128
+  },
+  {
+    "name_jp": "ハロウィン",
+    "name_kr": "할로윈",
+    "name_na": "Halloween",
+    "series_id": 130
+  },
+  {
+    "name_jp": "元フェス限シリーズ",
+    "name_kr": "갓페스 제외",
+    "name_na": "Ex GodFest",
+    "series_id": 131
+  },
+  {
+    "name_jp": "星機の神",
+    "name_kr": "성좌신",
+    "name_na": "Constellation God",
+    "series_id": 132
+  },
+  {
+    "name_jp": "犬龍",
+    "name_kr": "강아지용",
+    "name_na": "Dog Dragon",
+    "series_id": 133
+  },
+  {
+    "name_jp": "忍者ハットリくん コラボ",
+    "name_kr": "닌자 핫토리군 콜라보",
+    "name_na": "Ninja Hattori Collab",
+    "series_id": 134
+  },
+  {
+    "name_jp": "サンデーオールスターズコラボ",
+    "name_kr": "선데이 올스타즈 콜라보",
+    "name_na": "Sunday All Stars Collab",
+    "series_id": 135
+  },
+  {
+    "name_jp": "クリスマスガチャ",
+    "name_kr": "크리스마스 에그",
+    "name_na": "Christmas REM",
+    "series_id": 136
+  },
+  {
+    "name_jp": "古代龍",
+    "name_kr": "고대룡",
+    "name_na": "Prehistoric Dragon",
+    "series_id": 138
+  },
+  {
+    "name_jp": "お正月イベント",
+    "name_kr": "설날 이벤트",
+    "name_na": "New Year Event",
+    "series_id": 139
+  },
+  {
+    "name_jp": "クローズ コラボ",
+    "name_kr": "크로우즈 콜라보",
+    "name_na": "Crows Collab",
+    "series_id": 140
+  },
+  {
+    "name_jp": "星機の神 II",
+    "name_kr": "성좌신 II",
+    "name_na": "Constellation God II",
+    "series_id": 141
+  },
+  {
+    "name_jp": "鉄星龍",
+    "name_kr": "철성룡",
+    "name_na": "Iron Star Dragon",
+    "series_id": 142
+  },
+  {
+    "name_jp": "カーニバル限定",
+    "name_kr": "카니발 한정",
+    "name_na": "Carnival Limited",
+    "series_id": 143
+  },
+  {
+    "name_jp": "BLEACH コラボ",
+    "name_kr": "블리치 콜라보",
+    "name_na": "BLEACH Collab",
+    "series_id": 144
+  },
+  {
+    "name_jp": "スキル継承",
+    "name_kr": "스킬 계승",
+    "name_na": "Skill Transfer",
+    "series_id": 145
+  },
+  {
+    "name_jp": "契約龍",
+    "name_kr": "계약용",
+    "name_na": "Contract Dragon",
+    "series_id": 146
+  },
+  {
+    "name_jp": "ぷぎゅコレガチャ",
+    "name_kr": "뿌규 콜렉션 에그",
+    "name_na": "Chibi Collection",
+    "series_id": 147
+  },
+  {
+    "name_jp": "パズドラクロスコラボ",
+    "name_kr": "퍼드 크로스 콜라보",
+    "name_na": "PAD Cross Collab",
+    "series_id": 148
+  },
+  {
+    "name_jp": "ジューンブライド",
+    "name_kr": "준 브라이드",
+    "name_na": "June Bride",
+    "series_id": 149
+  },
+  {
+    "name_jp": "逆転裁判6コラボ",
+    "name_kr": "역전재판6 콜라보",
+    "name_na": "Ace Attorney 6 Collab",
+    "series_id": 150
+  },
+  {
+    "name_jp": "転界龍",
+    "name_kr": "전계룡",
+    "name_na": "Dimension Dragon",
+    "series_id": 151
+  },
+  {
+    "name_jp": "るろうに剣心 コラボ",
+    "name_kr": "바람의 검심 콜라보",
+    "name_na": "Rurouni Kenshin Collab",
+    "series_id": 152
+  },
+  {
+    "name_jp": "キン肉マン コラボ",
+    "name_kr": "근육맨 콜라보",
+    "name_na": "Kinnikuman Collab",
+    "series_id": 153
+  },
+  {
+    "name_jp": "パズドラレーダー連動",
+    "name_kr": "퍼드 레이더",
+    "name_na": "PAD Radar",
+    "series_id": 154
+  },
+  {
+    "name_jp": "明王の神",
+    "name_kr": "명왕신",
+    "name_na": "Wisdom Kings",
+    "series_id": 155
+  },
+  {
+    "name_jp": "護神龍",
+    "name_kr": "호신용",
+    "name_na": "Guardian Dragon",
+    "series_id": 156
+  },
+  {
+    "name_jp": "フェス限ヒロイン",
+    "name_kr": "페스 한정 히로인",
+    "name_na": "Fes heroine",
+    "series_id": 157
+  },
+  {
+    "name_jp": "ナイトメアストリート",
+    "name_kr": "나이트메어 스트리트",
+    "name_na": "Nightmare Street",
+    "series_id": 158
+  },
+  {
+    "name_jp": "三国の神 II",
+    "name_kr": "삼국지신 II",
+    "name_na": "Three Kingdoms II",
+    "series_id": 159
+  },
+  {
+    "name_jp": "勇士 II",
+    "name_kr": "용사 II",
+    "name_na": "Weapons/Braves II",
+    "series_id": 160
+  },
+  {
+    "name_jp": "大賢龍",
+    "name_kr": "대현룡",
+    "name_na": "Wisedragon",
+    "series_id": 161
+  },
+  {
+    "name_jp": "マガジンオールスターズコラボ",
+    "name_kr": "매거진 올스타즈 콜라보",
+    "name_na": "Magazine All Stars Collab",
+    "series_id": 162
+  },
+  {
+    "name_jp": "戦国の神 II",
+    "name_kr": "대장군 II",
+    "name_na": "Samurai God II",
+    "series_id": 163
+  },
+  {
+    "name_jp": "Voltronコラボ",
+    "name_kr": "볼트론 콜라보",
+    "name_na": "Voltron Collab",
+    "series_id": 164
+  },
+  {
+    "name_jp": "モンスターハンターコラボ",
+    "name_kr": "몬스터 헌터 콜라보",
+    "name_na": "Monster Hunter Collab",
+    "series_id": 165
+  },
+  {
+    "name_jp": "宝珠龍",
+    "name_kr": "보주용",
+    "name_na": "Orb Dragon",
+    "series_id": 166
+  },
+  {
+    "name_jp": "戦武龍",
+    "name_kr": "전무룡",
+    "name_na": "War Dragon",
+    "series_id": 168
+  },
+  {
+    "name_jp": "西洋神 第3弾",
+    "name_kr": "그리스로마신 III",
+    "name_na": "Greco-Roman God III",
+    "series_id": 169
+  },
+  {
+    "name_jp": "覚醒アシスト",
+    "name_kr": "각성 어시스트",
+    "name_na": "Awoken Assist",
+    "series_id": 170
+  },
+  {
+    "name_jp": "龍契士&龍喚士",
+    "name_kr": "용계사&용환사",
+    "name_na": "Dragonbound & Caller",
+    "series_id": 171
+  },
+  {
+    "name_jp": "鋼の錬金術師 コラボ",
+    "name_kr": "강철의 연금술사 콜라보",
+    "name_na": "Fullmetal Alchemist Collab",
+    "series_id": 172
+  },
+  {
+    "name_jp": "KOFコラボ",
+    "name_kr": "KOF 콜라보",
+    "name_na": "KOF Collab",
+    "series_id": 173
+  },
+  {
+    "name_jp": "ケルトの神",
+    "name_kr": "켈트신",
+    "name_na": "Celtic Pantheon",
+    "series_id": 174
+  },
+  {
+    "name_jp": "バレンタイン イベント",
+    "name_kr": "발렌타인 이벤트",
+    "name_na": "Valentine Event",
+    "series_id": 175
+  },
+  {
+    "name_jp": "レアキャラカーニバル友情ガチャ",
+    "name_kr": "레어 캐릭터 카니발 우정 에그",
+    "name_na": "Rare Character Carnival Pal Egg",
+    "series_id": 176
+  },
+  {
+    "name_jp": "幽☆遊☆白書 コラボ",
+    "name_kr": "유유백서 콜라보",
+    "name_na": "Yu Yu Hakusho Collab",
+    "series_id": 177
+  },
+  {
+    "name_jp": "メソポタミアの神",
+    "name_kr": "메소포타미아 신",
+    "name_na": "Mesopotamian Pantheon",
+    "series_id": 178
+  },
+  {
+    "name_jp": "ペルソナ コラボ",
+    "name_kr": "페르소나 콜라보",
+    "name_na": "Persona Collab",
+    "series_id": 179
+  },
+  {
+    "name_jp": "希石",
+    "name_kr": "희석",
+    "name_na": "Evolve Gem",
+    "series_id": 180
+  },
+  {
+    "name_jp": "Magic: The Gathering Collab",
+    "name_kr": "Magic: The Gathering Collab",
+    "name_na": "Magic: The Gathering Collab",
+    "series_id": 181
+  },
+  {
+    "name_jp": "Power Pros Collab",
+    "name_kr": "Power Pros Collab",
+    "name_na": "Power Pros Collab",
+    "series_id": 182
+  },
+  {
+    "name_jp": "Gungho Collab 2",
+    "name_kr": "Gungho Collab 2",
+    "name_na": "Gungho Collab 2",
+    "series_id": 183
+  },
+  {
+    "name_jp": "銀魂",
+    "name_kr": "",
+    "name_na": "Gintama",
+    "series_id": 184
+  },
+  {
+    "name_jp": "ソードアート・オンライン",
+    "name_kr": "Sword Art Online",
+    "name_na": "Sword Art Online",
+    "series_id": 185
+  },
+  {
+    "name_jp": "仮面ライダー",
+    "name_kr": "",
+    "name_na": "Kamen Rider",
+    "series_id": 186
+  },
+  {
+    "name_jp": "戦国の神 III",
+    "name_kr": "대장군 III",
+    "name_na": "Samurai God III",
+    "series_id": 187
+  },
+  {
+    "name_jp": "妖怪ウォッチ",
+    "name_kr": "",
+    "name_na": "Yokai Watch",
+    "series_id": 188
+  },
+  {
+    "name_jp": "",
+    "name_kr": "",
+    "name_na": "Companion Dragon",
+    "series_id": 189
+  },
+  {
+    "name_jp": "Fate/stay night Heaven's Feel",
+    "name_kr": "Fate/stay night Heaven's Feel",
+    "name_na": "Fate/stay night Heaven's Feel",
+    "series_id": 190
+  },
+  {
+    "name_jp": "Street Fighter V: Arcade Edition",
+    "name_kr": "Street Fighter V: Arcade Edition",
+    "name_na": "Street Fighter V: Arcade Edition",
+    "series_id": 191
+  },
+  {
+    "name_jp": "Shaman King Collab",
+    "name_kr": "Shaman King Collab",
+    "name_na": "Shaman King Collab",
+    "series_id": 192
+  }
+]
