@@ -58,14 +58,14 @@
   {
     "leader_tag_id": 32,
     "name_jp": "ダメージ減少",
-    "name_kr": "데미지 감소",
+    "name_kr": "대미지 경감",
     "name_na": "Reduce Damage",
     "order_idx": 11
   },
   {
     "leader_tag_id": 33,
     "name_jp": "デュアルダメージ減少",
-    "name_kr": "듀얼 데미지 감소",
+    "name_kr": "듀얼 대미지 경감",
     "name_na": "Dual Damage Reduction",
     "order_idx": 12
   },
@@ -107,7 +107,7 @@
   {
     "leader_tag_id": 160,
     "name_jp": "Egg Rate+",
-    "name_kr": "Egg Rate+",
+    "name_kr": "에그 드롭률+",
     "name_na": "Egg Rate+",
     "order_idx": 110
   },
@@ -128,7 +128,7 @@
   {
     "leader_tag_id": 210,
     "name_jp": "落ちコンなし",
-    "name_kr": "낙차콤보없음",
+    "name_kr": "낙차 콤보 없음",
     "name_na": "No Skyfall Combos",
     "order_idx": 210
   },
