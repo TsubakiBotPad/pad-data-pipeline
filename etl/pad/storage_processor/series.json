@@ -1090,5 +1090,17 @@
     "name_kr": "Power Rangers",
     "name_na": "Power Rangers",
     "series_id": 193
+  },
+  {
+    "name_jp": "シンカリオン",
+    "name_kr": "Shinkalion",
+    "name_na": "Shinkalion",
+    "series_id": 194
+  },
+  {
+    "name_jp": "富士見ファンタジア文庫",
+    "name_kr": "Fujimi Fantasia Collab",
+    "name_na": "Fujimi Fantasia Collab",
+    "series_id": 195
   }
 ]

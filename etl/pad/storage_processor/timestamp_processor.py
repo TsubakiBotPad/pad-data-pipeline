@@ -8,6 +8,7 @@ from pad.storage.encounter import Encounter
 from pad.storage.monster import Monster, ActiveSkill, LeaderSkill, Awakening, Evolution
 from pad.storage.rank_reward import RankReward
 from pad.storage.schedule import ScheduleEvent
+from pad.storage.series import Series
 from pad.storage.skill_tag import ActiveSkillTag, LeaderSkillTag
 from pad.storage.exchange import Exchange
 
@@ -27,6 +28,7 @@ _UPDATE_TABLES = [
     Monster.TABLE,
     RankReward.TABLE,
     ScheduleEvent.TABLE,
+    Series.TABLE,
     SubDungeon.TABLE,
 ]
 
