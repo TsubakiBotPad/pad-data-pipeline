@@ -58,14 +58,14 @@
   {
     "active_tag_id": 11,
     "name_jp": "ダメージ減少",
-    "name_kr": "데미지 감소",
+    "name_kr": "대미지 감소",
     "name_na": "Reduce Damage",
     "order_idx": 32
   },
   {
     "active_tag_id": 12,
     "name_jp": "ダメージ無効化",
-    "name_kr": "데미지 무효화",
+    "name_kr": "대미지 무효화",
     "name_na": "Void Damage",
     "order_idx": 33
   },
@@ -191,7 +191,7 @@
   {
     "active_tag_id": 60,
     "name_jp": "固定ダメージ",
-    "name_kr": "고정 데미지",
+    "name_kr": "고정 대미지",
     "name_na": "Fixed Damage",
     "order_idx": 80
   },
@@ -254,42 +254,42 @@
   {
     "active_tag_id": 180,
     "name_jp": "最大HP比例ダメージ",
-    "name_kr": "최대 HP 비례 데미지",
+    "name_kr": "최대 HP 비례 대미지",
     "name_na": "True Gravity",
     "order_idx": 180
   },
   {
     "active_tag_id": 190,
     "name_jp": "回復 & バインド回復",
-    "name_kr": "회복 & 바인드회복",
+    "name_kr": "회복 & 바인드 회복",
     "name_na": "Heal & Bind Recovery",
     "order_idx": 190
   },
   {
     "active_tag_id": 215,
     "name_jp": "覚醒無効回復",
-    "name_kr": "각성무효회복",
+    "name_kr": "각성 무효 회복",
     "name_na": "Awoken Invalid Recovery",
     "order_idx": 215
   },
   {
     "active_tag_id": 220,
     "name_jp": "バインド&覚醒無効回復",
-    "name_kr": "바인드 & 각성무효회복",
+    "name_kr": "바인드 & 각성 무효 회복",
     "name_na": "Bind & Awoken Invalid Recovery",
     "order_idx": 220
   },
   {
     "active_tag_id": 230,
     "name_jp": "ロック状態解除",
-    "name_kr": "잠금상태해제",
+    "name_kr": "잠금 상태 해제",
     "name_na": "Remove Lock",
     "order_idx": 230
   },
   {
     "active_tag_id": 240,
     "name_jp": "ダメージ吸収無効化",
-    "name_kr": "데미지 흡수 무효화",
+    "name_kr": "대미지 흡수 무효화",
     "name_na": "Void damage absorbs",
     "order_idx": 240
   },
