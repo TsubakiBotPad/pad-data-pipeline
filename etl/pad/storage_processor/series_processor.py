@@ -20,7 +20,6 @@ class SeriesProcessor(object):
         for raw in self.series:
             item = Series.from_json(raw)
             db.insert_or_update(item)
-        exit(0)
 
     def post_process(self, db: DbWrapper):
         self._try_ancestor(db)

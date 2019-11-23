@@ -4,6 +4,7 @@ from typing import List, Dict, Optional
 from pad.raw import EnemySkill
 from pad.raw.enemy_skills.enemy_skill_info import ESBehavior, BEHAVIOR_MAP, EnemySkillUnknown, ESSkillSet
 
+logger = logging.getLogger('processor')
 human_fix_logger = logging.getLogger('human_fix')
 
 
@@ -22,7 +23,9 @@ class BehaviorParser(object):
             if es_type in BEHAVIOR_MAP:
                 new_es = BEHAVIOR_MAP[es_type](es)
             else:
-                human_fix_logger.error('Failed to parse enemy skill: %d/%d: %s', es_id, es_type, es.name)
+                # Disabled; this isn't mission critical yet
+                # human_fix_logger.error('Failed to parse enemy skill: %d/%d: %s', es_id, es_type, es.name)
+                logger.error('Failed to parse enemy skill: %d/%d: %s', es_id, es_type, es.name)
                 new_es = EnemySkillUnknown(es)
 
             self.enemy_behaviors.append(new_es)
