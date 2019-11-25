@@ -1,35 +1,86 @@
 syntax = "proto3";
 
+package dadguide_proto;
+
+message MonsterBehavior {
+    repeated BehaviorGroup groups = 1;
+}
+
 message BehaviorGroup {
     enum GroupType {
+        // Should not be used
         UNSPECIFIED = 0;
+        // Always-active effects.
+        PASSIVE = 1;
+        // Executed on floor entry.
+        PREEMPT = 2;
+        // When user has a status effect.
+        DISPEL_PLAYER = 3;
+        // When the monster is affected by a status.
+        MONSTER_STATUS = 4;
+        // When a specific number of enemies are remaining
+        REMAINING = 5;
+        // Normal group.
+        STANDARD = 6;
+        // On monster death.
+        DEATH = 7;
     }
+
+    // Type for this group, affects display text and type.
+    GroupType group_type = 1;
+
+    // Conditions attached to this group executing. Should not be duplicated on
+    // any child behaviors.
+    Condition condition = 2;
+
+    // Child behavior items or groups.
+    repeated BehaviorItem children = 3;
 }
 
 message BehaviorItem {
-    Condition condition = 1;
+    oneof value {
+        // This item represents a nested group.
+        BehaviorGroup group = 2;
 
-    //    oneof
-    BehaviorItem group = 2;
-
-    // If 0, the BehaviorDetails should fill the entire info.
-    int32 enemy_skill_id = 3;
+        // This item represents a terminal behavior.
+        Behavior behavior = 3;
+    }
 }
 
+message Behavior {
+    // Conditions associated with this item executing. Should be deduped
+    // against the parent before display.
+    Condition condition = 1;
+
+    // The ID of the enemy skill that should be used to populate the item.
+    // Real monster behaviors start at 1.
+    // Fake behaviors inserted as a guide start at -1.
+    int32 enemy_skill_id = 2;
+}
 
 message Condition {
+    // Action or group is guarded by a HP threshold.
     int32 hp_threshold = 1;
 
+    // Action has a % of activating.
     int32 use_chance = 2;
 
-    bool one_time = 3;
+    // Action/group repeats every N turns. Can only be applied manually.
+    int32 repeats_every = 3;
+
+    // Action/group will only ever execute one time.
     bool global_one_time = 8;
 
+    // Action/group will only execute when N enemies remain. If this number
+    // is larger than 10 it should be ignored.
     int32 enemies_remaining = 4;
 
+    // Action/group will only execute on death of the current monster.
     bool on_death = 5;
 
+    // Action will only execute when specific orbs are available.
     bool orb_limited = 6;
 
+    // Action/group will execute when specific monsters are on the player's team.
     repeated int32 trigger_monsters = 7;
 }
