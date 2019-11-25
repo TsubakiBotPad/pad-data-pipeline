@@ -6,6 +6,8 @@ import argparse
 import os
 import pathlib
 
+import padtools
+
 from pad.common import pad_util
 from pad.common.shared_types import Server
 from pad.raw.enemy_skills.debug_utils import simple_dump_obj
@@ -23,6 +25,8 @@ def parse_args():
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--output_dir", required=True,
                               help="Path to a folder where output should be saved")
+    input_group.add_argument("--image_data_only", default=False, action="store_true",
+                             help="Should we only dump image availability")
 
     help_group = parser.add_argument_group("Help")
     help_group.add_argument("-h", "--help", action="help",
@@ -30,9 +34,22 @@ def parse_args():
     return parser.parse_args()
 
 
+def save_region_files(output_dir, server: Server, pad_server):
+    output_dir = os.path.join(output_dir, server.name)
+    save_single_file(output_dir, 'assets', pad_server.assets)
+    save_single_file(output_dir, 'extras', pad_server.extras)
+
+
 def dump_data(args):
     input_dir = args.input_dir
     output_dir = args.output_dir
+
+    save_region_files(output_dir, Server.jp, padtools.regions.japan.server)
+    save_region_files(output_dir, Server.kr, padtools.regions.north_america.server)
+    save_region_files(output_dir, Server.na, padtools.regions.korea.server)
+
+    if args.image_data_only:
+        exit(0)
 
     print('Processing JP')
     jp_db = merged_database.Database(Server.jp, input_dir)
