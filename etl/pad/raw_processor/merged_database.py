@@ -25,17 +25,15 @@ def _clean_bonuses(server: Server, bonus_sets, dungeons) -> List[MergedBonus]:
         for bonus in bonus_set:
             dungeon = None
             guerrilla_group = None
-            critical_failures = []
             if bonus.dungeon_id:
                 dungeon = dungeons_by_id.get(bonus.dungeon_id, None)
                 if dungeon is None:
-                    critical_failures.append('Dungeon lookup failed for bonus: %s'.format(repr(bonus)))
+                    fail_logger.warning('Dungeon lookup failed for bonus: %s'.format(repr(bonus)))
                 else:
                     guerrilla_group = StarterGroup(data_group) if dungeon.dungeon_type == 'guerrilla' else None
 
             if guerrilla_group or data_group == StarterGroup.red.name:
                 result = MergedBonus(server, bonus, dungeon, guerrilla_group)
-                result.critical_failures.extend(critical_failures)
                 merged_bonuses.append(result)
 
     return merged_bonuses
@@ -106,7 +104,7 @@ class Database(object):
         self.cards = []  # type: List[MergedCard]
         self.leader_skills = []  # type: List[LeaderSkill]
         self.active_skills = []  # type: List[ActiveSkill]
-        self.enemy_skills = []  # type: List[EsInstance]
+        self.enemy_skills = []  # type: List[ESBehavior]
         self.enemies = []  # type: List[MergedEnemy]
 
         # Faster lookups
@@ -143,6 +141,7 @@ class Database(object):
         es_parser = BehaviorParser()
         es_parser.parse(self.raw_enemy_skills)
         self.enemy_skills = es_parser.enemy_behaviors
+        self.es_id_to_enemy_skill = {es.enemy_skill_id: es for es in self.enemy_skills}
 
         if not skip_extra:
             self.exchange = exchange.load_data(data_dir=base_dir, server=self.server)
@@ -182,6 +181,9 @@ class Database(object):
 
     def active_skill_by_id(self, skill_id: SkillId) -> ActiveSkill:
         return self.skill_id_to_active_skill.get(skill_id, None)
+
+    def enemy_skill_by_id(self, es_id: int) -> EsInstance:
+        return self.es_id_to_enemy_skill.get(es_id, None)
 
     def dungeon_by_id(self, dungeon_id: DungeonId) -> Dungeon:
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
