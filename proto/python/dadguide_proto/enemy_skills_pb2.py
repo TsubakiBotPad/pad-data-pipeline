@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='dadguide_proto',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12\x65nemy_skills.proto\x12\x0e\x64\x61\x64guide_proto\"@\n\x0fMonsterBehavior\x12-\n\x06groups\x18\x01 \x03(\x0b\x32\x1d.dadguide_proto.BehaviorGroup\"\xb2\x02\n\rBehaviorGroup\x12;\n\ngroup_type\x18\x01 \x01(\x0e\x32\'.dadguide_proto.BehaviorGroup.GroupType\x12,\n\tcondition\x18\x02 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12.\n\x08\x63hildren\x18\x03 \x03(\x0b\x32\x1c.dadguide_proto.BehaviorItem\"\x85\x01\n\tGroupType\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x0b\n\x07PASSIVE\x10\x01\x12\x0b\n\x07PREEMPT\x10\x02\x12\x11\n\rDISPEL_PLAYER\x10\x03\x12\x12\n\x0eMONSTER_STATUS\x10\x04\x12\r\n\tREMAINING\x10\x05\x12\x0c\n\x08STANDARD\x10\x06\x12\t\n\x05\x44\x45\x41TH\x10\x07\"u\n\x0c\x42\x65haviorItem\x12.\n\x05group\x18\x02 \x01(\x0b\x32\x1d.dadguide_proto.BehaviorGroupH\x00\x12,\n\x08\x62\x65havior\x18\x03 \x01(\x0b\x32\x18.dadguide_proto.BehaviorH\x00\x42\x07\n\x05value\"P\n\x08\x42\x65havior\x12,\n\tcondition\x18\x01 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12\x16\n\x0e\x65nemy_skill_id\x18\x02 \x01(\x05\"\xc1\x01\n\tCondition\x12\x14\n\x0chp_threshold\x18\x01 \x01(\x05\x12\x12\n\nuse_chance\x18\x02 \x01(\x05\x12\x15\n\rrepeats_every\x18\x03 \x01(\x05\x12\x17\n\x0fglobal_one_time\x18\x08 \x01(\x08\x12\x19\n\x11\x65nemies_remaining\x18\x04 \x01(\x05\x12\x10\n\x08on_death\x18\x05 \x01(\x08\x12\x13\n\x0borb_limited\x18\x06 \x01(\x08\x12\x18\n\x10trigger_monsters\x18\x07 \x03(\x05\x62\x06proto3')
+  serialized_pb=_b('\n\x12\x65nemy_skills.proto\x12\x0e\x64\x61\x64guide_proto\"T\n\x0fMonsterBehavior\x12\x12\n\nmonster_id\x18\x01 \x01(\x05\x12-\n\x06levels\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.LevelBehavior\"M\n\rLevelBehavior\x12\r\n\x05level\x18\x01 \x01(\x05\x12-\n\x06groups\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.BehaviorGroup\"\xb2\x02\n\rBehaviorGroup\x12;\n\ngroup_type\x18\x01 \x01(\x0e\x32\'.dadguide_proto.BehaviorGroup.GroupType\x12,\n\tcondition\x18\x02 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12.\n\x08\x63hildren\x18\x03 \x03(\x0b\x32\x1c.dadguide_proto.BehaviorItem\"\x85\x01\n\tGroupType\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x0b\n\x07PASSIVE\x10\x01\x12\x0b\n\x07PREEMPT\x10\x02\x12\x11\n\rDISPEL_PLAYER\x10\x03\x12\x12\n\x0eMONSTER_STATUS\x10\x04\x12\r\n\tREMAINING\x10\x05\x12\x0c\n\x08STANDARD\x10\x06\x12\t\n\x05\x44\x45\x41TH\x10\x07\"u\n\x0c\x42\x65haviorItem\x12.\n\x05group\x18\x02 \x01(\x0b\x32\x1d.dadguide_proto.BehaviorGroupH\x00\x12,\n\x08\x62\x65havior\x18\x03 \x01(\x0b\x32\x18.dadguide_proto.BehaviorH\x00\x42\x07\n\x05value\"P\n\x08\x42\x65havior\x12,\n\tcondition\x18\x01 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12\x16\n\x0e\x65nemy_skill_id\x18\x02 \x01(\x05\"\xc1\x01\n\tCondition\x12\x14\n\x0chp_threshold\x18\x01 \x01(\x05\x12\x12\n\nuse_chance\x18\x02 \x01(\x05\x12\x15\n\rrepeats_every\x18\x03 \x01(\x05\x12\x17\n\x0fglobal_one_time\x18\x08 \x01(\x08\x12\x19\n\x11\x65nemies_remaining\x18\x04 \x01(\x05\x12\x10\n\x08on_death\x18\x05 \x01(\x08\x12\x13\n\x0borb_limited\x18\x06 \x01(\x08\x12\x18\n\x10trigger_monsters\x18\x07 \x03(\x05\x62\x06proto3')
 )
 
 
@@ -66,8 +66,8 @@ _BEHAVIORGROUP_GROUPTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=278,
-  serialized_end=411,
+  serialized_start=377,
+  serialized_end=510,
 )
 _sym_db.RegisterEnumDescriptor(_BEHAVIORGROUP_GROUPTYPE)
 
@@ -80,8 +80,15 @@ _MONSTERBEHAVIOR = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='groups', full_name='dadguide_proto.MonsterBehavior.groups', index=0,
-      number=1, type=11, cpp_type=10, label=3,
+      name='monster_id', full_name='dadguide_proto.MonsterBehavior.monster_id', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='levels', full_name='dadguide_proto.MonsterBehavior.levels', index=1,
+      number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -99,7 +106,45 @@ _MONSTERBEHAVIOR = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=38,
-  serialized_end=102,
+  serialized_end=122,
+)
+
+
+_LEVELBEHAVIOR = _descriptor.Descriptor(
+  name='LevelBehavior',
+  full_name='dadguide_proto.LevelBehavior',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='level', full_name='dadguide_proto.LevelBehavior.level', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='groups', full_name='dadguide_proto.LevelBehavior.groups', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=124,
+  serialized_end=201,
 )
 
 
@@ -144,8 +189,8 @@ _BEHAVIORGROUP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=105,
-  serialized_end=411,
+  serialized_start=204,
+  serialized_end=510,
 )
 
 
@@ -185,8 +230,8 @@ _BEHAVIORITEM = _descriptor.Descriptor(
       name='value', full_name='dadguide_proto.BehaviorItem.value',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=413,
-  serialized_end=530,
+  serialized_start=512,
+  serialized_end=629,
 )
 
 
@@ -223,8 +268,8 @@ _BEHAVIOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=532,
-  serialized_end=612,
+  serialized_start=631,
+  serialized_end=711,
 )
 
 
@@ -303,11 +348,12 @@ _CONDITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=615,
-  serialized_end=808,
+  serialized_start=714,
+  serialized_end=907,
 )
 
-_MONSTERBEHAVIOR.fields_by_name['groups'].message_type = _BEHAVIORGROUP
+_MONSTERBEHAVIOR.fields_by_name['levels'].message_type = _LEVELBEHAVIOR
+_LEVELBEHAVIOR.fields_by_name['groups'].message_type = _BEHAVIORGROUP
 _BEHAVIORGROUP.fields_by_name['group_type'].enum_type = _BEHAVIORGROUP_GROUPTYPE
 _BEHAVIORGROUP.fields_by_name['condition'].message_type = _CONDITION
 _BEHAVIORGROUP.fields_by_name['children'].message_type = _BEHAVIORITEM
@@ -322,6 +368,7 @@ _BEHAVIORITEM.oneofs_by_name['value'].fields.append(
 _BEHAVIORITEM.fields_by_name['behavior'].containing_oneof = _BEHAVIORITEM.oneofs_by_name['value']
 _BEHAVIOR.fields_by_name['condition'].message_type = _CONDITION
 DESCRIPTOR.message_types_by_name['MonsterBehavior'] = _MONSTERBEHAVIOR
+DESCRIPTOR.message_types_by_name['LevelBehavior'] = _LEVELBEHAVIOR
 DESCRIPTOR.message_types_by_name['BehaviorGroup'] = _BEHAVIORGROUP
 DESCRIPTOR.message_types_by_name['BehaviorItem'] = _BEHAVIORITEM
 DESCRIPTOR.message_types_by_name['Behavior'] = _BEHAVIOR
@@ -334,6 +381,13 @@ MonsterBehavior = _reflection.GeneratedProtocolMessageType('MonsterBehavior', (_
   # @@protoc_insertion_point(class_scope:dadguide_proto.MonsterBehavior)
   })
 _sym_db.RegisterMessage(MonsterBehavior)
+
+LevelBehavior = _reflection.GeneratedProtocolMessageType('LevelBehavior', (_message.Message,), {
+  'DESCRIPTOR' : _LEVELBEHAVIOR,
+  '__module__' : 'enemy_skills_pb2'
+  # @@protoc_insertion_point(class_scope:dadguide_proto.LevelBehavior)
+  })
+_sym_db.RegisterMessage(LevelBehavior)
 
 BehaviorGroup = _reflection.GeneratedProtocolMessageType('BehaviorGroup', (_message.Message,), {
   'DESCRIPTOR' : _BEHAVIORGROUP,

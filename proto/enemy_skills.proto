@@ -2,8 +2,21 @@ syntax = "proto3";
 
 package dadguide_proto;
 
+// All the behavior types a monster
 message MonsterBehavior {
-    repeated BehaviorGroup groups = 1;
+    // The DadGuide unique monster ID.
+    int32 monster_id = 1;
+
+    // Combination of level value and behaviors at that level.
+    repeated LevelBehavior levels = 2;
+}
+
+message LevelBehavior {
+    // The level (inclusive) that this behavior executes at.
+    int32 level = 1;
+
+    // The behavior at this level.
+    repeated BehaviorGroup groups = 2;
 }
 
 message BehaviorGroup {

@@ -8,7 +8,16 @@
 const MonsterBehavior$json = const {
   '1': 'MonsterBehavior',
   '2': const [
-    const {'1': 'groups', '3': 1, '4': 3, '5': 11, '6': '.dadguide_proto.BehaviorGroup', '10': 'groups'},
+    const {'1': 'monster_id', '3': 1, '4': 1, '5': 5, '10': 'monsterId'},
+    const {'1': 'levels', '3': 2, '4': 3, '5': 11, '6': '.dadguide_proto.LevelBehavior', '10': 'levels'},
+  ],
+};
+
+const LevelBehavior$json = const {
+  '1': 'LevelBehavior',
+  '2': const [
+    const {'1': 'level', '3': 1, '4': 1, '5': 5, '10': 'level'},
+    const {'1': 'groups', '3': 2, '4': 3, '5': 11, '6': '.dadguide_proto.BehaviorGroup', '10': 'groups'},
   ],
 };
 

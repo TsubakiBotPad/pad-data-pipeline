@@ -15,7 +15,8 @@ export 'enemy_skills.pbenum.dart';
 
 class MonsterBehavior extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('MonsterBehavior', package: const $pb.PackageName('dadguide_proto'), createEmptyInstance: create)
-    ..pc<BehaviorGroup>(1, 'groups', $pb.PbFieldType.PM, subBuilder: BehaviorGroup.create)
+    ..a<$core.int>(1, 'monsterId', $pb.PbFieldType.O3)
+    ..pc<LevelBehavior>(2, 'levels', $pb.PbFieldType.PM, subBuilder: LevelBehavior.create)
     ..hasRequiredFields = false
   ;
 
@@ -35,7 +36,51 @@ class MonsterBehavior extends $pb.GeneratedMessage {
   static MonsterBehavior _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<BehaviorGroup> get groups => $_getList(0);
+  $core.int get monsterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set monsterId($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMonsterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMonsterId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<LevelBehavior> get levels => $_getList(1);
+}
+
+class LevelBehavior extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('LevelBehavior', package: const $pb.PackageName('dadguide_proto'), createEmptyInstance: create)
+    ..a<$core.int>(1, 'level', $pb.PbFieldType.O3)
+    ..pc<BehaviorGroup>(2, 'groups', $pb.PbFieldType.PM, subBuilder: BehaviorGroup.create)
+    ..hasRequiredFields = false
+  ;
+
+  LevelBehavior._() : super();
+  factory LevelBehavior() => create();
+  factory LevelBehavior.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LevelBehavior.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  LevelBehavior clone() => LevelBehavior()..mergeFromMessage(this);
+  LevelBehavior copyWith(void Function(LevelBehavior) updates) => super.copyWith((message) => updates(message as LevelBehavior));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static LevelBehavior create() => LevelBehavior._();
+  LevelBehavior createEmptyInstance() => create();
+  static $pb.PbList<LevelBehavior> createRepeated() => $pb.PbList<LevelBehavior>();
+  @$core.pragma('dart2js:noInline')
+  static LevelBehavior getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LevelBehavior>(create);
+  static LevelBehavior _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get level => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set level($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLevel() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLevel() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<BehaviorGroup> get groups => $_getList(1);
 }
 
 class BehaviorGroup extends $pb.GeneratedMessage {
