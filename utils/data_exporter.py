@@ -175,6 +175,7 @@ def save_database(output_dir: str, db: Database):
         if b.dungeon:
             # We don't want to save the whole dungeon with the bonus, it's excessive
             b.dungeon = b.dungeon.clean_name
+    db.bonuses.sort(key=lambda x: [x.server, x.start_timestamp, x.group, x.dungeon, x.bonus])
     save_single_file(output_dir, 'bonuses', db.bonuses)
 
     save_single_file(output_dir, 'exchanges', db.exchange)
