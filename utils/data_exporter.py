@@ -36,8 +36,15 @@ def parse_args():
 
 def save_region_files(output_dir, server: Server, pad_server):
     output_dir = os.path.join(output_dir, server.name)
-    save_single_file(output_dir, 'assets', pad_server.assets)
-    save_single_file(output_dir, 'extras', pad_server.extras)
+
+    def clean_asset(input):
+        return {
+            'file_name': input.file_name,
+            'compressed_size': input.compressed_size,
+        }
+
+    save_single_file(output_dir, 'assets', [clean_asset(x) for x in pad_server.assets])
+    save_single_file(output_dir, 'extras', [clean_asset(x) for x in pad_server.extras])
 
 
 def dump_data(args):
