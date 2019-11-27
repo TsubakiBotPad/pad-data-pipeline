@@ -25,8 +25,6 @@ class MergedBonus(pad_util.Printable):
         self.start_timestamp = pad_util.gh_to_timestamp_2(bonus.start_time_str, server)
         self.end_timestamp = pad_util.gh_to_timestamp_2(bonus.end_time_str, server)
 
-        self.critical_failures = []
-
     def __str__(self):
         return 'MergedBonus({} {} - {} - {})'.format(
             self.server, self.group, self.dungeon, self.bonus)
@@ -69,8 +67,6 @@ class MergedCard(pad_util.Printable):
         self.leader_skill = leader_skill
 
         self.enemy_skills = enemy_skills
-
-        self.critical_failures = []
 
     def no_to_id(self, monster_no: MonsterNo) -> MonsterId:
         if self.server == Server.jp:
