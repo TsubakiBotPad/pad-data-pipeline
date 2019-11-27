@@ -43,8 +43,13 @@ def save_region_files(output_dir, server: Server, pad_server):
             'compressed_size': input.compressed_size,
         }
 
+    def clean_extra(input):
+        return {
+            'file_name': input.file_name,
+        }
+
     save_single_file(output_dir, 'assets', [clean_asset(x) for x in pad_server.assets])
-    save_single_file(output_dir, 'extras', [clean_asset(x) for x in pad_server.extras])
+    save_single_file(output_dir, 'extras', [clean_extra(x) for x in pad_server.extras])
 
 
 def dump_data(args):
