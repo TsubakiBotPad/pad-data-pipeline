@@ -62,9 +62,9 @@ class HpActions():
 class Moveset(object):
     def __init__(self):
         # Action which triggers when a status is applied.
-        self.status_action = None  # type: Optional[ESAttackUpStatus]
+        self.status_action = None  # type: Optional[EsInstance]
         # Action which triggers when player has a buff.
-        self.dispel_action = None  # type: Optional[ESDispel]
+        self.dispel_action = None  # type: Optional[EsInstance]
         # Timed and repeating actions which execute at various HP checkpoints.
         self.hp_actions = []  # type: List[HpActions]
 
@@ -87,11 +87,11 @@ class ProcessedSkillset(object):
         # The monster level this skillset applies to.
         self.level = level
         # Things like color/type resists, resolve, etc.
-        self.base_abilities = []  # type: List[ESAction]
+        self.base_abilities = []  # type: List[EsInstance]
         # These automatically trigger when the monster dies
-        self.death_actions = []  # type: List[ESAction]
+        self.death_actions = []  # type: List[EsInstance]
         # Preemptive attacks, shields, combo guards.
-        self.preemptives = []  # type: List[ESAction]
+        self.preemptives = []  # type: List[EsInstance]
 
         # Default enemy actions.
         self.moveset = Moveset()
@@ -324,7 +324,7 @@ def loop_through(ctx, behaviors: List[Optional[EsInstance]]) -> List[EsInstance]
 
         # Update the description to distinguish
         for nb in new_behaviors:
-            nb.extra_description = '(if {} on team)'.format(list(card_ids))
+            nb.condition.cards_on_team = list(card_ids)
 
         # Some branches set flags to prevent them from triggering again
         ctx.flags |= card_ctx.flags
@@ -344,7 +344,7 @@ def loop_through(ctx, behaviors: List[Optional[EsInstance]]) -> List[EsInstance]
 
         # Update the description to distinguish
         for nb in new_behaviors:
-            nb.extra_description = '(if >={} combos last turn)'.format(combo_count)
+            nb.condition.combos_made = combo_count
 
         combo_extra_actions.extend(new_behaviors)
 

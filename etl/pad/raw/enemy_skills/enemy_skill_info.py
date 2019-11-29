@@ -139,7 +139,14 @@ class ESCondition(object):
         # If set, this only executes when the enemy is defeated.
         self.on_death = None
 
-        self.condition_attributes = None
+        # Only executes if these attributes are present
+        self.condition_attributes = []  # type List[int]
+
+        # Only executes if certain cards are on the team
+        self.cards_on_team = []  # type List[int]
+
+        # Only executes if a certain combo count was met
+        self.combos_made = None
 
     def use_chance(self):
         """Returns the likelihood that this condition will be used.
@@ -206,8 +213,6 @@ class ESBehavior(Printable):
         self._name = skill.name
         self.type = skill.type
         self.params = skill.params
-
-        self.extra_description = None
 
     @property
     def name(self):
@@ -1409,7 +1414,6 @@ class EsInstance(Printable):
         self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
-        self.extra_description = None
 
         if not issubclass(self.btype, ESLogic):
             if ref.enemy_ai > 0 or ref.enemy_rnd > 0:
