@@ -3,14 +3,30 @@ syntax = "proto3";
 package dadguide_proto;
 
 // All the behavior types a monster
+message MonsterBehaviorWithOverrides {
+    // The DadGuide unique monster ID.
+    int32 monster_id = 1;
+
+    // Combination of level value and behaviors at that level.
+    repeated LevelBehavior levels = 2;
+
+    // Combination of level value and behaviors at that level.
+    repeated LevelBehavior level_overrides = 3;
+}
+
+// Monster ID, behaviors per level, and approval status.
 message MonsterBehavior {
     // The DadGuide unique monster ID.
     int32 monster_id = 1;
 
     // Combination of level value and behaviors at that level.
     repeated LevelBehavior levels = 2;
+
+    // If this behavior has been approved by a human reviewer.
+    bool approved = 3;
 }
 
+// Combination of a monster level and the behaviors at that level.
 message LevelBehavior {
     // The level (inclusive) that this behavior executes at.
     int32 level = 1;
@@ -69,6 +85,9 @@ message Behavior {
     // Real monster behaviors start at 1.
     // Fake behaviors inserted as a guide start at -1.
     int32 enemy_skill_id = 2;
+
+    // The IDs for component skills, if this is a skillset.
+    repeated int32 child_ids = 3;
 }
 
 message Condition {
@@ -78,22 +97,34 @@ message Condition {
     // Action has a % of activating.
     int32 use_chance = 2;
 
-    // Action/group repeats every N turns. Can only be applied manually.
+    // Action/group repeats every N turns.
     int32 repeats_every = 3;
 
     // Action/group will only ever execute one time.
-    bool global_one_time = 8;
+    bool global_one_time = 4;
 
     // Action/group will only execute when N enemies remain. If this number
     // is larger than 10 it should be ignored.
-    int32 enemies_remaining = 4;
+    int32 trigger_enemies_remaining = 5;
 
     // Action/group will only execute on death of the current monster.
-    bool on_death = 5;
+    bool if_defeated = 6;
 
     // Action will only execute when specific orbs are available.
-    bool orb_limited = 6;
+    bool if_attributes_available = 7;
 
     // Action/group will execute when specific monsters are on the player's team.
-    repeated int32 trigger_monsters = 7;
+    repeated int32 trigger_monsters = 8;
+
+    // Executes if at least this many combos were executed
+    int32 trigger_combos = 9;
+
+    // If this is a fallback skill. Can only be applied manually.
+    bool if_nothing_matched = 10;
+
+    // Execute if the turn count matches.
+    int32 trigger_turn = 11;
+
+    // If set, the range of turn counts this matches.
+    int32 trigger_turn_end = 12;
 }
