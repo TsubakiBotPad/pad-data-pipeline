@@ -13,10 +13,50 @@ import 'enemy_skills.pbenum.dart';
 
 export 'enemy_skills.pbenum.dart';
 
+class MonsterBehaviorWithOverrides extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('MonsterBehaviorWithOverrides', package: const $pb.PackageName('dadguide_proto'), createEmptyInstance: create)
+    ..a<$core.int>(1, 'monsterId', $pb.PbFieldType.O3)
+    ..pc<LevelBehavior>(2, 'levels', $pb.PbFieldType.PM, subBuilder: LevelBehavior.create)
+    ..pc<LevelBehavior>(3, 'levelOverrides', $pb.PbFieldType.PM, subBuilder: LevelBehavior.create)
+    ..hasRequiredFields = false
+  ;
+
+  MonsterBehaviorWithOverrides._() : super();
+  factory MonsterBehaviorWithOverrides() => create();
+  factory MonsterBehaviorWithOverrides.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MonsterBehaviorWithOverrides.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  MonsterBehaviorWithOverrides clone() => MonsterBehaviorWithOverrides()..mergeFromMessage(this);
+  MonsterBehaviorWithOverrides copyWith(void Function(MonsterBehaviorWithOverrides) updates) => super.copyWith((message) => updates(message as MonsterBehaviorWithOverrides));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static MonsterBehaviorWithOverrides create() => MonsterBehaviorWithOverrides._();
+  MonsterBehaviorWithOverrides createEmptyInstance() => create();
+  static $pb.PbList<MonsterBehaviorWithOverrides> createRepeated() => $pb.PbList<MonsterBehaviorWithOverrides>();
+  @$core.pragma('dart2js:noInline')
+  static MonsterBehaviorWithOverrides getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MonsterBehaviorWithOverrides>(create);
+  static MonsterBehaviorWithOverrides _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get monsterId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set monsterId($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMonsterId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMonsterId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<LevelBehavior> get levels => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.List<LevelBehavior> get levelOverrides => $_getList(2);
+}
+
 class MonsterBehavior extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('MonsterBehavior', package: const $pb.PackageName('dadguide_proto'), createEmptyInstance: create)
     ..a<$core.int>(1, 'monsterId', $pb.PbFieldType.O3)
     ..pc<LevelBehavior>(2, 'levels', $pb.PbFieldType.PM, subBuilder: LevelBehavior.create)
+    ..aOB(3, 'approved')
     ..hasRequiredFields = false
   ;
 
@@ -46,6 +86,15 @@ class MonsterBehavior extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.List<LevelBehavior> get levels => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.bool get approved => $_getBF(2);
+  @$pb.TagNumber(3)
+  set approved($core.bool v) { $_setBool(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasApproved() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearApproved() => clearField(3);
 }
 
 class LevelBehavior extends $pb.GeneratedMessage {
@@ -194,6 +243,7 @@ class Behavior extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('Behavior', package: const $pb.PackageName('dadguide_proto'), createEmptyInstance: create)
     ..aOM<Condition>(1, 'condition', subBuilder: Condition.create)
     ..a<$core.int>(2, 'enemySkillId', $pb.PbFieldType.O3)
+    ..p<$core.int>(3, 'childIds', $pb.PbFieldType.P3)
     ..hasRequiredFields = false
   ;
 
@@ -231,6 +281,9 @@ class Behavior extends $pb.GeneratedMessage {
   $core.bool hasEnemySkillId() => $_has(1);
   @$pb.TagNumber(2)
   void clearEnemySkillId() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get childIds => $_getList(2);
 }
 
 class Condition extends $pb.GeneratedMessage {
@@ -238,11 +291,15 @@ class Condition extends $pb.GeneratedMessage {
     ..a<$core.int>(1, 'hpThreshold', $pb.PbFieldType.O3)
     ..a<$core.int>(2, 'useChance', $pb.PbFieldType.O3)
     ..a<$core.int>(3, 'repeatsEvery', $pb.PbFieldType.O3)
-    ..a<$core.int>(4, 'enemiesRemaining', $pb.PbFieldType.O3)
-    ..aOB(5, 'onDeath')
-    ..aOB(6, 'orbLimited')
-    ..p<$core.int>(7, 'triggerMonsters', $pb.PbFieldType.P3)
-    ..aOB(8, 'globalOneTime')
+    ..aOB(4, 'globalOneTime')
+    ..a<$core.int>(5, 'triggerEnemiesRemaining', $pb.PbFieldType.O3)
+    ..aOB(6, 'ifDefeated')
+    ..aOB(7, 'ifAttributesAvailable')
+    ..p<$core.int>(8, 'triggerMonsters', $pb.PbFieldType.P3)
+    ..a<$core.int>(9, 'triggerCombos', $pb.PbFieldType.O3)
+    ..aOB(10, 'ifNothingMatched')
+    ..a<$core.int>(11, 'triggerTurn', $pb.PbFieldType.O3)
+    ..a<$core.int>(12, 'triggerTurnEnd', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -289,42 +346,78 @@ class Condition extends $pb.GeneratedMessage {
   void clearRepeatsEvery() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.int get enemiesRemaining => $_getIZ(3);
+  $core.bool get globalOneTime => $_getBF(3);
   @$pb.TagNumber(4)
-  set enemiesRemaining($core.int v) { $_setSignedInt32(3, v); }
+  set globalOneTime($core.bool v) { $_setBool(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasEnemiesRemaining() => $_has(3);
+  $core.bool hasGlobalOneTime() => $_has(3);
   @$pb.TagNumber(4)
-  void clearEnemiesRemaining() => clearField(4);
+  void clearGlobalOneTime() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.bool get onDeath => $_getBF(4);
+  $core.int get triggerEnemiesRemaining => $_getIZ(4);
   @$pb.TagNumber(5)
-  set onDeath($core.bool v) { $_setBool(4, v); }
+  set triggerEnemiesRemaining($core.int v) { $_setSignedInt32(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasOnDeath() => $_has(4);
+  $core.bool hasTriggerEnemiesRemaining() => $_has(4);
   @$pb.TagNumber(5)
-  void clearOnDeath() => clearField(5);
+  void clearTriggerEnemiesRemaining() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.bool get orbLimited => $_getBF(5);
+  $core.bool get ifDefeated => $_getBF(5);
   @$pb.TagNumber(6)
-  set orbLimited($core.bool v) { $_setBool(5, v); }
+  set ifDefeated($core.bool v) { $_setBool(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasOrbLimited() => $_has(5);
+  $core.bool hasIfDefeated() => $_has(5);
   @$pb.TagNumber(6)
-  void clearOrbLimited() => clearField(6);
+  void clearIfDefeated() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.List<$core.int> get triggerMonsters => $_getList(6);
+  $core.bool get ifAttributesAvailable => $_getBF(6);
+  @$pb.TagNumber(7)
+  set ifAttributesAvailable($core.bool v) { $_setBool(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasIfAttributesAvailable() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearIfAttributesAvailable() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.bool get globalOneTime => $_getBF(7);
-  @$pb.TagNumber(8)
-  set globalOneTime($core.bool v) { $_setBool(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasGlobalOneTime() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearGlobalOneTime() => clearField(8);
+  $core.List<$core.int> get triggerMonsters => $_getList(7);
+
+  @$pb.TagNumber(9)
+  $core.int get triggerCombos => $_getIZ(8);
+  @$pb.TagNumber(9)
+  set triggerCombos($core.int v) { $_setSignedInt32(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasTriggerCombos() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearTriggerCombos() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.bool get ifNothingMatched => $_getBF(9);
+  @$pb.TagNumber(10)
+  set ifNothingMatched($core.bool v) { $_setBool(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasIfNothingMatched() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearIfNothingMatched() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.int get triggerTurn => $_getIZ(10);
+  @$pb.TagNumber(11)
+  set triggerTurn($core.int v) { $_setSignedInt32(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasTriggerTurn() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearTriggerTurn() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.int get triggerTurnEnd => $_getIZ(11);
+  @$pb.TagNumber(12)
+  set triggerTurnEnd($core.int v) { $_setSignedInt32(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasTriggerTurnEnd() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearTriggerTurnEnd() => clearField(12);
 }
 
