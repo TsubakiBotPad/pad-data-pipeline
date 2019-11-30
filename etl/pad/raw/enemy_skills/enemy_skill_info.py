@@ -21,8 +21,7 @@ class DictWithAttributeAccess(dict):
 
 def attribute_bitmap(bits, inverse=False, bit_len=9):
     if bits is None:
-        # TODO: Should this be empty array?
-        return None
+        return []
     if bits == -1:
         return [-1]
     offset = 0

@@ -6,9 +6,11 @@ import argparse
 import logging
 import os
 
+from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.common.shared_types import Server
-from pad.raw.enemy_skills import enemy_skillset_processor, enemy_skillset_dump, debug_utils
+from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
 from pad.raw.enemy_skills.enemy_skill_info import ESAction, inject_implicit_onetime
+from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
 
@@ -36,11 +38,11 @@ def parse_args():
     return parser.parse_args()
 
 
-def process_card(csc: CrossServerCard):
+def process_card(csc: CrossServerCard) -> MonsterBehavior:
     enemy_behavior = csc.enemy_behavior
     card = csc.na_card.card
     if not enemy_behavior:
-        return
+        return None
 
     inject_implicit_onetime(card, enemy_behavior)
 
@@ -50,9 +52,9 @@ def process_card(csc: CrossServerCard):
     for level in sorted(levels):
         try:
             skillset = enemy_skillset_processor.convert(card, enemy_behavior, level)
-            flattened = enemy_skillset_dump.flatten_skillset(level, skillset)
-            if not flattened.records:
+            if not skillset.has_actions():
                 continue
+            flattened = enemy_skill_proto.flatten_skillset(level, skillset)
             used_actions.extend(debug_utils.extract_used_skills(skillset))
             skill_listings.append(flattened)
         except Exception as ex:
@@ -64,39 +66,40 @@ def process_card(csc: CrossServerCard):
                 print('\tLoop detection failure for', card.monster_no, card.name)
 
     if not skill_listings:
-        return
+        return None
 
     unused_actions = []
     for b in enemy_behavior:
-        if issubclass(b.btype, ESAction) and b not in used_actions and b not in unused_actions:
-            unused_actions.append(b)
+        try:
+            if issubclass(b.btype, ESAction) and b not in used_actions and b not in unused_actions:
+                unused_actions.append(b)
+        except:
+            print('oops')
 
-    entry_info = enemy_skillset_dump.EntryInfo(
-        csc.monster_id, card.name, 'not yet populated')
-    if unused_actions:
-        entry_info.warnings.append('Found {} unused actions'.format(len(unused_actions)))
+    # TODO: add unused actions and store them
 
-    summary = enemy_skillset_dump.EnemySummary(entry_info, skill_listings)
-    # TODO: turn this on
-    # summary = enemy_skillset_dump.load_and_merge_summary(summary)
+    result = MonsterBehavior()
+    result.monster_id = csc.monster_id
+    result.levels.extend(skill_listings)
 
-    enemy_skillset_dump.dump_summary_to_file(card, summary, enemy_behavior, unused_actions)
-
-    return len(unused_actions)
+    return result
 
 
 def run(args):
-    enemy_skillset_dump.set_data_dir(args.output_dir)
+    behavior_data_dir = os.path.join(args.output_dir, 'behavior_data')
+    os.makedirs(behavior_data_dir, exist_ok=True)
+    behavior_text_dir = os.path.join(args.output_dir, 'behavior_text')
+    os.makedirs(behavior_text_dir, exist_ok=True)
 
     raw_input_dir = os.path.join(args.input_dir, 'raw')
     jp_db = merged_database.Database(Server.jp, raw_input_dir)
     na_db = merged_database.Database(Server.na, raw_input_dir)
 
-    jp_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
+    # jp_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
     na_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
 
     print('merging data')
-    cross_db = CrossServerDatabase(jp_db, na_db, na_db)
+    cross_db = CrossServerDatabase(na_db, na_db, na_db)
 
     combined_cards = cross_db.all_cards
 
@@ -114,7 +117,15 @@ def run(args):
             count += 1
             if count % 100 == 0:
                 print('processing {} of {}'.format(count, len(combined_cards)))
-            process_card(csc)
+            monster_behavior = process_card(csc)
+            if monster_behavior is None:
+                continue
+
+            behavior_data_file = os.path.join(behavior_data_dir, '{}.textproto'.format(csc.monster_id))
+            safe_save_to_file(behavior_data_file, monster_behavior)
+
+            behavior_text_file = os.path.join(behavior_text_dir, '{}.txt'.format(csc.monster_id))
+            # TODO: Implement saving human readable
 
         except Exception as ex:
             print('failed to process', card.name)

@@ -1,6 +1,6 @@
 from typing import List
 
-from pad.raw.enemy_skills.enemy_skill_info import ESAction, ESSkillSet
+from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, EsInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset
 
 
@@ -35,7 +35,7 @@ def simple_dump_obj(o):
         return msg
 
 
-def extract_used_skills(skillset: ProcessedSkillset, include_preemptive=True) -> List[ESAction]:
+def extract_used_skills(skillset: ProcessedSkillset, include_preemptive=True) -> List[EsInstance]:
     """Flattens a ProcessedSkillset to a list of actions"""
     results = []
 
@@ -44,10 +44,10 @@ def extract_used_skills(skillset: ProcessedSkillset, include_preemptive=True) ->
     if include_preemptive:
         results.extend(skillset.preemptives)
 
-    def sg_extract(l: List[StandardSkillGroup]) -> List[ESAction]:
+    def sg_extract(l: List[StandardSkillGroup]) -> List[EsInstance]:
         return [item for sublist in l for item in sublist.skills]
 
-    def moveset_extract(moveset: Moveset) -> List[ESAction]:
+    def moveset_extract(moveset: Moveset) -> List[EsInstance]:
         moveset_results = []
 
         for hp_action in moveset.hp_actions:

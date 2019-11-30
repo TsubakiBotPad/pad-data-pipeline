@@ -68,6 +68,9 @@ class Moveset(object):
         # Timed and repeating actions which execute at various HP checkpoints.
         self.hp_actions = []  # type: List[HpActions]
 
+    def has_actions(self):
+        return any([self.status_action, self.dispel_action, self.hp_actions])
+
 
 class EnemyRemainingMoveset(Moveset):
     def __init__(self, count: int):
@@ -98,6 +101,13 @@ class ProcessedSkillset(object):
 
         # Alternate movesets which execute when a specific number of enemies remain.
         self.enemy_remaining_movesets = []  # type: List[EnemyRemainingMoveset]
+
+    def has_actions(self):
+        return any([self.base_abilities,
+                    self.death_actions,
+                    self.preemptives,
+                    self.enemy_remaining_movesets,
+                    self.moveset.has_actions()])
 
 
 class Context(object):
