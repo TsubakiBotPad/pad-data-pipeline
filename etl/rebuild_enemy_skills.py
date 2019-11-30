@@ -9,6 +9,7 @@ import os
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.common.shared_types import Server
 from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
+from pad.raw.enemy_skills.debug_utils import save_monster_behavior
 from pad.raw.enemy_skills.enemy_skill_info import ESAction, inject_implicit_onetime
 from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file
 from pad.raw_processor import merged_database
@@ -125,10 +126,12 @@ def run(args):
             safe_save_to_file(behavior_data_file, monster_behavior)
 
             behavior_text_file = os.path.join(behavior_text_dir, '{}.txt'.format(csc.monster_id))
-            # TODO: Implement saving human readable
+            save_monster_behavior(behavior_text_file, csc, monster_behavior)
+
+            # TODO: Add raw behavior dump
 
         except Exception as ex:
-            print('failed to process', card.name)
+            print('failed to process', csc.monster_id, card.name)
             print(ex)
             # if 'unsupported operation' not in str(ex):
             import traceback
