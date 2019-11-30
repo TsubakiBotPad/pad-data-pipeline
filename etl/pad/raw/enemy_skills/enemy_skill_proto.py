@@ -5,7 +5,7 @@ from google.protobuf import text_format
 
 from dadguide_proto.enemy_skills_pb2 import BehaviorItem, LevelBehavior, BehaviorGroup, MonsterBehavior, \
     MonsterBehaviorWithOverrides
-from pad.raw.enemy_skills.enemy_skill_info import EsInstance, ESPassive
+from pad.raw.enemy_skills.enemy_skill_info import EsInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Moveset, HpActions, TimedSkillGroup
 
 
@@ -49,14 +49,14 @@ def behavior_to_proto(instance: EsInstance) -> BehaviorItem:
 
     cond = instance.condition
     if cond is not None:
-        item.hp_threshold = cond.hp_threshold or 100
-        item.use_chance = cond.use_chance()
-        item.global_one_time = cond.forced_one_time or False
-        item.trigger_enemies_remaining = cond.enemies_remaining or 0
-        item.if_defeated = cond.on_death or False
-        item.if_attributes_available = len(cond.condition_attributes) > 0
-        item.trigger_monsters[:] = cond.cards_on_team
-        item.trigger_combos = cond.combos_made or 0
+        item_condition.hp_threshold = cond.hp_threshold or 100
+        item_condition.use_chance = cond.use_chance()
+        item_condition.global_one_time = cond.forced_one_time or False
+        item_condition.trigger_enemies_remaining = cond.enemies_remaining or 0
+        item_condition.if_defeated = cond.on_death or False
+        item_condition.if_attributes_available = len(cond.condition_attributes) > 0
+        item_condition.trigger_monsters[:] = cond.cards_on_team
+        item_condition.trigger_combos = cond.combos_made or 0
 
     return item
 
@@ -109,7 +109,10 @@ def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInst
     items = list(filter(None, items))  # Ensure there are no nulls in the list
     if not items:
         return
-    bg = group_list.add().group
+    bg = group_list.add()
+    if isinstance(bg, BehaviorItem):
+        # This method accepts a Union[List[BehaviorGroup], List[BehaviorItem]]
+        bg = bg.group
     bg.group_type = group_type
     for item in items:
         bg.children.append(behavior_to_proto(item))
@@ -117,7 +120,7 @@ def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInst
 
 
 def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) -> BehaviorGroup:
-    bg = group_list.add().group
+    bg = group_list.add()
     bg.group_type = group_type
 
     add_behavior_group_from_behaviors(bg.children, BehaviorGroup.DISPEL_PLAYER, [moveset.dispel_action])
@@ -140,6 +143,8 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
             rg.condition.repeats_every = repeat_action.interval
             add_behavior_group_from_behaviors(rg.children, BehaviorGroup.STANDARD, repeat_action.skills)
 
+    return bg
+
 
 def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
     result = LevelBehavior()
@@ -155,11 +160,14 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
         es_bg = add_behavior_group_from_moveset(result.groups, BehaviorGroup.REMAINING, es_moveset)
         es_bg.condition.trigger_enemies_remaining = es_moveset.count
 
+    return result
+
 
 def safe_save_to_file(file_path: str, obj: MonsterBehavior) -> MonsterBehaviorWithOverrides:
     mbwo = load_from_file(file_path)
     mbwo.monster_id = obj.monster_id
-    mbwo.levels[:] = obj.levels
+    del mbwo.levels[:]
+    mbwo.levels.extend(obj.levels)
 
     msg_str = text_format.MessageToString(mbwo, as_utf8=True, indent=2)
     with open(file_path, 'w', encoding='utf-8') as f:
