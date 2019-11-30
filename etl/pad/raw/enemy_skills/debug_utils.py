@@ -1,7 +1,123 @@
 from typing import List
 
-from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, EsInstance
+from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Condition, Behavior
+from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, EsInstance, ESCountdownMessage
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset
+from pad.raw_processor.crossed_data import CrossServerCard
+
+
+def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehavior):
+    output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)
+    card = csc.jp_card.card
+    output += '\nmonster size: {}'.format(card.unknown_009)
+    output += '\nnew AI: {}'.format(card.use_new_ai)
+    output += '\nstart/max counter: {}'.format(card.enemy_skill_max_counter)
+    output += '\ncounter increment: {}'.format(card.enemy_skill_counter_increment)
+
+    library = {}
+    for x in csc.enemy_behavior:
+        library[x.enemy_skill_id] = x.behavior
+        if isinstance(x.behavior, ESSkillSet):
+            for y in x.behavior.skills:
+                library[y.enemy_skill_id] = y
+
+    library = {x.enemy_skill_id: x.behavior for x in csc.enemy_behavior}
+    output += '\n' + format_monster_behavior(mb, library)
+
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(output)
+
+
+def format_monster_behavior(mb: MonsterBehavior, library):
+    output = 'monster_id: {}'.format(mb.monster_id)
+    output += '\napproved: {}'.format(mb.approved)
+
+    for level in mb.levels:
+        output += '\n\nlevel: {}'.format(level.level)
+        for group in level.groups:
+            output += '\n' + format_behavior_group(' ', group, library)
+
+    return output
+
+
+def format_behavior_group(indent_str, group: BehaviorGroup, library):
+    sub_indent_str = indent_str.replace('|', ' ') + '| '
+    if group.group_type in [BehaviorGroup.UNSPECIFIED, BehaviorGroup.STANDARD]:
+        output = '{}group:'.format(indent_str)
+    else:
+        output = '{}type: {}'.format(indent_str, BehaviorGroup.GroupType.Name(group.group_type))
+    cond_str = format_condition(group.condition)
+    if cond_str:
+        output += '\n{}condition: {}'.format(indent_str, cond_str)
+    for child in group.children:
+        if child.HasField('group'):
+            output += '\n' + format_behavior_group(sub_indent_str, child.group, library)
+        elif child.HasField('behavior'):
+            output += '\n' + format_behavior(sub_indent_str, child.behavior, library)
+        else:
+            raise ValueError('Expected group or behavior')
+
+    return output
+
+
+def format_condition(cond: Condition):
+    parts = []
+    if cond.use_chance not in [0, 100]:
+        parts.append('{}% chance'.format(cond.use_chance))
+    if cond.repeats_every:
+        parts.append('repeats every {} turns'.format(cond.repeats_every))
+    if cond.global_one_time:
+        parts.append('one time only')
+    if cond.trigger_enemies_remaining:
+        parts.append('when {} enemies remain'.format(cond.trigger_enemies_remaining))
+    if cond.if_defeated:
+        parts.append('when defeated')
+    if cond.if_attributes_available:
+        parts.append('when required attributes on board')
+    if cond.trigger_monsters:
+        parts.append('when {} on team'.format(', '.join(map(str, cond.trigger_monsters))))
+    if cond.trigger_combos:
+        parts.append('when {} combos last turn'.format(cond.trigger_combos))
+    if cond.if_nothing_matched:
+        parts.append('if no other skills matched')
+    if cond.trigger_turn_end:
+        parts.append('turns {}-{}'.format(cond.trigger_turn, cond.trigger_turn_end))
+    elif cond.trigger_turn:
+        parts.append('turn {}'.format(cond.trigger_turn))
+
+    if not parts and cond.hp_threshold in [100, 0]:
+        return None
+
+    if cond.hp_threshold not in [0]:
+        parts.append('hp <= {}'.format(cond.hp_threshold))
+
+    return ', '.join(parts)
+
+
+def format_behavior(indent_str, behavior: Behavior, library):
+    # TODO: fix ESCountdownMessage hack
+    skill = library.get(behavior.enemy_skill_id) or ESCountdownMessage(behavior.enemy_skill_id)
+    skill_name = skill.name
+    if not skill_name:
+        if behavior.child_ids:
+            skill_name = ' + '.join([library[x] for x in behavior.child_ids])
+        else:
+            skill_name = 'unknown_name'
+    output = '{}({}:{}) {}'.format(indent_str, skill.enemy_skill_id, skill.type, skill_name)
+    if not behavior.child_ids:
+        output += '\n{}{}'.format(indent_str, skill.full_description())
+    for child_id in behavior.child_ids:
+        child_skill = library.get(child_id) or ESCountdownMessage(child_id)
+
+        output += '\n{} - ({}:{}) {}'.format(indent_str,
+                                             child_skill.enemy_skill_id,
+                                             child_skill.type,
+                                             child_skill.full_description())
+
+    cond_str = format_condition(behavior.condition)
+    if cond_str:
+        output = '{}condition: {}\n{}'.format(indent_str, cond_str, output)
+    return output
 
 
 def simple_dump_obj(o):
