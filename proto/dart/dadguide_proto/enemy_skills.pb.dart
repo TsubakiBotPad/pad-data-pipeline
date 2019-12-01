@@ -18,6 +18,7 @@ class MonsterBehaviorWithOverrides extends $pb.GeneratedMessage {
     ..a<$core.int>(1, 'monsterId', $pb.PbFieldType.O3)
     ..pc<LevelBehavior>(2, 'levels', $pb.PbFieldType.PM, subBuilder: LevelBehavior.create)
     ..pc<LevelBehavior>(3, 'levelOverrides', $pb.PbFieldType.PM, subBuilder: LevelBehavior.create)
+    ..e<MonsterBehaviorWithOverrides_Status>(4, 'status', $pb.PbFieldType.OE, defaultOrMaker: MonsterBehaviorWithOverrides_Status.NOT_APPROVED, valueOf: MonsterBehaviorWithOverrides_Status.valueOf, enumValues: MonsterBehaviorWithOverrides_Status.values)
     ..hasRequiredFields = false
   ;
 
@@ -50,6 +51,15 @@ class MonsterBehaviorWithOverrides extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(3)
   $core.List<LevelBehavior> get levelOverrides => $_getList(2);
+
+  @$pb.TagNumber(4)
+  MonsterBehaviorWithOverrides_Status get status => $_getN(3);
+  @$pb.TagNumber(4)
+  set status(MonsterBehaviorWithOverrides_Status v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasStatus() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearStatus() => clearField(4);
 }
 
 class MonsterBehavior extends $pb.GeneratedMessage {

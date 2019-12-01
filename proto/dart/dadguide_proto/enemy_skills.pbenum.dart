@@ -9,6 +9,25 @@
 import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+class MonsterBehaviorWithOverrides_Status extends $pb.ProtobufEnum {
+  static const MonsterBehaviorWithOverrides_Status NOT_APPROVED = MonsterBehaviorWithOverrides_Status._(0, 'NOT_APPROVED');
+  static const MonsterBehaviorWithOverrides_Status APPROVED_AS_IS = MonsterBehaviorWithOverrides_Status._(1, 'APPROVED_AS_IS');
+  static const MonsterBehaviorWithOverrides_Status NEEDS_REAPPROVAL = MonsterBehaviorWithOverrides_Status._(2, 'NEEDS_REAPPROVAL');
+  static const MonsterBehaviorWithOverrides_Status APPROVED_WITH_CHANGES = MonsterBehaviorWithOverrides_Status._(3, 'APPROVED_WITH_CHANGES');
+
+  static const $core.List<MonsterBehaviorWithOverrides_Status> values = <MonsterBehaviorWithOverrides_Status> [
+    NOT_APPROVED,
+    APPROVED_AS_IS,
+    NEEDS_REAPPROVAL,
+    APPROVED_WITH_CHANGES,
+  ];
+
+  static final $core.Map<$core.int, MonsterBehaviorWithOverrides_Status> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static MonsterBehaviorWithOverrides_Status valueOf($core.int value) => _byValue[value];
+
+  const MonsterBehaviorWithOverrides_Status._($core.int v, $core.String n) : super(v, n);
+}
+
 class BehaviorGroup_GroupType extends $pb.ProtobufEnum {
   static const BehaviorGroup_GroupType UNSPECIFIED = BehaviorGroup_GroupType._(0, 'UNSPECIFIED');
   static const BehaviorGroup_GroupType PASSIVE = BehaviorGroup_GroupType._(1, 'PASSIVE');
