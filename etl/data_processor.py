@@ -14,6 +14,7 @@ from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_content_processor import DungeonContentProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
+from pad.storage_processor.enemy_skill_processor import EnemySkillProcessor
 from pad.storage_processor.exchange_processor import ExchangeProcessor
 from pad.storage_processor.egg_machine_processor import EggMachineProcessor
 from pad.storage_processor.exchange_processor import ExchangeProcessor
@@ -63,6 +64,8 @@ def parse_args():
                              help="Should we run dev processes")
     input_group.add_argument("--input_dir", required=True,
                              help="Path to a folder where the input data is")
+    input_group.add_argument("--es_dir",
+                             help="Path to a folder where the enemy skills data protos are")
     input_group.add_argument("--media_dir", required=False,
                              help="Path to the root folder containing images, voices, etc")
 
@@ -125,6 +128,13 @@ def load_data(args):
     # Ensure tags
     SkillTagProcessor().process(db_wrapper)
 
+    # Load enemy skills
+    es_processor = EnemySkillProcessor(db_wrapper, cs_database)
+    es_processor.load_static()
+    es_processor.load_enemy_skills()
+    if args.es_dir:
+        es_processor.load_enemy_data(args.es_dir)
+
     # Load basic series data
     series_processor = SeriesProcessor(cs_database)
     series_processor.pre_process(db_wrapper)
@@ -158,16 +168,7 @@ def load_data(args):
     # Update timestamps
     TimestampProcessor().process(db_wrapper)
 
-    # cs_database.dungeon_diagnostics()
-    # cs_database.card_diagnostics()
-
     print('done')
-    # logger.info('Starting news update')
-    # try:
-    #     database_update_news(db_wrapper)
-    # except Exception as ex:
-    #     print('updating news failed', str(ex))
-    #
 
 
 if __name__ == '__main__':
