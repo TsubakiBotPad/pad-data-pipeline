@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package dadguide_proto;
 
-// All the behavior types a monster
+// Persistent output from the processor combined with approval information.
 message MonsterBehaviorWithOverrides {
     // The DadGuide unique monster ID.
     int32 monster_id = 1;
@@ -12,6 +12,24 @@ message MonsterBehaviorWithOverrides {
 
     // Combination of level value and behaviors at that level.
     repeated LevelBehavior level_overrides = 3;
+
+    enum Status {
+        // Default status, not reviewed.
+        NOT_APPROVED = 0;
+        // Reviewed and approved with no changes. If the auto-generated
+        // behavior changes, updates to NEEDS_REAPPROVAL.
+        APPROVED_AS_IS = 1;
+        // Was approved in the past but the auto-generated values changed, so
+        // someone should compare and re-approve.
+        NEEDS_REAPPROVAL = 2;
+        // An admin applied changes and then approved the result.
+        APPROVED_WITH_CHANGES = 3;
+    }
+
+    // Determines which LevelBehavior should be used.
+    // If NOT_APPROVED - levels with approved=False
+    // Anything else - level_overrides with approved=True
+    Status status = 4;
 }
 
 // Monster ID, behaviors per level, and approval status.

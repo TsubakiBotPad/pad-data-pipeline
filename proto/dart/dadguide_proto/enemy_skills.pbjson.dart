@@ -11,6 +11,18 @@ const MonsterBehaviorWithOverrides$json = const {
     const {'1': 'monster_id', '3': 1, '4': 1, '5': 5, '10': 'monsterId'},
     const {'1': 'levels', '3': 2, '4': 3, '5': 11, '6': '.dadguide_proto.LevelBehavior', '10': 'levels'},
     const {'1': 'level_overrides', '3': 3, '4': 3, '5': 11, '6': '.dadguide_proto.LevelBehavior', '10': 'levelOverrides'},
+    const {'1': 'status', '3': 4, '4': 1, '5': 14, '6': '.dadguide_proto.MonsterBehaviorWithOverrides.Status', '10': 'status'},
+  ],
+  '4': const [MonsterBehaviorWithOverrides_Status$json],
+};
+
+const MonsterBehaviorWithOverrides_Status$json = const {
+  '1': 'Status',
+  '2': const [
+    const {'1': 'NOT_APPROVED', '2': 0},
+    const {'1': 'APPROVED_AS_IS', '2': 1},
+    const {'1': 'NEEDS_REAPPROVAL', '2': 2},
+    const {'1': 'APPROVED_WITH_CHANGES', '2': 3},
   ],
 };
 

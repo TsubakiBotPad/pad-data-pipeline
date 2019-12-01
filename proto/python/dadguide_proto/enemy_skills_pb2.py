@@ -20,10 +20,40 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='dadguide_proto',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12\x65nemy_skills.proto\x12\x0e\x64\x61\x64guide_proto\"\x99\x01\n\x1cMonsterBehaviorWithOverrides\x12\x12\n\nmonster_id\x18\x01 \x01(\x05\x12-\n\x06levels\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.LevelBehavior\x12\x36\n\x0flevel_overrides\x18\x03 \x03(\x0b\x32\x1d.dadguide_proto.LevelBehavior\"f\n\x0fMonsterBehavior\x12\x12\n\nmonster_id\x18\x01 \x01(\x05\x12-\n\x06levels\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.LevelBehavior\x12\x10\n\x08\x61pproved\x18\x03 \x01(\x08\"M\n\rLevelBehavior\x12\r\n\x05level\x18\x01 \x01(\x05\x12-\n\x06groups\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.BehaviorGroup\"\xb2\x02\n\rBehaviorGroup\x12;\n\ngroup_type\x18\x01 \x01(\x0e\x32\'.dadguide_proto.BehaviorGroup.GroupType\x12,\n\tcondition\x18\x02 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12.\n\x08\x63hildren\x18\x03 \x03(\x0b\x32\x1c.dadguide_proto.BehaviorItem\"\x85\x01\n\tGroupType\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x0b\n\x07PASSIVE\x10\x01\x12\x0b\n\x07PREEMPT\x10\x02\x12\x11\n\rDISPEL_PLAYER\x10\x03\x12\x12\n\x0eMONSTER_STATUS\x10\x04\x12\r\n\tREMAINING\x10\x05\x12\x0c\n\x08STANDARD\x10\x06\x12\t\n\x05\x44\x45\x41TH\x10\x07\"u\n\x0c\x42\x65haviorItem\x12.\n\x05group\x18\x02 \x01(\x0b\x32\x1d.dadguide_proto.BehaviorGroupH\x00\x12,\n\x08\x62\x65havior\x18\x03 \x01(\x0b\x32\x18.dadguide_proto.BehaviorH\x00\x42\x07\n\x05value\"c\n\x08\x42\x65havior\x12,\n\tcondition\x18\x01 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12\x16\n\x0e\x65nemy_skill_id\x18\x02 \x01(\x05\x12\x11\n\tchild_ids\x18\x03 \x03(\x05\"\xbc\x02\n\tCondition\x12\x14\n\x0chp_threshold\x18\x01 \x01(\x05\x12\x12\n\nuse_chance\x18\x02 \x01(\x05\x12\x15\n\rrepeats_every\x18\x03 \x01(\x05\x12\x17\n\x0fglobal_one_time\x18\x04 \x01(\x08\x12!\n\x19trigger_enemies_remaining\x18\x05 \x01(\x05\x12\x13\n\x0bif_defeated\x18\x06 \x01(\x08\x12\x1f\n\x17if_attributes_available\x18\x07 \x01(\x08\x12\x18\n\x10trigger_monsters\x18\x08 \x03(\x05\x12\x16\n\x0etrigger_combos\x18\t \x01(\x05\x12\x1a\n\x12if_nothing_matched\x18\n \x01(\x08\x12\x14\n\x0ctrigger_turn\x18\x0b \x01(\x05\x12\x18\n\x10trigger_turn_end\x18\x0c \x01(\x05\x62\x06proto3')
+  serialized_pb=_b('\n\x12\x65nemy_skills.proto\x12\x0e\x64\x61\x64guide_proto\"\xbf\x02\n\x1cMonsterBehaviorWithOverrides\x12\x12\n\nmonster_id\x18\x01 \x01(\x05\x12-\n\x06levels\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.LevelBehavior\x12\x36\n\x0flevel_overrides\x18\x03 \x03(\x0b\x32\x1d.dadguide_proto.LevelBehavior\x12\x43\n\x06status\x18\x04 \x01(\x0e\x32\x33.dadguide_proto.MonsterBehaviorWithOverrides.Status\"_\n\x06Status\x12\x10\n\x0cNOT_APPROVED\x10\x00\x12\x12\n\x0e\x41PPROVED_AS_IS\x10\x01\x12\x14\n\x10NEEDS_REAPPROVAL\x10\x02\x12\x19\n\x15\x41PPROVED_WITH_CHANGES\x10\x03\"f\n\x0fMonsterBehavior\x12\x12\n\nmonster_id\x18\x01 \x01(\x05\x12-\n\x06levels\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.LevelBehavior\x12\x10\n\x08\x61pproved\x18\x03 \x01(\x08\"M\n\rLevelBehavior\x12\r\n\x05level\x18\x01 \x01(\x05\x12-\n\x06groups\x18\x02 \x03(\x0b\x32\x1d.dadguide_proto.BehaviorGroup\"\xb2\x02\n\rBehaviorGroup\x12;\n\ngroup_type\x18\x01 \x01(\x0e\x32\'.dadguide_proto.BehaviorGroup.GroupType\x12,\n\tcondition\x18\x02 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12.\n\x08\x63hildren\x18\x03 \x03(\x0b\x32\x1c.dadguide_proto.BehaviorItem\"\x85\x01\n\tGroupType\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x0b\n\x07PASSIVE\x10\x01\x12\x0b\n\x07PREEMPT\x10\x02\x12\x11\n\rDISPEL_PLAYER\x10\x03\x12\x12\n\x0eMONSTER_STATUS\x10\x04\x12\r\n\tREMAINING\x10\x05\x12\x0c\n\x08STANDARD\x10\x06\x12\t\n\x05\x44\x45\x41TH\x10\x07\"u\n\x0c\x42\x65haviorItem\x12.\n\x05group\x18\x02 \x01(\x0b\x32\x1d.dadguide_proto.BehaviorGroupH\x00\x12,\n\x08\x62\x65havior\x18\x03 \x01(\x0b\x32\x18.dadguide_proto.BehaviorH\x00\x42\x07\n\x05value\"c\n\x08\x42\x65havior\x12,\n\tcondition\x18\x01 \x01(\x0b\x32\x19.dadguide_proto.Condition\x12\x16\n\x0e\x65nemy_skill_id\x18\x02 \x01(\x05\x12\x11\n\tchild_ids\x18\x03 \x03(\x05\"\xbc\x02\n\tCondition\x12\x14\n\x0chp_threshold\x18\x01 \x01(\x05\x12\x12\n\nuse_chance\x18\x02 \x01(\x05\x12\x15\n\rrepeats_every\x18\x03 \x01(\x05\x12\x17\n\x0fglobal_one_time\x18\x04 \x01(\x08\x12!\n\x19trigger_enemies_remaining\x18\x05 \x01(\x05\x12\x13\n\x0bif_defeated\x18\x06 \x01(\x08\x12\x1f\n\x17if_attributes_available\x18\x07 \x01(\x08\x12\x18\n\x10trigger_monsters\x18\x08 \x03(\x05\x12\x16\n\x0etrigger_combos\x18\t \x01(\x05\x12\x1a\n\x12if_nothing_matched\x18\n \x01(\x08\x12\x14\n\x0ctrigger_turn\x18\x0b \x01(\x05\x12\x18\n\x10trigger_turn_end\x18\x0c \x01(\x05\x62\x06proto3')
 )
 
 
+
+_MONSTERBEHAVIORWITHOVERRIDES_STATUS = _descriptor.EnumDescriptor(
+  name='Status',
+  full_name='dadguide_proto.MonsterBehaviorWithOverrides.Status',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='NOT_APPROVED', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='APPROVED_AS_IS', index=1, number=1,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='NEEDS_REAPPROVAL', index=2, number=2,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='APPROVED_WITH_CHANGES', index=3, number=3,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=263,
+  serialized_end=358,
+)
+_sym_db.RegisterEnumDescriptor(_MONSTERBEHAVIORWITHOVERRIDES_STATUS)
 
 _BEHAVIORGROUP_GROUPTYPE = _descriptor.EnumDescriptor(
   name='GroupType',
@@ -66,8 +96,8 @@ _BEHAVIORGROUP_GROUPTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=551,
-  serialized_end=684,
+  serialized_start=717,
+  serialized_end=850,
 )
 _sym_db.RegisterEnumDescriptor(_BEHAVIORGROUP_GROUPTYPE)
 
@@ -100,11 +130,19 @@ _MONSTERBEHAVIORWITHOVERRIDES = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='status', full_name='dadguide_proto.MonsterBehaviorWithOverrides.status', index=3,
+      number=4, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
+    _MONSTERBEHAVIORWITHOVERRIDES_STATUS,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -113,7 +151,7 @@ _MONSTERBEHAVIORWITHOVERRIDES = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=39,
-  serialized_end=192,
+  serialized_end=358,
 )
 
 
@@ -157,8 +195,8 @@ _MONSTERBEHAVIOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=194,
-  serialized_end=296,
+  serialized_start=360,
+  serialized_end=462,
 )
 
 
@@ -195,8 +233,8 @@ _LEVELBEHAVIOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=298,
-  serialized_end=375,
+  serialized_start=464,
+  serialized_end=541,
 )
 
 
@@ -241,8 +279,8 @@ _BEHAVIORGROUP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=378,
-  serialized_end=684,
+  serialized_start=544,
+  serialized_end=850,
 )
 
 
@@ -282,8 +320,8 @@ _BEHAVIORITEM = _descriptor.Descriptor(
       name='value', full_name='dadguide_proto.BehaviorItem.value',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=686,
-  serialized_end=803,
+  serialized_start=852,
+  serialized_end=969,
 )
 
 
@@ -327,8 +365,8 @@ _BEHAVIOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=805,
-  serialized_end=904,
+  serialized_start=971,
+  serialized_end=1070,
 )
 
 
@@ -435,12 +473,14 @@ _CONDITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=907,
-  serialized_end=1223,
+  serialized_start=1073,
+  serialized_end=1389,
 )
 
 _MONSTERBEHAVIORWITHOVERRIDES.fields_by_name['levels'].message_type = _LEVELBEHAVIOR
 _MONSTERBEHAVIORWITHOVERRIDES.fields_by_name['level_overrides'].message_type = _LEVELBEHAVIOR
+_MONSTERBEHAVIORWITHOVERRIDES.fields_by_name['status'].enum_type = _MONSTERBEHAVIORWITHOVERRIDES_STATUS
+_MONSTERBEHAVIORWITHOVERRIDES_STATUS.containing_type = _MONSTERBEHAVIORWITHOVERRIDES
 _MONSTERBEHAVIOR.fields_by_name['levels'].message_type = _LEVELBEHAVIOR
 _LEVELBEHAVIOR.fields_by_name['groups'].message_type = _BEHAVIORGROUP
 _BEHAVIORGROUP.fields_by_name['group_type'].enum_type = _BEHAVIORGROUP_GROUPTYPE
