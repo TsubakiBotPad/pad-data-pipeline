@@ -41,9 +41,9 @@ class CrossServerCard(object):
         self.leader_skill = make_cross_server_skill(jp_card.leader_skill, na_card.leader_skill, kr_card.leader_skill)
         self.active_skill = make_cross_server_skill(jp_card.active_skill, na_card.active_skill, kr_card.active_skill)
 
-        (jp_behavior, na_behavior) = make_cross_server_enemy_behavior(jp_card.enemy_skills, na_card.enemy_skills)
-        self.enemy_behavior_jp = jp_behavior
-        self.enemy_behavior = na_behavior
+        self.enemy_behavior = make_cross_server_enemy_behavior(jp_card.enemy_skills,
+                                                               na_card.enemy_skills,
+                                                               kr_card.enemy_skills)
 
         # This is mostly just for integration test purposes. Should really be fixed a different way.
         self.en_ls_text = None
@@ -131,18 +131,33 @@ def make_cross_server_card(jp_card: MergedCard,
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
 
 
+class CrossServerEsInstance(object):
+    """A per-monster skill info across servers.
+
+    Not sure why we need both of these.
+    """
+
+    def __init__(self, jp_skill: EsInstance, na_skill: EsInstance, kr_skill: EsInstance):
+        self.enemy_skill_id = (jp_skill or na_skill or kr_skill).enemy_skill_id
+        self.jp_skill = jp_skill
+        self.na_skill = na_skill
+        self.kr_skill = kr_skill
+
+
 def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
-                                     na_skills: List[EsInstance]) -> List[EsInstance]:
-    """Creates enemy data by combining the JP enemy info with the NA enemy info."""
+                                     na_skills: List[EsInstance],
+                                     kr_skills: List[EsInstance]) -> List[CrossServerEsInstance]:
+    """Creates enemy data by combining the JP/NA/KR enemy info."""
     jp_skills = list(jp_skills) or []
     na_skills = list(na_skills) or []
+    kr_skills = list(kr_skills) or []
 
     if len(jp_skills) > len(na_skills):
-        return jp_skills, jp_skills
+        na_skills = jp_skills
+        kr_skills = jp_skills
     elif len(na_skills) > len(jp_skills):
-        return na_skills, na_skills
-    elif not na_skills and not jp_skills:
-        return [], []
+        jp_skills = na_skills
+        kr_skills = na_skills
 
     def override_if_necessary(override_skills: List[EsInstance], dest_skills: List[EsInstance]):
         # Then check if we need to individually overwrite
@@ -156,8 +171,20 @@ def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
     # Override priority: JP > NA, NA -> JP
     override_if_necessary(jp_skills, na_skills)
     override_if_necessary(na_skills, jp_skills)
+    override_if_necessary(na_skills, kr_skills)
 
-    return jp_skills, na_skills
+    return _combine_es(jp_skills, na_skills, kr_skills)
+
+
+def _combine_es(jp_skills: List[EsInstance],
+                na_skills: List[EsInstance],
+                kr_skills: List[EsInstance]) -> List[CrossServerEsInstance]:
+    if not len(jp_skills) == len(na_skills) and len(na_skills) == len(kr_skills):
+        raise ValueError('unexpected skill lengths')
+    results = []
+    for idx, jp_skill in enumerate(jp_skills):
+        results.append(CrossServerEsInstance(jp_skill, na_skills[idx], kr_skills[idx]))
+    return results
 
 
 class CrossServerDungeon(object):
