@@ -81,7 +81,7 @@ class EnemyData(SimpleSqlItem):
     @staticmethod
     def from_mb(o: MonsterBehavior) -> 'EnemyData':
         return EnemyData(
-            enemy_id=o.enemy_skill_id,
+            enemy_id=o.monster_id,
             behavior=o.SerializeToString())
 
     def __init__(self,

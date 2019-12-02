@@ -14,14 +14,7 @@ def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehav
     output += '\nstart/max counter: {}'.format(card.enemy_skill_max_counter)
     output += '\ncounter increment: {}'.format(card.enemy_skill_counter_increment)
 
-    library = {}
-    for x in csc.enemy_behavior:
-        library[x.enemy_skill_id] = x.behavior
-        if isinstance(x.behavior, ESSkillSet):
-            for y in x.behavior.skills:
-                library[y.enemy_skill_id] = y
-
-    library = {x.enemy_skill_id: x.behavior for x in csc.enemy_behavior}
+    library = {x.enemy_skill_id: x.na_skill.behavior for x in csc.enemy_behavior}
     output += '\n' + format_monster_behavior(mb, library)
 
     with open(file_path, 'w', encoding='utf-8') as f:
