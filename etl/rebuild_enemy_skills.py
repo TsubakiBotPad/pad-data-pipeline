@@ -96,11 +96,12 @@ def run(args):
     jp_db = merged_database.Database(Server.jp, raw_input_dir)
     na_db = merged_database.Database(Server.na, raw_input_dir)
 
-    # jp_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
+    jp_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
     na_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
 
     print('merging data')
-    cross_db = CrossServerDatabase(na_db, na_db, na_db)
+    # Skipping KR database; we don't need it to compute ES
+    cross_db = CrossServerDatabase(jp_db, na_db, na_db)
 
     combined_cards = cross_db.all_cards
 
