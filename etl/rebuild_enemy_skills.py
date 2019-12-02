@@ -40,7 +40,7 @@ def parse_args():
 
 
 def process_card(csc: CrossServerCard) -> MonsterBehavior:
-    enemy_behavior = csc.enemy_behavior
+    enemy_behavior = [x.na_skill for x in csc.enemy_behavior]
     card = csc.na_card.card
     if not enemy_behavior:
         return None

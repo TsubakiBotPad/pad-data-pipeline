@@ -1,5 +1,6 @@
 import decimal
 import time
+import binascii
 from datetime import datetime, date
 from enum import Enum
 
@@ -33,6 +34,8 @@ def _value_to_sql_param(v):
         return "'{}'".format(v.replace(tzinfo=None).isoformat())
     elif type(v) in [bool]:
         return str(v)
+    elif type(v) == bytes:
+        return '0x' + binascii.hexlify(bytearray(v)).decode('ascii')
     else:
         return None
 
