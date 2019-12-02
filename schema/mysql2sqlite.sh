@@ -13,10 +13,10 @@
 
 set -e
 
-mysqldump --default-character-set=utf8 --compatible=ansi --skip-extended-insert --compact  "$@" | \
-#mysqldump --skip-extended-insert --compact  "$@" | \
-
-awk '
+mysqldump --hex-blob --default-character-set=utf8 --compatible=ansi --skip-extended-insert --compact "$@" |
+  # Fix for binary hex blobs
+  sed -r "s/0x([[:xdigit:]]+)/X'\1'/" |
+  awk '
 
 BEGIN {
 	FS=",$"
