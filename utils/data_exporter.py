@@ -176,13 +176,14 @@ def save_database(output_dir: str, db: Database):
         if parsed:
             save_object(skill_dir, '{}_parsed.json'.format(es.enemy_skill_id), parsed)
 
-    for b in db.bonuses:
-        if b.dungeon:
-            # We don't want to save the whole dungeon with the bonus, it's excessive
-            b.dungeon = b.dungeon.clean_name
-    db.bonuses.sort(
-        key=lambda x: [x.server, x.start_timestamp, x.group.name if x.group else "", x.dungeon or "", x.bonus.bonus_id])
-    save_single_file(output_dir, 'bonuses', db.bonuses)
+    # Disable bonuses; this is very spammy
+    # for b in db.bonuses:
+    #     if b.dungeon:
+    #         # We don't want to save the whole dungeon with the bonus, it's excessive
+    #         b.dungeon = b.dungeon.clean_name
+    # db.bonuses.sort(
+    #     key=lambda x: [x.server, x.start_timestamp, x.group.name if x.group else "", x.dungeon or "", x.bonus.bonus_id])
+    # save_single_file(output_dir, 'bonuses', db.bonuses)
 
     save_single_file(output_dir, 'exchanges', db.exchange)
     save_single_file(output_dir, 'egg_machines', db.egg_machines)
