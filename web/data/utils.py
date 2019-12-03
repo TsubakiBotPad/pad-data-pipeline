@@ -1,3 +1,4 @@
+import binascii
 from datetime import datetime
 from decimal import Decimal
 
@@ -14,6 +15,8 @@ def fix_row(row):
             fixed_data = float(data)
         elif type(data) is datetime:
             fixed_data = data.isoformat(' ')
+        elif type(data) == bytes:
+            fixed_data = '0x' + binascii.hexlify(bytearray(data)).decode('ascii')
         elif type(data) not in [int, float, str]:
             fixed_data = str(data)
         else:

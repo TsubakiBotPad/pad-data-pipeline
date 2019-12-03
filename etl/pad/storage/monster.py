@@ -2,12 +2,10 @@ from datetime import date
 from typing import List, Optional
 
 from pad.common.shared_types import Server, MonsterId, MonsterNo, EvolutionType
+from pad.db import sql_item
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
-from pad.raw.skills.active_skill_info import ActiveSkill as RawActiveSkill
-from pad.raw.skills.active_skill_text import AsTextConverter
-from pad.raw.skills.leader_skill_info import LeaderSkill as RawLeaderSkill
-from pad.raw.skills.leader_skill_text import LsTextConverter
-from pad.raw_processor.crossed_data import CrossServerCard
+from pad.raw.skills import skill_text_typing
+from pad.raw_processor.crossed_data import CrossServerCard, CrossServerSkill
 from pad.storage.series import Series
 
 
@@ -232,18 +230,29 @@ class ActiveSkill(SimpleSqlItem):
     KEY_COL = 'active_skill_id'
 
     @staticmethod
-    def from_as(jp_skill: RawActiveSkill, na_skill: RawActiveSkill, kr_skill: RawActiveSkill) -> 'ActiveSkill':
-        na_description = na_skill.full_text(AsTextConverter())
+    def from_css(css: CrossServerSkill) -> 'ActiveSkill':
+        jp_skill = css.jp_skill
+        na_skill = css.na_skill
+        kr_skill = css.kr_skill
+
+        na_description = css.en_text
+        tags = skill_text_typing.format_conditions(css.skill_type_tags)
+
+        # In the event that we don't have KR data, use the NA name and calculated description.
+        kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
+        kr_desc = kr_skill.raw_description if jp_skill != kr_skill else na_description
+
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
             name_jp=jp_skill.name,
             name_na=na_skill.name,
-            name_kr=kr_skill.name,
+            name_kr=kr_name,
             desc_jp=jp_skill.raw_description,
             desc_na=na_description,
-            desc_kr=kr_skill.raw_description,
+            desc_kr=kr_desc,
             turn_max=jp_skill.turn_max,
-            turn_min=jp_skill.turn_min)
+            turn_min=jp_skill.turn_min,
+            tags=tags)
 
     def __init__(self,
                  active_skill_id: int = None,
@@ -255,6 +264,7 @@ class ActiveSkill(SimpleSqlItem):
                  desc_kr: str = None,
                  turn_max: int = None,
                  turn_min: int = None,
+                 tags: str = None,
                  tstamp: int = None):
         self.active_skill_id = active_skill_id
         self.name_jp = name_jp
@@ -265,6 +275,7 @@ class ActiveSkill(SimpleSqlItem):
         self.desc_kr = desc_kr
         self.turn_max = turn_max
         self.turn_min = turn_min
+        self.tags = tags
         self.tstamp = tstamp
 
     def __str__(self):
@@ -277,8 +288,13 @@ class LeaderSkill(SimpleSqlItem):
     KEY_COL = 'leader_skill_id'
 
     @staticmethod
-    def from_ls(jp_skill: RawLeaderSkill, na_skill: RawLeaderSkill, kr_skill: RawLeaderSkill) -> 'LeaderSkill':
-        na_description = na_skill.full_text(LsTextConverter())
+    def from_css(css: CrossServerSkill) -> 'LeaderSkill':
+        jp_skill = css.jp_skill
+        na_skill = css.na_skill
+        kr_skill = css.kr_skill
+
+        na_description = css.en_text
+        tags = skill_text_typing.format_conditions(css.skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
         kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
@@ -295,7 +311,8 @@ class LeaderSkill(SimpleSqlItem):
             max_hp=jp_skill.hp,
             max_atk=jp_skill.atk,
             max_rcv=jp_skill.rcv,
-            max_shield=jp_skill.shield)
+            max_shield=jp_skill.shield,
+            tags=tags)
 
     def __init__(self,
                  leader_skill_id: int = None,
@@ -309,6 +326,7 @@ class LeaderSkill(SimpleSqlItem):
                  max_atk: float = None,
                  max_rcv: float = None,
                  max_shield: float = None,
+                 tags: str = None,
                  tstamp: int = None):
         self.leader_skill_id = leader_skill_id
         self.name_jp = name_jp
@@ -321,6 +339,7 @@ class LeaderSkill(SimpleSqlItem):
         self.max_atk = max_atk
         self.max_rcv = max_rcv
         self.max_shield = max_shield
+        self.tags = tags
         self.tstamp = tstamp
 
     def __str__(self):
@@ -362,6 +381,13 @@ class Awakening(SimpleSqlItem):
 
     def exists_strategy(self):
         return ExistsStrategy.BY_VALUE
+
+    def value_exists_sql(self):
+        sql = """
+        SELECT awakening_id FROM awakenings
+        WHERE monster_id = {monster_id} and order_idx = {order_idx}
+        """.format(**sql_item._object_to_sql_params(self))
+        return sql
 
     def _non_auto_insert_cols(self):
         return [self._key()]

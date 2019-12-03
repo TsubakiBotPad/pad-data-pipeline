@@ -2,10 +2,11 @@ import datetime
 import json
 import os
 import re
+from typing import Union
 
 import pytz
 
-from pad.common.shared_types import JsonType, Printable, Server, dump_helper
+from pad.common.shared_types import JsonType, Printable, Server, dump_helper, ListJsonType
 
 # Re-exporting these types; should fix imports
 Printable = Printable
@@ -58,13 +59,6 @@ def ghtime(time_str: str, server: str) -> datetime.datetime:
     }
     timezone_str = '{} {}'.format(time_str, tz_offsets[server])
     return datetime.datetime.strptime(timezone_str, '%y%m%d%H%M%S %z')
-
-
-# TODO: delete this
-def gh_to_timestamp(time_str: str, server: str) -> int:
-    """Converts a time string to a timestamp."""
-    dt = ghtime(time_str, server)
-    return int(dt.timestamp())
 
 
 def gh_to_timestamp_2(time_str: str, server: Server) -> int:
@@ -126,12 +120,12 @@ def identify_server(json_file: str, server: str) -> str:
     raise Exception('Server not supplied and not automatically detected from path')
 
 
-def load_raw_json(data_dir: str = None, json_file: str = None, file_name: str = None) -> JsonType:
+def load_raw_json(data_dir: str = None, json_file: str = None, file_name: str = None) -> Union[JsonType, ListJsonType]:
     """Load JSON file."""
     if json_file is None:
         json_file = os.path.join(data_dir, file_name)
 
-    with open(json_file) as f:
+    with open(json_file, encoding='utf-8') as f:
         return json.load(f)
 
 

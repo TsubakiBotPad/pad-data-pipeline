@@ -7,12 +7,15 @@ from typing import List, Optional, Union
 
 from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
-from pad.raw import Dungeon
+from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
+from pad.raw.enemy_skills.enemy_skill_info import EsInstance
+from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en_active_skill_text import EnAsTextConverter
 from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
+from pad.raw.skills.skill_text_typing import AsCondition, LsCondition
 from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
@@ -37,6 +40,10 @@ class CrossServerCard(object):
         # This is an initial pass; the more 'correct' versions override later
         self.leader_skill = make_cross_server_skill(jp_card.leader_skill, na_card.leader_skill, kr_card.leader_skill)
         self.active_skill = make_cross_server_skill(jp_card.active_skill, na_card.active_skill, kr_card.active_skill)
+
+        self.enemy_behavior = make_cross_server_enemy_behavior(jp_card.enemy_skills,
+                                                               na_card.enemy_skills,
+                                                               kr_card.enemy_skills)
 
         # This is mostly just for integration test purposes. Should really be fixed a different way.
         self.en_ls_text = None
@@ -71,7 +78,7 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
 
 def is_bad_name(name):
     """Finds names that are currently placeholder data."""
-    return any(x in name for x in ['***', '???', '無し'])
+    return any([x in name for x in ['***', '???']]) or any([x == name for x in ['None', '無し', '없음', 'なし']])
 
 
 def _compare_named(override, dest):
@@ -110,19 +117,6 @@ def make_cross_server_card(jp_card: MergedCard,
         dest_card.leader_skill = _compare_named(source_card.leader_skill, dest_card.leader_skill)
         dest_card.active_skill = _compare_named(source_card.active_skill, dest_card.active_skill)
 
-        # Same concept with enemy skills, first check if we need to bulk overwrite
-        if len(source_card.enemy_behavior) != len(dest_card.enemy_behavior):
-            dest_card.enemy_behavior = source_card.enemy_behavior
-
-        # Then check if we need to individually overwrite
-        for idx in range(len(source_card.enemy_behavior)):
-            if type(source_card.enemy_behavior[idx]) != type(dest_card.enemy_behavior[idx]):
-                dest_card.enemy_behavior[idx] = source_card.enemy_behavior[idx]
-            else:
-                # Fill the source name in as a hack.
-                # TODO: rename jp_name to alt_name or something
-                dest_card.enemy_behavior[idx].jp_name = (source_card.enemy_behavior[idx].name or
-                                                         dest_card.enemy_behavior[idx].name)
         return dest_card
 
     # Override priority: JP > NA, NA -> JP, NA -> KR.
@@ -135,6 +129,62 @@ def make_cross_server_card(jp_card: MergedCard,
         return None, 'Debug monster'
 
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
+
+
+class CrossServerEsInstance(object):
+    """A per-monster skill info across servers.
+
+    Not sure why we need both of these.
+    """
+
+    def __init__(self, jp_skill: EsInstance, na_skill: EsInstance, kr_skill: EsInstance):
+        self.enemy_skill_id = (jp_skill or na_skill or kr_skill).enemy_skill_id
+        self.jp_skill = jp_skill
+        self.na_skill = na_skill
+        self.kr_skill = kr_skill
+
+
+def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
+                                     na_skills: List[EsInstance],
+                                     kr_skills: List[EsInstance]) -> List[CrossServerEsInstance]:
+    """Creates enemy data by combining the JP/NA/KR enemy info."""
+    jp_skills = list(jp_skills) or []
+    na_skills = list(na_skills) or []
+    kr_skills = list(kr_skills) or []
+
+    if len(jp_skills) > len(na_skills):
+        na_skills = jp_skills
+        kr_skills = jp_skills
+    elif len(na_skills) > len(jp_skills):
+        jp_skills = na_skills
+        kr_skills = na_skills
+
+    def override_if_necessary(override_skills: List[EsInstance], dest_skills: List[EsInstance]):
+        # Then check if we need to individually overwrite
+        for idx in range(len(override_skills)):
+            override_skill = override_skills[idx].behavior
+
+            dest_skill = dest_skills[idx].behavior
+            if override_skill is _compare_named(override_skill, dest_skill):
+                dest_skills[idx] = override_skills[idx]
+
+    # Override priority: JP > NA, NA -> JP
+    override_if_necessary(jp_skills, na_skills)
+    override_if_necessary(na_skills, jp_skills)
+    override_if_necessary(na_skills, kr_skills)
+
+    return _combine_es(jp_skills, na_skills, kr_skills)
+
+
+def _combine_es(jp_skills: List[EsInstance],
+                na_skills: List[EsInstance],
+                kr_skills: List[EsInstance]) -> List[CrossServerEsInstance]:
+    if not len(jp_skills) == len(na_skills) and len(na_skills) == len(kr_skills):
+        raise ValueError('unexpected skill lengths')
+    results = []
+    for idx, jp_skill in enumerate(jp_skills):
+        results.append(CrossServerEsInstance(jp_skill, na_skills[idx], kr_skills[idx]))
+    return results
 
 
 class CrossServerDungeon(object):
@@ -239,10 +289,13 @@ EitherSkillType = Union[ActiveSkill, LeaderSkill]
 
 class CrossServerSkill(object):
     def __init__(self, jp_skill: EitherSkillType, na_skill: EitherSkillType, kr_skill: EitherSkillType):
-        self.skill_id = jp_skill.skill_id
+        self.skill_id = (jp_skill or na_skill or kr_skill).skill_id
         self.jp_skill = jp_skill
         self.na_skill = na_skill
         self.kr_skill = kr_skill
+
+        self.en_text = None
+        self.skill_type_tags = []  # type: List[Union[LsCondition, AsCondition]]
 
 
 def build_cross_server_skills(jp_skills: List[EitherSkillType],
@@ -284,6 +337,43 @@ def make_cross_server_skill(jp_skill: EitherSkillType,
         return None
 
 
+class CrossServerEnemySkill(object):
+    def __init__(self, jp_skill: EnemySkill, na_skill: EnemySkill, kr_skill: EnemySkill):
+        self.enemy_skill_id = (jp_skill or na_skill or kr_skill).enemy_skill_id
+        self.jp_skill = jp_skill
+        self.na_skill = na_skill
+        self.kr_skill = kr_skill
+
+
+def build_cross_server_enemy_skills(jp_skills: List[EnemySkill],
+                                    na_skills: List[EnemySkill],
+                                    kr_skills: List[EnemySkill]) -> List[CrossServerEnemySkill]:
+    jp_map = {skill.enemy_skill_id: skill for skill in jp_skills}
+    na_map = {skill.enemy_skill_id: skill for skill in na_skills}
+    kr_map = {skill.enemy_skill_id: skill for skill in kr_skills}
+
+    all_ids = set()
+    all_ids.update(jp_map.keys())
+    all_ids.update(na_map.keys())
+    all_ids.update(kr_map.keys())
+
+    results = []  # type: List[CrossServerEnemySkill]
+    for skill_id in all_ids:
+        jp_skill = jp_map.get(skill_id, None)
+        na_skill = na_map.get(skill_id, None)
+        kr_skill = kr_map.get(skill_id, None)
+
+        # Override priority: JP > NA, NA -> JP, NA -> KR.
+        na_skill = _compare_named(jp_skill, na_skill)
+        jp_skill = _compare_named(na_skill, jp_skill)
+        kr_skill = _compare_named(na_skill, kr_skill)
+
+        if na_skill or jp_skill or kr_skill:
+            results.append(CrossServerEnemySkill(jp_skill, na_skill, kr_skill))
+
+    return results
+
+
 class CrossServerDatabase(object):
     def __init__(self, jp_database: Database, na_database: Database, kr_database: Database):
         self.all_cards = build_cross_server_cards(jp_database,
@@ -296,17 +386,45 @@ class CrossServerDatabase(object):
                                                        na_database.leader_skills,
                                                        kr_database.leader_skills)
 
+        ls_converter = EnLsTextConverter()
+        for ls in self.leader_skills:
+            ls.en_text = ls.jp_skill.full_text(ls_converter)
+            ls.skill_type_tags = list(skill_text_typing.parse_ls_conditions(ls.en_text))
+            ls.skill_type_tags.sort(key=lambda x: x.value)
+
         self.active_skills = build_cross_server_skills(jp_database.active_skills,
                                                        na_database.active_skills,
                                                        kr_database.active_skills)
+
+        as_converter = EnAsTextConverter()
+        for ask in self.active_skills:
+            ask.en_text = ask.jp_skill.full_text(as_converter)
+            ask.skill_type_tags = list(skill_text_typing.parse_as_conditions(ask.en_text))
+            ask.skill_type_tags.sort(key=lambda x: x.value)
 
         self.dungeons = build_cross_server_dungeons(jp_database,
                                                     na_database,
                                                     kr_database)  # type: List[CrossServerDungeon]
 
+        self.enemy_skills = build_cross_server_enemy_skills(jp_database.raw_enemy_skills,
+                                                            na_database.raw_enemy_skills,
+                                                            kr_database.raw_enemy_skills)
+
         self.jp_bonuses = jp_database.bonuses
         self.na_bonuses = na_database.bonuses
         self.kr_bonuses = kr_database.bonuses
+
+        self.jp_exchange = jp_database.exchange
+        self.na_exchange = na_database.exchange
+        self.kr_exchange = kr_database.exchange
+
+        self.jp_egg_machines = jp_database.egg_machines
+        self.na_egg_machines = na_database.egg_machines
+        self.kr_egg_machines = kr_database.egg_machines
+
+        self.jp_exchange = jp_database.exchange
+        self.na_exchange = na_database.exchange
+        self.kr_exchange = kr_database.exchange
 
         self.monster_id_to_card = {c.monster_id: c for c in self.all_cards}
         self.leader_id_to_leader = {s.skill_id: s for s in self.leader_skills}
@@ -346,100 +464,15 @@ class CrossServerDatabase(object):
 
     def save(self, output_dir: str, file_name: str, obj: object, pretty: bool):
         output_file = os.path.join(output_dir, '{}.json'.format(file_name))
-        with open(output_file, 'w') as f:
+        with open(output_file, 'w', encoding='utf-8') as f:
             pad_util.json_file_dump(obj, f, pretty)
 
     def save_all(self, output_dir: str, pretty: bool):
         self.save(output_dir, 'all_cards', self.all_cards, pretty)
         self.save(output_dir, 'dungeons', self.dungeons, pretty)
+        self.save(output_dir, 'active_skills', self.active_skills, pretty)
+        self.save(output_dir, 'leader_skills', self.leader_skills, pretty)
+        self.save(output_dir, 'enemy_skills', self.enemy_skills, pretty)
         self.save(output_dir, 'jp_bonuses', self.jp_bonuses, pretty)
         self.save(output_dir, 'na_bonuses', self.na_bonuses, pretty)
         self.save(output_dir, 'kr_bonuses', self.kr_bonuses, pretty)
-
-    # TODO: move this to another file
-    # TODO: check with KR data
-    def card_diagnostics(self):
-        print('checking', len(self.all_cards), 'cards')
-        for c in self.all_cards:
-            jpc = c.jp_card
-            nac = c.na_card
-            krc = c.kr_card
-
-            if jpc.card.type_1_id != nac.card.type_1_id:
-                print('type1 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_1_id, nac.card.type_1_id))
-
-            if jpc.card.type_2_id != nac.card.type_2_id:
-                print('type2 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_2_id, nac.card.type_2_id))
-
-            if jpc.card.type_3_id != nac.card.type_3_id:
-                print('type3 failure: {} - {} {}'.format(nac.card.name, jpc.card.type_3_id, nac.card.type_3_id))
-
-            if krc.card.type_1_id != nac.card.type_1_id:
-                print('kr type1 failure: {} - {} {}'.format(nac.card.name, krc.card.type_1_id, nac.card.type_1_id))
-
-            if krc.card.type_2_id != nac.card.type_2_id:
-                print('kr type2 failure: {} - {} {}'.format(nac.card.name, krc.card.type_2_id, nac.card.type_2_id))
-
-            if krc.card.type_3_id != nac.card.type_3_id:
-                print('kr type3 failure: {} - {} {}'.format(nac.card.name, krc.card.type_3_id, nac.card.type_3_id))
-
-            jpcas = jpc.active_skill
-            nacas = nac.active_skill
-            krcas = krc.active_skill
-            if jpcas and nacas and jpcas.skill_id != nacas.skill_id:
-                print('active skill failure: {} - {} / {}'.format(nac.card.name, jpcas.skill_id, nacas.skill_id))
-            if krcas and nacas and krcas.skill_id != nacas.skill_id:
-                print('active skill failure: {} - {} / {}'.format(nac.card.name, krcas.skill_id, nacas.skill_id))
-
-            jpcls = jpc.leader_skill
-            nacls = nac.leader_skill
-            krcls = krc.leader_skill
-            if jpcls and nacls and jpcls.skill_id != nacls.skill_id:
-                print('leader skill failure: {} - {} / {}'.format(nac.card.name, jpcls.skill_id, nacls.skill_id))
-            if krcls and nacls and krcls.skill_id != nacls.skill_id:
-                print('leader skill failure: {} - {} / {}'.format(nac.card.name, krcls.skill_id, nacls.skill_id))
-
-            if len(jpc.card.awakenings) != len(nac.card.awakenings):
-                print('awakening : {} - {} / {}'.format(nac.card.name,
-                                                        len(jpc.card.awakenings),
-                                                        len(nac.card.awakenings)))
-
-            if len(krc.card.awakenings) != len(nac.card.awakenings):
-                print('awakening : {} - {} / {}'.format(nac.card.name,
-                                                        len(krc.card.awakenings),
-                                                        len(nac.card.awakenings)))
-
-            if len(jpc.card.super_awakenings) != len(nac.card.super_awakenings):
-                print('super awakening : {} - {} / {}'.format(nac.card.name,
-                                                              len(jpc.card.super_awakenings),
-                                                              len(nac.card.super_awakenings)))
-
-            if len(krc.card.super_awakenings) != len(nac.card.super_awakenings):
-                print('super awakening : {} - {} / {}'.format(nac.card.name,
-                                                              len(krc.card.super_awakenings),
-                                                              len(nac.card.super_awakenings)))
-
-    def dungeon_diagnostics(self):
-        print('checking', len(self.dungeons), 'dungeons')
-        for d in self.dungeons:
-            jpd = d.jp_dungeon
-            nad = d.na_dungeon
-            krd = d.kr_dungeon
-
-            if len(jpd.sub_dungeons) != len(nad.sub_dungeons):
-                print('Floor count failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
-                                                                      len(jpd.sub_dungeons),
-                                                                      len(nad.sub_dungeons)))
-
-            if len(krd.sub_dungeons) != len(nad.sub_dungeons):
-                print('Floor count failure: {} / {} - {} / {}'.format(krd.clean_name, nad.clean_name,
-                                                                      len(krd.sub_dungeons),
-                                                                      len(nad.sub_dungeons)))
-
-            if jpd.full_dungeon_type != nad.full_dungeon_type:
-                print('Dungeon type failure: {} / {} - {} / {}'.format(jpd.clean_name, nad.clean_name,
-                                                                       jpd.full_dungeon_type, nad.full_dungeon_type))
-
-            if krd.full_dungeon_type != nad.full_dungeon_type:
-                print('Dungeon type failure: {} / {} - {} / {}'.format(krd.clean_name, nad.clean_name,
-                                                                       krd.full_dungeon_type, nad.full_dungeon_type))

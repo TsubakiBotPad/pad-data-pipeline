@@ -19,6 +19,7 @@ class SubDungeon(pad_util.Printable):
 
     def __init__(self, dungeon_id: DungeonId, raw: List[Any]):
         self.sub_dungeon_id = SubDungeonId(dungeon_id * 1000 + int(raw[0]))
+        self.simple_sub_dungeon_id = int(raw[0])
         self.raw_name = raw[1]
         self.clean_name = pad_util.strip_colors(self.raw_name)
         self.floors = int(raw[2])
@@ -107,8 +108,9 @@ class SubDungeon(pad_util.Printable):
             i += 1
             # self.properties = self.remaining_fields[i++].split('|');
 
+
 def __str__(self):
-        return 'SubDungeon({} - {})'.format(self.sub_dungeon_id, self.clean_name)
+    return 'SubDungeon({} - {})'.format(self.sub_dungeon_id, self.clean_name)
 
 
 prefix_to_dungeontype = {
@@ -142,7 +144,7 @@ class Dungeon(pad_util.Printable):
         self.clean_name = pad_util.strip_colors(self.name)
 
         # Basic dungeon type computed by scanning the name for flags.
-        self.dungeon_type = None # type: Optional[str]
+        self.dungeon_type = None  # type: Optional[str]
 
         # A more detailed dungeon type.
         self.full_dungeon_type = dungeon_types.RawDungeonType(int(raw[3]))

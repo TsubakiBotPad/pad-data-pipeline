@@ -1,3 +1,5 @@
+import json
+import os
 from collections import defaultdict
 
 from pad.db.db_util import DbWrapper
@@ -5,17 +7,19 @@ from pad.raw_processor import crossed_data
 from pad.storage.monster import MonsterWithSeries
 from pad.storage.series import Series
 
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 
 class SeriesProcessor(object):
     def __init__(self, data: crossed_data.CrossServerDatabase):
+        with open(os.path.join(__location__, 'series.json')) as f:
+            self.series = json.load(f)
         self.data = data
 
     def pre_process(self, db: DbWrapper):
-        unsorted_item = Series(series_id=0,
-                               name_jp='Unsorted',
-                               name_na='Unsorted',
-                               name_kr='Unsorted')
-        db.insert_or_update(unsorted_item)
+        for raw in self.series:
+            item = Series.from_json(raw)
+            db.insert_or_update(item)
 
     def post_process(self, db: DbWrapper):
         self._try_ancestor(db)
