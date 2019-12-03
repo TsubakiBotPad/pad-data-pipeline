@@ -140,7 +140,8 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
 
         for repeat_action in action.repeating:
             rg = hg.children.add().group
-            rg.condition.repeats_every = repeat_action.interval
+            if repeat_action.interval > 1:
+                rg.condition.repeats_every = repeat_action.interval
             add_behavior_group_from_behaviors(rg.children, BehaviorGroup.STANDARD, repeat_action.skills)
 
     return bg
@@ -197,8 +198,32 @@ def clean_behavior_group(o: BehaviorGroup) -> Optional[BehaviorGroup]:
             r.children.append(c)
 
     # Just strip empty groups entirely
-    if not o.children:
+    if not r.children:
         return None
+
+    # If this group has only one child, and its child is a group, merge up.
+    if len(r.children) == 1 and r.children[0].HasField('group'):
+        child = r.children[0].group
+
+        # Set the grandchildren as children
+        del r.children[:]
+        r.children.extend(child.children)
+
+        # If a condition is present, combine it.
+        if child.HasField('condition'):
+            r.condition.MergeFrom(child.condition)
+
+    # If this group has exactly one child behavior, merge the condition up.
+    if len(r.children) == 1 and r.children[0].HasField('behavior'):
+        child = r.children[0].behavior
+        if child.HasField('condition'):
+            # TODO: this might need special handling for HP. I noticed that a lot of
+            # items have a group of hp <= X containing a behavior with with hp <= X+1. Not
+            # sure which is which is correct but I'm guessing the group is right, meaning
+            # we are doing the wrong thing here. Maybe the right answer is to unset the
+            # child HP if the parent has a HP set.
+            r.condition.MergeFrom(child.condition)
+            child.ClearField('condition')
 
     return r
 
