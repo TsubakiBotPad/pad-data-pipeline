@@ -23,7 +23,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Runs the integration test.", add_help=False)
     inputGroup = parser.add_argument_group("Input")
     inputGroup.add_argument("--input_dir", required=True,
-                            help="Path to a folder where the input data is")
+                            help="Path to a folder where the raw input data is")
     inputGroup.add_argument("--card_id", required=False,
                             help="Process only this card")
     inputGroup.add_argument("--interactive", required=False,
@@ -92,9 +92,8 @@ def run(args):
     behavior_text_dir = os.path.join(args.output_dir, 'behavior_text')
     os.makedirs(behavior_text_dir, exist_ok=True)
 
-    raw_input_dir = os.path.join(args.input_dir, 'raw')
-    jp_db = merged_database.Database(Server.jp, raw_input_dir)
-    na_db = merged_database.Database(Server.na, raw_input_dir)
+    jp_db = merged_database.Database(Server.jp, args.input_dir)
+    na_db = merged_database.Database(Server.na, args.input_dir)
 
     jp_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
     na_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
