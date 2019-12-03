@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from collections import defaultdict
 
@@ -9,6 +10,7 @@ from pad.storage.series import Series
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+logger = logging.getLogger('processor')
 
 class SeriesProcessor(object):
     def __init__(self, data: crossed_data.CrossServerDatabase):
@@ -56,7 +58,10 @@ class SeriesProcessor(object):
         group_id_to_series_ids = defaultdict(set)
         for csc in self.data.ownable_cards:
             monster_id = csc.monster_id
-            series_id = monster_id_to_series_id[monster_id]
+            series_id = monster_id_to_series_id.get(monster_id)
+            if series_id is None:
+                logger.warning('Series was null for monster %d', monster_id)
+                continue
             if series_id == 0:
                 # No useful data from this card
                 continue
