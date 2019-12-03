@@ -98,7 +98,7 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
             f.write('{} : counter increment\n'.format(c.jp_card.card.enemy_skill_counter_increment))
             f.write('\n')
             for b in c.enemy_behavior:
-                f.write(simple_dump_obj(b) + '\n\n')
+                f.write(simple_dump_obj(b.na_skill) + '\n\n')
 
     leader_dir = os.path.join(output_dir, 'leader_skills')
     pathlib.Path(leader_dir).mkdir(parents=True, exist_ok=True)
