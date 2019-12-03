@@ -11,7 +11,7 @@ from pad.common.shared_types import Server
 from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
 from pad.raw.enemy_skills.debug_utils import save_monster_behavior
 from pad.raw.enemy_skills.enemy_skill_info import ESAction, inject_implicit_onetime
-from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file
+from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file, clean_monster_behavior
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
 
@@ -121,6 +121,9 @@ def run(args):
             monster_behavior = process_card(csc)
             if monster_behavior is None:
                 continue
+
+            # Do some sanity cleanup on the behavior
+            monster_behavior = clean_monster_behavior(monster_behavior)
 
             behavior_data_file = os.path.join(behavior_data_dir, '{}.textproto'.format(csc.monster_id))
             safe_save_to_file(behavior_data_file, monster_behavior)
