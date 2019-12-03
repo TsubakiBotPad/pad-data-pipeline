@@ -1,10 +1,10 @@
 import os
-from typing import List
+from typing import List, Optional
 
 from google.protobuf import text_format
 
 from dadguide_proto.enemy_skills_pb2 import BehaviorItem, LevelBehavior, BehaviorGroup, MonsterBehavior, \
-    MonsterBehaviorWithOverrides
+    MonsterBehaviorWithOverrides, Behavior
 from pad.raw.enemy_skills.enemy_skill_info import EsInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Moveset, HpActions, TimedSkillGroup
 
@@ -161,6 +161,65 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
         es_bg.condition.trigger_enemies_remaining = es_moveset.count
 
     return result
+
+
+def clean_monster_behavior(o: MonsterBehavior) -> MonsterBehavior:
+    r = MonsterBehavior()
+    r.monster_id = o.monster_id
+    r.approved = o.approved
+    for l in o.levels:
+        r.levels.append(clean_level_behavior(l))
+    return r
+
+
+def clean_level_behavior(o: LevelBehavior) -> LevelBehavior:
+    r = LevelBehavior()
+    r.level = o.level
+    for g in o.groups:
+        g = clean_behavior_group(g)
+        if g and g.children:
+            r.groups.append(g)
+
+    # Even if the LevelBehavior is empty we shouldn't remove it, although this
+    # seems like an unlikely case.
+    return r
+
+
+def clean_behavior_group(o: BehaviorGroup) -> Optional[BehaviorGroup]:
+    r = BehaviorGroup()
+    r.group_type = o.group_type
+    if o.HasField('condition'):
+        r.condition.CopyFrom(o.condition)
+
+    for c in o.children:
+        c = clean_behavior_item(c)
+        if c:
+            r.children.append(c)
+
+    # Just strip empty groups entirely
+    if not o.children:
+        return None
+
+    return r
+
+
+def clean_behavior_item(o: BehaviorItem) -> Optional[BehaviorItem]:
+    r = BehaviorItem()
+
+    if o.HasField('group'):
+        g = clean_behavior_group(o.group)
+        if not g:
+            return None
+        r.group.CopyFrom(g)
+    elif o.HasField('behavior'):
+        r.behavior.CopyFrom(clean_behavior(o.behavior))
+
+    return r
+
+
+def clean_behavior(o: Behavior) -> Behavior:
+    # No cleanup for behaviors yet
+    return o
 
 
 def safe_save_to_file(file_path: str, obj: MonsterBehavior) -> MonsterBehaviorWithOverrides:
