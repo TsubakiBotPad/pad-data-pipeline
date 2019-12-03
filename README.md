@@ -55,3 +55,16 @@ gsutil -m cp -r -c pad_data/raw gs://dadguide-integration/parser/raw
 It would be really great to have a version that either did the mysql data load, or a sqlite one, or
 maybe just dumps the computed SQL to a file. The latter is probably not sufficient, since some steps
 require index lookups and we would have to fake those.
+
+### Docker based development
+
+In the `docker` directory are utilities to help you get working faster. You can download the database
+backup from production, start a mysql container, and restore the backup with a single command:
+
+```bash
+docker/start_env.sh
+```
+
+TODO: start the sanic webserver as well for ease of dadguide-flutter dev work
+
+TODO: docker script to launch the pipeline against the docker env
