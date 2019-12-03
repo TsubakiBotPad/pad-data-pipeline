@@ -50,11 +50,11 @@ def run_test(args):
     kr_db = merged_database.Database(Server.kr, input_dir)
 
     print('loading JP')
-    jp_db.load_database()
+    jp_db.load_database(skip_extra=True)
     print('loading NA')
-    na_db.load_database()
+    na_db.load_database(skip_extra=True)
     print('loading KR')
-    kr_db.load_database()
+    kr_db.load_database(skip_extra=True)
 
     print('merging data')
     cross_db = CrossServerDatabase(jp_db, na_db, kr_db)
@@ -66,6 +66,9 @@ def run_test(args):
     files = {
         'all_cards.json': cross_db.all_cards,
         'dungeons.json': cross_db.dungeons,
+        'active_skills.json': cross_db.active_skills,
+        'leader_skills.json': cross_db.leader_skills,
+        'enemy_skills.json': cross_db.enemy_skills,
         # 'jp_bonuses.json': cross_db.jp_bonuses,
         # 'na_bonuses.json': cross_db.na_bonuses,
         # 'kr_bonuses.json': cross_db.kr_bonuses,
@@ -84,12 +87,13 @@ def run_test(args):
             continue
 
         print('diffing', golden_file, 'against', new_file)
-        with open(golden_file) as f:
+        with open(golden_file, encoding="utf-8") as f:
             golden_data = json.load(f)
 
         if len(golden_data) != len(data):
             print('ERROR')
-            print('ERROR: file lengths differed, indicates old golden data for', file)
+            print('ERROR: file lengths differed ({} vs {}), indicates old golden data for {}'.format(
+                len(golden_data), len(data), file))
             print('ERROR')
             failed_comparisons += 1
             continue
@@ -109,18 +113,24 @@ def run_test(args):
             continue
 
         fail_count = len(failures)
-        disp_count = min(fail_count, 3)
+        disp_count = min(fail_count, 6)
         print('encountered', fail_count, 'errors, displaying the first', disp_count)
 
         failed_comparisons += 1
         bad_records += fail_count
 
+        failure_ids = []
+        for failure in failures:
+            gold_str = failure[0]
+            failure_ids.append(find_ids(gold_str))
+
+        print('All failing ids:\n' + '\n'.join(failure_ids))
+
         for i in range(disp_count):
             gold_str = failures[i][0]
             new_str = failures[i][1]
 
-            id_text = '\n'.join(filter(lambda x: '_id' in x, gold_str.split('\n')))
-            print('row identifiers:\n{}\n'.format(id_text))
+            print('row identifiers:\n{}\n'.format(find_ids(gold_str)))
             diff_lines = difflib.context_diff(
                 gold_str.split('\n'), new_str.split('\n'), fromfile='golden', tofile='new', n=1)
             print('\n'.join(diff_lines))
@@ -129,6 +139,16 @@ def run_test(args):
         print('Bad files:', failed_comparisons)
         print('Bad records:', bad_records)
         exit(1)
+
+
+def find_ids(gold_str):
+    def is_id_line(line):
+        return any(x in line for x in ['monster_no', 'dungeon_id', 'leader_skill_id', 'active_skill_id'])
+
+    id_hits = filter(is_id_line, gold_str.split('\n'))
+    id_info = set(map(str.strip, id_hits))
+    return '\n'.join(id_info)
+
 
 if __name__ == '__main__':
     args = parse_args()

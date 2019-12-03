@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package dadguide_proto;
+
+// Persistent output from the processor combined with approval information.
+message MonsterBehaviorWithOverrides {
+    // The DadGuide unique monster ID.
+    int32 monster_id = 1;
+
+    // Combination of level value and behaviors at that level.
+    repeated LevelBehavior levels = 2;
+
+    // Combination of level value and behaviors at that level.
+    repeated LevelBehavior level_overrides = 3;
+
+    enum Status {
+        // Default status, not reviewed.
+        NOT_APPROVED = 0;
+        // Reviewed and approved with no changes. If the auto-generated
+        // behavior changes, updates to NEEDS_REAPPROVAL.
+        APPROVED_AS_IS = 1;
+        // Was approved in the past but the auto-generated values changed, so
+        // someone should compare and re-approve.
+        NEEDS_REAPPROVAL = 2;
+        // An admin applied changes and then approved the result.
+        APPROVED_WITH_CHANGES = 3;
+    }
+
+    // Determines which LevelBehavior should be used.
+    // If NOT_APPROVED - levels with approved=False
+    // Anything else - level_overrides with approved=True
+    Status status = 4;
+}
+
+// Monster ID, behaviors per level, and approval status.
+message MonsterBehavior {
+    // The DadGuide unique monster ID.
+    int32 monster_id = 1;
+
+    // Combination of level value and behaviors at that level.
+    repeated LevelBehavior levels = 2;
+
+    // If this behavior has been approved by a human reviewer.
+    bool approved = 3;
+}
+
+// Combination of a monster level and the behaviors at that level.
+message LevelBehavior {
+    // The level (inclusive) that this behavior executes at.
+    int32 level = 1;
+
+    // The behavior at this level.
+    repeated BehaviorGroup groups = 2;
+}
+
+message BehaviorGroup {
+    enum GroupType {
+        // Should not be used
+        UNSPECIFIED = 0;
+        // Always-active effects.
+        PASSIVE = 1;
+        // Executed on floor entry.
+        PREEMPT = 2;
+        // When user has a status effect.
+        DISPEL_PLAYER = 3;
+        // When the monster is affected by a status.
+        MONSTER_STATUS = 4;
+        // When a specific number of enemies are remaining
+        REMAINING = 5;
+        // Normal group.
+        STANDARD = 6;
+        // On monster death.
+        DEATH = 7;
+    }
+
+    // Type for this group, affects display text and type.
+    GroupType group_type = 1;
+
+    // Conditions attached to this group executing. Should not be duplicated on
+    // any child behaviors.
+    Condition condition = 2;
+
+    // Child behavior items or groups.
+    repeated BehaviorItem children = 3;
+}
+
+message BehaviorItem {
+    oneof value {
+        // This item represents a nested group.
+        BehaviorGroup group = 2;
+
+        // This item represents a terminal behavior.
+        Behavior behavior = 3;
+    }
+}
+
+message Behavior {
+    // Conditions associated with this item executing. Should be deduped
+    // against the parent before display.
+    Condition condition = 1;
+
+    // The ID of the enemy skill that should be used to populate the item.
+    // Real monster behaviors start at 1.
+    // Fake behaviors inserted as a guide start at -1.
+    int32 enemy_skill_id = 2;
+
+    // The IDs for component skills, if this is a skillset.
+    repeated int32 child_ids = 3;
+}
+
+message Condition {
+    // Action or group is guarded by a HP threshold.
+    int32 hp_threshold = 1;
+
+    // Action has a % of activating.
+    int32 use_chance = 2;
+
+    // Action/group repeats every N turns.
+    int32 repeats_every = 3;
+
+    // Action/group will only ever execute one time.
+    bool global_one_time = 4;
+
+    // Action/group will only execute when N enemies remain. If this number
+    // is larger than 10 it should be ignored.
+    int32 trigger_enemies_remaining = 5;
+
+    // Action/group will only execute on death of the current monster.
+    bool if_defeated = 6;
+
+    // Action will only execute when specific orbs are available.
+    bool if_attributes_available = 7;
+
+    // Action/group will execute when specific monsters are on the player's team.
+    repeated int32 trigger_monsters = 8;
+
+    // Executes if at least this many combos were executed
+    int32 trigger_combos = 9;
+
+    // If this is a fallback skill. Can only be applied manually.
+    bool if_nothing_matched = 10;
+
+    // Execute if the turn count matches.
+    int32 trigger_turn = 11;
+
+    // If set, the range of turn counts this matches.
+    int32 trigger_turn_end = 12;
+}

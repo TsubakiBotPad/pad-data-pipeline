@@ -72,7 +72,13 @@ class DbWrapper(object):
             row = data[0]
             if len(row.values()) > 1:
                 raise ValueError('too many columns in result:', sql)
-            return op(list(row.values())[0])
+            result_value = list(row.values())[0]
+            if result_value is None:
+                if fail_on_empty:
+                    raise ValueError('got null result:', sql)
+                else:
+                    return None
+            return op(result_value)
 
     def load_single_object(self, obj_type, key_val):
         sql = 'SELECT * FROM {} WHERE {}'.format(

@@ -7,6 +7,13 @@ class Series(SimpleSqlItem):
     KEY_COL = 'series_id'
     UNSORTED_SERIES_ID = 0
 
+    @staticmethod
+    def from_json(o):
+        return Series(series_id=o['series_id'],
+                      name_jp=o['name_jp'],
+                      name_na=o['name_na'],
+                      name_kr=o['name_kr'])
+
     def __init__(self,
                  series_id: int = None,
                  name_jp: str = None,
