@@ -18,7 +18,7 @@ def fix_row(row):
         elif type(data) not in [int, float, str]:
             fixed_data = str(data)
         elif type(data) == bytes:
-            return '0x' + binascii.hexlify(bytearray(data)).decode('ascii')
+            fixed_data = '0x' + binascii.hexlify(bytearray(data)).decode('ascii')
         else:
             fixed_data = data
 
