@@ -60,6 +60,7 @@ class SeriesProcessor(object):
             monster_id = csc.monster_id
             series_id = monster_id_to_series_id.get(monster_id)
             if series_id is None:
+                monster_id_to_series_id[monster_id] = 0
                 logger.warning('Series was null for monster %d', monster_id)
                 continue
             if series_id == 0:
