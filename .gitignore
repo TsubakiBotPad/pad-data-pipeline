@@ -105,6 +105,7 @@ venv.bak/
 
 # Ignore intellij files
 .idea
+*.iml
 
 # Ignore data copied by refresh script
 pad_data

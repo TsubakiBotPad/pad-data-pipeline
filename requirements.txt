@@ -4,3 +4,4 @@ pytz
 bs4
 pyyaml
 protobuf
+pymysql
