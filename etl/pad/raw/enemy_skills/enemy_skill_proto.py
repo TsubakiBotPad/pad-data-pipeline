@@ -141,6 +141,7 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
         for repeat_action in action.repeating:
             rg = hg.children.add().group
             if repeat_action.interval > 1:
+                rg.condition.trigger_turn = repeat_action.turn
                 rg.condition.repeats_every = repeat_action.interval
             add_behavior_group_from_behaviors(rg.children, BehaviorGroup.STANDARD, repeat_action.skills)
 
