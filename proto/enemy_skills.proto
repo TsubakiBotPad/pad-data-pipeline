@@ -140,7 +140,8 @@ message Condition {
     // If this is a fallback skill. Can only be applied manually.
     bool if_nothing_matched = 10;
 
-    // Execute if the turn count matches.
+    // Execute if the turn count matches. May be combined with repeats_every
+    // for actions that repeat in a loop.
     int32 trigger_turn = 11;
 
     // If set, the range of turn counts this matches.
