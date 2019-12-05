@@ -57,8 +57,6 @@ def format_condition(cond: Condition):
     parts = []
     if cond.use_chance not in [0, 100]:
         parts.append('{}% chance'.format(cond.use_chance))
-    if cond.repeats_every:
-        parts.append('repeats every {} turns'.format(cond.repeats_every))
     if cond.global_one_time:
         parts.append('one time only')
     if cond.trigger_enemies_remaining:
@@ -73,7 +71,12 @@ def format_condition(cond: Condition):
         parts.append('when {} combos last turn'.format(cond.trigger_combos))
     if cond.if_nothing_matched:
         parts.append('if no other skills matched')
-    if cond.trigger_turn_end:
+    if cond.repeats_every:
+        if cond.trigger_turn:
+            parts.append('execute repeatedly, turn {} of {}'.format(cond.trigger_turn, cond.repeats_every))
+        else:
+            parts.append('repeats every {} turns'.format(cond.repeats_every))
+    elif cond.trigger_turn_end:
         parts.append('turns {}-{}'.format(cond.trigger_turn, cond.trigger_turn_end))
     elif cond.trigger_turn:
         parts.append('turn {}'.format(cond.trigger_turn))
