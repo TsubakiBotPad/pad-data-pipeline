@@ -167,7 +167,16 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
     # Preempts can only have specific conditions
     visit_tree(bg, clean_preempt)
 
-    add_behavior_group_from_behaviors(result.groups, BehaviorGroup.DEATH, skillset.death_actions)
+    bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.DEATH, skillset.death_actions)
+
+    def clean_on_death(x):
+        if_defeated_cond = x.condition.if_defeated
+        x.ClearField('condition')
+        if if_defeated_cond:
+            x.condition.if_defeated = if_defeated_cond
+
+    # Only condition necessary for death is, well, death
+    visit_tree(bg, clean_on_death)
 
     add_behavior_group_from_moveset(result.groups, BehaviorGroup.STANDARD, skillset.moveset)
 
