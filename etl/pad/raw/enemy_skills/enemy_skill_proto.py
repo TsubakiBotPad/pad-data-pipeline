@@ -44,12 +44,10 @@ def behavior_to_proto(instance: EsInstance) -> BehaviorItem:
     item_condition = item_behavior.condition
 
     item_behavior.enemy_skill_id = instance.enemy_skill_id
-    item_condition.hp_threshold = 100
     item_condition.use_chance = 100
 
     cond = instance.condition
     if cond is not None:
-        item_condition.hp_threshold = cond.hp_threshold or 100
         item_condition.use_chance = cond.use_chance()
         item_condition.global_one_time = cond.forced_one_time or False
         item_condition.trigger_enemies_remaining = cond.enemies_remaining or 0
