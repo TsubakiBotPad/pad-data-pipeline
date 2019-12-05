@@ -92,10 +92,10 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         elif len(attr) > n_attr:
             return '{}+ of {} at once'.format(str(n_attr), attr_text)
         return '{} at once'.format(attr_text)
-    
+
     def matching_n_or_more_attr(self, attr, min_attr, is_range=False):
         return ' when matching ' + self.n_attr_or_heal(attr, min_attr, '{} or more', is_range=is_range)
-    
+
     def up_to_n_attr(self, attr, max_attr, mult):
         if attr == [0, 1, 2, 3, 4, 5]:
             return ' up to {}x at 5 colors+heal'.format(mult)
@@ -103,10 +103,16 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
             return ' up to {}x when matching {}'.format(mult, max_attr)
         return ' up to {}x at '.format(mult) + self.n_attr_or_heal(attr, max_attr, '{}')
 
-    def threshold_stats_text(self, intro, above, threshold, is_100):
+    def chance_to_text(self, chance, to_do):
+        return '{}% chance to {}'.format(chance, to_do).capitalize()
+
+    def threshold_stats_text(self, intro, above, threshold):
         skill_text = intro
-        if is_100:
+        threshold_value = int(threshold)
+        if threshold_value == 100:
             skill_text += ' when HP is {}'.format('full' if above else 'not full')
+        elif threshold_value == 1:
+            pass
         else:
             skill_text += ' when above ' if above else ' when below '
             skill_text += threshold + '% HP'
@@ -132,7 +138,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
     def attribute_match_text(self, intro, attr_text, max_attr_text):
         return intro + attr_text + max_attr_text
-    
+
     def multi_of_one_attribute_match_text(self, intro, min_match, attr_text, max_mult, max_match):
         skill_text = intro
         skill_text += ' when matching {}'.format(min_match)
@@ -143,7 +149,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
             return skill_text
         skill_text += ', up to {}x at {} {} combos'.format(max_mult, max_match, attr_text)
         return skill_text
-    
+
     def multi_of_dif_attribute_match_text(self, intro, min_colors, alt_colors, max_mult, all_colors):
         skill_text = intro
         skill_text += ' when matching {}'.format(min_colors)
@@ -163,42 +169,42 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
             return skill_text
         skill_text += ' up to {}x at {} orbs'.format(max_mult, max_count)
         return skill_text
-    
+
     def after_attack_text(self, mult):
         return '{}x ATK additional damage when matching orbs'.format(mult)
-    
+
     def heal_on_text(self, mult):
         return '{}x RCV additional heal when matching orbs'.format(mult)
-    
+
     def resolve_text(self, percent):
         return 'May survive when HP is reduced to 0 (HP>{}%)'.format(percent)
-    
+
     def bonus_time_text(self, intro, time):
         skill_text = intro + '; ' if intro else ''
         return skill_text + 'Increase orb movement time by {} seconds'.format(time)
-    
+
     def counter_attack_text(self, is_guaranteed, chance, mult, attribute):
         if is_guaranteed:
             return '{}x {} counterattack'.format(mult, attribute)
         return '{}% chance to counterattack with {}x {} damage'.format(chance, mult, attribute)
-    
+
     def egg_drop_text(self, mult):
         return '{}x Egg Drop rate'.format(mult)
-    
+
     def coin_drop_text(self, mult):
         return '{}x Coin Drop rate'.format(mult)
-    
+
     def skill_used_text(self, intro):
         return intro + ' on the turn a skill is used'
-    
+
     def exact_combo_text(self, mult, combos):
         return '{}x ATK when exactly {} combos'.format(mult, combos)
-    
+
     def passive_stats_type_atk_all_hp_text(self, hp_pct, atk_mult, type_text):
         skill_text = 'Reduce total HP by {}%; {}x ATK for '.format(hp_pct, atk_mult)
         skill_text += type_text + ' type'
         return skill_text
-    
+
     def team_build_bonus_text(self, intro, card):
         return intro + ' if {} is on the team'.format(card)
 
@@ -207,7 +213,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
     def heart_tpa_stats_text(self, mult):
         return '{}x RCV when matching 4 Heal orbs'.format(mult)
-    
+
     def five_orb_one_enhance_text(self, mult):
         return '{}x ATK for matched Att. when matching 5 Orbs with 1+ enhanced'.format(mult)
 
@@ -269,7 +275,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
             skill_text = '???'
         skill_text += ' when matching 5' + attr + ' orbs in L shape'
         return skill_text
-    
+
     def add_combo_att_text(self, mult, attr_condition_text, bonus_combo):
         skill_parts = [
             mult,
@@ -292,7 +298,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
     def mass_match_bonus_damage_text(self, bonus_damage, min_match, attr_text):
         skill_text = '{} additional damage when matching {} or more'.format(bonus_damage, min_match)
-        
+
         if attr_text:
             skill_text += '{} orbs'.format(attr_text)
         else:
