@@ -81,7 +81,9 @@ def format_condition(cond: Condition):
     if not parts and cond.hp_threshold in [100, 0]:
         return None
 
-    if cond.hp_threshold not in [0]:
+    if cond.hp_threshold == 101:
+        parts.append('when hp is full')
+    elif cond.hp_threshold not in [0]:
         parts.append('hp <= {}'.format(cond.hp_threshold))
 
     return ', '.join(parts)
