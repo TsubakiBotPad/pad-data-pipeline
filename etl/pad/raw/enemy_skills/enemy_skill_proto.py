@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from google.protobuf import text_format
 
@@ -152,8 +152,21 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
     result = LevelBehavior()
     result.level = level
 
-    add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PASSIVE, skillset.base_abilities)
-    add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PREEMPT, skillset.preemptives)
+    bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PASSIVE, skillset.base_abilities)
+    # Passives should have no conditions
+    visit_tree(bg, lambda x: x.ClearField('condition'))
+
+    bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PREEMPT, skillset.preemptives)
+
+    def clean_preempt(x):
+        attr_cond = x.condition.if_attributes_available
+        x.ClearField('condition')
+        if attr_cond:
+            x.condition.if_attributes_available = attr_cond
+
+    # Preempts can only have specific conditions
+    visit_tree(bg, clean_preempt)
+
     add_behavior_group_from_behaviors(result.groups, BehaviorGroup.DEATH, skillset.death_actions)
 
     add_behavior_group_from_moveset(result.groups, BehaviorGroup.STANDARD, skillset.moveset)
@@ -164,6 +177,21 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
 
     return result
 
+
+def visit_tree(bg_or_behavior, fn):
+    """Recursively apply a function to a tree of behavior.
+
+    Simplifies applying various cleanup operations to an entire tree.
+    """
+    if not bg_or_behavior:
+        return
+    fn(bg_or_behavior)
+    if hasattr(bg_or_behavior, 'children'):
+        for c in bg_or_behavior.children:
+            visit_tree(_group_or_behavior(c), fn)
+
+def _group_or_behavior(o: BehaviorItem) -> Union[BehaviorGroup, Behavior]:
+    return o.group if o.HasField('group') else o.behavior
 
 def clean_monster_behavior(o: MonsterBehavior) -> MonsterBehavior:
     r = MonsterBehavior()
@@ -266,5 +294,5 @@ def load_from_file(file_path: str) -> MonsterBehaviorWithOverrides:
     if os.path.exists(file_path):
         with open(file_path, encoding='utf-8') as f:
             data = f.read()
-        text_format.Merge(data, mbwo)
+        text_format.Merge(data, mbwo, allow_unknown_field=True)
     return mbwo
