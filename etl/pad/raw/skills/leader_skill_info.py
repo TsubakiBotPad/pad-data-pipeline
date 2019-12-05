@@ -316,13 +316,15 @@ class Counterattack(LeaderSkill):
 
 class HighHpShield(LeaderSkill):
     def __init__(self, ms: MonsterSkill):
-        self.threshold = mult(ms.data[0])
+        data = merge_defaults(ms.data, [0, 0, 0])
+        self.threshold = mult(data[0])
         self.threshold_type = ThresholdType.ABOVE
-        shield = mult(ms.data[2])
+        self.chance = mult(data[1])
+        shield = mult(data[2])
         super().__init__(43, ms, shield=shield)
 
     def text(self, converter: LsTextConverter) -> str:
-        return converter.threshold_stats_convert(self)
+        return converter.random_shield_threshold_stats(self)
 
 
 class HighHpAtkBoost(LeaderSkill):
