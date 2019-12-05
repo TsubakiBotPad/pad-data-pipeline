@@ -197,8 +197,10 @@ def visit_tree(bg_or_behavior, fn):
         for c in bg_or_behavior.children:
             visit_tree(_group_or_behavior(c), fn)
 
+
 def _group_or_behavior(o: BehaviorItem) -> Union[BehaviorGroup, Behavior]:
     return o.group if o.HasField('group') else o.behavior
+
 
 def clean_monster_behavior(o: MonsterBehavior) -> MonsterBehavior:
     r = MonsterBehavior()
@@ -253,13 +255,15 @@ def clean_behavior_group(o: BehaviorGroup) -> Optional[BehaviorGroup]:
     if len(r.children) == 1 and r.children[0].HasField('behavior'):
         child = r.children[0].behavior
         if child.HasField('condition'):
-            # TODO: this might need special handling for HP. I noticed that a lot of
-            # items have a group of hp <= X containing a behavior with with hp <= X+1. Not
-            # sure which is which is correct but I'm guessing the group is right, meaning
-            # we are doing the wrong thing here. Maybe the right answer is to unset the
-            # child HP if the parent has a HP set.
             r.condition.MergeFrom(child.condition)
             child.ClearField('condition')
+
+    # If this group has two subgroups, the first has hp = 100 and second has hp = 99, update the first HP to 101, which
+    # is a special case indicating 'when HP is full'.
+    if (len(r.children) > 1 and
+            r.children[0].group.condition.hp_threshold == 100 and
+            r.children[1].group.condition.hp_threshold == 99):
+        r.children[0].group.condition.hp_threshold = 101
 
     return r
 
