@@ -24,10 +24,6 @@ class StandardSkillGroup(object):
 
         self.hp_range = None  # type: Optional[int]
 
-        # Extra notes for skills in this group that could be appended to output.
-        # The index of the note corresponds to the index of the skill.
-        self.notes = {}  # type: Dict[int, str]
-
     def __eq__(self, other):
         return self.skills == other.skills
 

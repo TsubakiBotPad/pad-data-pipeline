@@ -611,8 +611,6 @@ class ESAttackUPRemainingEnemies(ESEnrageAttackUp):
         self.turns = self.params[2]
 
     def description(self):
-        # TODO: review this
-        # return super().description() + ' when <= {} enemies remain'.format(self.enemy_count)
         return super().description()
 
 
