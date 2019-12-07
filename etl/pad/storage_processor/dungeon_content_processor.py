@@ -139,13 +139,14 @@ class DungeonContentProcessor(object):
                                ','.join(map(str, seen_enemies)))
                 bad_stored_encounters = db.fetch_data(sql)
                 if bad_stored_encounters:
-                    encounter_list_str = ','.join(map(str, bad_stored_encounters))
+                    encounter_list_str = ','.join([str(x['encounter_id']) for x in bad_stored_encounters])
                     delete_drops_sql = 'DELETE FROM drops WHERE encounter_id IN ({});'.format(encounter_list_str)
                     delete_encounters_sql = 'DELETE FROM encounters WHERE encounter_id IN ({});'.format(
                         encounter_list_str)
-                    human_fix_logger.warning('Found bad stored encounters for %s - %s\n%s\n%s',
+                    human_fix_logger.warning('Found bad stored encounters for %s: [%s] - %s\n%s\n%s',
                                              dungeon.na_dungeon.clean_name,
                                              sub_dungeon.na_sub_dungeon.clean_name,
+                                             encounter_list_str,
                                              delete_drops_sql,
                                              delete_encounters_sql)
 
