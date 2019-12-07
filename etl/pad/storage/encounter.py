@@ -47,7 +47,7 @@ class Encounter(SimpleSqlItem):
         self.tstamp = tstamp
 
     def exists_strategy(self):
-        return ExistsStrategy.CUSTOM
+        return ExistsStrategy.BY_KEY_IF_SET
 
     def __str__(self):
         return 'Encounter({}): {} -> {}'.format(self.key_value(), self.sub_dungeon_id, self.enemy_id)
@@ -86,4 +86,4 @@ class Drop(SimpleSqlItem):
         return [self._key()]
 
     def __str__(self):
-        return 'Encounter({}): {} -> {}'.format(self.key_value(), self.encounter_id, self.monster_id)
+        return 'Drop({}): {} -> {}'.format(self.key_value(), self.encounter_id, self.monster_id)
