@@ -153,7 +153,6 @@ class DbWrapper(object):
             raise ex
 
     def _insert_or_update(self, item: SqlItem, force_insert: bool):
-        item_type = type(item)
         key = item.key_value()
 
         if force_insert:
@@ -170,6 +169,15 @@ class DbWrapper(object):
                 self.insert_item(item.insert_sql())
             elif not self.check_existing(item.needs_update_sql()):
                 logger.info('item needed update: %s', item)
+                self.insert_item(item.update_sql())
+
+        elif item.exists_strategy() == ExistsStrategy.BY_KEY_IF_SET:
+            if not key:
+                key = self.insert_item(item.insert_sql())
+                item.set_key_value(key)
+                logger.info('item needed by-key insert: %s', item)
+            elif not self.check_existing(item.needs_update_sql()):
+                logger.info('item needed by-key update: %s', item)
                 self.insert_item(item.update_sql())
 
         elif item.exists_strategy() == ExistsStrategy.BY_VALUE:
