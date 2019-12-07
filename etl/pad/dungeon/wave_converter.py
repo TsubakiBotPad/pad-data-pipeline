@@ -2,8 +2,7 @@ from collections import defaultdict
 from statistics import mean
 from typing import List, Set, Optional
 
-from pad.common import monster_id_mapping
-from pad.common.shared_types import Server, MonsterId
+from pad.common.shared_types import MonsterId
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
 from pad.storage.wave import WaveItem
 
@@ -222,6 +221,7 @@ class WaveConverter(object):
         waves_by_entry = defaultdict(list)
         waves_by_stage_and_entry = defaultdict(lambda: defaultdict(list))
         for wave_item in wave_items:
+            monster_id = wave_item.monster_id
             drop_id = wave_item.get_drop()
 
             # Stuff in this range is supposedly:
@@ -235,13 +235,6 @@ class WaveConverter(object):
             # 9999: announcement
             if drop_id and (9000 < drop_id < 10000):
                 raise ValueError('Special drop detected (not handled yet)')
-
-            # Correct for NA server mappings if necessary
-            monster_id = wave_item.monster_id
-            if wave_item.server != Server.jp:
-                monster_id = monster_id_mapping.nakr_no_to_monster_id(monster_id)
-                if drop_id:
-                    drop_id = monster_id_mapping.nakr_no_to_monster_id(drop_id)
 
             # Build a structure that merges DB info with wave data.
             card = self.data.card_by_monster_id(monster_id)
