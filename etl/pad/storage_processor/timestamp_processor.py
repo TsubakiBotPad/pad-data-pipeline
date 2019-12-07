@@ -20,6 +20,8 @@ _UPDATE_TABLES = [
     ActiveSkillTag.TABLE,
     Awakening.TABLE,
     AwokenSkill.TABLE,
+    # This is a special table that gets populated when items are deleted from other tables.
+    'deleted_rows',
     Dungeon.TABLE,
     Encounter.TABLE,
     EnemySkill.TABLE,
