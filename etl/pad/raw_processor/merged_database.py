@@ -14,6 +14,7 @@ from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw.skills.skill_parser import SkillParser
 from .merged_data import MergedBonus, MergedCard, MergedEnemy
 
+human_fix_logger = logging.getLogger('human_fix')
 fail_logger = logging.getLogger('processor_failures')
 
 
@@ -53,14 +54,14 @@ def _clean_cards(server: Server,
         if card.active_skill_id:
             active_skill = db.active_skill_by_id(card.active_skill_id)
             if active_skill is None:
-                fail_logger.warning('Active skill lookup failed: %s - %s',
-                                    repr(card), card.active_skill_id)
+                human_fix_logger.warning('Active skill lookup failed: %s - %s',
+                                         repr(card), card.active_skill_id)
 
         if card.leader_skill_id:
             leader_skill = db.leader_skill_by_id(card.leader_skill_id)
             if leader_skill is None:
-                fail_logger.warning('Leader skill lookup failed: %s - %s',
-                                    repr(card), card.leader_skill_id)
+                human_fix_logger.warning('Leader skill lookup failed: %s - %s',
+                                         repr(card), card.leader_skill_id)
 
         enemy = enemy_by_enemy_id.get(card.monster_no)
         enemy_skills = enemy.enemy_skills if enemy else []
