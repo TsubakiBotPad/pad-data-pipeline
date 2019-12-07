@@ -1,3 +1,4 @@
+from pad.common import monster_id_mapping
 from pad.db.sql_item import SqlItem
 from pad.raw import wave as wave_data
 
@@ -9,24 +10,24 @@ class WaveItem(SqlItem):
     LIST_COL = 'dungeon_id'
 
     def __init__(self,
-                 id: int=None,
-                 pull_id: int=None,
-                 entry_id: int=None,
-                 server: str=None,
-                 dungeon_id: int=None,
-                 floor_id: int=None,
-                 stage: int=None,
-                 slot: int=None,
-                 spawn_type: int=None,
-                 monster_id: int=None,
-                 monster_level: int=None,
-                 drop_monster_id: int=None,
-                 drop_monster_level: int=None,
-                 plus_amount: int=None,
-                 monster: wave_data.WaveMonster=None,
+                 id: int = None,
+                 pull_id: int = None,
+                 entry_id: int = None,
+                 server: str = None,
+                 dungeon_id: int = None,
+                 floor_id: int = None,
+                 stage: int = None,
+                 slot: int = None,
+                 spawn_type: int = None,
+                 monster_id: int = None,
+                 monster_level: int = None,
+                 drop_monster_id: int = None,
+                 drop_monster_level: int = None,
+                 plus_amount: int = None,
+                 monster: wave_data.WaveMonster = None,
                  pull_time=None,  # Ignored
-                 leader_id: int=None,
-                 friend_id: int=None):
+                 leader_id: int = None,
+                 friend_id: int = None):
         self.id = id
         self.server = server
         self.dungeon_id = dungeon_id
@@ -45,9 +46,11 @@ class WaveItem(SqlItem):
 
         if monster:
             self.spawn_type = monster.spawn_type
-            self.monster_id = monster.monster_id
+            # Need to correct the drop/spawn IDs for NA vs JP
+            mapping_fn = monster_id_mapping.jp_no_to_monster_id if self.server.lower() == 'jp' else monster_id_mapping.nakr_no_to_monster_id
+            self.monster_id = mapping_fn(monster.monster_id)
             self.monster_level = monster.monster_level
-            self.drop_monster_id = monster.drop_monster_id
+            self.drop_monster_id = mapping_fn(monster.drop_monster_id)
             self.drop_monster_level = monster.drop_monster_level
             self.plus_amount = monster.plus_amount
 
