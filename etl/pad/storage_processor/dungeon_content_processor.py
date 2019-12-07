@@ -14,6 +14,7 @@ from pad.storage.encounter import Encounter, Drop
 from pad.storage.wave import WaveItem
 
 logger = logging.getLogger('processor')
+human_fix_logger = logging.getLogger('human_fix')
 
 
 class DungeonContentProcessor(object):
@@ -26,8 +27,6 @@ class DungeonContentProcessor(object):
         self._process_dungeon_contents(db)
         self._process_dungeon_rewards(db)
         # TODO: support multiple rewards
-        # TODO: support updates to encounters
-        # TODO: support updates to drops
 
         logger.warning('done loading contents')
 
@@ -74,19 +73,13 @@ class DungeonContentProcessor(object):
                                  dungeon: CrossServerDungeon,
                                  sub_dungeon: CrossServerSubDungeon,
                                  result_floor: ResultFloor):
-        sql = 'SELECT count(*) FROM encounters WHERE dungeon_id={} and sub_dungeon_id={}'.format(
-            dungeon.dungeon_id, sub_dungeon.sub_dungeon_id)
-        encounter_count = db.get_single_value(sql, int)
-        if encounter_count:
-            logger.debug('Skipping encounter insert for {}-{}'.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id))
-            return
-
-        logger.warning('Executing encounter insert for {}-{}'.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id))
         for stage in result_floor.stages:
+            seen_enemies = set()
             for slot in stage.slots:
                 csc = self.data.card_by_monster_id(slot.monster_id)
                 card = csc.jp_card.card
                 enemy = card.enemy()
+                seen_enemies.add(slot.monster_id)
 
                 turns = card.enemy_turns
                 if dungeon.jp_dungeon.full_dungeon_type == RawDungeonType.TECHNICAL and card.enemy_turns_alt:
@@ -115,11 +108,42 @@ class DungeonContentProcessor(object):
                     atk=atk,
                     defence=defence)
 
-                db.insert_or_update(encounter, force_insert=True)
+                sql = '''
+                    SELECT encounter_id 
+                    FROM encounters 
+                    WHERE dungeon_id={} 
+                    AND sub_dungeon_id={}
+                    AND stage={}
+                    AND enemy_id={}
+                '''.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id, stage.stage_idx, slot.monster_id)
+                stored_encounter_id = db.get_single_value(sql, int, fail_on_empty=False)
+
+                if stored_encounter_id:
+                    encounter.encounter_id = stored_encounter_id
+
+                db.insert_or_update(encounter)
 
                 drops = Drop.from_slot(slot, encounter)
                 for drop in drops:
                     db.insert_or_update(drop)
+
+            if seen_enemies:
+                sql = '''
+                    SELECT encounter_id, enemy_id
+                    FROM encounters
+                    WHERE dungeon_id={}
+                    AND sub_dungeon_id={}
+                    AND stage={}
+                    AND enemy_id not in ({})
+                    '''.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id, stage.stage_idx,
+                               ','.join(map(str, seen_enemies)))
+                bad_stored_encounters = db.fetch_data(sql)
+                if bad_stored_encounters:
+                    delete_sql = 'DELETE FROM encounters WHERE encounter_id IN ({});'.format(
+                        ','.join(map(str, bad_stored_encounters)))
+                    human_fix_logger.warning('Found bad stored encounters for %s - %s\n%s',
+                                             dungeon.na_dungeon.clean_name,
+                                             sub_dungeon.na_sub_dungeon.clean_name, delete_sql)
 
     def _process_dungeon_rewards(self, db):
         def is_floor_bonus(x):
