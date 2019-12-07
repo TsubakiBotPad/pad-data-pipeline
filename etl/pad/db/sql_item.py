@@ -110,6 +110,7 @@ class ExistsStrategy(Enum):
     BY_KEY = 1
     BY_VALUE = 2
     CUSTOM = 3  # Prevents mistaken 'standard' inserts; requires a force method
+    BY_KEY_IF_SET = 4
 
 
 class SqlItem(Printable):
