@@ -139,11 +139,15 @@ class DungeonContentProcessor(object):
                                ','.join(map(str, seen_enemies)))
                 bad_stored_encounters = db.fetch_data(sql)
                 if bad_stored_encounters:
-                    delete_sql = 'DELETE FROM encounters WHERE encounter_id IN ({});'.format(
-                        ','.join(map(str, bad_stored_encounters)))
-                    human_fix_logger.warning('Found bad stored encounters for %s - %s\n%s',
+                    encounter_list_str = ','.join(map(str, bad_stored_encounters))
+                    delete_drops_sql = 'DELETE FROM drops WHERE encounter_id IN ({});'.format(encounter_list_str)
+                    delete_encounters_sql = 'DELETE FROM encounters WHERE encounter_id IN ({});'.format(
+                        encounter_list_str)
+                    human_fix_logger.warning('Found bad stored encounters for %s - %s\n%s\n%s',
                                              dungeon.na_dungeon.clean_name,
-                                             sub_dungeon.na_sub_dungeon.clean_name, delete_sql)
+                                             sub_dungeon.na_sub_dungeon.clean_name,
+                                             delete_drops_sql,
+                                             delete_encounters_sql)
 
     def _process_dungeon_rewards(self, db):
         def is_floor_bonus(x):
