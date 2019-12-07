@@ -1,8 +1,11 @@
+import logging
 from typing import List, Optional
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.leader_skill_common import ThresholdType, Tag, sort_tags
 from pad.raw.skills.leader_skill_text import LsTextConverter
+
+human_fix_logger = logging.getLogger('human_fix')
 
 
 def mult(x):
@@ -1325,7 +1328,11 @@ class FixedMovementTime(LeaderSkill):
             self.tags.append(Tag.FIXED_4S)
         elif self.time == 5:
             self.tags.append(Tag.FIXED_5S)
+        elif self.time == 0:
+            # Ignore this case; bad skill
+            pass
         else:
+            human_fix_logger.warning('Unexpected fixed time:' + str(self.time))
             raise ValueError('Unexpected fixed time:' + str(self.time))
 
         hp = multi_floor(data[3])

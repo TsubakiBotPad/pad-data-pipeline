@@ -24,8 +24,7 @@ class BehaviorParser(object):
                 new_es = BEHAVIOR_MAP[es_type](es)
             else:
                 # Disabled; this isn't mission critical yet
-                # human_fix_logger.error('Failed to parse enemy skill: %d/%d: %s', es_id, es_type, es.name)
-                logger.error('Failed to parse enemy skill: %d/%d: %s', es_id, es_type, es.name)
+                human_fix_logger.error('Failed to parse enemy skill: %d/%d: %s', es_id, es_type, es.name)
                 new_es = EnemySkillUnknown(es)
 
             self.enemy_behaviors.append(new_es)
