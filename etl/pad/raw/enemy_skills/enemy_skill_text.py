@@ -50,7 +50,7 @@ class TargetType(Enum):
 
 TARGET_NAMES = {
     TargetType.random: 'random cards',
-    TargetType.self_leader: 'own leader',
+    TargetType.self_leader: 'player leader',
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
     TargetType.subs: 'random subs',
