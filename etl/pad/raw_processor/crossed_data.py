@@ -154,9 +154,9 @@ def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
 
     if len(jp_skills) > len(na_skills):
         na_skills = jp_skills
-        kr_skills = jp_skills
-    elif len(na_skills) > len(jp_skills):
+    if len(na_skills) > len(jp_skills):
         jp_skills = na_skills
+    if len(na_skills) > len(kr_skills):
         kr_skills = na_skills
 
     def override_if_necessary(override_skills: List[EsInstance], dest_skills: List[EsInstance]):
