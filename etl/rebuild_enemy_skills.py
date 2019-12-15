@@ -9,7 +9,7 @@ import os
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.common.shared_types import Server
 from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
-from pad.raw.enemy_skills.debug_utils import save_monster_behavior
+from pad.raw.enemy_skills.debug_utils import save_monster_behavior, save_behavior_plain
 from pad.raw.enemy_skills.enemy_skill_info import ESAction, inject_implicit_onetime
 from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file, clean_monster_behavior
 from pad.raw_processor import merged_database
@@ -91,6 +91,8 @@ def run(args):
     os.makedirs(behavior_data_dir, exist_ok=True)
     behavior_text_dir = os.path.join(args.output_dir, 'behavior_text')
     os.makedirs(behavior_text_dir, exist_ok=True)
+    behavior_plain_dir = os.path.join(args.output_dir, 'behavior_plain')
+    os.makedirs(behavior_plain_dir, exist_ok=True)
 
     jp_db = merged_database.Database(Server.jp, args.input_dir)
     na_db = merged_database.Database(Server.na, args.input_dir)
@@ -130,6 +132,10 @@ def run(args):
 
             behavior_text_file = os.path.join(behavior_text_dir, '{}.txt'.format(csc.monster_id))
             save_monster_behavior(behavior_text_file, csc, monster_behavior)
+
+            enemy_behavior = [x.na_skill for x in csc.enemy_behavior]
+            behavior_plain_file = os.path.join(behavior_plain_dir, '{}.txt'.format(csc.monster_id))
+            save_behavior_plain(behavior_plain_file, csc, enemy_behavior)
 
             # TODO: Add raw behavior dump
 

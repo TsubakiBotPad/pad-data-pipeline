@@ -118,7 +118,23 @@ def format_behavior(indent_str, behavior: Behavior, library):
     return output
 
 
-def simple_dump_obj(o):
+def save_behavior_plain(file_path: str, csc: CrossServerCard, behavior: List[EsInstance]):
+    output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)
+    card = csc.jp_card.card
+    output += '\nmonster size: {}'.format(card.unknown_009)
+    output += '\nnew AI: {}'.format(card.use_new_ai)
+    output += '\nstart/max counter: {}'.format(card.enemy_skill_max_counter)
+    output += '\ncounter increment: {}'.format(card.enemy_skill_counter_increment)
+    output += '\n'
+
+    for b in behavior:
+        output += '\n' + format_behavior_plain(b)
+
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(output)
+
+
+def format_behavior_plain(o: EsInstance):
     def fmt_cond(c):
         msg = 'Condition: {} (ai:{} rnd:{})'.format(c.description(), c._ai, c._rnd)
         if c.one_time:
@@ -140,10 +156,8 @@ def simple_dump_obj(o):
         return msg
     else:
         msg = fmt_action_name(o.behavior)
-        if o.condition and (o.condition.description() or o.condition.one_time):
-            # TODO: tieout
-            # if o.condition and (o.condition.description() or o.condition.one_time or o.condition.forced_one_time):
-            msg += '\n\t{}'.format(fmt_cond(o.condition))
+        if o.condition and (o.condition.description() or o.condition.one_time or o.condition.forced_one_time):
+            msg += '\n{}'.format(fmt_cond(o.condition))
 
         msg += '\n{}'.format(o.behavior.full_description())
         return msg
