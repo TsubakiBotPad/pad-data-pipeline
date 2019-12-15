@@ -125,10 +125,9 @@ def save_behavior_plain(file_path: str, csc: CrossServerCard, behavior: List[EsI
     output += '\nnew AI: {}'.format(card.use_new_ai)
     output += '\nstart/max counter: {}'.format(card.enemy_skill_max_counter)
     output += '\ncounter increment: {}'.format(card.enemy_skill_counter_increment)
-    output += '\n'
 
     for b in behavior:
-        output += '\n' + format_behavior_plain(b)
+        output += '\n\n' + format_behavior_plain(b)
 
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(output)
