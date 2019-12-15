@@ -5,3 +5,5 @@ bs4
 pyyaml
 protobuf
 pymysql
+sanic
+sanic-cors
