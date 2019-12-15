@@ -293,6 +293,12 @@ def safe_save_to_file(file_path: str, obj: MonsterBehavior) -> MonsterBehaviorWi
     del mbwo.levels[:]
     mbwo.levels.extend(obj.levels)
 
+    if mbwo.status == MonsterBehaviorWithOverrides.APPROVED_AS_IS:
+        old_text = '\n'.join([x.SerializeToString() for x in mbwo.levels])
+        new_text = '\n'.join([x.SerializeToString() for x in mbwo.level_overrides])
+        if old_text != new_text:
+            mbwo.status = MonsterBehaviorWithOverrides.NEEDS_REAPPROVAL
+
     msg_str = text_format.MessageToString(mbwo, as_utf8=True, indent=2)
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(msg_str)
