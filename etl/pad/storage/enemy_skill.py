@@ -79,16 +79,19 @@ class EnemyData(SimpleSqlItem):
     KEY_COL = 'enemy_id'
 
     @staticmethod
-    def from_mb(o: MonsterBehavior) -> 'EnemyData':
+    def from_mb(o: MonsterBehavior, status: int) -> 'EnemyData':
         return EnemyData(
             enemy_id=o.monster_id,
+            status=status,
             behavior=o.SerializeToString())
 
     def __init__(self,
                  enemy_id: int = None,
+                 status: int = None,
                  behavior: str = None,
                  tstamp: int = None):
         self.enemy_id = enemy_id
+        self.status = status
         self.behavior = behavior
         self.tstamp = tstamp
 

@@ -69,7 +69,7 @@ class EnemySkillProcessor(object):
                 mb.approved = True
                 count_approved += 1
 
-            item = EnemyData.from_mb(mb)
+            item = EnemyData.from_mb(mb, mbwo.status)
             self.db.insert_or_update(item)
 
         logger.warning('done, %d approved %d not approved', count_approved, count_not_approved)
