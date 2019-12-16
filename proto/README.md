@@ -20,7 +20,7 @@ You must have 3 items on your path now:
 To compile:
 
 ```
-protoc -I=. --python_out=python/dadguide_proto --dart_out=dart/dadguide_proto enemy_skills.proto
+protoc -I=. --python_out=../etl/dadguide_proto enemy_skills.proto
+# Change this path to match your installation
+protoc -I=. --dart_out=../../../AndroidStudioProjects/dadguide2/lib/proto/enemy_skills/ enemy_skills.proto
 ```
-
-Copy the dart files into the dadguide flutter project.
