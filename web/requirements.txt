@@ -5,3 +5,7 @@ bs4
 pyyaml
 protobuf
 pymysql
+sanic
+sanic-cors
+sanic_compress
+fake_useragent
