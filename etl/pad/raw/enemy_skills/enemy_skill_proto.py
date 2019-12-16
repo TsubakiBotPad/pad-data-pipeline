@@ -299,11 +299,14 @@ def safe_save_to_file(file_path: str, obj: MonsterBehavior) -> MonsterBehaviorWi
         if old_text != new_text:
             mbwo.status = MonsterBehaviorWithOverrides.NEEDS_REAPPROVAL
 
+    save_overrides(file_path, mbwo)
+    return mbwo
+
+
+def save_overrides(file_path: str, mbwo: MonsterBehaviorWithOverrides):
     msg_str = text_format.MessageToString(mbwo, as_utf8=True, indent=2)
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(msg_str)
-
-    return mbwo
 
 
 def load_from_file(file_path: str) -> MonsterBehaviorWithOverrides:
