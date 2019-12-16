@@ -2,6 +2,7 @@ import argparse
 import binascii
 import json as base_json
 import os
+import string
 
 import pymysql
 from sanic import Sanic
@@ -10,6 +11,7 @@ from sanic.response import json, text
 from sanic_compress import Compress
 from sanic_cors import CORS
 
+from dadguide_proto.enemy_skills_pb2 import MonsterBehaviorWithOverrides
 from data.utils import load_from_db
 from pad.db.db_util import DbWrapper
 from pad.raw.enemy_skills import enemy_skill_proto
@@ -20,6 +22,7 @@ def parse_args():
     input_group = parser.add_argument_group("Input")
     input_group.add_argument("--db_config", help="JSON database info")
     input_group.add_argument("--es_dir", help="ES dir base")
+    input_group.add_argument("--web_dir", help="Admin app web directory")
     return parser.parse_args()
 
 
@@ -128,6 +131,28 @@ async def serve_random_monsters(request):
     return json({'monsters': data})
 
 
+@app.route('/dadguide/admin/nextMonster')
+async def serve_next_monster(request):
+    monster_id = int(request.args.get('id'))
+    sql = '''
+        select m.monster_id as monster_id
+        from monsters m
+        inner join encounters e
+        on m.monster_id = e.enemy_id
+        inner join dungeons d
+        using (dungeon_id)
+        inner join enemy_data ed
+        using (enemy_id)
+        where ed.status = 0
+        and d.dungeon_type != 0
+        and m.monster_id > {}
+        order by m.monster_id asc
+        limit 1
+    '''.format(monster_id)
+    data = db_wrapper.get_single_value(sql, int)
+    return text(data)
+
+
 @app.route('/dadguide/admin/monsterInfo')
 async def serve_monster_info(request):
     monster_id = int(request.args.get('id'))
@@ -140,7 +165,7 @@ async def serve_monster_info(request):
     sql = '''
         select
             d.name_na as dungeon_name, d.icon_id as dungeon_icon_id,
-            sd.name_na as sub_dungeon_name,
+            sd.name_na as sub_dungeon_name, sd.sub_dungeon_id as sub_dungeon_id,
             e.amount as amount, e.turns as turns, e.level as level,
             e.hp as hp, e.atk as atk, e.defence as defence
         from encounters e
@@ -153,6 +178,8 @@ async def serve_monster_info(request):
     '''.format(monster_id)
     encounters = []
     encounter_data = db_wrapper.fetch_data(sql)
+    # Filter out unnecessary dupes
+    encounter_data = list({x['sub_dungeon_id']: x for x in encounter_data}.values())
     for x in encounter_data:
         encounters.append({
             'encounter': {
@@ -180,7 +207,7 @@ async def serve_monster_info(request):
 @app.route('/dadguide/admin/rawEnemyData')
 async def serve_raw_enemy_data(request):
     monster_id = int(request.args.get('id'))
-    data_dir = os.path.join(es_dir, 'behavior_raw')
+    data_dir = os.path.join(es_dir, 'behavior_plain')
     monster_file = os.path.join(data_dir, '{}.txt'.format(monster_id))
     with open(monster_file) as f:
         return text(f.read())
@@ -214,6 +241,39 @@ async def serve_enemy_proto_encoded(request):
     return text(binascii.hexlify(bytearray(v)).decode('ascii'))
 
 
+@app.route('/dadguide/admin/saveApprovedAsIs')
+async def serve_save_approved_as_is(request):
+    monster_id = int(request.args.get('id'))
+    data_dir = os.path.join(es_dir, 'behavior_data')
+    monster_file = os.path.join(data_dir, '{}.textproto'.format(monster_id))
+    mbwo = enemy_skill_proto.load_from_file(monster_file)
+    del mbwo.level_overrides[:]
+    mbwo.level_overrides.extend(mbwo.levels)
+    mbwo.status = MonsterBehaviorWithOverrides.APPROVED_AS_IS
+    enemy_skill_proto.save_overrides(monster_file, mbwo)
+    return text('ok')
+
+
+@app.route('/dadguide/admin/loadSkill')
+async def serve_load_skill(request):
+    skill_id = int(request.args.get('id'))
+    sql = 'select * from enemy_skills where enemy_skill_id = {}'.format(skill_id)
+    results = db_wrapper.get_single_or_no_row(sql)
+    return json(fix_json_names(results))
+
+
+def fix_list_json_names(rows):
+    return [fix_json_names(x) for x in rows]
+
+
+def fix_json_names(row):
+    return {to_camel_case(key): val for key, val in row.items()}
+
+
+def to_camel_case(s):
+    return s[0].lower() + string.capwords(s, sep='_').replace('_', '')[1:] if s else s
+
+
 def main(args):
     with open(args.db_config) as f:
         global db_config
@@ -233,6 +293,10 @@ def main(args):
 
     global es_dir
     es_dir = args.es_dir
+
+    if args.web_dir:
+        app.static('/', os.path.join(args.web_dir, 'index.html'))
+        app.static('', args.web_dir)
 
     app.run(host='0.0.0.0', port=8000)
 
