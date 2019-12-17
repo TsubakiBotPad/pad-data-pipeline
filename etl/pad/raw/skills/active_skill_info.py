@@ -867,6 +867,33 @@ class AwokenSkillBurst(ActiveSkill):
         else:
             return None
 
+class AwokenSkillBurst2(ActiveSkill):
+    skill_type = 168
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [1, 0, 0, 0, 0, 0])
+        self.duration = data[0]
+        self.awakenings = data[1:4]
+        self.toggle = data[4]
+        self.amount_per = None
+        if self.toggle == 1:
+            self.amount_per = data[5]
+        elif self.toggle == 2:
+            self.amount_per = (data[5] - 100) / 100
+        elif self.toggle == 3:
+            self.amount_per = multi(data[5])
+        super().__init__(ms)
+
+    def text(self, converter: AsTextConverter) -> str:
+        if self.toggle == 1:
+            return converter.awakening_heal_convert(self)
+        elif self.toggle == 2:
+            return converter.awakening_attack_boost_convert(self)
+        elif self.toggle == 3:
+            return converter.awakening_shield_convert(self)
+        else:
+            return None
+
 
 class AddAdditionalCombos(ActiveSkill):
     skill_type = 160
@@ -1146,6 +1173,7 @@ ALL_ACTIVE_SKILLS = [
     EnemyAttrChange,
     ThreeAttrtoOneAttr,
     AwokenSkillBurst,
+    AwokenSkillBurst2,
     AddAdditionalCombos,
     TrueGravity,
     OrbLockRemoval,

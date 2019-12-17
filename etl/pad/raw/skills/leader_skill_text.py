@@ -403,6 +403,9 @@ class LsTextConverter(BaseTextConverter):
     def mass_match_bonus_damage_text(self, bonus_damage, min_match, attr_text):
         raise I13NotImplemented()
 
+    def armor_break_bonus_damage_convert(self, ls):
+        raise I13NotImplemented() 
+
     def taiko_convert(self, ls):
         return self.taiko_text()
 
