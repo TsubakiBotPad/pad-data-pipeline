@@ -10,7 +10,7 @@ import padtools
 
 from pad.common import pad_util
 from pad.common.shared_types import Server
-from pad.raw.enemy_skills.debug_utils import simple_dump_obj
+from pad.raw.enemy_skills.debug_utils import format_behavior_plain
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase
 from pad.raw_processor.merged_database import Database
@@ -98,7 +98,7 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
             f.write('{} : counter increment\n'.format(c.jp_card.card.enemy_skill_counter_increment))
             f.write('\n')
             for b in c.enemy_behavior:
-                f.write(simple_dump_obj(b.na_skill) + '\n\n')
+                f.write(format_behavior_plain(b.na_skill) + '\n\n')
 
     leader_dir = os.path.join(output_dir, 'leader_skills')
     pathlib.Path(leader_dir).mkdir(parents=True, exist_ok=True)
