@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 from google.protobuf import text_format
 
 from dadguide_proto.enemy_skills_pb2 import BehaviorItem, LevelBehavior, BehaviorGroup, MonsterBehavior, \
-    MonsterBehaviorWithOverrides, Behavior
+    MonsterBehaviorWithOverrides, Behavior, Condition
 from pad.raw.enemy_skills.enemy_skill_info import EsInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Moveset, HpActions, TimedSkillGroup
 
@@ -186,6 +186,11 @@ def visit_tree(bg_or_behavior, fn):
     if not bg_or_behavior:
         return
     fn(bg_or_behavior)
+
+    # Try not to export empty nodes
+    if bg_or_behavior.condition == Condition():
+        bg_or_behavior.ClearField('condition')
+
     if hasattr(bg_or_behavior, 'children'):
         for c in bg_or_behavior.children:
             visit_tree(_group_or_behavior(c), fn)
