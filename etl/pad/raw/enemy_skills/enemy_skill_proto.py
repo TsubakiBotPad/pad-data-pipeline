@@ -9,36 +9,12 @@ from pad.raw.enemy_skills.enemy_skill_info import EsInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Moveset, HpActions, TimedSkillGroup
 
 
-# Note for dadguide display:
-# def hp_title(hp: int) -> str:
-#     if use_hp_full_output and hp == 100:
-#         return 'When HP is full'
-#     elif use_hp_full_output and hp == 99:
-#         return 'When HP is not full'
-#     elif not skill_output and hp == 100:
-#         return ''
-#     elif (hp + 1) % 5 == 0:
-#         return 'HP < {}'.format(hp + 1)
-#     elif hp == 0:
-#         return 'Enemy is defeated'
-#     else:
-#         return 'HP <= {}'.format(hp)
+def behavior_to_proto(instance: EsInstance, is_timed_group=True) -> BehaviorItem:
+    """Converts an EsInstance into a BehaviorItem.
 
-
-# for idx, repeating_set in enumerate(hp_action.repeating):
-#     if len(hp_action.repeating) > 1:
-#         turn = repeating_set.turn
-#         if idx == 0:
-#             title = 'Execute repeatedly. Turn {}'.format(turn)
-#         elif idx == len(hp_action.repeating) - 1:
-#             title = 'Loop to 1 after. Turn {}'.format(turn)
-#         else:
-#             title = 'Turn {}'.format(turn)
-#         if repeating_set.end_turn:
-#             title += '-{}'.format(repeating_set.end_turn)
-
-
-def behavior_to_proto(instance: EsInstance) -> BehaviorItem:
+    is_timed_group is a hack that injects global_one_time for a relatively small group of monsters that
+    have a % chance to activate and no increment.
+    """
     item = BehaviorItem()
     item_behavior = item.behavior
     item_condition = item_behavior.condition
@@ -55,6 +31,15 @@ def behavior_to_proto(instance: EsInstance) -> BehaviorItem:
         item_condition.if_attributes_available = len(cond.condition_attributes) > 0
         item_condition.trigger_monsters[:] = cond.cards_on_team
         item_condition.trigger_combos = cond.combos_made or 0
+
+        is_optional = cond.use_chance() < 100
+        has_flag = (cond.one_time or 0) > 0
+        flags_only_decrease = instance.increment == 0 and instance.max_counter > 0
+        if not is_timed_group and is_optional and has_flag and flags_only_decrease:
+            if instance.max_counter == cond.one_time:
+                item_condition.global_one_time = True
+            else:
+                item_condition.limited_execution = int(instance.max_counter / cond.one_time)
 
     return item
 
@@ -103,7 +88,8 @@ def special_adjust_enemy_remaining(skillset: ProcessedSkillset):
             found_action.timed[0].skills.insert(idx, skill)
 
 
-def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInstance]) -> BehaviorGroup:
+def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInstance],
+                                      is_timed_group=False) -> BehaviorGroup:
     items = list(filter(None, items))  # Ensure there are no nulls in the list
     if not items:
         return
@@ -113,7 +99,7 @@ def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInst
         bg = bg.group
     bg.group_type = group_type
     for item in items:
-        bg.children.append(behavior_to_proto(item))
+        bg.children.append(behavior_to_proto(item, is_timed_group=is_timed_group))
     return bg
 
 
@@ -134,7 +120,8 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
             tg.condition.trigger_turn = time_action.turn
             if time_action.end_turn:
                 tg.condition.trigger_turn_end = time_action.end_turn
-            add_behavior_group_from_behaviors(tg.children, BehaviorGroup.STANDARD, time_action.skills)
+            add_behavior_group_from_behaviors(tg.children, BehaviorGroup.STANDARD, time_action.skills,
+                                              is_timed_group=True)
 
         for repeat_action in action.repeating:
             rg = hg.children.add().group

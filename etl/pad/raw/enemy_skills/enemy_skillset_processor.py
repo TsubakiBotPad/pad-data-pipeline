@@ -2,6 +2,7 @@
 Contains code to convert a list of enemy behavior logic into a flattened structure
 called a ProcessedSkillset.
 """
+import collections
 from typing import Set, Tuple, Dict
 
 from pad.raw.enemy_skills.enemy_skill_info import *
@@ -543,7 +544,11 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
             if ctx.counter > 0:
                 fake_behavior = ESCountdownMessage(b.enemy_skill_id, ctx.counter)
                 fake_ref = ESRef(b.enemy_skill_id, 100, 0)
-                fake_instance = EsInstance(fake_behavior, fake_ref)
+                FakeCard = collections.namedtuple('Card',
+                                                  'use_new_ai enemy_skill_max_counter enemy_skill_counter_increment')
+                fake_card = FakeCard(use_new_ai=False, enemy_skill_max_counter=0, enemy_skill_counter_increment=0)
+
+                fake_instance = EsInstance(fake_behavior, fake_ref, fake_card)
                 results.append(fake_instance)
                 return results, card_branches, combo_branches
             else:
