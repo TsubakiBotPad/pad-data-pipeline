@@ -585,4 +585,7 @@ class AsTextConverter(BaseTextConverter):
         random_skills_text = []
         for idx, s in enumerate(act.random_skills):
             random_skills_text.append('{}) {}'.format(idx + 1, s.full_text(self)))
-        return 'Activate a random skill from the list: {}'.format(', '.join(random_skills_text))
+        return 'Activate a random skill from the list: [{}]'.format(', '.join(random_skills_text))
+
+    def change_monster(self, act):
+        return "Changes to {}".format(act.change_to)
