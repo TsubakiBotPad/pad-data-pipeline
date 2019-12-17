@@ -12,6 +12,7 @@ class Tag(Enum):
     DISABLE_POISON = '[Disable Poison/Mortal Poison effects]'
     FIXED_4S = '[Fixed 4 second movetime]'
     FIXED_5S = '[Fixed 5 second movetime]'
+    FIXED_6S = '[Fixed 6 second movetime]'
     ERASE_4P = '[Unable to erase 3 orbs or less]'
     ERASE_5P = '[Unable to erase 4 orbs or less]'
 

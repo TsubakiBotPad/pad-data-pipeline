@@ -1328,6 +1328,8 @@ class FixedMovementTime(LeaderSkill):
             self.tags.append(Tag.FIXED_4S)
         elif self.time == 5:
             self.tags.append(Tag.FIXED_5S)
+        elif self.time == 6:
+            self.tags.append(Tag.FIXED_6S)
         elif self.time == 0:
             # Ignore this case; bad skill
             pass
