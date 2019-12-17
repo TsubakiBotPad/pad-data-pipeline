@@ -121,6 +121,9 @@ message Condition {
     // Action/group will only ever execute one time.
     bool global_one_time = 4;
 
+    // Action/group can execute at most this many times.
+    int32 limited_execution = 13;
+
     // Action/group will only execute when N enemies remain. If this number
     // is larger than 10 it should be ignored.
     int32 trigger_enemies_remaining = 5;
