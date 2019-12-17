@@ -16,8 +16,8 @@ exported database and install it into your local copy.
 
 In prod we're using a Apache webserver with PHP that executes a python script. Kind of gross.
 
-In dev we're using a sanic webserver (requires python 3.6 and sanic_compress). It would be nice
-to start using this in prod using mod_proxy? 
+In dev we're using a sanic webserver (requires python 3.6 and sanic\_compress). It would be nice
+to start using this in prod using mod\_proxy? 
 
 ## Integration tests
 

@@ -1032,6 +1032,16 @@ class ReduceDisableMatch(ActiveSkill):
     def text(self, converter: AsTextConverter) -> str:
         return converter.match_disable_convert(self)
 
+class ChangeMonster(ActiveSkill):
+    skill_type = 202
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0])
+        self.change_to = data[0]
+        super().__init__(ms)
+
+    def text(self, converter: AsTextConverter) -> str:
+        return converter.change_monster(self)
 
 def convert(skill_list: List[MonsterSkill]):
     skill_type_to_constructor = {}
@@ -1149,4 +1159,5 @@ ALL_ACTIVE_SKILLS = [
     ReduceVoidDamage,
     Suicide195,
     ReduceDisableMatch,
+    ChangeMonster,
 ]
