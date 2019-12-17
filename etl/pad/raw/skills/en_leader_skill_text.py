@@ -78,6 +78,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         83: 'Shaman King Collab',
         85: 'Samurai Spirits',
         86: 'Power Rangers',
+        88: 'Fujimi Fantasia',
         10001: 'Dragonbounds & Dragon Callers',
     }
 
