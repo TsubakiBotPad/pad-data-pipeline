@@ -844,17 +844,18 @@ class AwokenSkillBurst(ActiveSkill):
     skill_type = 156
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [1, 0, 0, 0, 0, 0])
+        data = merge_defaults(ms.data, [1, 1, 0, 0, 0, 0, 0, 1])
         self.duration = data[0]
         self.awakenings = data[1:4]
-        self.toggle = data[4]
+        self._unknown = data[5]
+        self.toggle = data[6]
         self.amount_per = None
         if self.toggle == 1:
-            self.amount_per = data[5]
+            self.amount_per = data[7]
         elif self.toggle == 2:
-            self.amount_per = (data[5] - 100) / 100
+            self.amount_per = (data[7] - 100) / 100
         elif self.toggle == 3:
-            self.amount_per = multi(data[5])
+            self.amount_per = multi(data[7])
         super().__init__(ms)
 
     def text(self, converter: AsTextConverter) -> str:
