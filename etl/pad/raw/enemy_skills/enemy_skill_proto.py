@@ -20,7 +20,6 @@ def behavior_to_proto(instance: EsInstance, is_timed_group=True) -> BehaviorItem
     item_condition = item_behavior.condition
 
     item_behavior.enemy_skill_id = instance.enemy_skill_id
-    item_condition.use_chance = 100
 
     cond = instance.condition
     if cond is not None:
@@ -165,6 +164,12 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
 
     bg = add_behavior_group_from_moveset(result.groups, BehaviorGroup.STANDARD, skillset.moveset)
 
+    def clean_empty_conditions(x):
+        # This just ensures we wipe out empty conditions
+        pass
+
+    visit_tree(bg, clean_empty_conditions)
+
     if not skillset.enemy_remaining_enabled:
         def clean_enemy_remaining(x):
             x.condition.ClearField('trigger_enemies_remaining')
@@ -249,13 +254,14 @@ def clean_behavior_group(o: BehaviorGroup) -> Optional[BehaviorGroup]:
         if child.HasField('condition'):
             r.condition.MergeFrom(child.condition)
 
+    # Removed this - it was pushing up unnecessary stuff.
+    #
     # If this group has exactly one child behavior, merge the condition up.
-    if len(r.children) == 1 and r.children[0].HasField('behavior'):
-        # TODO: consider removing this, or at least discriminating more
-        child = r.children[0].behavior
-        if child.HasField('condition'):
-            r.condition.MergeFrom(child.condition)
-            child.ClearField('condition')
+    # if len(r.children) == 1 and r.children[0].HasField('behavior'):
+    #     child = r.children[0].behavior
+    #     if child.HasField('condition'):
+    #         r.condition.MergeFrom(child.condition)
+    #         child.ClearField('condition')
 
     # If this group has two subgroups, the first has hp = 100 and second has hp = 99, update the first HP to 101, which
     # is a special case indicating 'when HP is full'.
