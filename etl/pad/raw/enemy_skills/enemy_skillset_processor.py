@@ -83,7 +83,7 @@ class ProcessedSkillset(object):
     roughly in the order in which they're declared here.
     """
 
-    def __init__(self, level: int):
+    def __init__(self, level: int, card: Card):
         # The monster level this skillset applies to.
         self.level = level
         # Things like color/type resists, resolve, etc.
@@ -98,6 +98,9 @@ class ProcessedSkillset(object):
 
         # Alternate movesets which execute when a specific number of enemies remain.
         self.enemy_remaining_movesets = []  # type: List[EnemyRemainingMoveset]
+
+        # Hint that we shouldn't accept enemy remaining conditions.
+        self.enemy_remaining_enabled = card.unknown_009 != 5
 
     def has_actions(self):
         return any([self.base_abilities,
@@ -792,7 +795,7 @@ def convert(card: Card, enemy_behavior: List[EsInstance], level: int):
     enemy_skill_max_counter = card.enemy_skill_max_counter
     enemy_skill_counter_increment = card.enemy_skill_counter_increment
 
-    skillset = ProcessedSkillset(level)
+    skillset = ProcessedSkillset(level, card)
 
     # Behavior is 1-indexed, so stick a fake row in to start
     behaviors = [None] + list(enemy_behavior)  # type: List[EsInstance]

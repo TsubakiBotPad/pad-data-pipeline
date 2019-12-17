@@ -112,7 +112,7 @@ message Condition {
     // Action or group is guarded by a HP threshold.
     int32 hp_threshold = 1;
 
-    // Action has a % of activating.
+    // Action has a % of activating. 0, 100, and missing all mean guaranteed.
     int32 use_chance = 2;
 
     // Action/group repeats every N turns.

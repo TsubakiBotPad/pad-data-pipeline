@@ -24,7 +24,8 @@ def behavior_to_proto(instance: EsInstance, is_timed_group=True) -> BehaviorItem
 
     cond = instance.condition
     if cond is not None:
-        item_condition.use_chance = cond.use_chance()
+        if cond.use_chance() not in [0, 100]:
+            item_condition.use_chance = cond.use_chance()
         item_condition.global_one_time = cond.forced_one_time or False
         item_condition.trigger_enemies_remaining = cond.enemies_remaining or 0
         item_condition.if_defeated = cond.on_death or False
@@ -155,15 +156,20 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
     bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.DEATH, skillset.death_actions)
 
     def clean_on_death(x):
-        if_defeated_cond = x.condition.if_defeated
         x.ClearField('condition')
-        if if_defeated_cond:
-            x.condition.if_defeated = if_defeated_cond
 
     # Only condition necessary for death is, well, death
-    visit_tree(bg, clean_on_death)
+    if bg:
+        visit_tree(bg, clean_on_death)
+        bg.condition.if_defeated = True
 
-    add_behavior_group_from_moveset(result.groups, BehaviorGroup.STANDARD, skillset.moveset)
+    bg = add_behavior_group_from_moveset(result.groups, BehaviorGroup.STANDARD, skillset.moveset)
+
+    if not skillset.enemy_remaining_enabled:
+        def clean_enemy_remaining(x):
+            x.condition.ClearField('trigger_enemies_remaining')
+
+        visit_tree(bg, clean_enemy_remaining)
 
     for es_moveset in skillset.enemy_remaining_movesets:
         es_bg = add_behavior_group_from_moveset(result.groups, BehaviorGroup.REMAINING, es_moveset)
@@ -240,6 +246,7 @@ def clean_behavior_group(o: BehaviorGroup) -> Optional[BehaviorGroup]:
 
     # If this group has exactly one child behavior, merge the condition up.
     if len(r.children) == 1 and r.children[0].HasField('behavior'):
+        # TODO: consider removing this, or at least discriminating more
         child = r.children[0].behavior
         if child.HasField('condition'):
             r.condition.MergeFrom(child.condition)
