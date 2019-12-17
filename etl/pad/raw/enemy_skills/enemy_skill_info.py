@@ -1407,10 +1407,14 @@ class EnemySkillUnknown(ESBehavior):
 
 
 class EsInstance(Printable):
-    def __init__(self, behavior: ESBehavior, ref: ESRef):
+    def __init__(self, behavior: ESBehavior, ref: ESRef, monster_card: Card):
         self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
+
+        self.use_new_ai = monster_card.use_new_ai
+        self.max_counter = monster_card.enemy_skill_max_counter
+        self.increment = monster_card.enemy_skill_counter_increment
 
         if not issubclass(self.btype, ESLogic):
             if ref.enemy_ai > 0 or ref.enemy_rnd > 0:

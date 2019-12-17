@@ -79,7 +79,8 @@ def _clean_enemy(cards: List[Card], enemy_skills: List[ESBehavior]) -> List[Merg
         if not c.enemy_skill_refs:
             continue
 
-        merged_skills = [EsInstance(enemy_skill_map[ref.enemy_skill_id], ref) for ref in c.enemy_skill_refs if ref]
+        merged_skills = [EsInstance(enemy_skill_map[ref.enemy_skill_id], ref, c) for ref in c.enemy_skill_refs if
+                         ref]
         merged_enemies.append(MergedEnemy(c.monster_no, c.enemy(), merged_skills))
     return merged_enemies
 

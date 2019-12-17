@@ -59,6 +59,8 @@ def format_condition(cond: Condition):
         parts.append('{}% chance'.format(cond.use_chance))
     if cond.global_one_time:
         parts.append('one time only')
+    if cond.limited_execution:
+        parts.append('at most {} times'.format(cond.limited_execution))
     if cond.trigger_enemies_remaining:
         parts.append('when {} enemies remain'.format(cond.trigger_enemies_remaining))
     if cond.if_defeated:
