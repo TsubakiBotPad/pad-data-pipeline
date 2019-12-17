@@ -9,6 +9,7 @@ class LsTextConverter(BaseTextConverter):
         Tag.BOARD_7X6: '[Board becomes 7x6]',
         Tag.FIXED_4S: '[Fixed 4 second movetime]',
         Tag.FIXED_5S: '[Fixed 5 second movetime]',
+        Tag.FIXED_6S: '[Fixed 6 second movetime]',
         Tag.ERASE_4P: '[Unable to erase 3 orbs or less]',
         Tag.ERASE_5P: '[Unable to erase 4 orbs or less]',
     }
