@@ -588,4 +588,4 @@ class AsTextConverter(BaseTextConverter):
         return 'Activate a random skill from the list: [{}]'.format(', '.join(random_skills_text))
 
     def change_monster(self, act):
-        return "Changes to {}".format(act.change_to)
+        return "Changes to {} for the duration of the dungeon".format(act.change_to)
