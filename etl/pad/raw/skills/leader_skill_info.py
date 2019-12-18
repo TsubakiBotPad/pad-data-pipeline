@@ -1503,7 +1503,7 @@ class BlobBonusDamage(LeaderSkill):
 class ArmorBreakBonusDamage(LeaderSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0])
-        self.match_attributes = list_binary_con(data[:4])
+        self.attributes = list_binary_con(data[:4])
         self.min_combo = data[4]
         self.bonus_damage = data[5]
         super().__init__(201, ms)
