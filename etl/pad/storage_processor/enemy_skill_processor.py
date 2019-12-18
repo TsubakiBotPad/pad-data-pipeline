@@ -24,7 +24,7 @@ class EnemySkillProcessor(object):
             self.static_enemy_skills = json.load(f)
 
     def load_static(self):
-        logger.warning('loading %d static skills', len(self.static_enemy_skills))
+        logger.info('loading %d static skills', len(self.static_enemy_skills))
         for raw in self.static_enemy_skills:
             item = EnemySkill.from_json(raw)
             self.db.insert_or_update(item)
@@ -39,21 +39,21 @@ class EnemySkillProcessor(object):
 
                 used_skills[cseb.enemy_skill_id] = cseb
 
-        logger.warning('loading %d enemy skills', len(used_skills))
+        logger.info('loading %d enemy skills', len(used_skills))
         for cseb in used_skills.values():
             item = EnemySkill.from_cseb(cseb)
             self.db.insert_or_update(item)
 
     def load_enemy_data(self, base_dir: str):
         card_files = []
-        logger.warning('scanning enemy data for %d cards', len(self.data.all_cards))
+        logger.info('scanning enemy data for %d cards', len(self.data.all_cards))
         for csc in self.data.all_cards:
             card_file = os.path.join(base_dir, '{}.textproto'.format(csc.monster_id))
             if not os.path.exists(card_file):
                 continue
             card_files.append(card_file)
 
-        logger.warning('loading enemy data for %d cards', len(card_files))
+        logger.info('loading enemy data for %d cards', len(card_files))
         count_not_approved = 0
         count_approved = 0
         for card_file in card_files:
@@ -72,4 +72,4 @@ class EnemySkillProcessor(object):
             item = EnemyData.from_mb(mb, mbwo.status)
             self.db.insert_or_update(item)
 
-        logger.warning('done, %d approved %d not approved', count_approved, count_not_approved)
+        logger.info('done, %d approved %d not approved', count_approved, count_not_approved)
