@@ -341,7 +341,7 @@ class AsTextConverter(BaseTextConverter):
             elif c==len(rows)-1 or rows[c+1][1] != row[1]:
                 skill_text.append('change {} to {} orbs'.format(row[0], row[1]))
             else:
-                while rows[c+skip][1] == row[1]:
+                while c+skip<len(rows) and rows[c+skip][1] == row[1]:
                     skip += 1
                 formatted = ' and '.join(map(lambda x: x[0], rows[c:c+skip]))
                 skill_text.append("change {} to {} orbs".format(formatted, row[1]))
