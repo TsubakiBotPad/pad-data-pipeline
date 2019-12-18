@@ -210,7 +210,7 @@ class AsTextConverter(BaseTextConverter):
 
     def awakening_heal_convert(self, act):
         # TODO: these things are a travesty clean them up
-        skill_text = 'Recover ' + str(act.amount_per) + ' HP for each '
+        skill_text = 'Heal ' + str(act.amount_per).replace(".0","") + 'x RCV for each '
         for i in range(0, len(act.awakenings) - 1):
             if act.awakenings[i + 1] != 0:
                 skill_text += self.AWAKENING_MAP[act.awakenings[i]] + ', '
@@ -324,30 +324,29 @@ class AsTextConverter(BaseTextConverter):
 
     def row_change_convert(self, act):
         ROW_INDEX = {
-            2: 'top row',
-            1: '2nd row from top',
-            0: 'middle row',
-           -1: '2nd row from bottom',
-           -2: 'bottom row',
+            2: 'the top row',
+            1: 'the 2nd row from the top',
+            0: 'the middle row',
+           -1: 'the 2nd row from the bottom',
+           -2: 'the bottom row',
         }
-        
-        skill_text = ''
-        if len(act.rows) == 1:
-            skill_text += 'Change ' + \
-                          ROW_INDEX[int(act.rows[0]['index'])] + ' to ' + \
-                          self.ATTRIBUTES[int(act.rows[0]['orbs'][0])] + ' orbs'
-        elif len(act.rows) == 2:
-            if act.rows[0]['orbs'][0] == act.rows[1]['orbs'][0]:
-                skill_text += 'Change ' + ROW_INDEX[int(act.rows[0]['index'])] + ' and ' + ROW_INDEX[int(
-                    act.rows[1]['index'])] + ' to ' + self.ATTRIBUTES[int(act.rows[0]['orbs'][0])] + ' orbs'
+    
+        skill_text = []
+        rows = [(ROW_INDEX[int(row['index'])], self.ATTRIBUTES[int(row['orbs'][0])]) for row in act.rows]
+        skip = 0
+        for c, row in enumerate(rows):
+            if skip:
+                skip -= 1
+                continue
+            elif c==len(rows)-1 or rows[c+1][1] != row[1]:
+                skill_text.append('change {} to {} orbs'.format(row[0], row[1]))
             else:
-                skill_text += 'Change ' + \
-                              ROW_INDEX[int(act.rows[0]['index'])] + ' to ' + \
-                              self.ATTRIBUTES[int(act.rows[0]['orbs'][0])] + ' orbs'
-                skill_text += ' and change ' + \
-                              ROW_INDEX[int(act.rows[1]['index'])] + ' to ' + \
-                              self.ATTRIBUTES[int(act.rows[1]['orbs'][0])] + ' orbs'
-        return skill_text
+                while rows[c+skip][1] == row[1]:
+                    skip += 1
+                formatted = ' and '.join(map(lambda x: x[0], rows[c:c+skip]))
+                skill_text.append("change {} to {} orbs".format(formatted, row[1]))
+                skip -= 1
+        return ' and '.join(skill_text).capitalize()
 
     def column_change_convert(self, act):
         COLUMN_INDEX = {
