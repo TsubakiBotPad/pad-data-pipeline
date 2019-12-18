@@ -1500,7 +1500,7 @@ class BlobBonusDamage(LeaderSkill):
     def text(self, converter: LsTextConverter) -> str:
         return converter.mass_match_bonus_damage_convert(self)
 
-class ArmorBreakBonusDamage(LeaderSkill):
+class ColorComboBonusDamage(LeaderSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0])
         self.attributes = list_binary_con(data[:4])
@@ -1509,7 +1509,7 @@ class ArmorBreakBonusDamage(LeaderSkill):
         super().__init__(201, ms)
 
     def text(self, converter: LsTextConverter) -> str:
-        return converter.armor_break_bonus_damage_convert(self)
+        return converter.color_combo_bonus_damage_convert(self)
 
 def convert(skill_list: List[MonsterSkill]):
     results = {}
@@ -1745,6 +1745,6 @@ def convert_skill(s) -> Optional[LeaderSkill]:
     if s.skill_type == 200:
         return BlobBonusDamage(s)
     if s.skill_type == 201:
-        return ArmorBreakBonusDamage(s)
+        return ColorComboBonusDamage(s)
 
     return None

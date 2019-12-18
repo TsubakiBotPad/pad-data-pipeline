@@ -324,13 +324,13 @@ class AsTextConverter(BaseTextConverter):
 
     def row_change_convert(self, act):
         ROW_INDEX = {
-            0: 'top row',
+            2: 'top row',
             1: '2nd row from top',
-            2: '3rd row from bottom',
-            3: '2nd row from bottom',
-            -2: 'bottom row',
+            0: 'middle row',
+           -1: '2nd row from bottom',
+           -2: 'bottom row',
         }
-
+        
         skill_text = ''
         if len(act.rows) == 1:
             skill_text += 'Change ' + \

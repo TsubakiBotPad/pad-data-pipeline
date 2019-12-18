@@ -307,5 +307,13 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
         return skill_text
 
+    def color_combo_bonus_damage_text(self, bonus_damage, min_combo, attr_text):
+        skill_text = '{} additional damage when attacking with {} or more'.format(bonus_damage, min_combo)
+        if attr_text:
+            skill_text += '{} combos'.format(attr_text)
+        else:
+            skill_text += ' combos'
+        return skill_text
+
     def taiko_text(self):
         return 'Turn orb sound effects into Taiko noises'
