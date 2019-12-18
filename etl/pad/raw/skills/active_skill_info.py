@@ -621,7 +621,7 @@ class TwoPartActiveSkill(ActiveSkill):
                 text_to_item[p_text].repeat += 1
             else:
                 text_to_item[p_text] = PartWithTextAndCount(p, p_text)
-
+                
         return '; '.join(map(lambda x: x.full_text(converter), text_to_item.values()))
 
 
@@ -687,7 +687,7 @@ class RowOrbChange(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [])
         # TODO: simplify this
-        self.rows = [{'index': i if i < 4 else i - 6, 'orbs': binary_con(orbs)} for
+        self.rows = [{'index': 2-i, 'orbs': binary_con(orbs)} for
                      indices, orbs in zip(data[::2], data[1::2]) for i in binary_con(indices)]
         super().__init__(ms)
 
@@ -838,8 +838,7 @@ class ThreeAttrtoOneAttr(ActiveSkill):
 
     def text(self, converter: AsTextConverter) -> str:
         return converter.random_orb_change_convert(self)
-
-
+    
 class AwokenSkillBurst(ActiveSkill):
     skill_type = 156
 
@@ -866,6 +865,38 @@ class AwokenSkillBurst(ActiveSkill):
             return converter.awakening_shield_convert(self)
         else:
             return None
+
+class AwokenSkillBurst2(ActiveSkill):
+    #TODO: Figure out what this actually is
+    #http://www.puzzledragonx.com/en/skill.asp?s=5665
+    #http://www.puzzledragonx.com/en/skill.asp?s=5803
+    skill_type = 168
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [1, 1, 0, 0, 0, 0, 0, 1])
+        self.duration = data[0]
+        self.awakenings = data[1:4]
+        self._unknown = data[5]
+        self.toggle = data[6]
+        self.amount_per = None
+        if self.toggle == 1:
+            self.amount_per = data[7]
+        elif self.toggle == 2:
+            self.amount_per = (data[7] - 100) / 100
+        elif self.toggle == 3:
+            self.amount_per = multi(data[7])
+        super().__init__(ms)
+
+    def text(self, converter: AsTextConverter) -> str:
+        if self.toggle in [0,1]:
+            return converter.awakening_heal_convert(self)
+        elif self.toggle == 2:
+            return converter.awakening_attack_boost_convert(self)
+        elif self.toggle == 3:
+            return converter.awakening_shield_convert(self)
+        else:
+            return None
+
 
 
 class AddAdditionalCombos(ActiveSkill):
@@ -1146,6 +1177,7 @@ ALL_ACTIVE_SKILLS = [
     EnemyAttrChange,
     ThreeAttrtoOneAttr,
     AwokenSkillBurst,
+    AwokenSkillBurst2,
     AddAdditionalCombos,
     TrueGravity,
     OrbLockRemoval,
