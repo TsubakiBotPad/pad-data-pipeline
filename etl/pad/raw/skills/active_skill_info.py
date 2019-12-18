@@ -687,7 +687,7 @@ class RowOrbChange(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [])
         # TODO: simplify this
-        self.rows = [{'index': i if i < 4 else i - 6, 'orbs': binary_con(orbs)} for
+        self.rows = [{'index': 2-i, 'orbs': binary_con(orbs)} for
                      indices, orbs in zip(data[::2], data[1::2]) for i in binary_con(indices)]
         super().__init__(ms)
 
