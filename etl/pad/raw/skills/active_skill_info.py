@@ -849,7 +849,7 @@ class AwokenSkillBurst(ActiveSkill):
         self.toggle = data[4]
         self.amount_per = None
         if self.toggle == 1:
-            self.amount_per = data[5]
+            self.amount_per = data[5]/100
         elif self.toggle == 2:
             self.amount_per = (data[5] - 100) / 100
         elif self.toggle == 3:
