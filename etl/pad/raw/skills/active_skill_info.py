@@ -881,8 +881,8 @@ class AwokenSkillBurst2(ActiveSkill):
         self.amount_per = None
         if self.toggle == 1:
             self.amount_per = data[7]
-        elif self.toggle == [0,2]:
-            self.amount_per = (data[7] - 100) / 100
+        elif self.toggle in [0,2]:
+            self.amount_per = data[7] / 100
         elif self.toggle == 3:
             self.amount_per = multi(data[7])
         super().__init__(ms)
