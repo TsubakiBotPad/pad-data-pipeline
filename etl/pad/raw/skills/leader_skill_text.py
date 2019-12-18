@@ -405,7 +405,7 @@ class LsTextConverter(BaseTextConverter):
 
     def color_combo_bonus_damage_convert(self, ls):
         attr_text = self.fmt_multi_attr(list(set(ls.attributes)))
-        return self.mass_match_bonus_damage_text(ls.bonus_damage, ls.min_combo, attr_text)
+        return self.color_combo_bonus_damage_text(ls.bonus_damage, ls.min_combo, attr_text)
 
     def color_combo_bonus_damage_text(self, bonus_damage, min_combo, attr_text):
         raise I13NotImplemented()
