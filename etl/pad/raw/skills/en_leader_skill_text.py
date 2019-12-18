@@ -78,6 +78,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         83: 'Shaman King Collab',
         85: 'Samurai Spirits',
         86: 'Power Rangers',
+        88: 'Fujimi Fantasia',
         10001: 'Dragonbounds & Dragon Callers',
     }
 
@@ -304,6 +305,14 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
         else:
             skill_text += ' orbs'
 
+        return skill_text
+
+    def color_combo_bonus_damage_text(self, bonus_damage, min_combo, attr_text):
+        skill_text = '{} additional damage when attacking with {} or more'.format(bonus_damage, min_combo)
+        if attr_text:
+            skill_text += '{} combos'.format(attr_text)
+        else:
+            skill_text += ' combos'
         return skill_text
 
     def taiko_text(self):
