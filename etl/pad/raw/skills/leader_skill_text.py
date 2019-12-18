@@ -404,8 +404,12 @@ class LsTextConverter(BaseTextConverter):
         raise I13NotImplemented()
 
     def armor_break_bonus_damage_convert(self, ls):
-        raise I13NotImplemented() 
+        attr_text = self.fmt_multi_attr(ls.attributes)
+        return self.mass_match_bonus_damage_text(ls.bonus_damage, ls.min_combo, attr_text)
 
+    def armor_break_bonus_damage_text(self, bonus_damage, min_combo, attr_text):
+        raise I13NotImplemented()
+ 
     def taiko_convert(self, ls):
         return self.taiko_text()
 
