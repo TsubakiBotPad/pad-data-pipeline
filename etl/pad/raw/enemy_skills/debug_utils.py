@@ -1,7 +1,7 @@
 from typing import List
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Condition, Behavior
-from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, EsInstance, ESCountdownMessage
+from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, EsInstance, ESCountdownMessage, ESDefaultAttack
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset
 from pad.raw_processor.crossed_data import CrossServerCard
 
@@ -15,6 +15,8 @@ def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehav
     output += '\ncounter increment: {}'.format(card.enemy_skill_counter_increment)
 
     library = {x.enemy_skill_id: x.na_skill.behavior for x in csc.enemy_behavior}
+    library[-1] = ESCountdownMessage()
+    library[-2] = ESDefaultAttack()
     output += '\n' + format_monster_behavior(mb, library)
 
     with open(file_path, 'w', encoding='utf-8') as f:
@@ -95,8 +97,7 @@ def format_condition(cond: Condition):
 
 
 def format_behavior(indent_str, behavior: Behavior, library):
-    # TODO: fix ESCountdownMessage hack
-    skill = library.get(behavior.enemy_skill_id) or ESCountdownMessage(behavior.enemy_skill_id)
+    skill = library.get(behavior.enemy_skill_id)
     skill_name = skill.name
     if not skill_name:
         if behavior.child_ids:
@@ -107,7 +108,7 @@ def format_behavior(indent_str, behavior: Behavior, library):
     if not behavior.child_ids:
         output += '\n{}{}'.format(indent_str, skill.full_description())
     for child_id in behavior.child_ids:
-        child_skill = library.get(child_id) or ESCountdownMessage(child_id)
+        child_skill = library.get(child_id)
 
         output += '\n{} - ({}:{}) {}'.format(indent_str,
                                              child_skill.enemy_skill_id,

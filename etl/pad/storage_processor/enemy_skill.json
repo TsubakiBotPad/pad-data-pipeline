@@ -10,5 +10,17 @@
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
+  },
+  {
+    "enemy_skill_id": -2,
+    "name_na": "Single hit attack",
+    "name_jp": "Single hit attack",
+    "name_kr": "Single hit attack",
+    "desc_na": "Attack one time",
+    "desc_jp": "Attack one time",
+    "desc_kr": "Attack one time",
+    "min_hits": 1,
+    "max_hits": 1,
+    "atk_mult": 100
   }
 ]
