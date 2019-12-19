@@ -315,9 +315,20 @@ class Context(object):
         return (self.enraged or 0) > 0
 
 
-# def default_attack():
-#     """Indicates that the monster uses its standard attack."""
-#     return ESDefaultAttack()
+def wrap_with_instance(behavior):
+    FakeCard = collections.namedtuple('Card', 'use_new_ai enemy_skill_max_counter enemy_skill_counter_increment')
+    fake_card = FakeCard(use_new_ai=False, enemy_skill_max_counter=0, enemy_skill_counter_increment=0)
+    fake_ref = ESRef(behavior.enemy_skill_id, 100, 0)
+    return EsInstance(behavior, fake_ref, fake_card)
+
+
+def countdown_message():
+    return wrap_with_instance(ESCountdownMessage())
+
+
+def default_attack():
+    """Indicates that the monster uses its standard attack."""
+    return wrap_with_instance(ESDefaultAttack())
 
 
 def loop_through(ctx, behaviors: List[Optional[EsInstance]]) -> List[EsInstance]:
@@ -545,14 +556,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
         if b_type == ESCountdown:
             ctx.counter -= 1
             if ctx.counter > 0:
-                fake_behavior = ESCountdownMessage(b.enemy_skill_id, ctx.counter)
-                fake_ref = ESRef(b.enemy_skill_id, 100, 0)
-                FakeCard = collections.namedtuple('Card',
-                                                  'use_new_ai enemy_skill_max_counter enemy_skill_counter_increment')
-                fake_card = FakeCard(use_new_ai=False, enemy_skill_max_counter=0, enemy_skill_counter_increment=0)
-
-                fake_instance = EsInstance(fake_behavior, fake_ref, fake_card)
-                results.append(fake_instance)
+                results.append(countdown_message())
                 return results, card_branches, combo_branches
             else:
                 idx += 1

@@ -284,14 +284,16 @@ class ESAttackSinglehit(ESBehaviorAttack):
         self.attack = ESAttack.new_instance(100)
 
 
-# class ESDefaultAttack(ESAttackSinglehit):
-#     """Not a real behavior, used in place of a behavior when none is detected.
-#
-#     Implies that a monster uses its normal attack.
-#     """
-#
-#     def __init__(self):
-#         self.name = 'Default Attack'
+class ESDefaultAttack(ESAttackSinglehit):
+    """Not a real behavior, used in place of a behavior when none is detected.
+
+    Implies that a monster uses its normal attack.
+    """
+
+    def __init__(self):
+        raw = ['-2', 'Default Attack', '-2', '0']
+        dummy_skill = EnemySkill(raw)
+        super().__init__(dummy_skill)
 
 
 class ESAttackMultihit(ESBehaviorAttack):
@@ -1351,13 +1353,8 @@ class ESCountdown(ESLogic):
 class ESCountdownMessage(ESBehavior):
     """Dummy action class to represent displaying countdown numbers"""
 
-    def __init__(self, enemy_skill_id, current_counter=0):
-        raw = [
-            str(enemy_skill_id + 1000 * current_counter),
-            'Countdown Message',
-            '-1',
-            '0'
-        ]
+    def __init__(self, current_counter=0):
+        raw = ['-1', 'Countdown Message', '-1', '0']
         dummy_skill = EnemySkill(raw)
         super().__init__(dummy_skill)
         self.current_counter = current_counter
