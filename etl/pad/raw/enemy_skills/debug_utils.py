@@ -77,7 +77,12 @@ def format_condition(cond: Condition):
         parts.append('if no other skills matched')
     if cond.repeats_every:
         if cond.trigger_turn:
-            parts.append('execute repeatedly, turn {} of {}'.format(cond.trigger_turn, cond.repeats_every))
+            if cond.trigger_turn_end:
+                parts.append('execute repeatedly, turn {}-{} of {}'.format(cond.trigger_turn,
+                                                                           cond.trigger_turn_end,
+                                                                           cond.repeats_every))
+            else:
+                parts.append('execute repeatedly, turn {} of {}'.format(cond.trigger_turn, cond.repeats_every))
         else:
             parts.append('repeats every {} turns'.format(cond.repeats_every))
     elif cond.trigger_turn_end:
