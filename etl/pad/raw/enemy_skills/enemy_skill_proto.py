@@ -128,6 +128,8 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
             if repeat_action.interval > 1:
                 rg.condition.trigger_turn = repeat_action.turn
                 rg.condition.repeats_every = repeat_action.interval
+            if repeat_action.end_turn and repeat_action.end_turn != repeat_action.turn:
+                rg.condition.trigger_turn_end = repeat_action.end_turn
             add_behavior_group_from_behaviors(rg.children, BehaviorGroup.STANDARD, repeat_action.skills)
 
     return bg
