@@ -1610,9 +1610,6 @@ def inject_implicit_onetime(card: Card, behavior: List[EsInstance]):
     max_flag = max([0] + [x.condition.one_time for x in behavior if x.condition and x.condition.one_time])
     next_flag = pow(2, ceil(log(max_flag + 1) / log(2)))
     for b in behavior:
-        if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition.use_chance(
-                hp=0) == 100:
-            # if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition.use_chance(
-            #         hp=0) == 100:
+        if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition._ai == 100:
             b.condition.forced_one_time = next_flag
             next_flag = next_flag << 1
