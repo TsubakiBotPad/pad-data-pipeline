@@ -16,7 +16,9 @@ class ESRef(pad_util.Printable):
 
     def __init__(self, enemy_skill_id: int, enemy_ai: int, enemy_rnd: int):
         self.enemy_skill_id = enemy_skill_id
+        # This is an additive amount under a specific threshold?
         self.enemy_ai = enemy_ai
+        # Seems like this is the base chance for an action
         self.enemy_rnd = enemy_rnd
 
 
@@ -122,7 +124,6 @@ class Card(pad_util.Printable):
 
         # When >0, the enemy turn timer for technical dungeons.
         self.enemy_turns_alt = int(raw[51])
-
 
         # Controls whether the monster uses the 'new' AI or the 'old' AI.
         # Monsters using the old  AI only have support up to some limit of ES values.
