@@ -9,7 +9,7 @@ from pad.raw.enemy_skills.enemy_skill_info import EsInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Moveset, HpActions, TimedSkillGroup
 
 
-def behavior_to_proto(instance: EsInstance, is_timed_group=True) -> BehaviorItem:
+def behavior_to_proto(instance: EsInstance, is_timed_group=True, cur_hp=100) -> BehaviorItem:
     """Converts an EsInstance into a BehaviorItem.
 
     is_timed_group is a hack that injects global_one_time for a relatively small group of monsters that
@@ -23,8 +23,9 @@ def behavior_to_proto(instance: EsInstance, is_timed_group=True) -> BehaviorItem
 
     cond = instance.condition
     if cond is not None:
-        if cond.use_chance() not in [0, 100]:
-            item_condition.use_chance = cond.use_chance()
+        use_chance = cond.use_chance(hp=cur_hp)
+        if use_chance not in [0, 100]:
+            item_condition.use_chance = use_chance
         item_condition.global_one_time = cond.forced_one_time or False
         item_condition.trigger_enemies_remaining = cond.enemies_remaining or 0
         item_condition.if_defeated = cond.on_death or False
@@ -32,7 +33,7 @@ def behavior_to_proto(instance: EsInstance, is_timed_group=True) -> BehaviorItem
         item_condition.trigger_monsters[:] = cond.cards_on_team
         item_condition.trigger_combos = cond.combos_made or 0
 
-        is_optional = cond.use_chance() < 100
+        is_optional = use_chance < 100
         has_flag = (cond.one_time or 0) > 0
         flags_only_decrease = instance.increment == 0 and instance.max_counter > 0
         if not is_timed_group and is_optional and has_flag and flags_only_decrease:
@@ -89,7 +90,7 @@ def special_adjust_enemy_remaining(skillset: ProcessedSkillset):
 
 
 def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInstance],
-                                      is_timed_group=False) -> BehaviorGroup:
+                                      is_timed_group=False, cur_hp=100) -> BehaviorGroup:
     items = list(filter(None, items))  # Ensure there are no nulls in the list
     if not items:
         return
@@ -99,7 +100,7 @@ def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInst
         bg = bg.group
     bg.group_type = group_type
     for item in items:
-        bg.children.append(behavior_to_proto(item, is_timed_group=is_timed_group))
+        bg.children.append(behavior_to_proto(item, is_timed_group=is_timed_group, cur_hp=cur_hp))
     return bg
 
 
@@ -121,7 +122,7 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
             if time_action.end_turn:
                 tg.condition.trigger_turn_end = time_action.end_turn
             add_behavior_group_from_behaviors(tg.children, BehaviorGroup.STANDARD, time_action.skills,
-                                              is_timed_group=True)
+                                              is_timed_group=True, cur_hp=action.hp)
 
         for repeat_action in action.repeating:
             rg = hg.children.add().group
@@ -130,7 +131,8 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
                 rg.condition.repeats_every = repeat_action.interval
             if repeat_action.end_turn and repeat_action.end_turn != repeat_action.turn:
                 rg.condition.trigger_turn_end = repeat_action.end_turn
-            add_behavior_group_from_behaviors(rg.children, BehaviorGroup.STANDARD, repeat_action.skills)
+            add_behavior_group_from_behaviors(rg.children, BehaviorGroup.STANDARD, repeat_action.skills,
+                                              cur_hp=action.hp)
 
     return bg
 

@@ -17,7 +17,7 @@ ZERO_INDEXED_MONSTERS = [
 class StandardSkillGroup(object):
     """Base class storing a list of skills."""
 
-    def __init__(self, skills: List[ESAction], hp_threshold):
+    def __init__(self, skills: List[EsInstance], hp_threshold):
         # List of skills which execute.
         self.skills = skills
         # The hp threshold that this group executes on, always present, even if 100.
@@ -32,7 +32,7 @@ class StandardSkillGroup(object):
 class TimedSkillGroup(StandardSkillGroup):
     """Set of skills which execute on a specific turn, possibly with a HP threshold."""
 
-    def __init__(self, turn: int, hp_threshold: int, skills: List[ESAction]):
+    def __init__(self, turn: int, hp_threshold: int, skills: List[EsInstance]):
         super().__init__(skills, hp_threshold)
         # The turn that this group executes on.
         self.turn = turn
@@ -43,7 +43,7 @@ class TimedSkillGroup(StandardSkillGroup):
 class RepeatSkillGroup(TimedSkillGroup):
     """Set of skills which execute on a specific turn, possibly with a HP threshold."""
 
-    def __init__(self, turn: int, interval: int, hp_threshold: int, skills: List[ESAction]):
+    def __init__(self, turn: int, interval: int, hp_threshold: int, skills: List[EsInstance]):
         super().__init__(turn, hp_threshold, skills)
         # The number of turns between repeats, aka loop size
         self.interval = interval
@@ -377,7 +377,7 @@ def loop_through(ctx, behaviors: List[Optional[EsInstance]]) -> List[EsInstance]
 
     for r in results:
         cond = r.condition
-        if cond and cond.use_chance() == 100 and (cond.one_time or cond.forced_one_time):
+        if cond and cond.use_chance(hp=ctx.hp) == 100 and (cond.one_time or cond.forced_one_time):
             # Handle single counter / fixed cost items
             ctx.update_skill_use(r.condition)
             break
@@ -456,12 +456,13 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
         if b_type == EnemySkillUnknown or issubclass(b_type, ESAction):
             # Check if we should execute this action at all.
             if cond:
-                # HP based checks.
-                if cond.hp_threshold and ctx.hp >= cond.hp_threshold:
+                use_chance_at_hp = cond.use_chance(hp=ctx.hp)
+                # This skill can never execute at this HP; either AI is 0 or the HP is below the threshold
+                if use_chance_at_hp == 0:
                     idx += 1
                     continue
 
-                if cond.use_chance() == 100 and b_type not in [ESDispel]:
+                if use_chance_at_hp == 100 and b_type not in [ESDispel]:
                     # This always executes so it is a terminal action.
                     if not ctx.check_skill_use(cond):
                         idx += 1
@@ -675,6 +676,8 @@ def extract_turn_behaviors(ctx: Context, behaviors: List[EsInstance], hp_checkpo
     hp_ctx = ctx.clone()
     hp_ctx.hp = hp_checkpoint
     turn_data = []
+    # TODO: evaluate changing this to 40, it seems to fix some monsters.
+    # for idx in range(0, 40):
     for idx in range(0, 20):
         started_enraged = hp_ctx.is_enraged()
         turn_data.append(loop_through(hp_ctx, behaviors))
@@ -785,13 +788,22 @@ def compute_enemy_actions(ctx: Context, behaviors: List[EsInstance], hp_checkpoi
             comp_hp = hp_checkpoints[nhp_idx]
             comp_actions = hp_to_actions[comp_hp]
             comp_repeating = comp_actions.repeating
-            if [x.skills for x in repeating] == [x.skills for x in comp_repeating]:
+            if make_repeating_comparable(hp, repeating) == make_repeating_comparable(comp_hp, comp_repeating):
                 for x in repeating:
-                    # TODO: maybe repeating should be an object with a hp slot instead
                     x.hp_range = comp_hp
                 comp_repeating.clear()
 
     return list(sorted(hp_to_actions.values(), key=lambda x: x.hp, reverse=True))
+
+
+def make_repeating_comparable(hp: int, repeating: List[RepeatSkillGroup]):
+    """Helper function to make a repeating skill group comparable against another one.
+
+    A group is effectively comparable if it has the same skill ids in the same order, with the same use chance
+    with each skill. This handles the case where the skill groups can be the same, but one subskill can have a higher
+    rate at a lower threshold; we don't want to lose this information.
+    """
+    return [(y.enemy_skill_id, y.condition.use_chance(hp)) for x in repeating for y in x.skills]
 
 
 def convert(card: Card, enemy_behavior: List[EsInstance], level: int):

@@ -147,14 +147,20 @@ class ESCondition(object):
         # Only executes if a certain combo count was met
         self.combos_made = None
 
-    def use_chance(self):
+    def use_chance(self, hp: int = 100):
         """Returns the likelihood that this condition will be used.
 
-        If 100, it means it will always activate.
-        Note that this implementation is incorrect; it should take a 'current HP' parameter and
-        validate that against the hp_threshold. If under, the result should be ai+rnd.
+        If 100, it means it will always activate. If a HP threshold is present, RND should
+        be interpreted as the 'base chance' and the 'under threshold' chance is AI + RND.
         """
-        return max(self._ai, self._rnd)
+        max_chance = min(self._rnd + self._ai, 100)
+        min_chance = min(self._rnd, 100)
+        if self.hp_threshold:
+            if hp < self.hp_threshold:
+                return max_chance
+            else:
+                return min_chance
+        return max_chance
 
     def description(self):
         desc = Describe.condition(max(self._ai, self._rnd), self.hp_threshold,
@@ -1604,6 +1610,9 @@ def inject_implicit_onetime(card: Card, behavior: List[EsInstance]):
     max_flag = max([0] + [x.condition.one_time for x in behavior if x.condition and x.condition.one_time])
     next_flag = pow(2, ceil(log(max_flag + 1) / log(2)))
     for b in behavior:
-        if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition.use_chance() == 100:
+        if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition.use_chance(
+                hp=0) == 100:
+            # if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition.use_chance(
+            #         hp=0) == 100:
             b.condition.forced_one_time = next_flag
             next_flag = next_flag << 1
