@@ -4,6 +4,7 @@ import random
 from typing import Callable
 
 import pymysql
+from pymysql import InterfaceError
 
 from pad.common import pad_util
 from .sql_item import SqlItem, _col_compare, _tbl_name_ref, _process_col_mappings, ExistsStrategy
@@ -30,7 +31,11 @@ class DbWrapper(object):
 
     def execute(self, cursor, sql):
         logger.debug('Executing: %s', sql)
-        return cursor.execute(sql)
+        try:
+            return cursor.execute(sql)
+        except InterfaceError:
+            self.connection.ping()
+            return cursor.execute(sql)
 
     def fetch_data(self, sql):
         with self.connection.cursor() as cursor:
