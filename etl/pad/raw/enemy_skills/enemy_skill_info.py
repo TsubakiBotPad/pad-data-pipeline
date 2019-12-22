@@ -158,6 +158,9 @@ class ESCondition(object):
         if self.hp_threshold:
             if hp < self.hp_threshold:
                 return max_chance
+            elif self._ai >= 100:
+                # This case literally only affects Avowed Thief, Ishikawa Goemon
+                return 0
             else:
                 return min_chance
         return max_chance
