@@ -332,15 +332,21 @@ class AsTextConverter(BaseTextConverter):
         }
     
         skill_text = []
+        # rows :: List<(str:row_name, str:attribute)>
         rows = [(ROW_INDEX[int(row['index'])], self.ATTRIBUTES[int(row['orbs'][0])]) for row in act.rows]
         skip = 0
         for c, row in enumerate(rows):
             if skip:
                 skip -= 1
                 continue
+
+            # If the current row is different than it's successor or it's the last item
             elif c==len(rows)-1 or rows[c+1][1] != row[1]:
                 skill_text.append('change {} to {} orbs'.format(row[0], row[1]))
+
+            # Otherwise, the current row has the same attribute as it's successor
             else:
+                #Check how many successors share the attribute (and also how many to skip after)
                 while c+skip<len(rows) and rows[c+skip][1] == row[1]:
                     skip += 1
                 formatted = ' and '.join(map(lambda x: x[0], rows[c:c+skip]))
