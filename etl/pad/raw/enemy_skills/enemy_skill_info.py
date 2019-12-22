@@ -472,10 +472,7 @@ class ESPoisonChangeSingle(ESOrbChangeConditional):
         to_attr = 7
         super().__init__(skill, from_attr, to_attr)
 
-class ESUnknown57(ESBehavior):
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-    
+
 class ESPoisonChangeRandom(ESOrbChange):
     def __init__(self, skill: EnemySkill):
         from_attr = -1
@@ -608,12 +605,7 @@ class ESStorePower(ESEnrage):
         self.multiplier = 100 + self.params[1]
         self.turns = 0
 
-#NOT REAL
-class ESBuffDefenceUnused(ESBehavior):
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-        self.shield_percent = self.params[2]
-    
+
 class ESEnrageAttackUp(ABC, ESEnrage):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
@@ -1300,10 +1292,6 @@ class ESBranch(ESLogic):
     def description(self):
         return Describe.branch(self.branch_condition, self.compare, self.branch_value, self.target_round)
 
-#NOT REAL
-class ESSetFlag(ESLogic):
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
 
 class ESBranchFlag(ESBranch):
     def __init__(self, skill: EnemySkill):
@@ -1498,7 +1486,7 @@ BEHAVIOR_MAP = {
     6: ESDispel,
     7: ESRecoverEnemy,
     8: ESStorePower,
-    9: ESBuffDefence,# type 9 skills are unused, but there's 3 and they seem to buff defense
+    9: EnemySkillUnknown,  # This skill is unused
     12: ESJammerChangeSingle,
     13: ESJammerChangeRandom,
     14: ESBindSkill,
@@ -1519,7 +1507,7 @@ BEHAVIOR_MAP = {
     54: ESBindTarget,
     55: ESRecoverPlayer,
     56: ESPoisonChangeSingle,
-    57: ESDarkSnow, # <- NotReal
+    57: EnemySkillUnknown,  # This skill is not yet supported.
     60: ESPoisonChangeRandom,
     61: ESMortalPoisonChangeRandom,
     62: ESBlind,
@@ -1576,7 +1564,7 @@ BEHAVIOR_MAP = {
 
     # LOGIC
     0: ESNone,
-    21: ESNotSure, # <- Fake
+    21: EnemySkillUnknown,  # This logic is unused
     22: ESFlagOperation,
     23: ESBranchFlag,
     24: ESFlagOperation,
