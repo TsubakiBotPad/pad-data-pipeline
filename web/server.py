@@ -254,6 +254,24 @@ async def serve_save_approved_as_is(request):
     return text('ok')
 
 
+@app.route('/dadguide/admin/saveApprovedWithChanges', methods=["POST"])
+async def serve_save_approved_with_changes(request):
+    monster_id = int(request.args.get('id'))
+    data_dir = os.path.join(es_dir, 'behavior_data')
+    monster_file = os.path.join(data_dir, '{}.textproto'.format(monster_id))
+    mbwo = enemy_skill_proto.load_from_file(monster_file)
+    del mbwo.level_overrides[:]
+
+    mbwo_input = MonsterBehaviorWithOverrides()
+    mbwo_input.ParseFromString(binascii.unhexlify(str(request.body.decode('ascii'))))
+
+    mbwo.level_overrides.extend(mbwo_input.level_overrides)
+    mbwo.status = MonsterBehaviorWithOverrides.APPROVED_WITH_CHANGES
+    enemy_skill_proto.save_overrides(monster_file, mbwo)
+
+    return text('ok')
+
+
 @app.route('/dadguide/admin/loadSkill')
 async def serve_load_skill(request):
     skill_id = int(request.args.get('id'))
