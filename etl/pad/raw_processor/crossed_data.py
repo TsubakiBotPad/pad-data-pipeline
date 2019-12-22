@@ -9,7 +9,7 @@ from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
 from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
-from pad.raw.enemy_skills.enemy_skill_info import EsInstance
+from pad.raw.enemy_skills.enemy_skill_info import EsInstance, EnemySkillUnknown
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en_active_skill_text import EnAsTextConverter
@@ -20,6 +20,7 @@ from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
 fail_logger = logging.getLogger('processor_failures')
+human_fix_logger = logging.getLogger('human_fix')
 
 
 class CrossServerCard(object):
@@ -183,6 +184,9 @@ def _combine_es(jp_skills: List[EsInstance],
         raise ValueError('unexpected skill lengths')
     results = []
     for idx, jp_skill in enumerate(jp_skills):
+        if jp_skill.btype == EnemySkillUnknown:
+            human_fix_logger.error('Detected an in-use unknown enemy skill: %d/%d: %s',
+                                   jp_skill.enemy_skill_id, jp_skill.behavior.type, jp_skill.behavior.name)
         results.append(CrossServerEsInstance(jp_skill, na_skills[idx], kr_skills[idx]))
     return results
 
