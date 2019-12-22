@@ -1603,12 +1603,7 @@ def inject_implicit_onetime(card: Card, behavior: List[EsInstance]):
 
     Currently only ESBindRandom but other early skills may need this.
     This seems to fix things like Hera-Is and others, but breaks some like Metatron Tama.
-
-    TODO: Investigate if this has an ai/rnd interaction, like the hp_threshold issue.
     """
-    if card.enemy_skill_counter_increment != 0:
-        # This seems unlikely to be correct.
-        return
     max_flag = max([0] + [x.condition.one_time for x in behavior if x.condition and x.condition.one_time])
     next_flag = pow(2, ceil(log(max_flag + 1) / log(2)))
     for b in behavior:
