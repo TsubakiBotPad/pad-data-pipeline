@@ -1,12 +1,13 @@
 import logging
 import json
+import os
 
 from pad.raw.skills.en_skill_common import EnBaseTextConverter
 from pad.raw.skills.leader_skill_text import LsTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')
 
-SERIES = json.load(open("etl/pad/storage_processor/series.json"))
+SERIES = json.load(open(os.path.realpath(os.path.join(os.getcwd(), "etl/pad/storage_processor/series.json"))))
 
 
 class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
