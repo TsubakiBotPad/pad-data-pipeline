@@ -3,7 +3,8 @@
     "name_jp": "Unsorted",
     "name_kr": "Unsorted",
     "name_na": "Unsorted",
-    "series_id": 0
+    "series_id": 0,
+    "collab_id": 0
   },
   {
     "name_jp": "御三家",
@@ -188,7 +189,7 @@
   {
     "name_jp": "ゴッドフェス限定",
     "name_kr": "갓페스 한정",
-    "name_na": "GodFestival",
+    "name_na": "God Festival",
     "series_id": 34
   },
   {
@@ -248,7 +249,7 @@
   {
     "name_jp": "ノエル",
     "name_kr": "노엘 드래곤",
-    "name_na": "Snow Dome Dragon",
+    "name_na": "Snow Globe Dragon",
     "series_id": 45
   },
   {
@@ -266,7 +267,7 @@
   {
     "name_jp": "忍者",
     "name_kr": "닌자",
-    "name_na": "Ninja",
+    "name_na": "Sengoku Ninja",
     "series_id": 48
   },
   {
@@ -278,7 +279,7 @@
   {
     "name_jp": "妖精",
     "name_kr": "요정",
-    "name_na": "Fairy",
+    "name_na": "Fey",
     "series_id": 51
   },
   {
@@ -320,7 +321,7 @@
   {
     "name_jp": "エヴァコラボ",
     "name_kr": "에반게리온 콜라보",
-    "name_na": "Eva Collab",
+    "name_na": "Evangelion Collab",
     "series_id": 61
   },
   {
@@ -368,13 +369,13 @@
   {
     "name_jp": "ラグオデA コラボ",
     "name_kr": "라그오디A 콜라보",
-    "name_na": "Ragnarok Odyssey Ace Collab ",
+    "name_na": "Ragnarok Odyssey Ace Collab",
     "series_id": 69
   },
   {
     "name_jp": "高岡市コラボ",
     "name_kr": "타카오카시 콜라보",
-    "name_na": "Takaoka Collab",
+    "name_na": "Takaoka City Collab",
     "series_id": 70
   },
   {
@@ -398,7 +399,7 @@
   {
     "name_jp": "サーティワン コラボ",
     "name_kr": "배스킨라빈스 31 콜라보",
-    "name_na": "Baskin-Robbins 31 Collab",
+    "name_na": "Baskin-Robbins Collab",
     "series_id": 75
   },
   {
@@ -410,7 +411,7 @@
   {
     "name_jp": "海賊龍",
     "name_kr": "해적룡",
-    "name_na": "Pirates Dragon",
+    "name_na": "Pirate Dragon",
     "series_id": 77
   },
   {
@@ -470,7 +471,7 @@
   {
     "name_jp": "スペシャルモンスター",
     "name_kr": "스페셜 몬스터",
-    "name_na": "Special Monster",
+    "name_na": "CoroCoro Monster",
     "series_id": 87
   },
   {
@@ -632,7 +633,7 @@
   {
     "name_jp": "私立パズドラ学園",
     "name_kr": "사립 퍼드 학원",
-    "name_na": "Private PAD School",
+    "name_na": "PAD Academy",
     "series_id": 114
   },
   {
@@ -645,7 +646,8 @@
     "name_jp": "ファイナルファンタジー コラボ",
     "name_kr": "파이널 판타지 콜라보",
     "name_na": "Final Fantasy Collab",
-    "series_id": 116
+    "series_id": 116,
+    "collab_id": 45
   },
   {
     "name_jp": "ガンホーコラボ友情ガチャ",
@@ -663,7 +665,8 @@
     "name_jp": "デュエル・マスターズ コラボ",
     "name_kr": "듀얼 마스터즈 콜라보",
     "name_na": "Duel Masters Collab",
-    "series_id": 119
+    "series_id": 119,
+    "collab_id": 47
   },
   {
     "name_jp": "機導龍",
@@ -674,13 +677,13 @@
   {
     "name_jp": "機導獣",
     "name_kr": "기도수",
-    "name_na": "Mech Beast",
+    "name_na": "Cyber Beast",
     "series_id": 121
   },
   {
     "name_jp": "潜在覚醒",
     "name_kr": "잠재각성",
-    "name_na": "Potential Awoken",
+    "name_na": "Latent Awoken",
     "series_id": 122
   },
   {
@@ -698,7 +701,7 @@
   {
     "name_jp": "夏休み",
     "name_kr": "여름방학",
-    "name_na": "Summer Vacation",
+    "name_na": "PAD Island",
     "series_id": 125
   },
   {
@@ -717,7 +720,8 @@
     "name_jp": "進撃の巨人",
     "name_kr": "진격의 거인",
     "name_na": "Attack on Titan",
-    "series_id": 128
+    "series_id": 128,
+    "collab_id": 48
   },
   {
     "name_jp": "ハロウィン",
@@ -758,7 +762,7 @@
   {
     "name_jp": "クリスマスガチャ",
     "name_kr": "크리스마스 에그",
-    "name_na": "Christmas REM",
+    "name_na": "Christmas",
     "series_id": 136
   },
   {
@@ -770,13 +774,13 @@
   {
     "name_jp": "お正月イベント",
     "name_kr": "설날 이벤트",
-    "name_na": "New Year Event",
+    "name_na": "New Years",
     "series_id": 139
   },
   {
     "name_jp": "クローズ コラボ",
     "name_kr": "크로우즈 콜라보",
-    "name_na": "Crows Collab",
+    "name_na": "Crows x Worst Collab",
     "series_id": 140
   },
   {
@@ -794,7 +798,7 @@
   {
     "name_jp": "カーニバル限定",
     "name_kr": "카니발 한정",
-    "name_na": "Carnival Limited",
+    "name_na": "Legendary Hero",
     "series_id": 143
   },
   {
@@ -855,7 +859,8 @@
     "name_jp": "キン肉マン コラボ",
     "name_kr": "근육맨 콜라보",
     "name_na": "Kinnikuman Collab",
-    "series_id": 153
+    "series_id": 153,
+    "collab_id": 58
   },
   {
     "name_jp": "パズドラレーダー連動",
@@ -878,7 +883,7 @@
   {
     "name_jp": "フェス限ヒロイン",
     "name_kr": "페스 한정 히로인",
-    "name_na": "Fes heroine",
+    "name_na": "Fes Heroine",
     "series_id": 157
   },
   {
@@ -909,7 +914,8 @@
     "name_jp": "マガジンオールスターズコラボ",
     "name_kr": "매거진 올스타즈 콜라보",
     "name_na": "Magazine All Stars Collab",
-    "series_id": 162
+    "series_id": 162,
+    "collab_id": 60
   },
   {
     "name_jp": "戦国の神 II",
@@ -927,7 +933,8 @@
     "name_jp": "モンスターハンターコラボ",
     "name_kr": "몬스터 헌터 콜라보",
     "name_na": "Monster Hunter Collab",
-    "series_id": 165
+    "series_id": 165,
+    "collab_id": 61
   },
   {
     "name_jp": "宝珠龍",
@@ -956,8 +963,9 @@
   {
     "name_jp": "龍契士&龍喚士",
     "name_kr": "용계사&용환사",
-    "name_na": "Dragonbound & Caller",
-    "series_id": 171
+    "name_na": "Dragonbound & Dragoncaller",
+    "series_id": 171,
+    "collab_id": 10001
   },
   {
     "name_jp": "鋼の錬金術師 コラボ",
@@ -974,19 +982,19 @@
   {
     "name_jp": "ケルトの神",
     "name_kr": "켈트신",
-    "name_na": "Celtic Pantheon",
+    "name_na": "Celtic God",
     "series_id": 174
   },
   {
     "name_jp": "バレンタイン イベント",
     "name_kr": "발렌타인 이벤트",
-    "name_na": "Valentine Event",
+    "name_na": "Valentine's Day",
     "series_id": 175
   },
   {
     "name_jp": "レアキャラカーニバル友情ガチャ",
     "name_kr": "레어 캐릭터 카니발 우정 에그",
-    "name_na": "Rare Character Carnival Pal Egg",
+    "name_na": "Coloring Book",
     "series_id": 176
   },
   {
@@ -998,7 +1006,7 @@
   {
     "name_jp": "メソポタミアの神",
     "name_kr": "메소포타미아 신",
-    "name_na": "Mesopotamian Pantheon",
+    "name_na": "Mesopotamian Gods",
     "series_id": 178
   },
   {
@@ -1023,7 +1031,8 @@
     "name_jp": "Power Pros Collab",
     "name_kr": "Power Pros Collab",
     "name_na": "Power Pros Collab",
-    "series_id": 182
+    "series_id": 182,
+    "collab_id": 74
   },
   {
     "name_jp": "Gungho Collab 2",
@@ -1041,13 +1050,15 @@
     "name_jp": "ソードアート・オンライン",
     "name_kr": "Sword Art Online",
     "name_na": "Sword Art Online",
-    "series_id": 185
+    "series_id": 185,
+    "collab_id": 76
   },
   {
     "name_jp": "仮面ライダー",
     "name_kr": "",
     "name_na": "Kamen Rider",
-    "series_id": 186
+    "series_id": 186,
+    "collab_id": 77
   },
   {
     "name_jp": "戦国の神 III",
@@ -1059,7 +1070,8 @@
     "name_jp": "妖怪ウォッチ",
     "name_kr": "",
     "name_na": "Yokai Watch",
-    "series_id": 188
+    "series_id": 188,
+    "collab_id": 78
   },
   {
     "name_jp": "",
@@ -1083,24 +1095,83 @@
     "name_jp": "Shaman King Collab",
     "name_kr": "Shaman King Collab",
     "name_na": "Shaman King Collab",
-    "series_id": 192
+    "series_id": 192,
+    "collab_id": 83
   },
   {
     "name_jp": "Power Rangers",
     "name_kr": "Power Rangers",
     "name_na": "Power Rangers",
-    "series_id": 193
+    "series_id": 193,
+    "collab_id": 86
   },
   {
     "name_jp": "シンカリオン",
     "name_kr": "Shinkalion",
     "name_na": "Shinkalion",
-    "series_id": 194
+    "series_id": 194,
+    "collab_id": 87
   },
   {
     "name_jp": "富士見ファンタジア文庫",
     "name_kr": "Fujimi Fantasia Collab",
     "name_na": "Fujimi Fantasia Collab",
-    "series_id": 195
+    "series_id": 195,
+    "collab_id": 88
+  },
+  {
+    "name_jp": "Story Mode",
+    "name_kr": "Story Mode",
+    "name_na": "Story Mode",
+    "series_id": 196
+  },
+  {
+    "name_jp": "Special GodFest",
+    "name_kr": "Special GodFest",
+    "name_na": "Special GodFest",
+    "series_id": 197
+  },
+  {
+    "name_jp": "Samurai Shodown",
+    "name_kr": "Samurai Shodown",
+    "name_na": "Samurai Shodown",
+    "series_id": 198,
+    "collab_id": 85
+  },
+  {
+    "name_jp": "Draconic Orchestra",
+    "name_kr": "Draconic Orchestra",
+    "name_na": "Draconic Orchestra",
+    "series_id": 199
+  },
+  {
+    "name_jp": "McDonalds Collab",
+    "name_kr": "McDonalds Collab",
+    "name_na": "McDonalds Collab",
+    "series_id": 200
+  },
+  {
+    "name_jp": "Shonen Champion",
+    "name_kr": "Shonen Champion",
+    "name_na": "Shonen Champion",
+    "series_id": 201
+  },
+  {
+    "name_jp": "Pepper Collab",
+    "name_kr": "Pepper Collab",
+    "name_na": "Pepper Collab",
+    "series_id": 202
+  },
+  {
+    "name_jp": "Gemstone Princess",
+    "name_kr": "Gemstone Princess",
+    "name_na": "Gemstone Princess",
+    "series_id": 203
+  },
+  {
+    "name_jp": "Special Descended",
+    "name_kr": "Special Descended",
+    "name_na": "Special Descended",
+    "series_id": 204
   }
 ]
