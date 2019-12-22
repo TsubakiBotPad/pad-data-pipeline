@@ -1,11 +1,17 @@
+import logging
+import json
+
 from pad.raw.skills.en_skill_common import EnBaseTextConverter
 from pad.raw.skills.leader_skill_text import LsTextConverter
 
+human_fix_logger = logging.getLogger('human_fix')
 
-SERIES = __import__('json').load(open("etl/pad/storage_processor/series.json"))
+SERIES = json.load(open("etl/pad/storage_processor/series.json"))
+
 
 class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
-    _COLLAB_MAP = {x['collab_id'] : x['name_na'] for x in SERIES if x.get('collab_id')}
+    _COLLAB_MAP = {x['collab_id']: x['name_na'] for x in SERIES if 'collab_id' in x}
+
     def n_attr_or_heal(self, attr, n_attr, format_string, is_range=False):
         if attr == [0, 1, 2, 3, 4]:
             return format_string.format(n_attr) + ' colors'
@@ -171,7 +177,7 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
     def get_collab_name(self, collab_id):
         if collab_id not in self._COLLAB_MAP:
-            print('Missing collab name for', collab_id)
+            human_fix_logger.warning('Missing collab name for %s', collab_id)
         return self._COLLAB_MAP.get(collab_id, '<not populated:{}>'.format(collab_id))
 
     def collab_bonus_text(self, bonus, name):
