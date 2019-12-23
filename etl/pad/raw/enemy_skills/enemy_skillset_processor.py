@@ -10,6 +10,7 @@ from pad.raw.enemy_skills.enemy_skill_info import *
 # This is a hack that accounts for the fact that some monsters seem to be zero-indexed
 # rather than 1-indexed for jumps. Not obvious why this occurs yet.
 ZERO_INDEXED_MONSTERS = [
+    416,  # Mitsuki
     565,  # Goemon
 ]
 
