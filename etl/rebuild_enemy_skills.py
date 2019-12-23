@@ -10,7 +10,7 @@ from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.common.shared_types import Server
 from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
 from pad.raw.enemy_skills.debug_utils import save_monster_behavior, save_behavior_plain
-from pad.raw.enemy_skills.enemy_skill_info import ESAction, inject_implicit_onetime
+from pad.raw.enemy_skills.enemy_skill_info import ESAction
 from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file, clean_monster_behavior
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
@@ -44,8 +44,6 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
     card = csc.na_card.card
     if not enemy_behavior:
         return None
-
-    inject_implicit_onetime(card, enemy_behavior)
 
     levels = enemy_skillset_processor.extract_levels(enemy_behavior)
     skill_listings = []
