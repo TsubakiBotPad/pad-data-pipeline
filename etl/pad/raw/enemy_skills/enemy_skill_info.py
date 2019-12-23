@@ -1418,6 +1418,9 @@ class EsInstance(Printable):
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
 
+        # self.ai = ref.enemy_ai
+        # self.rnd = ref.enemy_rnd
+
         self.use_new_ai = monster_card.use_new_ai
         self.max_counter = monster_card.enemy_skill_max_counter
         self.increment = monster_card.enemy_skill_counter_increment
@@ -1599,17 +1602,3 @@ BEHAVIOR_MAP = {
     106: ESTurnChangePassive,
     118: ESTypeResist,
 }
-
-
-def inject_implicit_onetime(card: Card, behavior: List[EsInstance]):
-    """Injects one_time values into specific categories of skills.
-
-    Currently only ESBindRandom but other early skills may need this.
-    This seems to fix things like Hera-Is and others, but breaks some like Metatron Tama.
-    """
-    max_flag = max([0] + [x.condition.one_time for x in behavior if x.condition and x.condition.one_time])
-    next_flag = pow(2, ceil(log(max_flag + 1) / log(2)))
-    for b in behavior:
-        if b.btype in [ESBindRandom, ESBindAttribute] and not b.condition.one_time and b.condition._ai == 100:
-            b.condition.forced_one_time = next_flag
-            next_flag = next_flag << 1
