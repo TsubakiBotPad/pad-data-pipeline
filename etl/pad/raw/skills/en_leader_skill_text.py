@@ -8,8 +8,8 @@ from pad.raw.skills.leader_skill_text import LsTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')
 
-_SCRIPT_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
-SERIES = json.load(open(os.path.join(_SCRIPT_DIR, "pad/storage_processor/series.json")))
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+SERIES = json.load(open(os.path.join(__location__, "../../storage_processor/series.json")))
 
 
 class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
