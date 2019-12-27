@@ -86,13 +86,13 @@ class ScheduleProcessor(object):
         self.data = data
 
     def process(self, db: DbWrapper):
-        logger.warning('loading JP events')
+        logger.info('loading JP events')
         self._process_schedule(db, self.data.jp_bonuses)
-        logger.warning('loading NA events')
+        logger.info('loading NA events')
         self._process_schedule(db, self.data.na_bonuses)
-        logger.warning('loading KR events')
+        logger.info('loading KR events')
         self._process_schedule(db, self.data.kr_bonuses)
-        logger.warning('done loading schedule data')
+        logger.info('done loading schedule data')
 
     def _process_schedule(self, db: DbWrapper, bonuses: List[MergedBonus]):
         for bonus in bonuses:

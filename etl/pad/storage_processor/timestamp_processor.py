@@ -43,7 +43,7 @@ class TimestampProcessor(object):
         pass
 
     def process(self, db: DbWrapper):
-        logger.warning('timestamp update of %s tables', len(_UPDATE_TABLES))
+        logger.info('timestamp update of %s tables', len(_UPDATE_TABLES))
         for table in _UPDATE_TABLES:
             max_tstamp_sql = 'SELECT MAX(tstamp) AS tstamp FROM `{}`'.format(table)
             tstamp = db.get_single_value(max_tstamp_sql, op=int, fail_on_empty=False)
@@ -55,4 +55,4 @@ class TimestampProcessor(object):
             rows_updated = db.update_item(update_sql)
             if rows_updated:
                 logger.info('Updated tstamp for {} to {}'.format(table, tstamp))
-        logger.warning('done updating timestamps')
+        logger.info('done updating timestamps')
