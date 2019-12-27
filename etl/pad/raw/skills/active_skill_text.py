@@ -1,4 +1,4 @@
-from pad.raw.skills.skill_common import BaseTextConverter
+from pad.raw.skills.skill_common import BaseTextConverter, capitalize_first
 
 
 def fmt_mult(x):
@@ -344,9 +344,9 @@ class AsTextConverter(BaseTextConverter):
             elif c==len(rows)-1 or rows[c+1][1] != row[1]:
                 skill_text.append('change {} to {} orbs'.format(row[0], row[1]))
 
-            # Otherwise, the current row has the same attribute as it's successor
+            # Otherwise, the current row has the same attribute as its successor
             else:
-                #Check how many successors share the attribute (and also how many to skip after)
+                # Check how many successors share the attribute (and also how many to skip after)
                 while c+skip<len(rows) and rows[c+skip][1] == row[1]:
                     skip += 1
                 formatted = ' and '.join(map(lambda x: x[0], rows[c:c+skip]))
@@ -363,21 +363,37 @@ class AsTextConverter(BaseTextConverter):
             4: '2nd column from right',
             5: 'far right column',
         }
+        # COLUMN_INDEX = {
+        #     0: 'the far left column',
+        #     1: 'the 2nd column from the left',
+        #     2: 'the 3rd column from the left',
+        #     3: 'the 3rd column from the right',
+        #     4: 'the 2nd column from the right',
+        #     5: 'the far right column',
+        # }
 
-        skill_text = ''
-        if len(act.columns) == 1:
-            skill_text += 'Change ' + COLUMN_INDEX[int(
-                act.columns[0]['index'])] + ' to ' + self.ATTRIBUTES[int(act.columns[0]['orbs'][0])] + ' orbs'
-        elif len(act.columns) == 2:
-            if act.columns[0]['orbs'][0] == act.columns[1]['orbs'][0]:
-                skill_text += 'Change ' + COLUMN_INDEX[int(act.columns[0]['index'])] + ' and ' + COLUMN_INDEX[int(
-                    act.columns[1]['index'])] + ' to ' + self.ATTRIBUTES[int(act.columns[0]['orbs'][0])] + ' orbs'
+        skill_text = []
+        # columns :: List<(str:column_name, str:attribute)>
+        columns = [(COLUMN_INDEX[int(column['index'])], self.ATTRIBUTES[int(column['orbs'][0])]) for column in act.columns]
+        skip = 0
+        for c, column in enumerate(columns):
+            if skip:
+                skip -= 1
+                continue
+
+            # If the current column is different than it's successor or it's the last item
+            elif c==len(columns)-1 or columns[c+1][1] != column[1]:
+                skill_text.append('change {} to {} orbs'.format(column[0], column[1]))
+
+            # Otherwise, the current column has the same attribute as its successor
             else:
-                skill_text += 'Change ' + COLUMN_INDEX[int(
-                    act.columns[0]['index'])] + ' to ' + self.ATTRIBUTES[int(act.columns[0]['orbs'][0])] + ' orbs'
-                skill_text += ' and change ' + COLUMN_INDEX[int(
-                    act.columns[1]['index'])] + ' to ' + self.ATTRIBUTES[int(act.columns[1]['orbs'][0])] + ' orbs'
-        return skill_text
+                # Check how many successors share the attribute (and also how many to skip after)
+                while c+skip<len(columns) and columns[c+skip][1] == column[1]:
+                    skip += 1
+                formatted = ' and '.join(map(lambda x: x[0], columns[c:c+skip]))
+                skill_text.append("change {} to {} orbs".format(formatted, column[1]))
+                skip -= 1
+        return capitalize_first(' and '.join(skill_text))
 
     def change_skyfall_convert(self, act):
         skill_text = self.fmt_duration(act.duration)
