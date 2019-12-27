@@ -189,7 +189,7 @@
   {
     "name_jp": "ゴッドフェス限定",
     "name_kr": "갓페스 한정",
-    "name_na": "God Festival",
+    "name_na": "GodFest Exclusive",
     "series_id": 34
   },
   {
@@ -301,9 +301,9 @@
     "series_id": 55
   },
   {
-    "name_jp": "その他",
-    "name_kr": "기타",
-    "name_na": "Others",
+    "name_jp": "Monster Exchange",
+    "name_kr": "Monster Exchange",
+    "name_na": "Monster Exchange",
     "series_id": 57
   },
   {
@@ -796,8 +796,8 @@
     "series_id": 142
   },
   {
-    "name_jp": "カーニバル限定",
-    "name_kr": "카니발 한정",
+    "name_jp": "Legendary Hero",
+    "name_kr": "Legendary Hero",
     "name_na": "Legendary Hero",
     "series_id": 143
   },
@@ -1126,9 +1126,9 @@
     "series_id": 196
   },
   {
-    "name_jp": "Special GodFest",
-    "name_kr": "Special GodFest",
-    "name_na": "Special GodFest",
+    "name_jp": "Super GodFest Exclusive",
+    "name_kr": "Super GodFest Exclusive",
+    "name_na": "Super GodFest Exclusive",
     "series_id": 197
   },
   {
