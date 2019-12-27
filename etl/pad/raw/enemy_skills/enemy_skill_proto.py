@@ -114,7 +114,7 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
     for action in moveset.hp_actions:
         hg = bg.children.add().group
         hg.group_type = BehaviorGroup.STANDARD
-        hg.condition.hp_threshold = action.hp
+        hg.condition.hp_threshold = action.hp or 1  # Manually adjust '0' HP groups to <1 (resolve triggers)
 
         for time_action in action.timed:
             tg = hg.children.add().group
