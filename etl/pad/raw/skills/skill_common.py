@@ -18,6 +18,14 @@ def multi_getattr(o, *args):
     raise Exception('Attributs not found:' + str(args))
 
 
+def capitalize_first(x: str):
+    if not x:
+        return x
+    elif len(x) == 1:
+        return x.upper()
+    else:
+        return x[0].upper() + x[1:]
+
 class BaseTextConverter(object):
     """Contains code shared across AS and LS converters."""
 
