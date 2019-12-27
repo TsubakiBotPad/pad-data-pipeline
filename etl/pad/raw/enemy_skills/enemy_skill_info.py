@@ -2,21 +2,12 @@ import copy
 from abc import ABC
 from builtins import issubclass
 from collections import OrderedDict
-from math import ceil, log
 from typing import List, Optional
 
 from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import ESRef, Card
 from pad.raw.enemy_skills.enemy_skill_text import Describe, TargetType, targets_to_str, typing_to_str, attributes_to_str
-
-
-class DictWithAttributeAccess(dict):
-    def __getattr__(self, key):
-        return self[key]
-
-    def __setattr__(self, key, value):
-        self[key] = value
 
 
 def attribute_bitmap(bits, inverse=False, bit_len=9):
@@ -417,12 +408,14 @@ class ESOrbChange(ESAction):
         self.orb_from = orb_from
         self.orb_to = orb_to
         self.random_count = None
+        self.exclude_hearts = None
 
     def is_conditional(self):
         return self.orb_from != -1
 
     def description(self):
-        return Describe.orb_change(self.orb_from, self.orb_to, random_count=self.random_count)
+        return Describe.orb_change(self.orb_from, self.orb_to,
+                                   random_count=self.random_count, exclude_hearts=self.exclude_hearts)
 
 
 class ESOrbChangeConditional(ABC, ESOrbChange):
@@ -480,11 +473,17 @@ class ESPoisonChangeRandom(ESOrbChange):
     def __init__(self, skill: EnemySkill):
         from_attr = -1
         to_attr = 7
-        # TODO: This skill (and possibly others) seem to have an 'excludes hearts'
-        # clause; either it's innate to this skill, or it's in params[2] (many monsters have
-        # a 1 in that slot, not all though).
+        super().__init__(skill, from_attr, to_attr)
+        self.exclude_hearts = self.params[2] == 1
+
+
+class ESPoisonChangeRandomCount(ESOrbChange):
+    def __init__(self, skill: EnemySkill):
+        from_attr = -1
+        to_attr = 7
         super().__init__(skill, from_attr, to_attr)
         self.random_count = int(skill.params[1])
+        self.exclude_hearts = self.params[2] == 1
 
 
 class ESMortalPoisonChangeRandom(ESOrbChange):
@@ -1513,8 +1512,8 @@ BEHAVIOR_MAP = {
     54: ESBindTarget,
     55: ESRecoverPlayer,
     56: ESPoisonChangeSingle,
-    57: EnemySkillUnknown,  # This skill is not yet supported.
-    60: ESPoisonChangeRandom,
+    57: ESPoisonChangeRandom,
+    60: ESPoisonChangeRandomCount,
     61: ESMortalPoisonChangeRandom,
     62: ESBlind,
     63: ESBindAttack,

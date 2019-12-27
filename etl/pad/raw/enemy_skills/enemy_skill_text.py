@@ -118,7 +118,7 @@ class Describe:
         return ' for '.join(output)
 
     @staticmethod
-    def orb_change(orb_from, orb_to, random_count=None):
+    def orb_change(orb_from, orb_to, random_count=None, exclude_hearts=None):
         if type(orb_from) != list:
             orb_from = [orb_from]
         if type(orb_to) != list:
@@ -130,6 +130,9 @@ class Describe:
             output += ' {}'.format(random_count)
         output += ' to '
         output += attributes_to_str(orb_to)
+
+        if exclude_hearts:
+            output += ' (excluding hearts)'
 
         return output
 
