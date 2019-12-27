@@ -95,8 +95,8 @@ def run(args):
     jp_db = merged_database.Database(Server.jp, args.input_dir)
     na_db = merged_database.Database(Server.na, args.input_dir)
 
-    jp_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
-    na_db.load_database(skip_skills=True, skip_bonus=True, skip_extra=True)
+    jp_db.load_database(skip_bonus=True, skip_extra=True)
+    na_db.load_database(skip_bonus=True, skip_extra=True)
 
     print('merging data')
     # Skipping KR database; we don't need it to compute ES
