@@ -1334,7 +1334,7 @@ class FixedMovementTime(LeaderSkill):
             # Ignore this case; bad skill
             pass
         else:
-            human_fix_logger.warning('Unexpected fixed time:' + str(self.time))
+            human_fix_logger.error('Unexpected fixed time:' + str(self.time))
             raise ValueError('Unexpected fixed time:' + str(self.time))
 
         hp = multi_floor(data[3])

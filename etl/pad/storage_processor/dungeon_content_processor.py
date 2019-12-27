@@ -23,17 +23,17 @@ class DungeonContentProcessor(object):
         self.converter = WaveConverter(data)
 
     def process(self, db: DbWrapper):
-        logger.warning('loading dungeon contents')
+        logger.info('loading dungeon contents')
         self._process_dungeon_contents(db)
         self._process_dungeon_rewards(db)
         # TODO: support multiple rewards
 
-        logger.warning('done loading contents')
+        logger.info('done loading contents')
 
     def _process_dungeon_contents(self, db: DbWrapper):
         for dungeon in self.data.dungeons:
             if dungeon.dungeon_id % 250 == 0:
-                logger.warning('scanning dungeon:%s', dungeon.dungeon_id)
+                logger.info('scanning dungeon:%s', dungeon.dungeon_id)
             sub_dungeon_items = []
 
             for sub_dungeon in dungeon.sub_dungeons:

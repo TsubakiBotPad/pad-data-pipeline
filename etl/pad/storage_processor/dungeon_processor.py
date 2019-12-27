@@ -18,27 +18,27 @@ class DungeonProcessor(object):
         self.data = data
 
     def process(self, db: DbWrapper):
-        logger.warning('loading dungeon data')
+        logger.info('loading dungeon data')
         self._process_dungeons(db)
         self._process_subdungeons(db)
-        logger.warning('done loading dungeon data')
+        logger.info('done loading dungeon data')
 
     def post_encounter_process(self, db: DbWrapper):
-        logger.warning('post-encounter processing')
+        logger.info('post-encounter processing')
         updated_rows = db.update_item(_ENCOUNTER_VISIBILITY_SQL)
         logger.info('Updated visibility of %s dungeons', updated_rows)
 
     def _process_dungeons(self, db: DbWrapper):
-        logger.warning('loading %s dungeons', len(self.data.dungeons))
+        logger.info('loading %s dungeons', len(self.data.dungeons))
         for dungeon in self.data.dungeons:
             item = Dungeon.from_csd(dungeon)
             db.insert_or_update(item)
-        logger.warning('done loading dungeons')
+        logger.info('done loading dungeons')
 
     def _process_subdungeons(self, db: DbWrapper):
-        logger.warning('loading sub_dungeons')
+        logger.info('loading sub_dungeons')
         for dungeon in self.data.dungeons:
             items = SubDungeon.from_csd(dungeon)
             for item in items:
                 db.insert_or_update(item)
-        logger.warning('done loading subdungeons')
+        logger.info('done loading subdungeons')
