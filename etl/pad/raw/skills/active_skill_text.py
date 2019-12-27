@@ -330,7 +330,8 @@ class AsTextConverter(BaseTextConverter):
            -1: 'the 2nd row from the bottom',
            -2: 'the bottom row',
         }
-    
+
+        # TODO: these two chunks of code are duplicates except for the indexes
         skill_text = []
         # rows :: List<(str:row_name, str:attribute)>
         rows = [(ROW_INDEX[int(row['index'])], self.ATTRIBUTES[int(row['orbs'][0])]) for row in act.rows]
@@ -352,26 +353,19 @@ class AsTextConverter(BaseTextConverter):
                 formatted = ' and '.join(map(lambda x: x[0], rows[c:c+skip]))
                 skill_text.append("change {} to {} orbs".format(formatted, row[1]))
                 skip -= 1
-        return ' and '.join(skill_text).capitalize()
+        return capitalize_first(' and '.join(skill_text))
 
     def column_change_convert(self, act):
         COLUMN_INDEX = {
-            0: 'far left column',
-            1: '2nd column from left',
-            2: '3rd column from left',
-            3: '3rd column from right',
-            4: '2nd column from right',
-            5: 'far right column',
+            0: 'the far left column',
+            1: 'the 2nd column from the left',
+            2: 'the 3rd column from the left',
+            3: 'the 3rd column from the right',
+            4: 'the 2nd column from the right',
+            5: 'the far right column',
         }
-        # COLUMN_INDEX = {
-        #     0: 'the far left column',
-        #     1: 'the 2nd column from the left',
-        #     2: 'the 3rd column from the left',
-        #     3: 'the 3rd column from the right',
-        #     4: 'the 2nd column from the right',
-        #     5: 'the far right column',
-        # }
 
+        # TODO: these two chunks of code are duplicates except for the indexes
         skill_text = []
         # columns :: List<(str:column_name, str:attribute)>
         columns = [(COLUMN_INDEX[int(column['index'])], self.ATTRIBUTES[int(column['orbs'][0])]) for column in act.columns]
