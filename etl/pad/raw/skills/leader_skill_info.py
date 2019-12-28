@@ -1324,6 +1324,9 @@ class FixedMovementTime(LeaderSkill):
         self.attributes = binary_con(data[1])
         self.types = binary_con(data[2])
 
+        # TODO: this needs to be overhauled, just accept the value here if it != 0.
+        if self.time == 3:
+            self.tags.append(Tag.FIXED_3S)
         if self.time == 4:
             self.tags.append(Tag.FIXED_4S)
         elif self.time == 5:
@@ -1500,6 +1503,7 @@ class BlobBonusDamage(LeaderSkill):
     def text(self, converter: LsTextConverter) -> str:
         return converter.mass_match_bonus_damage_convert(self)
 
+
 class ColorComboBonusDamage(LeaderSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0])
@@ -1510,6 +1514,7 @@ class ColorComboBonusDamage(LeaderSkill):
 
     def text(self, converter: LsTextConverter) -> str:
         return converter.color_combo_bonus_damage_convert(self)
+
 
 def convert(skill_list: List[MonsterSkill]):
     results = {}
