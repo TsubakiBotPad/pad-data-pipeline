@@ -1327,7 +1327,7 @@ class FixedMovementTime(LeaderSkill):
         # TODO: this needs to be overhauled, just accept the value here if it != 0.
         if self.time == 3:
             self.tags.append(Tag.FIXED_3S)
-        if self.time == 4:
+        elif self.time == 4:
             self.tags.append(Tag.FIXED_4S)
         elif self.time == 5:
             self.tags.append(Tag.FIXED_5S)
