@@ -145,7 +145,7 @@ def format_behavior_plain(o: EsInstance):
     def fmt_cond(c):
         msg = 'Condition: {} (ai:{} rnd:{})'.format(c.description(), c._ai, c._rnd)
         if c.one_time:
-            msg += ' (one-time: {})'.format(c.one_time)
+            msg += ' (cost: {})'.format(c.one_time)
         elif c.forced_one_time:
             msg += ' (one-time only)'
         return msg
