@@ -66,6 +66,8 @@ def parse_args():
                              help="Path to a folder where the input data is")
     input_group.add_argument("--es_dir",
                              help="Path to a folder where the enemy skills data protos are")
+    input_group.add_argument("--es_only", default=False, action="store_true",
+                             help="If true, only load ES and then quit")
     input_group.add_argument("--media_dir", required=False,
                              help="Path to the root folder containing images, voices, etc")
 
@@ -81,6 +83,24 @@ def parse_args():
     help_group.add_argument("-h", "--help", action="help",
                             help="Displays this help message and exits.")
     return parser.parse_args()
+
+
+def load_es_quick_and_die(args):
+    with open(args.db_config) as f:
+        db_config = json.load(f)
+
+    jp_database = merged_database.Database(Server.jp, args.input_dir)
+    jp_database.load_database()
+    cs_database = crossed_data.CrossServerDatabase(jp_database, jp_database, jp_database)
+
+    db_wrapper = DbWrapper(False)
+    db_wrapper.connect(db_config)
+
+    es_processor = EnemySkillProcessor(db_wrapper, cs_database)
+    es_processor.load_enemy_data(args.es_dir)
+
+    print('done loading ES')
+    exit(0)
 
 
 def load_data(args):
@@ -176,4 +196,10 @@ def load_data(args):
 
 if __name__ == '__main__':
     args = parse_args()
+
+    # This is a hack to make loading ES easier and more frequent.
+    # Remove this once we're done with most of the ES processing.
+    if args.es_dir and args.es_only:
+        load_es_quick_and_die(args)
+
     load_data(args)
