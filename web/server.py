@@ -114,10 +114,10 @@ async def serve_state(request):
 @app.route('/dadguide/admin/randomMonsters')
 async def serve_random_monsters(request):
     sql = '''
-        select m.monster_id as monster_id, m.name_na as name
+        select m.monster_id as monster_id, e.enemy_id as enemy_id, m.name_na as name
         from monsters m
         inner join encounters e
-        on m.monster_id = e.enemy_id
+        on m.monster_id = (e.enemy_id % 100000)
         inner join dungeons d
         using (dungeon_id)
         inner join enemy_data ed
@@ -155,7 +155,8 @@ async def serve_next_monster(request):
 
 @app.route('/dadguide/admin/monsterInfo')
 async def serve_monster_info(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
+    monster_id = enemy_id % 100000
     sql = '''
         select m.monster_id as monster_id, m.name_na as name
         from monsters m
@@ -175,7 +176,7 @@ async def serve_monster_info(request):
         using (sub_dungeon_id)
         where enemy_id = {}
         and dungeon_type != 0
-    '''.format(monster_id)
+    '''.format(enemy_id)
     encounters = []
     encounter_data = db_wrapper.fetch_data(sql)
     # Filter out unnecessary dupes
@@ -198,6 +199,7 @@ async def serve_monster_info(request):
                 'name': x['sub_dungeon_name'],
             },
         })
+    monster_data['enemy_id'] = enemy_id
     return json({
         'monster': monster_data,
         'encounters': encounters,
@@ -206,36 +208,36 @@ async def serve_monster_info(request):
 
 @app.route('/dadguide/admin/rawEnemyData')
 async def serve_raw_enemy_data(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
     data_dir = os.path.join(es_dir, 'behavior_plain')
-    monster_file = os.path.join(data_dir, '{}.txt'.format(monster_id))
+    monster_file = os.path.join(data_dir, '{}.txt'.format(enemy_id))
     with open(monster_file) as f:
         return text(f.read())
 
 
 @app.route('/dadguide/admin/parsedEnemyData')
 async def serve_parsed_enemy_data(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
     data_dir = os.path.join(es_dir, 'behavior_text')
-    monster_file = os.path.join(data_dir, '{}.txt'.format(monster_id))
+    monster_file = os.path.join(data_dir, '{}.txt'.format(enemy_id))
     with open(monster_file) as f:
         return text(f.read())
 
 
 @app.route('/dadguide/admin/enemyProto')
 async def serve_enemy_proto(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
     data_dir = os.path.join(es_dir, 'behavior_data')
-    monster_file = os.path.join(data_dir, '{}.textproto'.format(monster_id))
+    monster_file = os.path.join(data_dir, '{}.textproto'.format(enemy_id))
     with open(monster_file) as f:
         return text(f.read())
 
 
 @app.route('/dadguide/admin/enemyProtoEncoded')
 async def serve_enemy_proto_encoded(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
     data_dir = os.path.join(es_dir, 'behavior_data')
-    monster_file = os.path.join(data_dir, '{}.textproto'.format(monster_id))
+    monster_file = os.path.join(data_dir, '{}.textproto'.format(enemy_id))
     mbwo = enemy_skill_proto.load_from_file(monster_file)
     v = mbwo.SerializeToString()
     return text(binascii.hexlify(bytearray(v)).decode('ascii'))
@@ -243,9 +245,9 @@ async def serve_enemy_proto_encoded(request):
 
 @app.route('/dadguide/admin/saveApprovedAsIs')
 async def serve_save_approved_as_is(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
     data_dir = os.path.join(es_dir, 'behavior_data')
-    monster_file = os.path.join(data_dir, '{}.textproto'.format(monster_id))
+    monster_file = os.path.join(data_dir, '{}.textproto'.format(enemy_id))
     mbwo = enemy_skill_proto.load_from_file(monster_file)
     del mbwo.level_overrides[:]
     mbwo.level_overrides.extend(mbwo.levels)
@@ -256,9 +258,9 @@ async def serve_save_approved_as_is(request):
 
 @app.route('/dadguide/admin/saveApprovedWithChanges', methods=["POST"])
 async def serve_save_approved_with_changes(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
     data_dir = os.path.join(es_dir, 'behavior_data')
-    monster_file = os.path.join(data_dir, '{}.textproto'.format(monster_id))
+    monster_file = os.path.join(data_dir, '{}.textproto'.format(enemy_id))
     mbwo = enemy_skill_proto.load_from_file(monster_file)
     del mbwo.level_overrides[:]
 
