@@ -128,7 +128,7 @@ MONSTERS_SQL = '''
 '''
 
 RANDOM_MONSTERS_SQL = MONSTERS_SQL.format('order by rand()')
-EASY_MONSTERS_SQL = MONSTERS_SQL.format('order by length(ed.behavior)')
+EASY_MONSTERS_SQL = MONSTERS_SQL.format('order by length(ed.behavior), rand()')
 
 
 @app.route('/dadguide/admin/randomMonsters')
@@ -145,22 +145,21 @@ async def serve_easy_monsters(request):
 
 @app.route('/dadguide/admin/nextMonster')
 async def serve_next_monster(request):
-    monster_id = int(request.args.get('id'))
+    enemy_id = int(request.args.get('id'))
     sql = '''
-        select m.monster_id as monster_id
-        from monsters m
+        select e.enemy_id as enemy_id
+        from enemy_data ed
         inner join encounters e
-        on m.monster_id = e.enemy_id
+        using (enemy_id)
         inner join dungeons d
         using (dungeon_id)
-        inner join enemy_data ed
-        using (enemy_id)
         where ed.status = 0
         and d.dungeon_type != 0
-        and m.monster_id > {}
-        order by m.monster_id asc
+        and e.enemy_id > {}
+        group by 1
+        order by e.enemy_id asc
         limit 1
-    '''.format(monster_id)
+    '''.format(enemy_id)
     data = db_wrapper.get_single_value(sql, int)
     return text(data)
 
