@@ -7,6 +7,7 @@ class LsTextConverter(BaseTextConverter):
         Tag.NO_SKYFALL: '[No skyfall]',
         Tag.DISABLE_POISON: '[Disable Poison & Mortal Poison orb effects]',
         Tag.BOARD_7X6: '[Board becomes 7x6]',
+        Tag.FIXED_3S: '[Fixed 3 second movetime]',
         Tag.FIXED_4S: '[Fixed 4 second movetime]',
         Tag.FIXED_5S: '[Fixed 5 second movetime]',
         Tag.FIXED_6S: '[Fixed 6 second movetime]',
@@ -409,7 +410,7 @@ class LsTextConverter(BaseTextConverter):
 
     def color_combo_bonus_damage_text(self, bonus_damage, min_combo, attr_text):
         raise I13NotImplemented()
- 
+
     def taiko_convert(self, ls):
         return self.taiko_text()
 
