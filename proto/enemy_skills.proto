@@ -71,6 +71,8 @@ message BehaviorGroup {
         STANDARD = 6;
         // On monster death.
         DEATH = 7;
+        // Could not find a slot for these, so dump them all in a separate group.
+        UNKNOWN_USE = 8;
     }
 
     // Type for this group, affects display text and type.

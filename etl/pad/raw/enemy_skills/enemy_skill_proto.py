@@ -296,6 +296,15 @@ def clean_behavior(o: Behavior) -> Behavior:
     return o
 
 
+def add_unused(skills: List[EsInstance], result: LevelBehavior):
+    """Add the leftover skills as a new group to behaviors at the end."""
+    bg = result.groups.add()
+    bg.group_type = BehaviorGroup.UNKNOWN_USE
+
+    for item in skills:
+        bg.children.append(behavior_to_proto(item, is_timed_group=False, cur_hp=100))
+
+
 def safe_save_to_file(file_path: str, obj: MonsterBehavior) -> MonsterBehaviorWithOverrides:
     mbwo = load_from_file(file_path)
     mbwo.monster_id = obj.monster_id

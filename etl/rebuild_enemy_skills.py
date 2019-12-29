@@ -5,13 +5,14 @@ Regenerates the flattened enemy skill list for all monsters.
 import argparse
 import logging
 import os
+from typing import List
 
-from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
+from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, LevelBehavior
 from pad.common.shared_types import Server
 from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
 from pad.raw.enemy_skills.debug_utils import save_monster_behavior, save_behavior_plain
-from pad.raw.enemy_skills.enemy_skill_info import ESAction
-from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file, clean_monster_behavior
+from pad.raw.enemy_skills.enemy_skill_info import ESAction, EsInstance
+from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file, clean_monster_behavior, add_unused
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
 
@@ -46,8 +47,8 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
         return None
 
     levels = enemy_skillset_processor.extract_levels(enemy_behavior)
-    skill_listings = []
-    used_actions = []
+    skill_listings = []  # type: List[LevelBehavior]
+    used_actions = []  # type: List[EsInstance]
     for level in sorted(levels):
         try:
             skillset = enemy_skillset_processor.convert(card, enemy_behavior, level)
@@ -75,7 +76,8 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
         except:
             print('oops')
 
-    # TODO: add unused actions and store them
+    for level_behavior in skill_listings:
+        add_unused(unused_actions, level_behavior)
 
     result = MonsterBehavior()
     result.monster_id = csc.monster_id
