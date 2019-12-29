@@ -899,13 +899,16 @@ class ESRandomSpawn(ESAction):
         super().__init__(skill)
         self.count = self.params[1]
         self.attributes = attribute_bitmap(self.params[2])
-        self.condition_attributes = attribute_bitmap(self.params[3], inverse=True)
+        self.condition_attributes = []
+        condition_attributes = attribute_bitmap(self.params[3], inverse=True)
+        if len(condition_attributes) < 6:
+            self.condition_attributes = condition_attributes
 
     def description(self):
         return Describe.random_orb_spawn(self.count, self.attributes)
 
     def is_conditional(self):
-        return len(self.condition_attributes or []) < 6
+        return self.condition_attributes
 
     def conditions(self):
         return Describe.attribute_exists(self.condition_attributes)
