@@ -3,16 +3,9 @@ Contains code to convert a list of enemy behavior logic into a flattened structu
 called a ProcessedSkillset.
 """
 import collections
-from typing import Set, Tuple, Dict
+from typing import Set, Tuple
 
 from pad.raw.enemy_skills.enemy_skill_info import *
-
-# This is a hack that accounts for the fact that some monsters seem to be zero-indexed
-# rather than 1-indexed for jumps. Not obvious why this occurs yet.
-ZERO_INDEXED_MONSTERS = [
-    416,  # Mitsuki
-    565,  # Goemon
-]
 
 
 class StandardSkillGroup(object):
@@ -489,7 +482,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
                     continue
                 return results, card_branches, combo_branches
 
-        if b_type == ESBranchFlag:
+        if b_type in [ESBranchFlag0, ESBranchFlag]:
             if b.branch_value == b.branch_value & ctx.flags:
                 # If we satisfy the flag, branch to it.
                 idx = b.target_round
@@ -815,11 +808,8 @@ def convert(card: Card, enemy_behavior: List[EsInstance], level: int):
     skillset = ProcessedSkillset(level, card)
 
     # Behavior is 1-indexed, so stick a fake row in to start
+    # It's actually not, this is a lie. Most branches are just 1-indexed.
     behaviors = [None] + list(enemy_behavior)  # type: List[EsInstance]
-
-    # Fix some monsters that seem to be 0-indexed
-    if card.monster_no in ZERO_INDEXED_MONSTERS:
-        behaviors.pop(0)
 
     (base_abilities, hp_checkpoints, card_checkpoints,
      has_enemy_remaining_branch, death_actions) = info_from_behaviors(behaviors)

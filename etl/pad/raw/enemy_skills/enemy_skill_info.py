@@ -1290,9 +1290,20 @@ class ESBranch(ESLogic):
         self.compare = '='
         self.branch_value = None
         self.target_round = None
+        self.target_round_offset = 0
 
     def description(self):
         return Describe.branch(self.branch_condition, self.compare, self.branch_value, self.target_round)
+
+
+class ESBranchFlag0(ESBranch):
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.branch_condition = 'flag'
+        self.compare = '&'
+        # For legacy reasons we treat all branches as 0 offset and manually offset by 1.
+        # This +1 fixes it for this rarely used branch type.
+        self.target_round_offset = 1
 
 
 class ESBranchFlag(ESBranch):
@@ -1443,7 +1454,7 @@ class EsInstance(Printable):
 
         if isinstance(self.behavior, ESBranch):
             self.behavior.branch_value = ref.enemy_ai
-            self.behavior.target_round = ref.enemy_rnd
+            self.behavior.target_round = ref.enemy_rnd + self.behavior.target_round_offset
 
         if self.btype in [ESRecoverEnemyAlly, ESAttackUPRemainingEnemies]:
             if self.condition:
@@ -1571,7 +1582,7 @@ BEHAVIOR_MAP = {
     0: ESNone,
     21: EnemySkillUnknown,  # This logic is unused
     22: ESFlagOperation,
-    23: ESBranchFlag,
+    23: ESBranchFlag0,
     24: ESFlagOperation,
     25: ESSetCounter,
     26: ESSetCounter,
