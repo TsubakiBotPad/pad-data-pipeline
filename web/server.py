@@ -111,23 +111,35 @@ async def serve_state(request):
     })
 
 
+MONSTERS_SQL = '''
+    select m.monster_id as monster_id, e.enemy_id as enemy_id, m.name_na as name
+    from monsters m
+    inner join encounters e
+    on m.monster_id = (e.enemy_id % 100000)
+    inner join dungeons d
+    using (dungeon_id)
+    inner join enemy_data ed
+    using (enemy_id)
+    where ed.status = 0
+    and d.dungeon_type != 0
+    group by 1, 2, 3
+    {}
+    limit 20
+'''
+
+RANDOM_MONSTERS_SQL = MONSTERS_SQL.format('order by rand()')
+EASY_MONSTERS_SQL = MONSTERS_SQL.format('order by length(ed.behavior)')
+
+
 @app.route('/dadguide/admin/randomMonsters')
 async def serve_random_monsters(request):
-    sql = '''
-        select m.monster_id as monster_id, e.enemy_id as enemy_id, m.name_na as name
-        from monsters m
-        inner join encounters e
-        on m.monster_id = (e.enemy_id % 100000)
-        inner join dungeons d
-        using (dungeon_id)
-        inner join enemy_data ed
-        using (enemy_id)
-        where ed.status = 0
-        and d.dungeon_type != 0
-        order by rand()
-        limit 20
-    '''
-    data = db_wrapper.fetch_data(sql)
+    data = db_wrapper.fetch_data(RANDOM_MONSTERS_SQL)
+    return json({'monsters': data})
+
+
+@app.route('/dadguide/admin/easyMonsters')
+async def serve_easy_monsters(request):
+    data = db_wrapper.fetch_data(EASY_MONSTERS_SQL)
     return json({'monsters': data})
 
 
