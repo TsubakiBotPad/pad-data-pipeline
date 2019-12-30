@@ -1467,18 +1467,21 @@ class EsInstance(Printable):
             self.behavior.target_round = ref.enemy_rnd + self.behavior.target_round_offset
 
         if self.btype in [ESRecoverEnemyAlly, ESAttackUPRemainingEnemies, ESTurnChangeRemainingEnemies]:
-            if self.condition:
-                self.condition.enemies_remaining = self.behavior.enemy_count
+            self._ensure_condition(ref)
+            self.condition.enemies_remaining = self.behavior.enemy_count
 
         if self.btype in [ESSkillSetOnDeath, ESDeathCry]:
-            self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
+            self._ensure_condition(ref)
             self.condition.on_death = True
 
         if self.btype in [ESRandomSpawn]:
-            if not self.condition:
-                self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
+            self._ensure_condition(ref)
             self.condition.condition_attributes = self.behavior.condition_attributes
         # End terrible badness
+
+    def _ensure_condition(self, ref: ESRef):
+        if not self.condition:
+            self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
 
     @property
     def btype(self):
