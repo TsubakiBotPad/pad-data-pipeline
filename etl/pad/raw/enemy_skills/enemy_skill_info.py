@@ -1132,10 +1132,10 @@ class ESMaxHPChange(ESAction):
 class ESFixedTarget(ESAction):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.target = self.params[1]
+        self.turn_count = self.params[1]
 
     def description(self):
-        return 'Forces attacks to hit this enemy'
+        return 'Forces attacks to hit this enemy for {} turns'.format(self.turn_count)
 
 
 class ESGachaFever(ESAction):
