@@ -142,16 +142,19 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
     result.level = level
 
     bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PASSIVE, skillset.base_abilities)
-    # Passives should have no conditions
+    # Passives should have no (few) conditions
     visit_tree(bg, lambda x: x.ClearField('condition'))
 
     bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PREEMPT, skillset.preemptives)
 
     def clean_preempt(x):
         attr_cond = x.condition.if_attributes_available
+        trigger_monsters = x.condition.trigger_monsters
         x.ClearField('condition')
         if attr_cond:
             x.condition.if_attributes_available = attr_cond
+        if trigger_monsters:
+            x.condition.trigger_monsters.extend(trigger_monsters)
 
     # Preempts can only have specific conditions
     visit_tree(bg, clean_preempt)
