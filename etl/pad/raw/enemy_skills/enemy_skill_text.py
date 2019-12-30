@@ -66,6 +66,8 @@ def targets_to_str(targets):
 def ordinal(n):
     return "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1) * (n % 10 < 4) * n % 10::4])
 
+def pluralize(noun, number, irregular_plural = None):
+    return noun if number == 1 else noun+'s' if irregular_plural is None else irregular_plural
 
 class Describe:
     @staticmethod
@@ -114,7 +116,7 @@ class Describe:
         if max_turns is not None and min_turns != max_turns:
             output.append('{:d}~{:d} turns'.format(min_turns, max_turns))
         else:
-            output.append('{:d} turns'.format(min_turns))
+            output.append('{:d} {:s}'.format(min_turns, pluralize('turn',min_turns)))
         return ' for '.join(output)
 
     @staticmethod
@@ -143,15 +145,17 @@ class Describe:
     @staticmethod
     def blind_sticky_random(turns, min_count, max_count):
         if min_count == 42:
-            return 'Blind all orbs for {:d} turns'.format(turns)
+            return 'Blind all orbs for {:d} {:s}'.format(turns, pluralize('turn',turns))
         if min_count == max_count:
-            return 'Blind random {:d} orbs for {:d} turns'.format(min_count, turns)
+            return 'Blind {:d} random {:s} for {:d} {:s}' \
+                   .format(min_count, pluralize('orb',min_count), turns, pluralize('turn',turns))
         else:
-            return 'Blind random {:d}~{:d} orbs for {:d} turns'.format(min_count, max_count, turns)
+            return 'Blind random {:d}~{:d} orbs for {:d} {:s}' \
+                   .format(min_count, max_count, turns, pluralize('turn',turns))
 
     @staticmethod
     def blind_sticky_fixed(turns):
-        return 'Blind orbs in specific positions for {:d} turns'.format(turns)
+        return 'Blind orbs in specific positions for {:d} {:s}'.format(turns, pluralize('turn',turns))
 
     @staticmethod
     def recover(min_amount, max_amount, target='enemy'):
@@ -166,12 +170,12 @@ class Describe:
         if turns == 0:
             output.append('attack')
         else:
-            output.append('{:d} turns'.format(turns))
+            output.append('{:d} {:s}'.format(turns, pluralize('turn',turns)))
         return ' for the next '.join(output)
 
     @staticmethod
     def status_shield(turns):
-        return 'Voids status ailments for {:d} turns'.format(turns)
+        return 'Voids status ailments for {:d} {:s}'.format(turns, pluralize('turn',turns))
 
     @staticmethod
     def debuff(d_type, amount, unit, turns):
@@ -179,7 +183,8 @@ class Describe:
         amount = amount or 0
         unit = unit or '?'
         turns = turns or 0
-        return '{:s} {:.0f}{:s} for {:d} turns'.format(d_type, amount, unit, turns).capitalize()
+        return '{:s} {:.0f}{:s} for {:d} {:s}' \
+               .format(d_type, amount, unit, turns, pluralize('turn',turns)).capitalize()
 
     @staticmethod
     def end_battle():
@@ -199,7 +204,8 @@ class Describe:
     @staticmethod
     def absorb(source, min_turns, max_turns=None):
         if max_turns is None or min_turns == max_turns:
-            return 'Absorb {:s} damage for {:d} turns'.format(source, min_turns)
+            return 'Absorb {:s} damage for {:d} {:s}' \
+                   .format(source, min_turns, pluralize('turn',min_turns))
         else:
             return 'Absorb {:s} damage for {:d}~{:d} turns'.format(source, min_turns, max_turns)
 
@@ -211,22 +217,24 @@ class Describe:
         if lock and orbs == 'Random':
             orbs = 'random'
         if max_turns is None or min_turns == max_turns:
-            return '{:s}{:s} skyfall +{:d}% for {:d} turns'.format(lock, orbs, chance, min_turns)
+            return '{:s}{:s} skyfall +{:d}% for {:d} {:s}' \
+                   .format(lock, orbs, chance, min_turns, pluralize('turn',min_turns))
         else:
             return '{:s}{:s} skyfall +{:d}% for {:d}~{:d} turns' \
                 .format(lock, orbs, chance, min_turns, max_turns)
 
     @staticmethod
     def void(threshold, turns):
-        return 'Void damage >= {:d} for {:d} turns'.format(threshold, turns)
+        return 'Void damage >= {:d} for {:d} {:s}'.format(threshold, turns, pluralize('turn',turns))
 
     @staticmethod
     def damage_reduction(source, percent=None, turns=None):
         if percent is None:
-            return 'Immune to damage from {:s} for {:d} turns'.format(source, turns)
+            return 'Immune to damage from {:s} for {:d} {:s}'.format(source, turns, pluralize('turn',turns))
         else:
             if turns:
-                return 'Reduce damage from {:s} by {:d}% for {:d} turns'.format(source, percent, turns)
+                return 'Reduce damage from {:s} by {:d}% for {:d} {:s}' \
+                       .format(source, percent, turns, pluralize('turn',turns))
             else:
                 return 'Reduce damage from {:s} by {:d}%'.format(source, percent)
 
@@ -236,7 +244,7 @@ class Describe:
 
     @staticmethod
     def leadswap(turns):
-        return 'Leader changes to random sub for {:d} turns'.format(turns)
+        return 'Leader changes to random sub for {:d} {:s}'.format(turns, pluralize('turn',turns))
 
     @staticmethod
     def row_col_spawn(position_type, positions, attributes):
@@ -252,7 +260,8 @@ class Describe:
         if count == 42:
             return Describe.board_change(attributes)
         else:
-            return 'Spawn random {:d} {:s} orbs'.format(count, attributes_to_str(attributes))
+            return 'Spawn random {:d} {:s} {:s}' \
+                   .format(count, attributes_to_str(attributes), pluralize('orb',count))
 
     @staticmethod
     def fixed_orb_spawn(attributes):
@@ -261,9 +270,9 @@ class Describe:
     @staticmethod
     def skill_delay(min_turns, max_turns):
         if min_turns is None:
-            return 'Delay active skills by {:d} turns'.format(max_turns)
+            return 'Delay active skills by {:d} {:s}'.format(max_turns, pluralize('turn',max_turns))
         elif max_turns is None or min_turns == max_turns:
-            return 'Delay active skills by {:d} turns'.format(min_turns)
+            return 'Delay active skills by {:d} {:s}'.format(min_turns, pluralize('turn',min_turns))
         else:
             return 'Delay active skills by {:d}~{:d} turns'.format(min_turns, max_turns)
 
@@ -272,11 +281,12 @@ class Describe:
         if count == 42:
             return 'Lock all {:s} orbs'.format(attributes_to_str(attributes))
         else:
-            return 'Lock {:d} random {:s} orbs'.format(count, attributes_to_str(attributes))
+            return 'Lock {:d} random {:s} {:s}'.format(count, attributes_to_str(attributes), pluralize('orb',count))
 
     @staticmethod
     def orb_seal(turns, position_type, positions):
-        return 'Seal {:s} {:s} for {:d} turns'.format(', '.join([ordinal(x) for x in positions]), position_type, turns)
+        return 'Seal {:s} {:s} for {:d} {:s}' \
+               .format(', '.join([ordinal(x) for x in positions]), position_type, turns, pluralize('turn',turns))
 
     @staticmethod
     def cloud(turns, width, height, x, y):
@@ -293,7 +303,8 @@ class Describe:
             pos.append('{:s} column'.format(ordinal(y)))
         if len(pos) == 0:
             pos.append('random location')
-        return '{:s} cloud appear for {:d} turns at {:s}'.format(shape, turns, ', '.join(pos))
+        return '{:s} cloud appear for {:d} {:s} at {:s}' \
+               .format(shape, turns, pluralize('turn',turns), ', '.join(pos))
 
     @staticmethod
     def turn_change(turn_counter, threshold=None):
@@ -304,18 +315,19 @@ class Describe:
 
     @staticmethod
     def attribute_block(turns, attributes):
-        return 'Unable to match {:s} orbs for {:d} turns'.format(attributes_to_str(attributes), turns)
+        return 'Unable to match {:s} orbs for {:d} {:s}' \
+               .format(attributes_to_str(attributes), turns, pluralize('turn',turns))
 
     @staticmethod
     def spinners(turns, speed, position_description):
-        return '{:s} orbs change every {:.1f}s for {:d} turns'.format(position_description, speed / 100, turns)
+        return '{:s} orbs change every {:.1f}s for {:d} {:s}'.format(position_description, speed / 100, turns, pluralize('turn',turns))
 
     @staticmethod
     def max_hp_change(turns, max_hp, change_type):
         if change_type == 'flat':
-            return 'Change player HP to {:d} for {:d} turns'.format(max_hp, turns)
+            return 'Change player HP to {:d} for {:d} {:s}'.format(max_hp, turns, pluralize('turn',turns))
         else:
-            return 'Change player HP to {:d}% for {:d} turns'.format(max_hp, turns)
+            return 'Change player HP to {:d}% for {:d} {:s}'.format(max_hp, turns, pluralize('turn',turns))
 
     @staticmethod
     def death_cry(message):
@@ -334,16 +346,16 @@ class Describe:
 
     @staticmethod
     def gacha_fever(attribute, orb_req):
-        return 'Fever Mode: clear {} {} orbs'.format(orb_req, attribute)
+        return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, ATTRIBUTE_MAP[attribute], pluralize('orb',orb_req))
 
     @staticmethod
     def lead_alter(turns, target):
-        return 'Change leader to [{}] for {} turns'.format(target, turns)
+        return 'Change leader to [{:d}] for {:d} {:s}'.format(target, turns, pluralize('turn',turns))
 
     @staticmethod
     def no_skyfall(turns):
-        return 'No skyfall for {} turns'.format(turns)
+        return 'No skyfall for {:d} {:s}'.format(turns, pluralize('turn',turns))
 
     @staticmethod
-    def branch(condition, compare, value, round):
-        return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, round)
+    def branch(condition, compare, value, rnd):
+        return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
