@@ -11,7 +11,7 @@ from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, LevelBehavior
 from pad.common.shared_types import Server
 from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
 from pad.raw.enemy_skills.debug_utils import save_monster_behavior, save_behavior_plain
-from pad.raw.enemy_skills.enemy_skill_info import ESAction, EsInstance
+from pad.raw.enemy_skills.enemy_skill_info import ESAction, EsInstance, ESDeathAction
 from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file, clean_monster_behavior, add_unused
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
@@ -71,7 +71,11 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
     unused_actions = []
     for b in enemy_behavior:
         try:
-            if issubclass(b.btype, ESAction) and b not in used_actions and b not in unused_actions:
+            is_action = issubclass(b.btype, ESAction)
+            is_used = b not in used_actions
+            already_in_unused = b not in unused_actions
+            is_death_action = issubclass(b.btype, ESDeathAction)
+            if is_action and is_used and already_in_unused and not is_death_action:
                 unused_actions.append(b)
         except:
             print('oops')
@@ -136,8 +140,6 @@ def run(args):
             enemy_behavior = [x.na_skill for x in csc.enemy_behavior]
             behavior_plain_file = os.path.join(behavior_plain_dir, '{}.txt'.format(csc.monster_id))
             save_behavior_plain(behavior_plain_file, csc, enemy_behavior)
-
-            # TODO: Add raw behavior dump
 
         except Exception as ex:
             print('failed to process', csc.monster_id, card.name)

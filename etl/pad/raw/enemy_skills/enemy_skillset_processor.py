@@ -624,7 +624,9 @@ def info_from_behaviors(behaviors: List[EsInstance]):
 
         # Extract death actions and null them out
         if es_type in [ESDeathCry, ESSkillSetOnDeath]:
-            death_actions.append(instance)
+            # Skip pointless death actions
+            if es.has_action():
+                death_actions.append(instance)
             behaviors[idx] = None
             continue
 

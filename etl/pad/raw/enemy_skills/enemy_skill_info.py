@@ -237,6 +237,13 @@ class ESBehavior(Printable):
         return other and self.enemy_skill_id == other.enemy_skill_id
 
 
+class ESDeathAction(object):
+    """This is just a marker class for death actions."""
+
+    def has_action(self) -> bool:
+        return False
+
+
 # Action
 class ESAction(ESBehavior):
     def __init__(self, skill: EnemySkill, attack=None):
@@ -269,7 +276,7 @@ class ESInactivity(ESAction):
         return Describe.skip()
 
 
-class ESDeathCry(ESAction):
+class ESDeathCry(ESDeathAction, ESAction):
     def __init__(self, skill):
         super().__init__(skill)
         self.message = self.params[0]
@@ -989,7 +996,7 @@ class ESSkillSet(ESAction):
         return any([s.ends_battle() for s in self.skills])
 
 
-class ESSkillSetOnDeath(ESSkillSet):
+class ESSkillSetOnDeath(ESDeathAction, ESSkillSet):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1465,8 +1472,7 @@ class EsInstance(Printable):
 
         if self.btype in [ESSkillSetOnDeath, ESDeathCry]:
             self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
-            if self.condition:
-                self.condition.on_death = True
+            self.condition.on_death = True
 
         if self.btype in [ESRandomSpawn]:
             if not self.condition:
