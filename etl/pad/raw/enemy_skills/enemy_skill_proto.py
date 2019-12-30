@@ -28,7 +28,7 @@ def behavior_to_proto(instance: EsInstance, is_timed_group=True, cur_hp=100) -> 
             item_condition.use_chance = use_chance
         item_condition.global_one_time = cond.forced_one_time or False
         item_condition.trigger_enemies_remaining = cond.enemies_remaining or 0
-        item_condition.if_defeated = cond.on_death or False
+        item_condition.if_defeated = (cond.on_death and instance.behavior.has_action()) or False
         item_condition.if_attributes_available = len(cond.condition_attributes) > 0
         item_condition.trigger_monsters[:] = cond.cards_on_team
         item_condition.trigger_combos = cond.combos_made or 0
