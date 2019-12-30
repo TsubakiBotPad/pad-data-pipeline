@@ -177,14 +177,17 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
 
     visit_tree(bg, clean_empty_conditions)
 
-    if not skillset.enemy_remaining_enabled:
-        def clean_enemy_remaining(x):
-            x.condition.ClearField('trigger_enemies_remaining')
+    def clean_enemy_remaining(x):
+        x.condition.ClearField('trigger_enemies_remaining')
 
+    if not skillset.enemy_remaining_enabled:
         visit_tree(bg, clean_enemy_remaining)
 
     for es_moveset in skillset.enemy_remaining_movesets:
         es_bg = add_behavior_group_from_moveset(result.groups, BehaviorGroup.REMAINING, es_moveset)
+        # Strip enemy remaining tags from individual items
+        visit_tree(es_bg, clean_enemy_remaining)
+        # Add it to the top level group
         es_bg.condition.trigger_enemies_remaining = es_moveset.count
 
     return result
