@@ -142,24 +142,27 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
     result.level = level
 
     bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PASSIVE, skillset.base_abilities)
+
+    def clean_passive(x):
+        trigger_enemies_remaining = x.condition.trigger_enemies_remaining
+        x.ClearField('condition')
+        # This needs to be enabled for things like turn change with remaining enemies.
+        if trigger_enemies_remaining:
+            x.condition.trigger_enemies_remaining = trigger_enemies_remaining
+
     # Passives should have no (few) conditions
-    visit_tree(bg, lambda x: x.ClearField('condition'))
+    visit_tree(bg, clean_passive)
 
     bg = add_behavior_group_from_behaviors(result.groups, BehaviorGroup.PREEMPT, skillset.preemptives)
 
     def clean_preempt(x):
         if_attributes_available = x.condition.if_attributes_available
         trigger_monsters = x.condition.trigger_monsters
-        trigger_enemies_remaining = x.condition.trigger_enemies_remaining
         x.ClearField('condition')
         if if_attributes_available:
             x.condition.if_attributes_available = if_attributes_available
         if trigger_monsters:
             x.condition.trigger_monsters.extend(trigger_monsters)
-        # This needs to be enabled for things like turn change, but shouldn't be enabled for things
-        # like when they misuse AttackUpRemainingEnemies.
-        if skillset.enemy_remaining_enabled and trigger_enemies_remaining:
-            x.condition.trigger_enemies_remaining = trigger_enemies_remaining
 
     # Preempts can only have specific conditions
     visit_tree(bg, clean_preempt)
