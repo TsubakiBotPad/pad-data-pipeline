@@ -1138,16 +1138,6 @@ class ESFixedTarget(ESAction):
         return 'Forces attacks to hit this enemy'
 
 
-class ESTurnChangeActive(ESAction):
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-        self.turn_counter = self.params[2]
-        self.enemy_seq = self.params[1]
-
-    def description(self):
-        return Describe.turn_change(self.turn_counter)
-
-
 class ESGachaFever(ESAction):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
@@ -1204,6 +1194,16 @@ class ESResolve(ESPassive):
 
     def description(self):
         return Describe.resolve(self.hp_threshold)
+
+
+class ESTurnChangeRemainingEnemies(ESPassive):
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.turn_counter = self.params[2]
+        self.enemy_count = self.params[1]
+
+    def description(self):
+        return Describe.turn_change(self.turn_counter)
 
 
 class ESTurnChangePassive(ESPassive):
@@ -1466,7 +1466,7 @@ class EsInstance(Printable):
             self.behavior.branch_value = ref.enemy_ai
             self.behavior.target_round = ref.enemy_rnd + self.behavior.target_round_offset
 
-        if self.btype in [ESRecoverEnemyAlly, ESAttackUPRemainingEnemies]:
+        if self.btype in [ESRecoverEnemyAlly, ESAttackUPRemainingEnemies, ESTurnChangeRemainingEnemies]:
             if self.condition:
                 self.condition.enemies_remaining = self.behavior.enemy_count
 
@@ -1581,7 +1581,6 @@ BEHAVIOR_MAP = {
     112: ESFixedTarget,
     119: ESInvulnerableOn,
     121: ESInvulnerableOff,
-    122: ESTurnChangeActive,
     123: ESInvulnerableOn,  # hexa's invulnerable gets special type because reasons
     124: ESGachaFever,  # defines number & type of orbs needed in fever mode
     125: ESLeaderAlter,
@@ -1619,5 +1618,6 @@ BEHAVIOR_MAP = {
     72: ESAttributeResist,
     73: ESResolve,
     106: ESTurnChangePassive,
+    122: ESTurnChangeRemainingEnemies,
     118: ESTypeResist,
 }
