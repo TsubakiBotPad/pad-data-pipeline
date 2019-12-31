@@ -158,11 +158,14 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
     def clean_preempt(x):
         if_attributes_available = x.condition.if_attributes_available
         trigger_monsters = x.condition.trigger_monsters
+        use_chance = x.condition.use_chance
         x.ClearField('condition')
         if if_attributes_available:
             x.condition.if_attributes_available = if_attributes_available
         if trigger_monsters:
             x.condition.trigger_monsters.extend(trigger_monsters)
+        if use_chance:
+            x.condition.use_chance = use_chance
 
     # Preempts can only have specific conditions
     visit_tree(bg, clean_preempt)
