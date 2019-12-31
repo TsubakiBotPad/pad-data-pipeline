@@ -108,7 +108,7 @@ def _cond_hp_timed_text(always_trigger_above: int, turn_text: str) -> str:
     if always_trigger_above == 1:
         text = 'always {}'.format(turn_text)
     elif always_trigger_above:
-        text = '{} while above {} HP'.format(turn_text, always_trigger_above)
+        text = '{} while HP > {}'.format(turn_text, always_trigger_above)
     return text
 
 
