@@ -1,7 +1,9 @@
 from pad.raw.skills.skill_common import BaseTextConverter, capitalize_first
 
+
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
+
 
 def parse_list(l):
     if len(l) == 0:
@@ -9,9 +11,10 @@ def parse_list(l):
     elif len(l) == 1:
         return l[0]
     elif len(l) == 2:
-        return " and ".join(map(str,l))
-    l[-1] = "and "+str(l[-1])
-    return ", ".join(map(str,l))
+        return " and ".join(map(str, l))
+    l[-1] = "and " + str(l[-1])
+    return ", ".join(map(str, l))
+
 
 class AsTextConverter(BaseTextConverter):
     def fmt_repeated(self, text, amount):
@@ -218,24 +221,24 @@ class AsTextConverter(BaseTextConverter):
     def awakening_heal_convert(self, act):
         skill_text = 'Heal {:d}x RCV for each '.format(int(act.amount_per))
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += ", ".join(filter(None,awakens))
+        skill_text += ", ".join(filter(None, awakens))
         skill_text += ' awakening skill on the team'
         return skill_text
 
     def awakening_attack_boost_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'increase ATK by ' + \
-                     fmt_mult(act.amount_per * 100) + '% for each '
+                     fmt_mult(act.amount_per * 100) + '% for each ['
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += ", ".join(filter(None,awakens))
-        skill_text += ' awakening skill on the team'
+        skill_text += ", ".join(filter(None, awakens))
+        skill_text += '] awakening skill on the team'
         return skill_text
 
     def awakening_shield_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'reduce damage taken by ' + \
-                     fmt_mult(act.amount_per * 100) + '% for each '
+                     fmt_mult(act.amount_per * 100) + '% for each ['
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += ", ".join(filter(None,awakens))
-        skill_text += ' awakening skill on the team'
+        skill_text += ", ".join(filter(None, awakens))
+        skill_text += '] awakening skill on the team'
         return skill_text
 
     def change_enemies_attribute_convert(self, act):
@@ -294,8 +297,8 @@ class AsTextConverter(BaseTextConverter):
             2: 'the top row',
             1: 'the 2nd row from the top',
             0: 'the middle row',
-           -1: 'the 2nd row from the bottom',
-           -2: 'the bottom row',
+            -1: 'the 2nd row from the bottom',
+            -2: 'the bottom row',
         }
         return self._line_change_convert(act.rows, ROW_INDEX)
 
@@ -322,15 +325,15 @@ class AsTextConverter(BaseTextConverter):
                 continue
 
             # If the current line is different than it's successor or it's the last item
-            elif c==len(lines)-1 or lines[c+1][1] != line[1]:
+            elif c == len(lines) - 1 or lines[c + 1][1] != line[1]:
                 skill_text.append('change {} to {} orbs'.format(*line))
 
             # Otherwise, the current line has the same attribute as its successor
             else:
                 # Check how many successors share the attribute (and also how many to skip after)
-                while c+skip<len(lines) and lines[c+skip][1] == line[1]:
+                while c + skip < len(lines) and lines[c + skip][1] == line[1]:
                     skip += 1
-                formatted = ' and '.join(map(lambda x: x[0], lines[c:c+skip]))
+                formatted = ' and '.join(map(lambda x: x[0], lines[c:c + skip]))
                 skill_text.append("change {} to {} orbs".format(formatted, line[1]))
                 skip -= 1
         return capitalize_first(' and '.join(skill_text))

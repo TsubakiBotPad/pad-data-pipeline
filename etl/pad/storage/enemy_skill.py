@@ -70,7 +70,7 @@ class EnemySkill(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'EnemySkill({}): {}'.format(self.key_value(), self.name_na)
+        return 'EnemySkill({}): {} - {}'.format(self.key_value(), self.name_na, self.desc_na)
 
 
 class EnemyData(SimpleSqlItem):

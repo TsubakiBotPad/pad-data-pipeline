@@ -556,7 +556,7 @@ class ESDispel(ESAction):
         super().__init__(skill)
 
     def description(self):
-        return 'Voids player buff effects'
+        return Describe.dispel_buffs()
 
 
 class ESStatusShield(ESAction):
@@ -798,7 +798,7 @@ class ESInvulnerableOff(ESAction):
         super().__init__(skill)
 
     def description(self):
-        return 'Remove damage immunity effect'
+        return Describe.invuln_off()
 
 
 class ESSkyfall(ESAction):
@@ -878,7 +878,7 @@ class ESRowColSpawnMulti(ESFixedOrbSpawn):
         self.attack = ESAttack.new_instance(self.params[7]) if skill.type in [77, 79] else None
 
     def description(self):
-        return 'Change ' + ', '.join(self.desc_arr)
+        return Describe.row_col_multi(self.desc_arr)
 
 
 class ESColumnSpawn(ESRowColSpawn):
@@ -1076,7 +1076,7 @@ class ESFixedStart(ESAction):
         super().__init__(skill)
 
     def description(self):
-        return 'Fix orb movement starting point to random position on the board'
+        return Describe.fixed_start()
 
 
 class ESAttributeBlock(ESAction):
@@ -1102,7 +1102,7 @@ class ESSpinnersRandom(ESSpinners):
         self.count = self.params[3]
 
     def description(self):
-        return Describe.spinners(self.turns, self.speed, 'Random {:d}'.format(self.count))
+        return Describe.spinners(self.turns, self.speed, self.count)
 
 
 class ESSpinnersFixed(ESSpinners):
@@ -1111,7 +1111,7 @@ class ESSpinnersFixed(ESSpinners):
         self.position_str, self.position_rows, self.position_cols = positions_2d_bitmap(self.params[3:8])
 
     def description(self):
-        return Describe.spinners(self.turns, self.speed, 'Specific')
+        return Describe.spinners(self.turns, self.speed)
 
 
 class ESMaxHPChange(ESAction):
@@ -1120,13 +1120,13 @@ class ESMaxHPChange(ESAction):
         self.turns = self.params[3]
         if self.params[1] is not None:
             self.max_hp = self.params[1]
-            self.hp_change_type = 'percent'
+            self.percent = True
         elif self.params[2] is not None:
             self.max_hp = self.params[2]
-            self.hp_change_type = 'flat'
+            self.percent = False
 
     def description(self):
-        return Describe.max_hp_change(self.turns, self.max_hp, self.hp_change_type)
+        return Describe.max_hp_change(self.turns, self.max_hp, self.percent)
 
 
 class ESFixedTarget(ESAction):
@@ -1135,7 +1135,7 @@ class ESFixedTarget(ESAction):
         self.turn_count = self.params[1]
 
     def description(self):
-        return 'Forces attacks to hit this enemy for {} turns'.format(self.turn_count)
+        return Describe.fixed_target(self.turn_count)
 
 
 class ESGachaFever(ESAction):
@@ -1156,6 +1156,16 @@ class ESLeaderAlter(ESAction):
 
     def description(self):
         return Describe.lead_alter(self.turns, self.target_card)
+
+
+class ES7x6Change(ESAction):
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.turns = self.params[1]
+        self.unknown = self.params[2]  # So far, only a single example with 1, converts to 7x6
+
+    def description(self):
+        return Describe.force_7x6(self.turns)
 
 
 class ESNoSkyfall(ESAction):
@@ -1587,6 +1597,7 @@ BEHAVIOR_MAP = {
     123: ESInvulnerableOn,  # hexa's invulnerable gets special type because reasons
     124: ESGachaFever,  # defines number & type of orbs needed in fever mode
     125: ESLeaderAlter,
+    126: ES7x6Change,
     127: ESNoSkyfall,
 
     # LOGIC
