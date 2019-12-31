@@ -121,6 +121,8 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
             tg.condition.trigger_turn = time_action.turn
             if time_action.end_turn:
                 tg.condition.trigger_turn_end = time_action.end_turn
+            if time_action.execute_above_hp:
+                tg.condition.always_trigger_above = time_action.execute_above_hp
             add_behavior_group_from_behaviors(tg.children, BehaviorGroup.STANDARD, time_action.skills,
                                               is_timed_group=True, cur_hp=action.hp)
 

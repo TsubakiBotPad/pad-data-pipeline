@@ -151,4 +151,15 @@ message Condition {
 
     // If set, the range of turn counts this matches.
     int32 trigger_turn_end = 12;
+
+    // Indicates that the trigger turn is absolute for a HP range; that is, it
+    // will always execute on the trigger_turn when the HP is above this value.
+    //
+    // This should be split out from normal triggers to prevent confusion, and
+    // those triggers adjusted.
+    //
+    // E.g. if a monster always binds turn 1, and enrages when > 50 on turn 2,
+    // the first skill should have trigger_turn=1 and always_trigger_above=1,
+    // while the and enrage should have it's trigger_turn adjusted to 1.
+    int32 always_trigger_above = 14;
 }

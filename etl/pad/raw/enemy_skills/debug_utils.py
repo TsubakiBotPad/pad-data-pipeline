@@ -86,9 +86,11 @@ def format_condition(cond: Condition):
         else:
             parts.append('repeats every {} turns'.format(cond.repeats_every))
     elif cond.trigger_turn_end:
-        parts.append('turns {}-{}'.format(cond.trigger_turn, cond.trigger_turn_end))
+        turn_text = 'turns {}-{}'.format(cond.trigger_turn, cond.trigger_turn_end)
+        parts.append(_cond_hp_timed_text(cond.always_trigger_above, turn_text))
     elif cond.trigger_turn:
-        parts.append('turn {}'.format(cond.trigger_turn))
+        turn_text = 'turn {}'.format(cond.trigger_turn)
+        parts.append(_cond_hp_timed_text(cond.always_trigger_above, turn_text))
 
     if not parts and cond.hp_threshold in [100, 0]:
         return None
@@ -99,6 +101,15 @@ def format_condition(cond: Condition):
         parts.append('hp <= {}'.format(cond.hp_threshold))
 
     return ', '.join(parts)
+
+
+def _cond_hp_timed_text(always_trigger_above: int, turn_text: str) -> str:
+    text = turn_text
+    if always_trigger_above == 1:
+        text = 'always {}'.format(turn_text)
+    elif always_trigger_above:
+        text = '{} while above {} HP'.format(turn_text, always_trigger_above)
+    return text
 
 
 def format_behavior(indent_str, behavior: Behavior, library):
