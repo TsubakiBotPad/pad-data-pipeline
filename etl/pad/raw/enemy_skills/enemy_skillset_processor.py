@@ -111,8 +111,6 @@ class Context(object):
         self.turn = 1
         # Whether the current turn triggered a preempt flag.
         self.is_preemptive = False
-        # Whether we are allowed to preempt based on level flags.
-        self.do_preemptive = False
         # A bitmask for flag values which can be updated.
         self.flags = 0
         # A bitmask for flag values which can only be unset.
@@ -427,15 +425,13 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
         # Detection for preempts, null the behavior afterwards so we don't trigger it again.
         if b_type == ESPreemptive:
             behaviors[idx] = None
-            ctx.is_preemptive = True
-            ctx.do_preemptive = b.level <= ctx.level
+            ctx.is_preemptive = b.level <= ctx.level
             idx += 1
             continue
 
         if b_type == ESAttackPreemptive:
             behaviors[idx] = None
             ctx.is_preemptive = True
-            ctx.do_preemptive = True
             results.append(instance)
             return results, card_branches, combo_branches
 
