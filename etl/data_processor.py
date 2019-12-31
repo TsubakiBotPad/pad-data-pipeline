@@ -24,6 +24,8 @@ from pad.storage_processor.schedule_processor import ScheduleProcessor
 from pad.storage_processor.series_processor import SeriesProcessor
 from pad.storage_processor.skill_tag_processor import SkillTagProcessor
 from pad.storage_processor.timestamp_processor import TimestampProcessor
+from pad.storage_processor.purge_schedule_processor import PurgeScheduleProcessor
+from pad.storage_processor.purge_deleted_rows_processor import PurgeDeletedRowProcessor
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
@@ -189,14 +191,16 @@ def load_data(args):
     TimestampProcessor().process(db_wrapper)
 
     # TODO: purge old schedule items
+    PurgeScheduleProcessor().process(db_wrapper)
+    
     # TODO: purge old deleted_rows items
+    PurgeDeletedRowProcessor().process(db_wrapper)
 
     print('done')
 
 
 if __name__ == '__main__':
     args = parse_args()
-
     # This is a hack to make loading ES easier and more frequent.
     # Remove this once we're done with most of the ES processing.
     if args.es_dir and args.es_only:
