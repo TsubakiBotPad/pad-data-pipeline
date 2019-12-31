@@ -32,6 +32,7 @@ class TimedSkillGroup(StandardSkillGroup):
         self.turn = turn
         # If set, this group executes over a range of turns
         self.end_turn = None  # type: Optional[int]
+        self.execute_above_hp = None
 
 
 class RepeatSkillGroup(TimedSkillGroup):
@@ -770,6 +771,13 @@ def compute_enemy_actions(ctx: Context, behaviors: List[EsInstance], hp_checkpoi
                     break
 
                 if cur_skills == comp_timed[turn_idx].skills:
+                    # This timed skill can execute at multiple checkpoints; we want this to be
+                    # the following checkpoint, because it encompases the next checkpoint. If there
+                    # is no next checkpoint, we use 1 as a placeholder for 'always execute'.
+                    next_comp_hp = hp_checkpoints[nhp_idx + 1] if nhp_idx < len(hp_checkpoints) - 1 else 1
+                    timed[turn_idx].execute_above_hp = next_comp_hp
+
+                    # Clear out the dupe timed skill.
                     comp_timed[turn_idx].skills.clear()
                     timed[turn_idx].hp_range = comp_hp
 
@@ -893,6 +901,7 @@ def collapse_repeating_groups(groups: List[TimedSkillGroup]) -> List[TimedSkillG
         next_item = groups[idx]
         if cur_item.skills == next_item.skills and cur_item.turn != next_item.turn:
             cur_item.end_turn = next_item.turn
+            cur_item.execute_above_hp = cur_item.execute_above_hp or next_item.execute_above_hp
         else:
             new_groups.append(next_item)
             cur_item = next_item
@@ -947,6 +956,11 @@ def clean_skillset(moveset: Moveset, hp_actions: List[HpActions]):
         timed = hp_action.timed[0]
         if len(timed.skills) > 1 and len(hp_action.repeating) == 1:
             timed.skills = [x for x in timed.skills if x not in hp_action.repeating[0].skills]
+
+    # Clean up unnecessary 'execute above' from the final hp threshold.
+    if len(moveset.hp_actions):
+        for timed_action in moveset.hp_actions[-1].timed:
+            timed_action.execute_above_hp = None
 
 
 def extract_levels(enemy_behavior: List[EsInstance]):
