@@ -64,6 +64,8 @@ class MonsterProcessor(object):
             for item in items:
                 try:
                     db.insert_or_update(item)
+                except (KeyboardInterrupt, SystemExit):
+                    raise
                 except:
                     human_fix_logger.fatal('Failed to insert item (probably new awakening): %s',
                                            pad_util.json_string_dump(item, pretty=True))

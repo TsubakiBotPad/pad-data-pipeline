@@ -1,12 +1,19 @@
 from pad.raw.skills.skill_common import BaseTextConverter, capitalize_first
 
-
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
 
+def parse_list(l):
+    if len(l) == 0:
+        return ""
+    elif len(l) == 1:
+        return l[0]
+    elif len(l) == 2:
+        return " and ".join(map(str,l))
+    l[-1] = "and "+str(l[-1])
+    return ", ".join(map(str,l))
 
 class AsTextConverter(BaseTextConverter):
-
     def fmt_repeated(self, text, amount):
         return '{} {} times'.format(text, amount)
 
@@ -209,41 +216,25 @@ class AsTextConverter(BaseTextConverter):
                'increase combo count by ' + str(act.combos)
 
     def awakening_heal_convert(self, act):
-        # TODO: these things are a travesty clean them up
-        skill_text = 'Heal ' + str(act.amount_per).replace(".0","") + 'x RCV for each '
-        for i in range(0, len(act.awakenings) - 1):
-            if act.awakenings[i + 1] != 0:
-                skill_text += self.AWAKENING_MAP[act.awakenings[i]] + ', '
-            else:
-                skill_text += self.AWAKENING_MAP[act.awakenings[i]]
-        if int(act.awakenings[-1]) != 0:
-            skill_text += self.AWAKENING_MAP[int(act.awakenings[-1])]
+        skill_text = 'Heal {:d}x RCV for each '.format(int(act.amount_per))
+        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
+        skill_text += ", ".join(filter(None,awakens))
         skill_text += ' awakening skill on the team'
         return skill_text
 
     def awakening_attack_boost_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'increase ATK by ' + \
                      fmt_mult(act.amount_per * 100) + '% for each '
-        for i in range(0, len(act.awakenings) - 1):
-            if act.awakenings[i + 1] != 0:
-                skill_text += self.AWAKENING_MAP[act.awakenings[i]] + ', '
-            else:
-                skill_text += self.AWAKENING_MAP[act.awakenings[i]]
-        if int(act.awakenings[-1]) != 0:
-            skill_text += self.AWAKENING_MAP[int(act.awakenings[-1])]
+        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
+        skill_text += ", ".join(filter(None,awakens))
         skill_text += ' awakening skill on the team'
         return skill_text
 
     def awakening_shield_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'reduce damage taken by ' + \
                      fmt_mult(act.amount_per * 100) + '% for each '
-        for i in range(0, len(act.awakenings) - 1):
-            if act.awakenings[i + 1] != 0:
-                skill_text += self.AWAKENING_MAP[act.awakenings[i]] + ', '
-            else:
-                skill_text += self.AWAKENING_MAP[act.awakenings[i]]
-        if int(act.awakenings[-1]) != 0:
-            skill_text += self.AWAKENING_MAP[int(act.awakenings[-1])]
+        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
+        skill_text += ", ".join(filter(None,awakens))
         skill_text += ' awakening skill on the team'
         return skill_text
 
@@ -266,49 +257,25 @@ class AsTextConverter(BaseTextConverter):
         skill_text = 'Change '
         if from_attr == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
             skill_text += 'all orbs to '
-        elif len(from_attr) > 1:
-            for i in from_attr[:-1]:
-                skill_text += self.ATTRIBUTES[i] + ', '
-            skill_text += self.ATTRIBUTES[from_attr[-1]] + ' orbs to '
-        elif act.from_attr != []:
-            skill_text += self.ATTRIBUTES[from_attr[0]] + ' orbs to '
-        if len(to_attr) > 1:
-            for i in to_attr[:-1]:
-                skill_text += self.ATTRIBUTES[i] + ', '
-            skill_text += self.ATTRIBUTES[to_attr[-1]] + ' orbs'
-        elif to_attr != []:
-            skill_text += self.ATTRIBUTES[to_attr[0]] + ' orbs'
+        else:
+            skill_text += parse_list([self.ATTRIBUTES[i] for i in from_attr]) + ' orbs to '
+        skill_text += parse_list([self.ATTRIBUTES[i] for i in to_attr]) + ' orbs'
         return skill_text
 
     def attack_attr_x_team_atk_convert(self, act):
         skill_text = 'Deal ' + self.ATTRIBUTES[act.attack_attribute] + \
                      ' damage equal to ' + fmt_mult(act.multiplier) + 'x of team\'s total '
-        if len(act.team_attributes) == 1:
-            skill_text += self.ATTRIBUTES[act.team_attributes[0]] + ' ATK to '
-        elif len(act.team_attributes) > 1:
-            for i in act.team_attributes[:-1]:
-                skill_text += self.ATTRIBUTES[i] + ', '
-            skill_text += self.ATTRIBUTES[act.team_attributes[-1]] + ' ATK to '
+        skill_text += parse_list([self.ATTRIBUTES[a] for a in act.team_attributes]) + ' ATK to '
         skill_text += self.fmt_mass_atk(act.mass_attack)
         return skill_text
 
     def spawn_orb_convert(self, act):
-        skill_text = 'Create ' + str(act.amount) + ' '
-        if len(act.orbs) == 1:
-            skill_text += self.ATTRIBUTES[act.orbs[0]] + ' orbs'
-        elif len(act.orbs) > 1:
-            for i in act.orbs[:-1]:
-                skill_text += self.ATTRIBUTES[i] + ', '
-            skill_text += self.ATTRIBUTES[act.orbs[-1]] + ' orbs'
+        skill_text = 'Create {} '.format(act.amount)
+        skill_text += parse_list([self.ATTRIBUTES[o] for o in act.orbs]) + ' orbs'
         if act.orbs != act.excluding_orbs and act.excluding_orbs != []:
-            templist = list(set(act.excluding_orbs) - set(act.orbs))
+            templist = set(act.excluding_orbs) - set(act.orbs)
             skill_text += ' over non '
-            if len(templist) > 1:
-                for i in templist[:-1]:
-                    skill_text += self.ATTRIBUTES[i] + ', '
-                skill_text += self.ATTRIBUTES[templist[-1]] + ' orbs'
-            elif len(templist) == 1:
-                skill_text += self.ATTRIBUTES[templist[0]] + ' orbs'
+            skill_text += parse_list([self.ATTRIBUTES[o] for o in templist]) + ' orbs'
         elif len(act.excluding_orbs) == 0:
             skill_text += ' over any orb'
         return skill_text
@@ -330,30 +297,7 @@ class AsTextConverter(BaseTextConverter):
            -1: 'the 2nd row from the bottom',
            -2: 'the bottom row',
         }
-
-        # TODO: these two chunks of code are duplicates except for the indexes
-        skill_text = []
-        # rows :: List<(str:row_name, str:attribute)>
-        rows = [(ROW_INDEX[int(row['index'])], self.ATTRIBUTES[int(row['orbs'][0])]) for row in act.rows]
-        skip = 0
-        for c, row in enumerate(rows):
-            if skip:
-                skip -= 1
-                continue
-
-            # If the current row is different than it's successor or it's the last item
-            elif c==len(rows)-1 or rows[c+1][1] != row[1]:
-                skill_text.append('change {} to {} orbs'.format(row[0], row[1]))
-
-            # Otherwise, the current row has the same attribute as its successor
-            else:
-                # Check how many successors share the attribute (and also how many to skip after)
-                while c+skip<len(rows) and rows[c+skip][1] == row[1]:
-                    skip += 1
-                formatted = ' and '.join(map(lambda x: x[0], rows[c:c+skip]))
-                skill_text.append("change {} to {} orbs".format(formatted, row[1]))
-                skip -= 1
-        return capitalize_first(' and '.join(skill_text))
+        return self._line_change_convert(act.rows, ROW_INDEX)
 
     def column_change_convert(self, act):
         COLUMN_INDEX = {
@@ -365,27 +309,29 @@ class AsTextConverter(BaseTextConverter):
             5: 'the far right column',
         }
 
-        # TODO: these two chunks of code are duplicates except for the indexes
+        return self._line_change_convert(act.columns, COLUMN_INDEX)
+
+    def _line_change_convert(self, lines, index):
         skill_text = []
-        # columns :: List<(str:column_name, str:attribute)>
-        columns = [(COLUMN_INDEX[int(column['index'])], self.ATTRIBUTES[int(column['orbs'][0])]) for column in act.columns]
+        # lines :: List<(str:line_name, str:attribute)>
+        lines = [(index[int(line['index'])], self.ATTRIBUTES[int(line['orbs'][0])]) for line in lines]
         skip = 0
-        for c, column in enumerate(columns):
+        for c, line in enumerate(lines):
             if skip:
                 skip -= 1
                 continue
 
-            # If the current column is different than it's successor or it's the last item
-            elif c==len(columns)-1 or columns[c+1][1] != column[1]:
-                skill_text.append('change {} to {} orbs'.format(column[0], column[1]))
+            # If the current line is different than it's successor or it's the last item
+            elif c==len(lines)-1 or lines[c+1][1] != line[1]:
+                skill_text.append('change {} to {} orbs'.format(*line))
 
-            # Otherwise, the current column has the same attribute as its successor
+            # Otherwise, the current line has the same attribute as its successor
             else:
                 # Check how many successors share the attribute (and also how many to skip after)
-                while c+skip<len(columns) and columns[c+skip][1] == column[1]:
+                while c+skip<len(lines) and lines[c+skip][1] == line[1]:
                     skip += 1
-                formatted = ' and '.join(map(lambda x: x[0], columns[c:c+skip]))
-                skill_text.append("change {} to {} orbs".format(formatted, column[1]))
+                formatted = ' and '.join(map(lambda x: x[0], lines[c:c+skip]))
+                skill_text.append("change {} to {} orbs".format(formatted, line[1]))
                 skip -= 1
         return capitalize_first(' and '.join(skill_text))
 
@@ -416,12 +362,7 @@ class AsTextConverter(BaseTextConverter):
 
     def board_change_convert(self, act):
         skill_text = 'Change all orbs to '
-        if len(act.attributes) > 1:
-            for i in act.attributes[:-1]:
-                skill_text += self.ATTRIBUTES[i] + ', '
-            skill_text += 'and ' + self.ATTRIBUTES[act.attributes[-1]] + ' orbs'
-        elif len(act.attributes) == 1:
-            skill_text += self.ATTRIBUTES[act.attributes[0]] + ' orbs'
+        skill_text += parse_list([self.ATTRIBUTES[a] for a in act.attributes]) + ' orbs'
         return skill_text
 
     def suicide_random_nuke_convert(self, act):
@@ -456,12 +397,8 @@ class AsTextConverter(BaseTextConverter):
 
     def type_attack_boost_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + fmt_mult(act.multiplier) + 'x ATK for '
-        if len(act.types) > 1:
-            for i in act.types[:-1]:
-                skill_text += self.TYPES[i] + ', '
-            skill_text += self.TYPES[act.types[-1]] + ' types'
-        elif len(act.types) == 1:
-            skill_text += self.TYPES[act.types[-1]] + ' type'
+        skill_text += parse_list([self.TYPES[t] for t in act.types]) + ' type'
+        skill_text += 's' if 'and' in skill_text else ''
         return skill_text
 
     def grudge_strike_convert(self, act):
