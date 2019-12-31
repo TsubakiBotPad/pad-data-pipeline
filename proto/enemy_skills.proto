@@ -162,4 +162,10 @@ message Condition {
     // the first skill should have trigger_turn=1 and always_trigger_above=1,
     // while the and enrage should have it's trigger_turn adjusted to 1.
     int32 always_trigger_above = 14;
+
+    // Indicates that the behavior will always execute after another skill
+    // identified by this skill id.
+    //
+    // Can only be manually set by an operator.
+    int32 always_after = 15;
 }
