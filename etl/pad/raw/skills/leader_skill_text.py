@@ -7,12 +7,8 @@ class LsTextConverter(BaseTextConverter):
         Tag.NO_SKYFALL: '[No skyfall]',
         Tag.DISABLE_POISON: '[Disable Poison & Mortal Poison orb effects]',
         Tag.BOARD_7X6: '[Board becomes 7x6]',
-        Tag.FIXED_3S: '[Fixed 3 second movetime]',
-        Tag.FIXED_4S: '[Fixed 4 second movetime]',
-        Tag.FIXED_5S: '[Fixed 5 second movetime]',
-        Tag.FIXED_6S: '[Fixed 6 second movetime]',
-        Tag.ERASE_4P: '[Unable to erase 3 orbs or less]',
-        Tag.ERASE_5P: '[Unable to erase 4 orbs or less]',
+        Tag.FIXED_TIME: '[Fixed {:d} second movetime]',
+        Tag.ERASE_P: '[Unable to erase {:d} orbs or less]',
     }
 
     def tag_only_convert(self, ls):
