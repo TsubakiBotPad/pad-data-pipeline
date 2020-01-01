@@ -18,4 +18,4 @@ class PurgeScheduleProcessor(object):
 
     def process(self, db: DbWrapper):
         db.fetch_data("DELETE FROM `schedule` WHERE end_timestamp < {}" \
-                      .format(date2tstamp(datetime.now()-timedelta(1))))
+                      .format(date2tstamp(datetime.now()-timedelta(weeks=4))))
