@@ -82,7 +82,7 @@ class LeaderSkill(object):
 
     def tag_text(self, converter: LsTextConverter) -> str:
         tags = getattr(self, 'tags', [])
-        return ''.join(sorted(tags))
+        return ''.join(sorted([converter.TAGS[tag].format(args) for tag, args in tags]))
 
     def full_text(self, converter: LsTextConverter) -> str:
         text = self.text(converter) or ''
@@ -1136,7 +1136,7 @@ class TwoPartLeaderSkill(LeaderSkill):
         for cs in self.parts:
             tags.update(getattr(cs, 'tags', []))
 
-        return ''.join(sorted(tags))
+        return ''.join(sorted([converter.TAGS[tag].format(args) for tag, args in tags]))
 
 
 class HpMultiConditionalAtkBoost(LeaderSkill):
@@ -1274,7 +1274,7 @@ class MatchXOrMoreOrbs(LeaderSkill):
 
         if self.min_match not in [4,5]:
             human_fix_logger.warning('Unexpected orb match amount:' + str(self.min_match))
-        self.tags.append(Tag.ERASE_P.format(self.min_match - 1))
+        self.tags.append((Tag.ERASE_P, (self.min_match - 1)))
 
         super().__init__(158, ms, hp=hp, atk=atk, rcv=rcv)
 
@@ -1303,7 +1303,7 @@ class SevenBySix(LeaderSkill):
     skill_type = 162
 
     def __init__(self, ms: MonsterSkill):
-        self.tags = [Tag.BOARD_7X6]
+        self.tags = [(Tag.BOARD_7X6, ())]
         super().__init__(162, ms)
 
     def text(self, converter: LsTextConverter) -> str:
@@ -1318,7 +1318,7 @@ class NoSkyfallBoost(LeaderSkill):
         self.attributes = binary_con(data[0])
         self.types = binary_con(data[1])
         self.reduction_attributes = binary_con(data[5])
-        self.tags = [Tag.NO_SKYFALL]
+        self.tags = [(Tag.NO_SKYFALL, ())]
         hp = multi_floor(data[2])
         atk = multi_floor(data[3])
         rcv = multi_floor(data[4])
@@ -1486,7 +1486,7 @@ class OrbRemainingMultiplier(LeaderSkill):
         self.min_atk = multi_floor(data[3])
         self.base_atk = mult(data[6])
         self.bonus_atk = mult(data[7])
-        self.tags = [Tag.NO_SKYFALL]
+        self.tags = [(Tag.NO_SKYFALL, ())]
         hp = multi_floor(data[2])
         rcv = multi_floor(data[4])
         atk = self.min_atk * (self.base_atk + (self.bonus_atk * self.orb_count))
@@ -1511,10 +1511,10 @@ class FixedMovementTime(LeaderSkill):
             # Ignore this case; bad skill
             pass
         elif self.time in [3,4,5,6]:
-            self.tags.append(Tag.FIXED_TIME.format(self.time))
+            self.tags.append((Tag.FIXED_TIME, (self.time)))
         else:
             human_fix_logger.warning('Unexpected fixed time:' + str(self.time))
-            self.tags.append(Tag.FIXED_TIME.format(self.time))
+            self.tags.append((Tag.FIXED_TIME, (self.time)))
 
         hp = multi_floor(data[3])
         atk = multi_floor(data[4])
@@ -1593,7 +1593,7 @@ class SevenBySixStatBoost(LeaderSkill):
         data = merge_defaults(ms.data, [0, 0, 100, 100, 100])
         self.attributes = binary_con(data[0])
         self.types = binary_con(data[1])
-        self.tags = [Tag.BOARD_7X6]
+        self.tags = [(Tag.BOARD_7X6, ())]
         hp = multi_floor(data[2])
         atk = multi_floor(data[3])
         rcv = multi_floor(data[4])
@@ -1652,7 +1652,7 @@ class DisablePoisonEffects(LeaderSkill):
     skill_type = 197
 
     def __init__(self, ms: MonsterSkill):
-        self.tags = [Tag.DISABLE_POISON]
+        self.tags = [(Tag.DISABLE_POISON, ())]
         super().__init__(197, ms)
 
     def text(self, converter: LsTextConverter) -> str:

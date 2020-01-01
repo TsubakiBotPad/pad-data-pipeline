@@ -6,12 +6,12 @@ class ThresholdType(Enum):
     ABOVE = '>'
 
 
-class Tag():
-    NO_SKYFALL = '[No Skyfall]'
-    BOARD_7X6 = '[Board becomes 7x6]'
-    DISABLE_POISON = '[Disable Poison/Mortal Poison effects]'
-    FIXED_TIME = '[Fixed {:d} second movetime]'
-    ERASE_P = '[Unable to erase {:d} orbs or less]'
+class Tag(Enum):  
+    NO_SKYFALL = 0
+    BOARD_7X6 = 1
+    DISABLE_POISON = 2
+    FIXED_TIME = 3
+    ERASE_P = 4
 
 def sort_tags(tags):
     return sorted(tags, key=lambda x: x.value)
