@@ -520,8 +520,10 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
 
         if b_type == ESBranchLevel:
             # Branch based on monster level.
-            if b.compare == '<':
-                take_branch = ctx.level < b.branch_value
+            if b.compare == '<=':
+                take_branch = ctx.level <= b.branch_value
+            elif b.compare == '=':
+                take_branch = ctx.level == b.branch_value
             else:
                 take_branch = ctx.level >= b.branch_value
             idx = b.target_round if take_branch else idx + 1
