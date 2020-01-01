@@ -1360,7 +1360,7 @@ class ESBranchCounter(ESBranch):
 
 class ESBranchLevel(ESBranch):
     LEVEL_COMPARE_MAP = {
-        33: '<',
+        33: '<=',
         34: '=',
         35: '>'
     }
