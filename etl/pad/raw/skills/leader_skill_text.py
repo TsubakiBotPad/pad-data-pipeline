@@ -5,8 +5,8 @@ from pad.raw.skills.skill_common import BaseTextConverter, fmt_mult, multi_getat
 class LsTextConverter(BaseTextConverter):
     TAGS = {
         Tag.NO_SKYFALL: '[No skyfall]',
-        Tag.BOARD_7X6: '[Disable Poison & Mortal Poison orb effects]',
-        Tag.DISABLE_POISON: '[Board becomes 7x6]',
+        Tag.DISABLE_POISON: '[Disable Poison & Mortal Poison orb effects]',
+        Tag.BOARD_7X6: '[Board becomes 7x6]',
         Tag.FIXED_TIME: '[Fixed {:d} second movetime]',
         Tag.ERASE_P: '[Unable to erase {:d} orbs or less]',
     }
