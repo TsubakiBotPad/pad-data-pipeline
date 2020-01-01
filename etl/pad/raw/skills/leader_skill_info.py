@@ -82,7 +82,7 @@ class LeaderSkill(object):
 
     def tag_text(self, converter: LsTextConverter) -> str:
         tags = getattr(self, 'tags', [])
-        return ''.join([converter.TAGS[x] for x in sort_tags(tags)])
+        return ''.join(sorted(tags))
 
     def full_text(self, converter: LsTextConverter) -> str:
         text = self.text(converter) or ''
@@ -1136,7 +1136,7 @@ class TwoPartLeaderSkill(LeaderSkill):
         for cs in self.parts:
             tags.update(getattr(cs, 'tags', []))
 
-        return ''.join([converter.TAGS[x] for x in sort_tags(tags)])
+        return ''.join(sorted(tags))
 
 
 class HpMultiConditionalAtkBoost(LeaderSkill):
@@ -1272,12 +1272,9 @@ class MatchXOrMoreOrbs(LeaderSkill):
         atk = multi_floor(data[3])
         rcv = multi_floor(data[5])
 
-        if self.min_match == 4:
-            self.tags.append(Tag.ERASE_4P)
-        elif self.min_match == 5:
-            self.tags.append(Tag.ERASE_5P)
-        else:
-            raise ValueError('Unexpected orb match amount:' + self.min_match)
+        if self.min_match not in [4,5]:
+            human_fix_logger.warning('Unexpected orb match amount:' + str(self.min_match))
+        self.tags.append(Tag.ERASE_P.format(self.min_match - 1))
 
         super().__init__(158, ms, hp=hp, atk=atk, rcv=rcv)
 
@@ -1510,20 +1507,14 @@ class FixedMovementTime(LeaderSkill):
         self.types = binary_con(data[2])
 
         # TODO: this needs to be overhauled, just accept the value here if it != 0.
-        if self.time == 3:
-            self.tags.append(Tag.FIXED_3S)
-        elif self.time == 4:
-            self.tags.append(Tag.FIXED_4S)
-        elif self.time == 5:
-            self.tags.append(Tag.FIXED_5S)
-        elif self.time == 6:
-            self.tags.append(Tag.FIXED_6S)
-        elif self.time == 0:
+        if self.time == 0:
             # Ignore this case; bad skill
             pass
+        elif self.time in [3,4,5,6]:
+            self.tags.append(Tag.FIXED_TIME.format(self.time))
         else:
-            human_fix_logger.error('Unexpected fixed time:' + str(self.time))
-            raise ValueError('Unexpected fixed time:' + str(self.time))
+            human_fix_logger.warning('Unexpected fixed time:' + str(self.time))
+            self.tags.append(Tag.FIXED_TIME.format(self.time))
 
         hp = multi_floor(data[3])
         atk = multi_floor(data[4])
