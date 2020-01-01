@@ -190,6 +190,15 @@ async def serve_monster_info(request):
     '''.format(enemy_id)
     encounters = []
     encounter_data = db_wrapper.fetch_data(sql)
+
+    sql = '''
+        select enemy_id 
+        from enemy_data
+        where enemy_id != {}
+        and (enemy_id % 100000) = {}
+    '''.format(enemy_id, monster_id)
+    alt_enemies = [x['enemy_id'] for x in db_wrapper.fetch_data(sql)]
+
     # Filter out unnecessary dupes
     encounter_data = list({x['sub_dungeon_id']: x for x in encounter_data}.values())
     for x in encounter_data:
@@ -212,6 +221,7 @@ async def serve_monster_info(request):
         })
     monster_data['enemy_id'] = enemy_id
     return json({
+        'alt_enemy_ids': alt_enemies,
         'monster': monster_data,
         'encounters': encounters,
     })
