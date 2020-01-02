@@ -286,14 +286,14 @@ class Context(object):
         return True
 
     def check_skill_use(self, cond: ESCondition):
+        result = True
         if cond.one_time:
-            return self.skill_counter >= cond.one_time
-        elif cond.forced_one_time:
-            return self.flag_skill_use & cond.forced_one_time == 0
-        elif cond.enemies_remaining:
-            return self.enemies <= cond.enemies_remaining
-        else:
-            return True
+            result = result and self.skill_counter >= cond.one_time
+        if cond.forced_one_time:
+            result = result and self.flag_skill_use and cond.forced_one_time == 0
+        if cond.enemies_remaining:
+            result = result and self.enemies <= cond.enemies_remaining
+        return result
 
     def update_skill_use(self, cond: ESCondition):
         if cond.one_time:
