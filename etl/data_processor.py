@@ -24,8 +24,7 @@ from pad.storage_processor.schedule_processor import ScheduleProcessor
 from pad.storage_processor.series_processor import SeriesProcessor
 from pad.storage_processor.skill_tag_processor import SkillTagProcessor
 from pad.storage_processor.timestamp_processor import TimestampProcessor
-from pad.storage_processor.purge_schedule_processor import PurgeScheduleProcessor
-from pad.storage_processor.purge_deleted_rows_processor import PurgeDeletedRowProcessor
+from pad.storage_processor.purge_data_processor import PurgeDataProcessor
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
@@ -186,15 +185,13 @@ def load_data(args):
 
     # Load exchange data
     ExchangeProcessor(cs_database).process(db_wrapper)
-
+    
     # Update timestamps
     TimestampProcessor().process(db_wrapper)
 
-    # TODO: purge old schedule items
-    PurgeScheduleProcessor().process(db_wrapper)
+    # Purge old schedule items and deleted_rows
+    PurgeDataProcessor().process(db_wrapper)
     
-    # TODO: purge old deleted_rows items
-    PurgeDeletedRowProcessor().process(db_wrapper)
 
     print('done')
 

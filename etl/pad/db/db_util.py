@@ -149,7 +149,7 @@ class DbWrapper(object):
             if num_rows > 0:
                 raise ValueError('got too many results for update:', num_rows, sql)
             return cursor.rowcount
-
+    
     def insert_or_update(self, item: SqlItem, force_insert=False):
         try:
             return self._insert_or_update(item, force_insert=force_insert)
