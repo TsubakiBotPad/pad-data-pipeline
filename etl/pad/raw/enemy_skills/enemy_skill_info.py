@@ -144,13 +144,14 @@ class ESCondition(object):
         If 100, it means it will always activate. If a HP threshold is present, RND should
         be interpreted as the 'base chance' and the 'under threshold' chance is AI + RND.
         """
-        max_chance = min(self._rnd + self._ai, 100)
+        max_chance = min(int(self._ai + (100 - self._ai) * self._rnd / 100), 100)
         min_chance = min(self._rnd, 100)
         if self.hp_threshold:
             if hp < self.hp_threshold:
                 return max_chance
             elif self._ai >= 100:
                 # This case literally only affects Avowed Thief, Ishikawa Goemon
+                # This is probably wrong but still fixes him.
                 return 0
             else:
                 return min_chance
