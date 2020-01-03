@@ -972,6 +972,12 @@ def extract_levels(enemy_behavior: List[EsInstance]):
     for b in enemy_behavior:
         if b.btype == ESBranchLevel:
             levels.add(b.behavior.branch_value)
+            if b.behavior.compare == '=':
+                # For this case, try both above and below the target level in addition.
+                if b.behavior.branch_value > 1:
+                    levels.add(b.behavior.branch_value - 1)
+                levels.add(b.behavior.branch_value + 1)
+
         elif hasattr(b.behavior, 'level'):
             levels.add(b.behavior.level)
     return levels
