@@ -1443,7 +1443,7 @@ class EnemySkillUnknown(ESBehavior):
         super().__init__(skill)
 
 
-class EsInstance(Printable):
+class ESInstance(Printable):
     def __init__(self, behavior: ESBehavior, ref: ESRef, monster_card: Card):
         self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
@@ -1509,7 +1509,7 @@ class EsInstance(Printable):
         return msg.strip()
 
     def __str__(self):
-        return 'EsInstance - {} | {}'.format(self.behavior, self.ref)
+        return 'ESInstance - {} | {}'.format(self.behavior, self.ref)
 
     def __eq__(self, other):
         return other and self.enemy_skill_id == other.enemy_skill_id

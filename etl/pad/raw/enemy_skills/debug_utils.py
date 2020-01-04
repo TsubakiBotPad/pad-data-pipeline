@@ -1,7 +1,7 @@
 from typing import List
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Condition, Behavior
-from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, EsInstance, ESCountdownMessage, ESDefaultAttack
+from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset
 from pad.raw_processor.crossed_data import CrossServerCard
 
@@ -137,7 +137,7 @@ def format_behavior(indent_str, behavior: Behavior, library):
     return output
 
 
-def save_behavior_plain(file_path: str, csc: CrossServerCard, behavior: List[EsInstance]):
+def save_behavior_plain(file_path: str, csc: CrossServerCard, behavior: List[ESInstance]):
     output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)
     card = csc.jp_card.card
     output += '\nmonster size: {}'.format(card.unknown_009)
@@ -152,7 +152,7 @@ def save_behavior_plain(file_path: str, csc: CrossServerCard, behavior: List[EsI
         f.write(output)
 
 
-def format_behavior_plain(o: EsInstance):
+def format_behavior_plain(o: ESInstance):
     def fmt_cond(c):
         msg = 'Condition: {} (ai:{} rnd:{})'.format(c.description(), c._ai, c._rnd)
         if c.one_time:
@@ -181,7 +181,7 @@ def format_behavior_plain(o: EsInstance):
         return msg
 
 
-def extract_used_skills(skillset: ProcessedSkillset, include_preemptive=True) -> List[EsInstance]:
+def extract_used_skills(skillset: ProcessedSkillset, include_preemptive=True) -> List[ESInstance]:
     """Flattens a ProcessedSkillset to a list of actions"""
     results = []
 
@@ -190,10 +190,10 @@ def extract_used_skills(skillset: ProcessedSkillset, include_preemptive=True) ->
     if include_preemptive:
         results.extend(skillset.preemptives)
 
-    def sg_extract(l: List[StandardSkillGroup]) -> List[EsInstance]:
+    def sg_extract(l: List[StandardSkillGroup]) -> List[ESInstance]:
         return [item for sublist in l for item in sublist.skills]
 
-    def moveset_extract(moveset: Moveset) -> List[EsInstance]:
+    def moveset_extract(moveset: Moveset) -> List[ESInstance]:
         moveset_results = []
 
         for hp_action in moveset.hp_actions:

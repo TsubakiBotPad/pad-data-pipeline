@@ -9,13 +9,13 @@ from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
 from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
-from pad.raw.enemy_skills.enemy_skill_info import EsInstance, EnemySkillUnknown
+from pad.raw.enemy_skills.enemy_skill_info import ESInstance, EnemySkillUnknown
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
-from pad.raw.skills.en_active_skill_text import EnAsTextConverter
-from pad.raw.skills.en_leader_skill_text import EnLsTextConverter
+from pad.raw.skills.en.active_skill_text import EnASTextConverter
+from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
-from pad.raw.skills.skill_text_typing import AsCondition, LsCondition
+from pad.raw.skills.skill_text_typing import ASCondition, LSCondition
 from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
@@ -51,8 +51,8 @@ class CrossServerCard(object):
         self.en_as_text = None
 
     def load_text(self):
-        self.en_ls_text = self.leader_skill.jp_skill.full_text(EnLsTextConverter()) if self.leader_skill else None
-        self.en_as_text = self.active_skill.jp_skill.full_text(EnAsTextConverter()) if self.active_skill else None
+        self.en_ls_text = self.leader_skill.jp_skill.full_text(EnLSTextConverter()) if self.leader_skill else None
+        self.en_as_text = self.active_skill.jp_skill.full_text(EnASTextConverter()) if self.active_skill else None
 
 
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
@@ -132,22 +132,22 @@ def make_cross_server_card(jp_card: MergedCard,
     return CrossServerCard(jp_card.monster_id, jp_card, na_card, kr_card), None
 
 
-class CrossServerEsInstance(object):
+class CrossServerESInstance(object):
     """A per-monster skill info across servers.
 
     Not sure why we need both of these.
     """
 
-    def __init__(self, jp_skill: EsInstance, na_skill: EsInstance, kr_skill: EsInstance):
+    def __init__(self, jp_skill: ESInstance, na_skill: ESInstance, kr_skill: ESInstance):
         self.enemy_skill_id = (jp_skill or na_skill or kr_skill).enemy_skill_id
         self.jp_skill = jp_skill
         self.na_skill = na_skill
         self.kr_skill = kr_skill
 
 
-def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
-                                     na_skills: List[EsInstance],
-                                     kr_skills: List[EsInstance]) -> List[CrossServerEsInstance]:
+def make_cross_server_enemy_behavior(jp_skills: List[ESInstance],
+                                     na_skills: List[ESInstance],
+                                     kr_skills: List[ESInstance]) -> List[CrossServerESInstance]:
     """Creates enemy data by combining the JP/NA/KR enemy info."""
     jp_skills = list(jp_skills) or []
     na_skills = list(na_skills) or []
@@ -160,7 +160,7 @@ def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
     if len(na_skills) > len(kr_skills):
         kr_skills = na_skills
 
-    def override_if_necessary(override_skills: List[EsInstance], dest_skills: List[EsInstance]):
+    def override_if_necessary(override_skills: List[ESInstance], dest_skills: List[ESInstance]):
         # Then check if we need to individually overwrite
         for idx in range(len(override_skills)):
             override_skill = override_skills[idx].behavior
@@ -177,9 +177,9 @@ def make_cross_server_enemy_behavior(jp_skills: List[EsInstance],
     return _combine_es(jp_skills, na_skills, kr_skills)
 
 
-def _combine_es(jp_skills: List[EsInstance],
-                na_skills: List[EsInstance],
-                kr_skills: List[EsInstance]) -> List[CrossServerEsInstance]:
+def _combine_es(jp_skills: List[ESInstance],
+                na_skills: List[ESInstance],
+                kr_skills: List[ESInstance]) -> List[CrossServerESInstance]:
     if not len(jp_skills) == len(na_skills) and len(na_skills) == len(kr_skills):
         raise ValueError('unexpected skill lengths')
     results = []
@@ -187,7 +187,7 @@ def _combine_es(jp_skills: List[EsInstance],
         if jp_skill.btype == EnemySkillUnknown:
             human_fix_logger.error('Detected an in-use unknown enemy skill: %d/%d: %s',
                                    jp_skill.enemy_skill_id, jp_skill.behavior.type, jp_skill.behavior.name)
-        results.append(CrossServerEsInstance(jp_skill, na_skills[idx], kr_skills[idx]))
+        results.append(CrossServerESInstance(jp_skill, na_skills[idx], kr_skills[idx]))
     return results
 
 
@@ -299,7 +299,7 @@ class CrossServerSkill(object):
         self.kr_skill = kr_skill
 
         self.en_text = None
-        self.skill_type_tags = []  # type: List[Union[LsCondition, AsCondition]]
+        self.skill_type_tags = []  # type: List[Union[LSCondition, ASCondition]]
 
 
 def build_cross_server_skills(jp_skills: List[EitherSkillType],
@@ -390,7 +390,7 @@ class CrossServerDatabase(object):
                                                        na_database.leader_skills,
                                                        kr_database.leader_skills)
 
-        ls_converter = EnLsTextConverter()
+        ls_converter = EnLSTextConverter()
         for ls in self.leader_skills:
             ls.en_text = ls.jp_skill.full_text(ls_converter)
             ls.skill_type_tags = list(skill_text_typing.parse_ls_conditions(ls.en_text))
@@ -400,7 +400,7 @@ class CrossServerDatabase(object):
                                                        na_database.active_skills,
                                                        kr_database.active_skills)
 
-        as_converter = EnAsTextConverter()
+        as_converter = EnASTextConverter()
         for ask in self.active_skills:
             ask.en_text = ask.jp_skill.full_text(as_converter)
             ask.skill_type_tags = list(skill_text_typing.parse_as_conditions(ask.en_text))

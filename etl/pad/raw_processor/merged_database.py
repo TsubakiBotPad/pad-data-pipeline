@@ -7,7 +7,7 @@ from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill, extra_egg_machine
-from pad.raw.enemy_skills.enemy_skill_info import EsInstance, ESBehavior
+from pad.raw.enemy_skills.enemy_skill_info import ESInstance, ESBehavior
 from pad.raw.enemy_skills.enemy_skill_parser import BehaviorParser
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
@@ -79,7 +79,7 @@ def _clean_enemy(cards: List[Card], enemy_skills: List[ESBehavior]) -> List[Merg
         if not c.enemy_skill_refs:
             continue
 
-        merged_skills = [EsInstance(enemy_skill_map[ref.enemy_skill_id], ref, c) for ref in c.enemy_skill_refs if
+        merged_skills = [ESInstance(enemy_skill_map[ref.enemy_skill_id], ref, c) for ref in c.enemy_skill_refs if
                          ref]
         merged_enemies.append(MergedEnemy(c.monster_no, c.enemy(), merged_skills))
     return merged_enemies
@@ -182,7 +182,7 @@ class Database(object):
     def active_skill_by_id(self, skill_id: SkillId) -> ActiveSkill:
         return self.skill_id_to_active_skill.get(skill_id, None)
 
-    def enemy_skill_by_id(self, es_id: int) -> EsInstance:
+    def enemy_skill_by_id(self, es_id: int) -> ESInstance:
         return self.es_id_to_enemy_skill.get(es_id, None)
 
     def dungeon_by_id(self, dungeon_id: DungeonId) -> Dungeon:

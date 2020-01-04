@@ -5,12 +5,12 @@ from google.protobuf import text_format
 
 from dadguide_proto.enemy_skills_pb2 import BehaviorItem, LevelBehavior, BehaviorGroup, MonsterBehavior, \
     MonsterBehaviorWithOverrides, Behavior, Condition
-from pad.raw.enemy_skills.enemy_skill_info import EsInstance
+from pad.raw.enemy_skills.enemy_skill_info import ESInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Moveset, HpActions, TimedSkillGroup
 
 
-def behavior_to_proto(instance: EsInstance, is_timed_group=True, cur_hp=100) -> BehaviorItem:
-    """Converts an EsInstance into a BehaviorItem.
+def behavior_to_proto(instance: ESInstance, is_timed_group=True, cur_hp=100) -> BehaviorItem:
+    """Converts an ESInstance into a BehaviorItem.
 
     is_timed_group is a hack that injects global_one_time for a relatively small group of monsters that
     have a % chance to activate and no increment.
@@ -89,7 +89,7 @@ def special_adjust_enemy_remaining(skillset: ProcessedSkillset):
             found_action.timed[0].skills.insert(idx, skill)
 
 
-def add_behavior_group_from_behaviors(group_list, group_type, items: List[EsInstance],
+def add_behavior_group_from_behaviors(group_list, group_type, items: List[ESInstance],
                                       is_timed_group=False, cur_hp=100) -> BehaviorGroup:
     items = list(filter(None, items))  # Ensure there are no nulls in the list
     if not items:
@@ -315,7 +315,7 @@ def clean_behavior(o: Behavior) -> Behavior:
     return o
 
 
-def add_unused(skills: List[EsInstance], result: LevelBehavior):
+def add_unused(skills: List[ESInstance], result: LevelBehavior):
     """Add the leftover skills as a new group to behaviors at the end."""
     bg = result.groups.add()
     bg.group_type = BehaviorGroup.UNKNOWN_USE

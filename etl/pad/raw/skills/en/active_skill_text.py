@@ -1,6 +1,5 @@
-from pad.raw.skills.skill_common import BaseTextConverter
-from pad.raw.skills.en.skill_common import capitalize_first
-
+from pad.raw.skills.active_skill_text import ASTextConverter
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first
 
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
@@ -16,8 +15,7 @@ def parse_list(l):
     l[-1] = "and " + str(l[-1])
     return ", ".join(map(str, l))
 
-
-class ASTextConverter(BaseTextConverter):
+class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
     def fmt_repeated(self, text, amount):
         return '{} {} times'.format(text, amount)
 
@@ -545,3 +543,4 @@ class ASTextConverter(BaseTextConverter):
 
     def change_monster(self, act):
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
+
