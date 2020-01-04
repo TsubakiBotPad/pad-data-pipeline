@@ -3,16 +3,20 @@ import json
 import os
 import sys
 
-from pad.raw.skills.en_skill_common import EnBaseTextConverter
-from pad.raw.skills.leader_skill_text import LsTextConverter
+from pad.raw.skills.en.skill_common import EnBaseTextConverter
+from pad.raw.skills.leader_skill_text import LSTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-SERIES = json.load(open(os.path.join(__location__, "../../storage_processor/series.json")))
+SERIES = json.load(open(os.path.join(__location__, "../../../storage_processor/series.json")))
 
-
-class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
+def capitalize_first(x: str):
+    if not x:
+        return x
+    return x[0].upper() + x[1:]
+    
+class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
     _COLLAB_MAP = {x['collab_id']: x['name_na'] for x in SERIES if 'collab_id' in x}
 
     def n_attr_or_heal(self, attr, n_attr, format_string, is_range=False):
@@ -250,3 +254,16 @@ class EnLsTextConverter(LsTextConverter, EnBaseTextConverter):
 
     def taiko_text(self):
         return 'Turn orb sound effects into Taiko noises'
+
+    
+    def full_text(self, text, tags=[]):
+        if isinstance(text, (str,type(None))):
+            text = [text or '']
+        text = '; '.join(filter(None, text))
+        tag_text = ''.join(filter(None, sorted([self.TAGS[tag].format(args) for tag, args in tags])))
+        if tag_text:
+            if text:
+                return '{} {}'.format(tag_text, text)
+            else:
+                return tag_text
+        return text

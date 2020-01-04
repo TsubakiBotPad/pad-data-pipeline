@@ -11,7 +11,7 @@ from pad.common import pad_util
 from pad.common.monster_id_mapping import nakr_no_to_monster_id, jp_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterNo, MonsterId
 from pad.raw import Bonus, Card, Dungeon, ESRef, EnemySkill, Enemy
-from pad.raw.enemy_skills.enemy_skill_info import EsInstance
+from pad.raw.enemy_skills.enemy_skill_info import ESInstance
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
 
@@ -42,7 +42,7 @@ class MergedBonus(pad_util.Printable):
 
 
 class MergedEnemy(pad_util.Printable):
-    def __init__(self, enemy_id: int, enemy: Enemy, enemy_skills: List[EsInstance]):
+    def __init__(self, enemy_id: int, enemy: Enemy, enemy_skills: List[ESInstance]):
         self.enemy_id = enemy_id
         self.enemy = enemy
         self.enemy_skills = enemy_skills
@@ -54,7 +54,7 @@ class MergedCard(pad_util.Printable):
                  card: Card,
                  active_skill: ActiveSkill,
                  leader_skill: LeaderSkill,
-                 enemy_skills: List[EsInstance]):
+                 enemy_skills: List[ESInstance]):
         self.server = server
         self.monster_no = card.monster_no
         self.monster_id = self.no_to_id(card.monster_no)

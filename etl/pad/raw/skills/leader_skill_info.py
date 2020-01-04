@@ -1,9 +1,10 @@
 import logging
 from typing import List, Optional
+from functools import reduce
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.leader_skill_common import ThresholdType, Tag, sort_tags
-from pad.raw.skills.leader_skill_text import LsTextConverter
+from pad.raw.skills.leader_skill_text import LSTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -49,7 +50,7 @@ class LeaderSkill(object):
             raise ValueError('Expected {} but got {}'.format(skill_type, ms.skill_type))
         self.skill_id = ms.skill_id
         self.skill_type = ms.skill_type
-
+        if not hasattr(self, 'tags'): self.tags = []
         self.name = ms.name
         self.raw_description = ms.clean_description
         self._hp = round(hp, 2)
@@ -77,22 +78,12 @@ class LeaderSkill(object):
     def parts(self):
         return [self]
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return '<unsupported>: {}'.format(self.raw_description)
 
-    def tag_text(self, converter: LsTextConverter) -> str:
-        tags = getattr(self, 'tags', [])
-        return ''.join(sorted([converter.TAGS[tag].format(args) for tag, args in tags]))
-
-    def full_text(self, converter: LsTextConverter) -> str:
+    def full_text(self, converter: LSTextConverter) -> str:
         text = self.text(converter) or ''
-        tag_text = self.tag_text(converter) or ''
-        if tag_text:
-            if text:
-                return '{} {}'.format(tag_text, text)
-            else:
-                return tag_text
-        return text
+        return converter.full_text(self.text(converter), self.tags)
 
 
 class AttrAtkBoost(LeaderSkill):
@@ -103,7 +94,7 @@ class AttrAtkBoost(LeaderSkill):
         atk = mult(ms.data[1])
         super().__init__(11, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -114,7 +105,7 @@ class BonusAttack(LeaderSkill):
         self.multiplier = mult(ms.data[0])
         super().__init__(12, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.after_attack_convert(self)
 
 
@@ -126,7 +117,7 @@ class Autoheal(LeaderSkill):
         self.multiplier = mult(data[0])
         super().__init__(13, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.heal_on_convert(self)
 
 
@@ -138,7 +129,7 @@ class Resolve(LeaderSkill):
         self.threshold = mult(data[0])
         super().__init__(14, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.resolve_convert(self)
 
 
@@ -150,7 +141,7 @@ class MovementTimeIncrease(LeaderSkill):
         self.time = mult(data[0])
         super().__init__(15, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.bonus_time_convert(self)
 
 
@@ -162,7 +153,7 @@ class DamageReduction(LeaderSkill):
         shield = mult(data[0])
         super().__init__(16, ms, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -175,7 +166,7 @@ class AttrDamageReduction(LeaderSkill):
         shield = mult(data[1])
         super().__init__(17, ms, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -188,7 +179,7 @@ class TypeAtkBoost(LeaderSkill):
         atk = mult(data[1])
         super().__init__(22, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -201,7 +192,7 @@ class TypeHpBoost(LeaderSkill):
         hp = mult(data[1])
         super().__init__(23, ms, hp=hp)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -214,7 +205,7 @@ class TypeRcvBoost(LeaderSkill):
         rcv = mult(data[1])
         super().__init__(24, ms, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -226,7 +217,7 @@ class StaticAtkBoost(LeaderSkill):
         atk = mult(data[0])
         super().__init__(26, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -239,7 +230,7 @@ class AttrAtkRcvBoost(LeaderSkill):
         boost = mult(data[1])
         super().__init__(28, ms, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -252,7 +243,7 @@ class AllStatBoost(LeaderSkill):
         boost = mult(data[1])
         super().__init__(29, ms, hp=boost, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -265,7 +256,7 @@ class TwoTypeHpBoost(LeaderSkill):
         hp = mult(data[2])
         super().__init__(30, ms, hp=hp)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -278,7 +269,7 @@ class TwoTypeAtkBoost(LeaderSkill):
         atk = mult(data[2])
         super().__init__(31, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -288,7 +279,7 @@ class TaikoDrum(LeaderSkill):
     def __init__(self, ms: MonsterSkill):
         super().__init__(33, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.taiko_convert(converter)
 
 
@@ -301,7 +292,7 @@ class TwoAttrDamageReduction(LeaderSkill):
         shield = mult(ms.data[2])
         super().__init__(36, ms, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -315,7 +306,7 @@ class LowHpShield(LeaderSkill):
         shield = mult(data[2])
         super().__init__(38, ms, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -330,7 +321,7 @@ class LowHpAtkOrRcvBoost(LeaderSkill):
         rcv = rcv_from_slice(data[1:4])
         super().__init__(39, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -342,7 +333,7 @@ class TwoAttrAtkBoost(LeaderSkill):
         atk = mult(ms.data[2])
         super().__init__(40, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -356,7 +347,7 @@ class Counterattack(LeaderSkill):
         self.attributes = [data[2]]
         super().__init__(41, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.counter_attack_convert(self)
 
 
@@ -371,7 +362,7 @@ class HighHpShield(LeaderSkill):
         shield = mult(data[2])
         super().__init__(43, ms, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.random_shield_threshold_stats(self)
 
 
@@ -385,7 +376,7 @@ class HighHpAtkBoost(LeaderSkill):
         rcv = rcv_from_slice(ms.data[1:4])
         super().__init__(44, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -399,7 +390,7 @@ class AttrAtkHpBoost(LeaderSkill):
         atk = boost
         super().__init__(45, ms, hp=hp, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -411,7 +402,7 @@ class TwoAttrHpBoost(LeaderSkill):
         hp = mult(ms.data[2])
         super().__init__(46, ms, hp=hp)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -423,7 +414,7 @@ class AttrHpBoost(LeaderSkill):
         hp = mult(ms.data[1])
         super().__init__(48, ms, hp=hp)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -435,7 +426,7 @@ class AttrRcvBoost(LeaderSkill):
         rcv = mult(ms.data[1])
         super().__init__(49, ms, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -446,7 +437,7 @@ class EggDropRateBoost(LeaderSkill):
         self.multiplier = mult(ms.data[0])
         super().__init__(53, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.egg_drop_convert(self)
 
 
@@ -457,7 +448,7 @@ class CoinDropBoost(LeaderSkill):
         self.multiplier = mult(ms.data[0])
         super().__init__(54, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.coin_drop_convert(self)
 
 
@@ -483,7 +474,7 @@ class Rainbow(LeaderSkill):
 
         super().__init__(61, ms, atk=self.max_atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.attribute_match_convert(self)
 
 
@@ -496,7 +487,7 @@ class TypeHpAtkBoost(LeaderSkill):
         boost = mult(data[1])
         super().__init__(62, ms, hp=boost, atk=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -509,7 +500,7 @@ class TypeHpRcvBoost(LeaderSkill):
         boost = mult(data[1])
         super().__init__(63, ms, hp=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -522,7 +513,7 @@ class TypeAtkRcvBoost(LeaderSkill):
         boost = mult(data[1])
         super().__init__(64, ms, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -535,7 +526,7 @@ class TypeAllStatBoost(LeaderSkill):
         boost = mult(data[1])
         super().__init__(65, ms, hp=boost, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -548,7 +539,7 @@ class ComboFlatMultiplier(LeaderSkill):
         atk = mult(data[1])
         super().__init__(66, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.combo_match_convert(self)
 
 
@@ -561,7 +552,7 @@ class AttrHpRcvBoost(LeaderSkill):
         boost = mult(data[1])
         super().__init__(67, ms, hp=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -575,7 +566,7 @@ class AttrTypeAtkBoost(LeaderSkill):
         atk = mult(data[2])
         super().__init__(69, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -589,7 +580,7 @@ class AttrTypeHpAtkBoost(LeaderSkill):
         boost = mult(data[2])
         super().__init__(73, ms, hp=boost, atk=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -603,7 +594,7 @@ class AttrTypeAtkRcvBoost(LeaderSkill):
         boost = mult(data[2])
         super().__init__(75, ms, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -617,7 +608,7 @@ class AttrTypeAllStatBoost(LeaderSkill):
         boost = mult(data[2])
         super().__init__(76, ms, hp=boost, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -630,7 +621,7 @@ class TwoTypeHpAtkBoost(LeaderSkill):
         boost = mult(data[2])
         super().__init__(77, ms, hp=boost, atk=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -643,7 +634,7 @@ class TwoTypeAtkRcvBoost(LeaderSkill):
         boost = mult(data[2])
         super().__init__(79, ms, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -659,7 +650,7 @@ class LowHpConditionalAttrAtkBoost(LeaderSkill):
         rcv = rcv_from_slice(data[2:5])
         super().__init__(94, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -675,7 +666,7 @@ class LowHpConditionalTypeAtkBoost(LeaderSkill):
         rcv = rcv_from_slice(data[2:5])
         super().__init__(95, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -691,7 +682,7 @@ class HighHpConditionalAttrAtkBoost(LeaderSkill):
         rcv = rcv_from_slice(data[2:5])
         super().__init__(96, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -707,7 +698,7 @@ class HighHpConditionalTypeAtkBoost(LeaderSkill):
         rcv = rcv_from_slice(data[2:5])
         super().__init__(97, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -723,7 +714,7 @@ class ComboScaledMultiplier(LeaderSkill):
         self.max_atk = self.min_atk + self.atk_step * (self.max_combos - self.min_combos)
         super().__init__(98, ms, atk=self.max_atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.combo_match_convert(self)
 
 
@@ -736,7 +727,7 @@ class SkillActivationAtkRcvBoost(LeaderSkill):
         rcv = rcv_from_slice(data[0:4])
         super().__init__(100, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.skill_used_convert(self)
 
 
@@ -748,7 +739,7 @@ class AtkBoostWithExactCombos(LeaderSkill):
         atk = mult(ms.data[1])
         super().__init__(101, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.exact_combo_convert(self)
 
 
@@ -762,7 +753,7 @@ class ComboFlatAtkRcvBoost(LeaderSkill):
         rcv = rcv_from_slice(data[1:4])
         super().__init__(103, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.combo_match_convert(self)
 
 
@@ -777,7 +768,7 @@ class ComboFlatMultiplierAttrAtkBoost(LeaderSkill):
         rcv = rcv_from_slice(data[2:5])
         super().__init__(104, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.combo_match_convert(self)
 
 
@@ -790,7 +781,7 @@ class ReducedRcvAtkBoost(LeaderSkill):
         atk = mult(data[1])
         super().__init__(105, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -803,7 +794,7 @@ class ReducedHpAtkBoost(LeaderSkill):
         atk = mult(data[1])
         super().__init__(106, ms, hp=hp, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -815,7 +806,7 @@ class HpReduction(LeaderSkill):
         hp = mult(data[0])
         super().__init__(107, ms, hp=hp)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -829,7 +820,7 @@ class ReducedHpTypeAtkBoost(LeaderSkill):
         atk = mult(data[2])
         super().__init__(108, ms, hp=hp, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_type_atk_all_hp_convert(self)
 
 
@@ -843,7 +834,7 @@ class BlobFlatAtkBoost(LeaderSkill):
         atk = mult(data[2])
         super().__init__(109, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.mass_match_convert(self)
 
 
@@ -856,7 +847,7 @@ class TwoAttrHpAtkBoost(LeaderSkill):
         boost = mult(data[2])
         super().__init__(111, ms, hp=boost, atk=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -869,7 +860,7 @@ class TwoAttrAllStatBoost(LeaderSkill):
         boost = mult(data[2])
         super().__init__(114, ms, hp=boost, atk=boost, rcv=boost)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -886,7 +877,7 @@ class BlobScalingAtkBoost(LeaderSkill):
         self.max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
         super().__init__(119, ms, atk=self.max_atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.mass_match_convert(self)
 
 
@@ -902,7 +893,7 @@ class AttrOrTypeStatBoost(LeaderSkill):
         rcv = multi_floor(data[4])
         super().__init__(121, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -919,7 +910,7 @@ class LowHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
         rcv = multi_floor(data[4]) if len(data) > 4 else 1
         super().__init__(122, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -936,7 +927,7 @@ class HighHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
         rcv = multi_floor(data[4]) if len(data) > 4 else 1
         super().__init__(123, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -953,7 +944,7 @@ class AttrComboScalingAtkBoost(LeaderSkill):
         self.max_atk = self.min_atk + self.atk_step * (self.max_combo - self.min_combo)
         super().__init__(124, ms, atk=self.max_atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.multi_attribute_match_convert(self)
 
 
@@ -968,7 +959,7 @@ class TeamUnitConditionalStatBoost(LeaderSkill):
         rcv = multi_floor(data[7])
         super().__init__(125, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.team_build_bonus_convert(self)
 
 
@@ -986,7 +977,7 @@ class MultiAttrTypeStatBoost(LeaderSkill):
         shield = mult(data[6]) if len(data) > 6 else 0
         super().__init__(129, ms, hp=hp, atk=atk, rcv=rcv, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -1005,7 +996,7 @@ class LowHpAttrAtkStatBoost(LeaderSkill):
         shield = mult(data[6])
         super().__init__(130, ms, atk=atk, rcv=rcv, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -1024,7 +1015,7 @@ class HighHpAttrTypeStatBoost(LeaderSkill):
         shield = mult(data[6])
         super().__init__(131, ms, atk=atk, rcv=rcv, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.threshold_stats_convert(self)
 
 
@@ -1039,7 +1030,7 @@ class SkillUsedAttrTypeAtkRcvBoost(LeaderSkill):
         rcv = multi_floor(data[3])
         super().__init__(133, ms, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.skill_used_convert(self)
 
 
@@ -1061,7 +1052,7 @@ class MultiAttrConditionalStatBoost(LeaderSkill):
         rcv = max(self.rcv_1, 1) * max(self.rcv_2, 1)
         super().__init__(136, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.dual_passive_stat_convert(self)
 
 
@@ -1083,7 +1074,7 @@ class MultiTypeConditionalStatBoost(LeaderSkill):
         rcv = self.rcv_1 * self.rcv_2
         super().__init__(137, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.dual_passive_stat_convert(self)
 
 
@@ -1127,17 +1118,14 @@ class TwoPartLeaderSkill(LeaderSkill):
     def parts(self):
         return self.child_skills
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         parts = map(lambda x: x.text(converter), self.parts)
-        return '; '.join([p for p in parts if p])
+        return converter.concat_list_semicolons(parts)
 
-    def tag_text(self, converter: LsTextConverter) -> str:
-        tags = set()
-        for cs in self.parts:
-            tags.update(getattr(cs, 'tags', []))
-
-        return ''.join(sorted([converter.TAGS[tag].format(args) for tag, args in tags]))
-
+    def full_text(self, converter: LSTextConverter):
+        tags  = set(reduce(lambda agg,cs:agg+cs.tags, self.parts, []))
+        parts = list(filter(None, [p.text(converter) for p in self.parts if p]))
+        return converter.full_text(parts, tags)
 
 class HpMultiConditionalAtkBoost(LeaderSkill):
     skill_type = 139
@@ -1158,7 +1146,7 @@ class HpMultiConditionalAtkBoost(LeaderSkill):
         atk = max(self.atk_1, self.atk_2)
         super().__init__(139, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.dual_threshold_stats_convert(self)
 
 
@@ -1170,7 +1158,7 @@ class RankXpBoost(LeaderSkill):
         self.multiplier = mult(data[0])
         super().__init__(148, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.rank_exp_rate_convert(self)
 
 
@@ -1182,7 +1170,7 @@ class HealMatchRcvBoost(LeaderSkill):
         rcv = mult(data[0])
         super().__init__(149, ms, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.heart_tpa_stats_convert(self)
 
 
@@ -1194,7 +1182,7 @@ class EnhanceOrbMatch5(LeaderSkill):
         atk = mult(data[1])
         super().__init__(150, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.five_orb_one_enhance_convert(self)
 
 
@@ -1208,7 +1196,7 @@ class HeartCross(LeaderSkill):
         shield = multi_floor(data[2])
         super().__init__(151, ms, atk=atk, rcv=rcv, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.heart_cross_convert(self)
 
 
@@ -1224,7 +1212,7 @@ class Multiboost(LeaderSkill):
         rcv = multi_floor(data[4])
         super().__init__(155, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.multi_play_convert(self)
 
 
@@ -1255,7 +1243,7 @@ class AttrCross(LeaderSkill):
 
         return round(v, 2)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.color_cross_convert(self)
 
 
@@ -1278,7 +1266,7 @@ class MatchXOrMoreOrbs(LeaderSkill):
 
         super().__init__(158, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.minimum_orb_convert(self)
 
 
@@ -1295,7 +1283,7 @@ class AdvancedBlobMatch(LeaderSkill):
         self.max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
         super().__init__(159, ms, atk=self.max_atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.mass_match_convert(self)
 
 
@@ -1306,7 +1294,7 @@ class SevenBySix(LeaderSkill):
         self.tags = [(Tag.BOARD_7X6, ())]
         super().__init__(162, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.tag_only_convert(self)
 
 
@@ -1325,7 +1313,7 @@ class NoSkyfallBoost(LeaderSkill):
         shield = mult(data[6])
         super().__init__(163, ms, hp=hp, atk=atk, rcv=rcv, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -1345,7 +1333,7 @@ class AttrComboConditionalAtkRcvBoost(LeaderSkill):
         self.max_rcv = self.min_rcv + self.rcv_step * (self.max_attr - self.min_attr)
         super().__init__(164, ms, atk=self.max_atk, rcv=self.max_rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.multi_attribute_match_convert(self)
 
 
@@ -1373,7 +1361,7 @@ class RainbowAtkRcv(LeaderSkill):
         self.max_rcv = self.min_rcv + self.rcv_step * (self.max_attr - self.min_attr)
         super().__init__(165, ms, atk=self.max_atk, rcv=self.max_rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.attribute_match_convert(self)
 
 
@@ -1392,7 +1380,7 @@ class AtkRcvComboScale(LeaderSkill):
         self.max_rcv = self.min_rcv + self.rcv_step * (self.max_combos - self.min_combos)
         super().__init__(166, ms, atk=self.max_atk, rcv=self.max_rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.combo_match_convert(self)
 
 
@@ -1412,7 +1400,7 @@ class BlobAtkRcvBoost(LeaderSkill):
         self.max_rcv = self.min_rcv + self.rcv_step * (self.max_count - self.min_count)
         super().__init__(167, ms, atk=self.max_atk, rcv=self.max_rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.mass_match_convert(self)
 
 
@@ -1426,7 +1414,7 @@ class ComboMultPlusShield(LeaderSkill):
         shield = mult(data[2])
         super().__init__(169, ms, atk=atk, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.combo_match_convert(self)
 
 
@@ -1441,7 +1429,7 @@ class RainbowMultPlusShield(LeaderSkill):
         shield = mult(data[3])
         super().__init__(170, ms, atk=atk, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.attribute_match_convert(self)
 
 
@@ -1456,7 +1444,7 @@ class MatchAttrPlusShield(LeaderSkill):
         shield = mult(data[6])
         super().__init__(171, ms, atk=atk, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.multi_attribute_match_convert(self)
 
 
@@ -1471,7 +1459,7 @@ class CollabConditionalBoost(LeaderSkill):
         rcv = multi_floor(data[5])
         super().__init__(175, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.collab_bonus_convert(self)
 
 
@@ -1492,7 +1480,7 @@ class OrbRemainingMultiplier(LeaderSkill):
         atk = self.min_atk * (self.base_atk + (self.bonus_atk * self.orb_count))
         super().__init__(177, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.orb_remain_convert(self)
 
 
@@ -1521,7 +1509,7 @@ class FixedMovementTime(LeaderSkill):
         rcv = multi_floor(data[5])
         super().__init__(178, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -1536,7 +1524,7 @@ class RowMatcHPlusDamageReduction(LeaderSkill):
         shield = mult(data[3])
         super().__init__(182, ms, atk=atk, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.mass_match_convert(self)
 
 
@@ -1565,7 +1553,7 @@ class DualThresholdBoost(LeaderSkill):
         shield = max(self.shield_1, self.shield_2)
         super().__init__(183, ms, atk=atk, rcv=rcv, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.dual_threshold_stats_convert(self)
 
 
@@ -1582,7 +1570,7 @@ class BonusTimeStatBoost(LeaderSkill):
         rcv = multi_floor(data[5])
         super().__init__(185, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.bonus_time_convert(self)
 
 
@@ -1599,7 +1587,7 @@ class SevenBySixStatBoost(LeaderSkill):
         rcv = multi_floor(data[4])
         super().__init__(186, ms, hp=hp, atk=atk, rcv=rcv)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.passive_stats_convert(self)
 
 
@@ -1614,7 +1602,7 @@ class BlobMatchBonusCombo(LeaderSkill):
         atk = multi_floor(data[2])
         super().__init__(192, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.multi_mass_match_convert(self)
 
 
@@ -1629,7 +1617,7 @@ class LMatchBoost(LeaderSkill):
         shield = mult(data[3])
         super().__init__(193, ms, atk=atk, rcv=rcv, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.l_match_convert(self)
 
 
@@ -1644,7 +1632,7 @@ class AttrMatchBonusCombo(LeaderSkill):
         atk = multi_floor(data[2])
         super().__init__(194, ms, atk=atk)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.add_combo_att_convert(self)
 
 
@@ -1655,7 +1643,7 @@ class DisablePoisonEffects(LeaderSkill):
         self.tags = [(Tag.DISABLE_POISON, ())]
         super().__init__(197, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.tag_only_convert(self)
 
 
@@ -1670,7 +1658,7 @@ class HealMatchBoostUnbind(LeaderSkill):
         shield = mult(data[2])
         super().__init__(198, ms, atk=atk, shield=shield)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.orb_heal_convert(self)
 
 
@@ -1684,7 +1672,7 @@ class RainbowBonusDamage(LeaderSkill):
         self.bonus_damage = data[2]
         super().__init__(199, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.rainbow_bonus_damage_convert(self)
 
 
@@ -1698,7 +1686,7 @@ class BlobBonusDamage(LeaderSkill):
         self.bonus_damage = data[2]
         super().__init__(200, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.mass_match_bonus_damage_convert(self)
 
 
@@ -1712,7 +1700,7 @@ class ColorComboBonusDamage(LeaderSkill):
         self.bonus_damage = data[5]
         super().__init__(201, ms)
 
-    def text(self, converter: LsTextConverter) -> str:
+    def text(self, converter: LSTextConverter) -> str:
         return converter.color_combo_bonus_damage_convert(self)
 
 
@@ -1724,7 +1712,7 @@ def convert(skill_list: List[MonsterSkill]):
             if ns:
                 results[ns.skill_id] = ns
         except Exception as ex:
-            print('Failed to convert', s.skill_type, ex)
+            human_fix_logger.warning('Failed to convert {} {}'.format(s.skill_type, ex))
 
     # Fills in TwoPartLeaderSkills
     for s in results.values():
@@ -1732,7 +1720,7 @@ def convert(skill_list: List[MonsterSkill]):
             continue
         for p_id in s.child_ids:
             if p_id not in results:
-                print('failed to look up skill id:', p_id)
+                human_fix_logger.warning('failed to look up skill id:'+str(p_id))
                 continue
             p_skill = results[p_id]
             s.child_skills.append(p_skill)

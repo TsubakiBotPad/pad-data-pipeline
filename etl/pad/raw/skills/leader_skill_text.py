@@ -2,7 +2,7 @@ from pad.raw.skills.leader_skill_common import ThresholdType, Tag, AttributeDict
 from pad.raw.skills.skill_common import BaseTextConverter, fmt_mult, multi_getattr, I13NotImplemented
 
 
-class LsTextConverter(BaseTextConverter):
+class LSTextConverter(BaseTextConverter):
     TAGS = {
         Tag.NO_SKYFALL: '[No skyfall]',
         Tag.DISABLE_POISON: '[Disable Poison & Mortal Poison orb effects]',

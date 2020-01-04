@@ -1,6 +1,6 @@
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.db.sql_item import SimpleSqlItem
-from pad.raw_processor.crossed_data import CrossServerEsInstance
+from pad.raw_processor.crossed_data import CrossServerESInstance
 
 
 class EnemySkill(SimpleSqlItem):
@@ -22,7 +22,7 @@ class EnemySkill(SimpleSqlItem):
                           atk_mult=o['atk_mult'])
 
     @staticmethod
-    def from_cseb(o: CrossServerEsInstance) -> 'EnemySkill':
+    def from_cseb(o: CrossServerESInstance) -> 'EnemySkill':
         exemplar = o.jp_skill.behavior
 
         has_attack = hasattr(exemplar, 'attack') and exemplar.attack

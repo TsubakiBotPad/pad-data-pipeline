@@ -11,7 +11,7 @@ from pad.raw.enemy_skills.enemy_skill_info import *
 class StandardSkillGroup(object):
     """Base class storing a list of skills."""
 
-    def __init__(self, skills: List[EsInstance], hp_threshold):
+    def __init__(self, skills: List[ESInstance], hp_threshold):
         # List of skills which execute.
         self.skills = skills
         # The hp threshold that this group executes on, always present, even if 100.
@@ -26,7 +26,7 @@ class StandardSkillGroup(object):
 class TimedSkillGroup(StandardSkillGroup):
     """Set of skills which execute on a specific turn, possibly with a HP threshold."""
 
-    def __init__(self, turn: int, hp_threshold: int, skills: List[EsInstance]):
+    def __init__(self, turn: int, hp_threshold: int, skills: List[ESInstance]):
         super().__init__(skills, hp_threshold)
         # The turn that this group executes on.
         self.turn = turn
@@ -38,7 +38,7 @@ class TimedSkillGroup(StandardSkillGroup):
 class RepeatSkillGroup(TimedSkillGroup):
     """Set of skills which execute on a specific turn, possibly with a HP threshold."""
 
-    def __init__(self, turn: int, interval: int, hp_threshold: int, skills: List[EsInstance]):
+    def __init__(self, turn: int, interval: int, hp_threshold: int, skills: List[ESInstance]):
         super().__init__(turn, hp_threshold, skills)
         # The number of turns between repeats, aka loop size
         self.interval = interval
@@ -54,9 +54,9 @@ class HpActions():
 class Moveset(object):
     def __init__(self):
         # Action which triggers when a status is applied.
-        self.status_action = None  # type: Optional[EsInstance]
+        self.status_action = None  # type: Optional[ESInstance]
         # Action which triggers when player has a buff.
-        self.dispel_action = None  # type: Optional[EsInstance]
+        self.dispel_action = None  # type: Optional[ESInstance]
         # Timed and repeating actions which execute at various HP checkpoints.
         self.hp_actions = []  # type: List[HpActions]
 
@@ -82,11 +82,11 @@ class ProcessedSkillset(object):
         # The monster level this skillset applies to.
         self.level = level
         # Things like color/type resists, resolve, etc.
-        self.base_abilities = []  # type: List[EsInstance]
+        self.base_abilities = []  # type: List[ESInstance]
         # These automatically trigger when the monster dies
-        self.death_actions = []  # type: List[EsInstance]
+        self.death_actions = []  # type: List[ESInstance]
         # Preemptive attacks, shields, combo guards.
-        self.preemptives = []  # type: List[EsInstance]
+        self.preemptives = []  # type: List[ESInstance]
 
         # Default enemy actions.
         self.moveset = Moveset()
@@ -312,7 +312,7 @@ def wrap_with_instance(behavior):
     FakeCard = collections.namedtuple('Card', 'use_new_ai enemy_skill_max_counter enemy_skill_counter_increment')
     fake_card = FakeCard(use_new_ai=False, enemy_skill_max_counter=0, enemy_skill_counter_increment=0)
     fake_ref = ESRef(behavior.enemy_skill_id, 100, 0)
-    return EsInstance(behavior, fake_ref, fake_card)
+    return ESInstance(behavior, fake_ref, fake_card)
 
 
 def countdown_message():
@@ -324,7 +324,7 @@ def default_attack():
     return wrap_with_instance(ESDefaultAttack())
 
 
-def loop_through(ctx, behaviors: List[Optional[EsInstance]]) -> List[EsInstance]:
+def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]:
     original_ctx = ctx.clone()
     results, card_branches, combo_branches = loop_through_inner(ctx, behaviors)
 
@@ -378,8 +378,8 @@ def loop_through(ctx, behaviors: List[Optional[EsInstance]]) -> List[EsInstance]
     return results
 
 
-def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
-        Tuple[List[EsInstance], List[int], List[int]]:
+def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
+        Tuple[List[ESInstance], List[int], List[int]]:
     """Executes a single turn through the simulator.
 
     This is called multiple times with varying Context values to probe the action set
@@ -597,7 +597,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[EsInstance]]) -> \
     return results, card_branches, combo_branches
 
 
-def info_from_behaviors(behaviors: List[EsInstance]):
+def info_from_behaviors(behaviors: List[ESInstance]):
     """Extract some static info from the behavior list and clean it up where necessary."""
     base_abilities = []
     death_actions = []
@@ -650,7 +650,7 @@ def info_from_behaviors(behaviors: List[EsInstance]):
     return base_abilities, hp_checkpoints, card_checkpoints, has_enemy_remaining_branch, death_actions
 
 
-def extract_preemptives(ctx: Context, behaviors: List[EsInstance], card_checkpoints: Set[Tuple[int]]):
+def extract_preemptives(ctx: Context, behaviors: List[ESInstance], card_checkpoints: Set[Tuple[int]]):
     """Simulate the initial run through the behaviors looking for preemptives.
 
     If we find a preemptive, continue onwards. If not, roll the context back.
@@ -666,7 +666,7 @@ def extract_preemptives(ctx: Context, behaviors: List[EsInstance], card_checkpoi
     return ctx, cur_loop
 
 
-def extract_turn_behaviors(ctx: Context, behaviors: List[EsInstance], hp_checkpoint: int) -> List[List[EsInstance]]:
+def extract_turn_behaviors(ctx: Context, behaviors: List[ESInstance], hp_checkpoint: int) -> List[List[ESInstance]]:
     """Simulate the first 20 turns at a specific hp checkpoint."""
     hp_ctx = ctx.clone()
     hp_ctx.hp = hp_checkpoint
@@ -739,7 +739,7 @@ def extract_loop_skills(hp: int, turn_data: list, loop_start: int, loop_end: int
     return HpActions(hp, timed_skill_groups, repeating_skill_groups)
 
 
-def compute_enemy_actions(ctx: Context, behaviors: List[EsInstance], hp_checkpoints: List[int]) -> List[HpActions]:
+def compute_enemy_actions(ctx: Context, behaviors: List[ESInstance], hp_checkpoints: List[int]) -> List[HpActions]:
     # Compute turn behaviors for every hp checkpoint
     hp_to_turn_behaviors = {hp: extract_turn_behaviors(ctx, behaviors, hp) for hp in hp_checkpoints}
 
@@ -808,7 +808,7 @@ def make_repeating_comparable(hp: int, repeating: List[RepeatSkillGroup]):
     return [(y.enemy_skill_id, y.condition.use_chance(hp)) for x in repeating for y in x.skills]
 
 
-def convert(card: Card, enemy_behavior: List[EsInstance], level: int):
+def convert(card: Card, enemy_behavior: List[ESInstance], level: int):
     force_one_enemy = int(card.unknown_009) == 5
     enemy_skill_max_counter = card.enemy_skill_max_counter
     enemy_skill_counter_increment = card.enemy_skill_counter_increment
@@ -817,7 +817,7 @@ def convert(card: Card, enemy_behavior: List[EsInstance], level: int):
 
     # Behavior is 1-indexed, so stick a fake row in to start
     # It's actually not, this is a lie. Most branches are just 1-indexed.
-    behaviors = [None] + list(enemy_behavior)  # type: List[EsInstance]
+    behaviors = [None] + list(enemy_behavior)  # type: List[ESInstance]
 
     (base_abilities, hp_checkpoints, card_checkpoints,
      has_enemy_remaining_branch, death_actions) = info_from_behaviors(behaviors)
@@ -965,7 +965,7 @@ def clean_skillset(moveset: Moveset, hp_actions: List[HpActions]):
             timed_action.execute_above_hp = None
 
 
-def extract_levels(enemy_behavior: List[EsInstance]):
+def extract_levels(enemy_behavior: List[ESInstance]):
     """Scan through the behavior list and compile a list of level values, always including 1."""
     levels = set()
     levels.add(1)
