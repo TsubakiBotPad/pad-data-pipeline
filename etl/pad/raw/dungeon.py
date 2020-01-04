@@ -23,11 +23,14 @@ class SubDungeon(pad_util.Printable):
         self.raw_name = raw[1]
         self.clean_name = pad_util.strip_colors(self.raw_name)
         self.floors = int(raw[2])
-        self.rflags1 = raw[3]
+        self.rflags1 = int(raw[3])
         self.stamina = raw[4]
         self.bgm1 = raw[5]
         self.bgm2 = raw[6]
         self.rflags2 = int(raw[7])
+
+        # If monsters can use skills in this dungeon.
+        self.technical = self.rflags1 & 0x80 > 0
 
         # This next loop runs through the elements from raw[8] until it hits a 0. The 0 indicates the end of the list
         # of drops for the floor, the following segments are the dungeon modifiers
