@@ -249,8 +249,16 @@ class ESDeathAction(object):
 class ESAction(ESBehavior):
     def __init__(self, skill: EnemySkill, attack=None):
         super().__init__(skill)
-        self.attack = attack if attack is not None else ESAttack.new_instance(self.params[14])
+        self._attack = attack if attack is not None else ESAttack.new_instance(self.params[14])
         # param 15 controls displaying sprites on screen, used by Gintama
+
+    @property
+    def attack(self):
+        return self._attack
+
+    @attack.setter
+    def attack(self, value):
+        self._attack = value
 
     def full_description(self):
         if isinstance(self, ESBehaviorAttack):
@@ -985,6 +993,19 @@ class ESSkillSet(ESAction):
         super().__init__(skill)
         self.skill_ids = list(filter(None, self.params[1:11]))  # type: List[int]
         self.skills = []  # type: List[ESAction]
+
+    @property
+    def attack(self):
+        # TODO: This is so wrong. Need to stop relying on the parent
+        #       skill attack and get all the attacks from the children.
+        #       Also need to figure out if there are skillsets with
+        #       attacks attached in addition to having children with attacks.
+        if self._attack:
+            return self._attack
+        for s in self.skills:
+            if s.attack:
+                return s.attack
+        return None
 
     @property
     def name(self):
