@@ -498,10 +498,10 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
         if b_type == ESFlagOperation:
             # Operations which change flag state, we always move to the next behavior after.
-            if b.operation == 'SET' or b.operation == 'OR':
-                # This is a bit suspicious that they have both SET and OR, possibly
-                # these should be broken apart?
+            if b.operation == 'OR':
                 ctx.flags = ctx.flags | b.flag
+            elif b.operation == 'SET':
+                ctx.flags = b.flag
             elif b.operation == 'UNSET':
                 ctx.flags = ctx.flags & ~b.flag
             else:
