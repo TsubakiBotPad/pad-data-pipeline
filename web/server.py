@@ -90,6 +90,9 @@ async def serve_state(request):
         from encounters
         inner join enemy_data
         using (enemy_id)
+        inner join sub_dungeons
+        using (sub_dungeon_id)
+        where technical is true
         group by 1
     ''')
 
@@ -153,9 +156,12 @@ async def serve_next_monster(request):
         using (enemy_id)
         inner join dungeons d
         using (dungeon_id)
+        inner join sub_dungeons sd
+        using (sub_dungeon_id)
         where ed.status = 0
         and d.dungeon_type != 0
         and e.enemy_id > {}
+        and sd.technical = true
         group by 1
         order by e.enemy_id asc
         limit 1
@@ -187,6 +193,7 @@ async def serve_monster_info(request):
         using (sub_dungeon_id)
         where enemy_id = {}
         and dungeon_type != 0
+        and technical = true
     '''.format(enemy_id)
     encounters = []
     encounter_data = db_wrapper.fetch_data(sql)
