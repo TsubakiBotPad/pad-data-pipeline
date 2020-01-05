@@ -11,7 +11,7 @@ class EnemySkill(pad_util.Printable):
 
     def __init__(self, raw: List[str]):
         self.enemy_skill_id = int(raw[0])
-        self.name = raw[1]
+        self.name = raw[1].replace('\n', ' ')
         self.type = int(raw[2])
         self.flags = int(raw[3], 16)  # 16bitmap for params
         self.params = [None] * 16
