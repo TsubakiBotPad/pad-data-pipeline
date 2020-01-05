@@ -1,5 +1,7 @@
 from enum import Enum
 
+CARDS = 'cards'
+
 ATTRIBUTE_MAP = {
     # TODO: tieout
     -9: 'locked Bomb',
@@ -39,6 +41,8 @@ def typing_to_str(types):
 
 
 class TargetType(Enum):
+    unset = -1
+    # Selective Subs
     random = 0
     self_leader = 1
     both_leader = 2
@@ -46,42 +50,138 @@ class TargetType(Enum):
     subs = 4
     attributes = 5
     types = 6
+    card = 6.5
 
+    # Specific Players/Enemies
+    player = 7
+    enemy = 8
+    enemy_ally = 9
+
+    #Full Team Aspect
+    awokens = 10
+    actives = 11
 
 TARGET_NAMES = {
-    TargetType.random: 'random cards',
+    TargetType.unset: '<targets unset>',
+    
+    #Specific Subs
+    TargetType.random: 'random card',
     TargetType.self_leader: 'player leader',
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
-    TargetType.subs: 'random subs',
+    TargetType.subs: 'random sub',
     TargetType.attributes: 'attributes',
-    TargetType.types: 'types',
+    TargetType.types: 'type',
+    TargetType.card: 'card',
+
+    #Specific Players/Enemies (For Recovery)
+    TargetType.player: 'player',
+    TargetType.enemy: 'enemy',
+    TargetType.enemy_ally: 'enemy ally',
+
+    #Full Team Aspect
+    TargetType.awokens: 'awoken skills',
+    TargetType.actives: 'active skills',
+
+
 }
 
 
 def targets_to_str(targets):
-    return ' and '.join([TARGET_NAMES[x] for x in targets])
+    return  targets if isinstance(targets,str)\
+                    else ' and '.join([TARGET_NAMES[x] for x in targets])
 
+
+class OrbShape(Enum):
+    l_shape = 0
+    cross = 1
+    column = 2
+    row = 4
+
+ORB_SHAPES = {
+    OrbShape.l_shape: 'L shape',
+    OrbShape.cross: 'cross',
+    OrbShape.column: 'column',
+    OrbShape.row: 'row',
+}
+
+def orbshape_to_str(shapes):
+    return ', '.join([ORB_SHAPES[x] for x in shapes])
+
+class Status(Enum):
+    movetime = 0
+    atk = 1
+    hp = 2
+    rcv = 4
+
+STATUSES = {
+    Status.movetime: 'movetime',
+    Status.atk: 'ATK',
+    Status.hp: 'HP',
+    Status.rcv: 'RCV',
+}
+
+def status_to_str(shapes):
+    return ', '.join([ORB_SHAPES[x] for x in shapes])
+
+class Unit(Enum):
+    unknown = -1
+    seconds = 0
+    percent = 1
+    none = 2
+
+UNITS = {
+    Unit.unknown: '?',
+    Unit.seconds: 's',
+    Unit.percent: '%',
+    Unit.none: '',
+}
+
+class Absorb(Enum):
+    unknown = -1
+    attr = 0
+    combo = 1
+    damage = 2
+
+def status_to_str(shapes):
+    return ', '.join([ORB_SHAPES[x] for x in shapes])
 
 def ordinal(n):
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
 
+def concat_list_and(l):
+    if len(l) == 0:
+        return ""
+    elif len(l) == 1:
+        return l[0]
+    elif len(l) == 2:
+        return " and ".join(map(str, l))
+    l[-1] = "and " + str(l[-1])
+    return ", ".join(map(str, l))
+
+irregulars = {
+    'status': 'statuses',
+}
 
 def pluralize(noun, number, irregular_plural=None):
+    irregular_plural = irregular_plural or irregulars.get(noun)
     if number not in (1, '1'):
         noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
     return noun
 
 
 def pluralize2(noun, number, irregular_plural=None):
+    irregular_plural = irregular_plural or irregulars.get(noun)
     if number not in (1, '1'):
         noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
     return "{} {}".format(number, noun)
 
 
-def minmax(nmin, nmax):
+def minmax(nmin, nmax, p=False):
     if None in [nmin, nmax] or nmin == nmax:
-        return str(int(nmin or nmax))
+        return str(int(nmin or nmax))+("%" if p else '')
+    elif p:
+        return "{}%~{}%".format(int(nmin), int(nmax))
     else:
         return "{}~{}".format(int(nmin), int(nmax))
 
@@ -91,6 +191,10 @@ class Describe:
     def not_set():
         return 'No description set'
 
+    @staticmethod
+    def default_attack():
+        return 'Default Attack'
+    
     @staticmethod
     def condition(chance, hp=None, one_time=False):
         output = []
@@ -121,11 +225,17 @@ class Describe:
         return 'Do nothing'
 
     @staticmethod
-    def bind(min_turns, max_turns, target_count=None, target_type='cards'):
-        if target_count:
-            output = 'Bind {:d} {:s} '.format(target_count, target_type)
+    def bind(min_turns, max_turns, target_count=None, target_types=TargetType.card):
+        if isinstance(target_types, TargetType): target_types = [target_types]
+        elif isinstance(target_types, str): target_types += ' cards'
+        targets = targets_to_str(target_types)
+        
+        if target_count and target_types != [TargetType.both_leader]:
+            output = 'Bind {:s} '.format(pluralize2(targets, target_count))
         else:
-            output = 'Bind {:s} '.format(target_type)
+            output = 'Bind {:s} '.format(targets)
+            if "2 both leaderss" in output:
+                print(target_types, targets, output)
         output += 'for '
         output += pluralize2('turn', minmax(min_turns, max_turns))
         return output
@@ -169,8 +279,9 @@ class Describe:
         return 'Voids player buff effects'
 
     @staticmethod
-    def recover(min_amount, max_amount, target='enemy'):
-        return '{:s} recover {:s}% HP'.format(target, minmax(min_amount, max_amount)).capitalize()
+    def recover(min_amount, max_amount, target_type):
+        target = targets_to_str([target_type])
+        return '{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)).capitalize()
 
     @staticmethod
     def enrage(mult, turns):
@@ -187,9 +298,9 @@ class Describe:
 
     @staticmethod
     def debuff(d_type, amount, unit, turns):
-        d_type = d_type or ''
+        d_type = STATUSES[d_type] or ''
         amount = amount or 0
-        unit = unit or '?'
+        unit = UNITS[unit] or '?'
         turns = turns or 0
         return '{:s} {:.0f}{:s} for {:s}' \
             .format(d_type, amount, unit, pluralize2('turn', turns)).capitalize()
@@ -210,13 +321,18 @@ class Describe:
         return 'Player -{:d}% HP'.format(percent)
 
     @staticmethod
-    def absorb(source, min_turns, max_turns=None):
-        if max_turns is None or min_turns == max_turns:
-            return 'Absorb {:s} damage for {:s}' \
-                .format(source, pluralize2('turn', min_turns))
+    def absorb(abs_type: Absorb, condition, min_turns, max_turns=None):
+        if abs_type == Absorb.attr:
+            source = attributes_to_str(condition)
+        elif abs_type == Absorb.combo:
+            source = 'combos <= {:d}'.format(condition)
+        elif abs_type == Absorb.damage:
+            source = 'damage >= {:,d}'.format(condition)
         else:
-            return 'Absorb {:s} damage for {:s}' \
-                .format(source, pluralize2("turn", minmax(min_turns, max_turns)))
+            human_fix_logger.warning("unknown absorb type: {}".format(abs_type))
+            
+        return 'Absorb {:s} damage for {:s}' \
+            .format(source, pluralize2("turn", minmax(min_turns, max_turns)))
 
     @staticmethod
     def skyfall(attributes, chance, min_turns, max_turns=None, locked=False):
@@ -258,7 +374,7 @@ class Describe:
     @staticmethod
     def row_col_spawn(position_type, positions, attributes):
         return 'Change {:s} {:s} to {:s} orbs'.format(
-            ', '.join([ordinal(x) for x in positions]), position_type, attributes_to_str(attributes))
+            ', '.join([ordinal(x) for x in positions]), ORB_SHAPES[position_type], attributes_to_str(attributes))
 
     @staticmethod
     def row_col_multi(desc_arr):
@@ -294,8 +410,10 @@ class Describe:
 
     @staticmethod
     def orb_seal(turns, position_type, positions):
-        return 'Seal {:s} {:s} for {:s}' \
-            .format(', '.join([ordinal(x) for x in positions]), position_type, pluralize2('turn', turns))
+        return 'Seal the {:s} {:s} for {:s}' \
+            .format(concat_list_and([ordinal(x) for x in positions]),
+                    pluralize(ORB_SHAPES[position_type], len(positions)),
+                    pluralize2('turn', turns))
 
     @staticmethod
     def cloud(turns, width, height, x, y):
@@ -385,3 +503,7 @@ class Describe:
     @staticmethod
     def branch(condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
+
+    @staticmethod
+    def join_skill_descs(descs):
+        return ' + '.join(descs)
