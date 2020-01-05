@@ -1,4 +1,5 @@
 import copy
+import logging
 from abc import ABC
 from builtins import issubclass
 from collections import OrderedDict
@@ -7,8 +8,9 @@ from typing import List, Optional
 from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import ESRef, Card
-from pad.raw.enemy_skills.enemy_skill_text import Describe, TargetType, targets_to_str, typing_to_str, attributes_to_str
+from pad.raw.enemy_skills.enemy_skill_text import *
 
+human_fix_logger = logging.getLogger('human_fix')
 
 def attribute_bitmap(bits, inverse=False, bit_len=9):
     if bits is None:
@@ -307,7 +309,7 @@ class ESDefaultAttack(ESAttackSinglehit):
     """
 
     def __init__(self):
-        raw = ['-2', 'Default Attack', '-2', '0']
+        raw = ['-2', Describe.default_attack(), '-2', '0']
         dummy_skill = EnemySkill(raw)
         super().__init__(dummy_skill)
 
@@ -330,11 +332,11 @@ class ESBind(ESAction):
         self.min_turns = self.params[2]
         self.max_turns = self.params[3]
         self.target_count = None
-        self.targets = ['<targets unset>']
+        self.targets = [TargetType.unset]
 
     def description(self):
         return Describe.bind(self.min_turns, self.max_turns,
-                             self.target_count, targets_to_str(self.targets))
+                             self.target_count, self.targets)
 
 
 class ESBindAttack(ESBind):
@@ -349,7 +351,7 @@ class ESBindRandom(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_count = self.params[1]
-        self.targets = [TargetType.random]
+        self.targets = TargetType.random
 
 
 class ESBindTarget(ESBind):
@@ -362,7 +364,7 @@ class ESBindTarget(ESBind):
 class ESBindRandomSub(ESBindRandom):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.targets = [TargetType.subs]
+        self.targets = TargetType.subs
 
 
 class ESBindAttribute(ESBind):
@@ -375,8 +377,8 @@ class ESBindAttribute(ESBind):
         return True
 
     def description(self):
-        target_type = '{:s} cards'.format(attributes_to_str([self.target_attribute]))
-        return Describe.bind(self.min_turns, self.max_turns, target_type=target_type)
+        target_type = attributes_to_str([self.target_attribute])
+        return Describe.bind(self.min_turns, self.max_turns, target_types=target_type)
 
 
 class ESBindTyping(ESBind):
@@ -389,8 +391,8 @@ class ESBindTyping(ESBind):
         return True
 
     def description(self):
-        target_type = '{:s} cards'.format(typing_to_str([self.target_typing]))
-        return Describe.bind(self.min_turns, self.max_turns, target_type=target_type)
+        target_type = typing_to_str([self.target_typing])
+        return Describe.bind(self.min_turns, self.max_turns, target_types=target_type)
 
 
 class ESBindSkill(ESAction):
@@ -403,7 +405,7 @@ class ESBindSkill(ESAction):
         return True
 
     def description(self):
-        return Describe.bind(self.min_turns, self.max_turns, target_type='active skills')
+        return Describe.bind(self.min_turns, self.max_turns, target_types=TargetType.actives)
 
 
 class ESBindAwoken(ESAction):
@@ -415,7 +417,7 @@ class ESBindAwoken(ESAction):
         return True
 
     def description(self):
-        return Describe.bind(self.turns, None, None, 'awoken skills')
+        return Describe.bind(self.turns, None, None, target_types=TargetType.awokens)
 
 
 class ESOrbChange(ESAction):
@@ -433,10 +435,8 @@ class ESOrbChange(ESAction):
         return Describe.orb_change(self.orb_from, self.orb_to,
                                    random_count=self.random_count, exclude_hearts=self.exclude_hearts)
 
-
+#Prototype
 class ESOrbChangeConditional(ABC, ESOrbChange):
-    """Parent class for orb changes that may not execute."""
-
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill, orb_from, orb_to)
 
@@ -590,12 +590,12 @@ class ESRecover(ESAction):
 
 class ESRecoverEnemy(ESRecover):
     def __init__(self, skill):
-        super().__init__(skill, target='enemy')
+        super().__init__(skill, target=TargetType.enemy)
 
 
 class ESRecoverEnemyAlly(ESRecover):
     def __init__(self, skill):
-        super().__init__(skill, target='enemy ally')
+        super().__init__(skill, target=TargetType.enemy_ally)
         self.enemy_count = 1
 
     def conditions(self):
@@ -604,7 +604,7 @@ class ESRecoverEnemyAlly(ESRecover):
 
 class ESRecoverPlayer(ESRecover):
     def __init__(self, skill: EnemySkill):
-        super().__init__(skill, target='player')
+        super().__init__(skill, target=TargetType.player)
 
 
 class ESEnrage(ESAction):
@@ -676,18 +676,18 @@ class ESDebuff(ABC, ESAction):
 class ESDebuffMovetime(ESDebuff):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.debuff_type = 'movetime'
+        self.debuff_type = Status.movetime
         self.amount = 0
-        self.unit = '?'
+        self.unit = Unit.none
 
         if self.params[2] is not None:
             self.amount = -self.params[2] / 10
-            self.unit = 's'
+            self.unit = Unit.seconds
         elif self.params[3] is not None:
             self.amount = self.params[3]
-            self.unit = '%'
+            self.unit = Unit.percent
         else:
-            print('unexpected debuff movetime skill')
+            human_fix_logger.warning('unexpected debuff movetime skill: {} ({})'.format(self.name, self.enemy_skill_id))
 
     def description(self):
         return Describe.debuff(self.debuff_type, self.amount, self.unit, self.turns)
@@ -696,9 +696,9 @@ class ESDebuffMovetime(ESDebuff):
 class ESDebuffRCV(ESDebuff):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.debuff_type = 'RCV'
+        self.debuff_type = Status.rcv
         self.amount = self.params[2]
-        self.unit = '%'
+        self.unit = Unit.percent
 
     def description(self):
         return Describe.debuff(self.debuff_type, self.amount, self.unit, self.turns)
@@ -739,26 +739,27 @@ class ESAbsorb(ABC, ESAction):
         super().__init__(skill)
         self.min_turns = self.params[1]
         self.max_turns = self.params[2]
+        self.absorb_type = Absorb.unknown
+        self.absorb_threshold = -1
 
+    def description(self):
+        return Describe.absorb(self.absorb_type, self.absorb_threshold, self.min_turns, self.max_turns)
 
 class ESAbsorbAttribute(ESAbsorb):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[3])
+        self.absorb_type = Absorb.attr
 
     def description(self):
-        source = attributes_to_str(self.attributes)
-        return Describe.absorb(source, self.min_turns, self.max_turns)
+        return Describe.absorb(Absorb.attr, self.attributes, self.min_turns, self.max_turns)
 
 
 class ESAbsorbCombo(ESAbsorb):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.combo_threshold = self.params[3]
-
-    def description(self):
-        source = 'combo <= {:,d}'.format(self.combo_threshold)
-        return Describe.absorb(source, self.min_turns, self.max_turns)
+        self.absorb_threshold = self.params[3]
+        self.absorb_type = Absorb.combo
 
 
 class ESAbsorbThreshold(ESAction):
@@ -766,10 +767,7 @@ class ESAbsorbThreshold(ESAction):
         super().__init__(skill)
         self.turns = self.params[1]
         self.absorb_threshold = self.params[2]
-
-    def description(self):
-        source = 'damage >= {}'.format(self.absorb_threshold)
-        return Describe.absorb(source, self.turns)
+        self.absorb_type = Absorb.damage
 
 
 class ESVoidShield(ESAction):
@@ -892,22 +890,22 @@ class ESRowColSpawnMulti(ESFixedOrbSpawn):
 
 class ESColumnSpawn(ESRowColSpawn):
     def __init__(self, skill: EnemySkill):
-        super().__init__(skill, position_type='column')
+        super().__init__(skill, position_type=OrbShape.column)
 
 
 class ESColumnSpawnMulti(ESRowColSpawnMulti):
     def __init__(self, skill: EnemySkill):
-        super().__init__(skill, position_type='column')
+        super().__init__(skill, position_type=OrbShape.column)
 
 
 class ESRowSpawn(ESRowColSpawn):
     def __init__(self, skill: EnemySkill):
-        super().__init__(skill, position_type='row')
+        super().__init__(skill, position_type=OrbShape.row)
 
 
 class ESRowSpawnMulti(ESRowColSpawnMulti):
     def __init__(self, skill: EnemySkill):
-        super().__init__(skill, position_type='row')
+        super().__init__(skill, position_type=OrbShape.row)
 
 
 class ESRandomSpawn(ESAction):
@@ -1009,10 +1007,10 @@ class ESSkillSet(ESAction):
 
     @property
     def name(self):
-        return ' + '.join(map(lambda s: s.name, self.skills))
+        return Describe.join_skill_descs(map(lambda s: s.name, self.skills))
 
     def description(self):
-        return ' + '.join(map(lambda s: s.full_description(), self.skills))
+        return Describe.join_skill_descs(map(lambda s: s.full_description(), self.skills))
 
     def ends_battle(self):
         return any([s.ends_battle() for s in self.skills])
@@ -1070,13 +1068,13 @@ class ESOrbSeal(ABC, ESAction):
 class ESOrbSealColumn(ESOrbSeal):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.position_type = 'column'
+        self.position_type = OrbShape.column
 
 
 class ESOrbSealRow(ESOrbSeal):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.position_type = 'row'
+        self.position_type = OrbShape.row
 
 
 class ESCloud(ESAction):
