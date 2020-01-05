@@ -402,9 +402,6 @@ class ESBindSkill(ESAction):
         self.min_turns = self.params[1]
         self.max_turns = self.params[2]
 
-    def is_conditional(self):
-        return True
-
     def description(self):
         return Describe.bind(self.min_turns, self.max_turns, target_types=TargetType.actives)
 
