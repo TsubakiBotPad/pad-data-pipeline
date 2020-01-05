@@ -12,6 +12,7 @@ from pad.raw.enemy_skills.enemy_skill_text import *
 
 human_fix_logger = logging.getLogger('human_fix')
 
+
 def attribute_bitmap(bits, inverse=False, bit_len=9):
     if bits is None:
         return []
@@ -435,7 +436,8 @@ class ESOrbChange(ESAction):
         return Describe.orb_change(self.orb_from, self.orb_to,
                                    random_count=self.random_count, exclude_hearts=self.exclude_hearts)
 
-#Prototype
+
+# Prototype
 class ESOrbChangeConditional(ABC, ESOrbChange):
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill, orb_from, orb_to)
@@ -745,6 +747,7 @@ class ESAbsorb(ABC, ESAction):
     def description(self):
         return Describe.absorb(self.absorb_type, self.absorb_threshold, self.min_turns, self.max_turns)
 
+
 class ESAbsorbAttribute(ESAbsorb):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
@@ -768,6 +771,9 @@ class ESAbsorbThreshold(ESAction):
         self.turns = self.params[1]
         self.absorb_threshold = self.params[2]
         self.absorb_type = Absorb.damage
+
+    def description(self):
+        return Describe.absorb(self.absorb_type, self.absorb_threshold, self.turns)
 
 
 class ESVoidShield(ESAction):
@@ -1015,7 +1021,6 @@ class ESSkillSet(ESAction):
         # skill description, and just rely on the min/max attacks for the UI. We can
         # Keep a version with the attacks for dumping to plain text though.
         return Describe.join_skill_descs(map(lambda s: s.description(), self.skills))
-
 
     def ends_battle(self):
         return any([s.ends_battle() for s in self.skills])
