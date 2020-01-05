@@ -1010,7 +1010,12 @@ class ESSkillSet(ESAction):
         return Describe.join_skill_descs(map(lambda s: s.name, self.skills))
 
     def description(self):
-        return Describe.join_skill_descs(map(lambda s: s.full_description(), self.skills))
+        # TODO: This is weird because of the attack property above.
+        # Realistically I think we should not store the attack info at all in the
+        # skill description, and just rely on the min/max attacks for the UI. We can
+        # Keep a version with the attacks for dumping to plain text though.
+        return Describe.join_skill_descs(map(lambda s: s.description(), self.skills))
+
 
     def ends_battle(self):
         return any([s.ends_battle() for s in self.skills])
