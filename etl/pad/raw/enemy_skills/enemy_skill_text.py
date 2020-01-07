@@ -1,6 +1,15 @@
 from enum import Enum
 
-CARDS = 'cards'
+def concat_list_and(l, conj = 'and'):
+    l = [str(i) for i in l if i]
+    if len(l) == 0:
+        return ""
+    elif len(l) == 1:
+        return l[0]
+    elif len(l) == 2:
+        return " {} ".format(conj).join(l)
+    l[-1] = "{} ".format(conj) + l[-1]
+    return ", ".join(l)
 
 ATTRIBUTE_MAP = {
     # TODO: tieout
@@ -20,8 +29,8 @@ ATTRIBUTE_MAP = {
 }
 
 
-def attributes_to_str(attributes):
-    return ', '.join([ATTRIBUTE_MAP[x] for x in attributes])
+def attributes_to_str(attributes, conj='and'):
+    return concat_list_and([ATTRIBUTE_MAP[x] for x in attributes],conj)
 
 
 TYPING_MAP = {
@@ -33,11 +42,14 @@ TYPING_MAP = {
     6: 'Attacker',
     7: 'Devil',
     8: 'Machine',
+    12: 'Awaken Material',
+    14: 'Enhance Material',
+    15: 'Redeemable Material'
 }
 
 
 def typing_to_str(types):
-    return ', '.join([TYPING_MAP[x] for x in types])
+    return concat_list_and([TYPING_MAP[x] for x in types])
 
 
 class TargetType(Enum):
@@ -106,7 +118,7 @@ ORB_SHAPES = {
 }
 
 def orbshape_to_str(shapes):
-    return ', '.join([ORB_SHAPES[x] for x in shapes])
+    return concat_list_and([ORB_SHAPES[x] for x in shapes])
 
 class Status(Enum):
     movetime = 0
@@ -121,8 +133,6 @@ STATUSES = {
     Status.rcv: 'RCV',
 }
 
-def status_to_str(shapes):
-    return ', '.join([ORB_SHAPES[x] for x in shapes])
 
 class Unit(Enum):
     unknown = -1
@@ -143,21 +153,21 @@ class Absorb(Enum):
     combo = 1
     damage = 2
 
-def status_to_str(shapes):
-    return ', '.join([ORB_SHAPES[x] for x in shapes])
+
+class Source(Enum):
+    all_sources = 0
+    types = 1
+    attrs = 2
+
+SOURCE_FUNCS = {
+    Source.all_sources: lambda x: 'all sources',
+    Source.types: typing_to_str,
+    Source.attrs: attributes_to_str,
+}
+    
 
 def ordinal(n):
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
-
-def concat_list_and(l):
-    if len(l) == 0:
-        return ""
-    elif len(l) == 1:
-        return l[0]
-    elif len(l) == 2:
-        return " and ".join(map(str, l))
-    l[-1] = "and " + str(l[-1])
-    return ", ".join(map(str, l))
 
 irregulars = {
     'status': 'statuses',
@@ -170,8 +180,10 @@ def pluralize(noun, number, irregular_plural=None):
     return noun
 
 
-def pluralize2(noun, number, irregular_plural=None):
-    irregular_plural = irregular_plural or irregulars.get(noun)
+def pluralize2(noun, number, max_number = None):
+    if max_number is not None:
+        number = minmax(number, max_number)
+    irregular_plural = irregulars.get(noun)
     if number not in (1, '1'):
         noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
     return "{} {}".format(number, noun)
@@ -241,7 +253,7 @@ class Describe:
         return output
 
     @staticmethod
-    def orb_change(orb_from, orb_to, random_count=None, exclude_hearts=None):
+    def orb_change(orb_from, orb_to, random_count=None, exclude_hearts=False):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
         if not isinstance(orb_to, list):
@@ -285,12 +297,9 @@ class Describe:
 
     @staticmethod
     def enrage(mult, turns):
-        output = ['Increase damage to {:d}%'.format(mult)]
-        if turns == 0:
-            output.append('attack')
-        else:
-            output.append('{:s}'.format(pluralize2('turn', turns)))
-        return ' for the next '.join(output)
+        output = 'Increase damage to {:d}% for the next '.format(mult)
+        output += pluralize2('turn', turns) if turns else 'attack'
+        return output
 
     @staticmethod
     def status_shield(turns):
@@ -300,10 +309,10 @@ class Describe:
     def debuff(d_type, amount, unit, turns):
         d_type = STATUSES[d_type] or ''
         amount = amount or 0
-        unit = UNITS[unit] or '?'
+        unit = UNITS[unit]
         turns = turns or 0
         return '{:s} {:.0f}{:s} for {:s}' \
-            .format(d_type, amount, unit, pluralize2('turn', turns)).capitalize()
+            .format(d_type.capitalize(), amount, unit, pluralize2('turn', turns))
 
     @staticmethod
     def end_battle():
@@ -314,7 +323,7 @@ class Describe:
         if len(attributes) == 1:
             return 'Change own attribute to {}'.format(ATTRIBUTE_MAP[attributes[0]])
         else:
-            return 'Change own attribute to random one of ' + attributes_to_str(attributes)
+            return 'Change own attribute to random one of ' + attributes_to_str(attributes,'or')
 
     @staticmethod
     def gravity(percent):
@@ -324,6 +333,8 @@ class Describe:
     def absorb(abs_type: Absorb, condition, min_turns, max_turns=None):
         if abs_type == Absorb.attr:
             source = attributes_to_str(condition)
+            return 'Absorb {:s} damage for {:s}' \
+                .format(source, pluralize2("turn", min_turns, max_turns))
         elif abs_type == Absorb.combo:
             source = 'combos <= {:d}'.format(condition)
         elif abs_type == Absorb.damage:
@@ -331,8 +342,8 @@ class Describe:
         else:
             human_fix_logger.warning("unknown absorb type: {}".format(abs_type))
             
-        return 'Absorb {:s} damage for {:s}' \
-            .format(source, pluralize2("turn", minmax(min_turns, max_turns)))
+        return 'Absorb damage when {:s} for {:s}' \
+            .format(source, pluralize2("turn", min_turns, max_turns))
 
     @staticmethod
     def skyfall(attributes, chance, min_turns, max_turns=None, locked=False):
@@ -340,24 +351,27 @@ class Describe:
         orbs = attributes_to_str(attributes)
         # TODO: tieout
         if lock and orbs == 'Random':
-            orbs = 'random'
+            orbs = orbs.lower()
         return '{:s}{:s} skyfall +{:d}% for {:s}' \
-            .format(lock, orbs, chance, pluralize2('turn', minmax(min_turns, max_turns)))
+            .format(lock, orbs, chance, pluralize2('turn', min_turns, max_turns))
 
     @staticmethod
     def void(threshold, turns):
         return 'Void damage >= {:d} for {:s}'.format(threshold, pluralize2('turn', turns))
 
     @staticmethod
-    def damage_reduction(source, percent=None, turns=None):
+    def damage_reduction(source_type: Source, source = None, percent=None, turns=None):
+        source = (SOURCE_FUNCS[source_type])(source)
         if percent is None:
-            return 'Immune to damage from {:s} for {:s}'.format(source, pluralize2('turn', turns))
+            return 'Immune to damage from {:s} {:s} for {:s}' \
+                   .format(source, source_type.name, pluralize2('turn', turns))
         else:
             if turns:
-                return 'Reduce damage from {:s} by {:d}% for {:s}' \
-                    .format(source, percent, pluralize2('turn', turns))
+                return 'Reduce damage from {:s} {:s} by {:d}% for {:s}' \
+                    .format(source, source_type.name, percent, pluralize2('turn', turns))
             else:
-                return 'Reduce damage from {:s} by {:d}%'.format(source, percent)
+                return 'Reduce damage from {:s} {:s} by {:d}%' \
+                       .format(source, source_type.name, percent)
 
     @staticmethod
     def invuln_off():
@@ -373,7 +387,7 @@ class Describe:
 
     @staticmethod
     def row_col_spawn(position_type, positions, attributes):
-        return 'Change {:s} {:s} to {:s} orbs'.format(
+        return 'Change the {:s} {:s} to {:s} orbs'.format(
             ', '.join([ordinal(x) for x in positions]), ORB_SHAPES[position_type], attributes_to_str(attributes))
 
     @staticmethod
@@ -389,8 +403,8 @@ class Describe:
         if count == 42:
             return Describe.board_change(attributes)
         else:
-            return 'Spawn random {:d} {:s} {:s}' \
-                .format(count, attributes_to_str(attributes), pluralize('orb', count))
+            return 'Spawn {:d} random {:s} {:s}' \
+                .format(count, attributes_to_str(attributes, 'or'), pluralize('orb', count))
 
     @staticmethod
     def fixed_orb_spawn(attributes):
@@ -478,7 +492,7 @@ class Describe:
 
     @staticmethod
     def attribute_exists(atts):
-        return 'when {:s} orbs are on the board'.format(attributes_to_str(atts))
+        return 'when {:s} orbs are on the board'.format(attributes_to_str(atts,'or'))
 
     @staticmethod
     def countdown(counter):

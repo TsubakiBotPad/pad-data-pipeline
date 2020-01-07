@@ -444,7 +444,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
         # Processing for actions and unparsed stuff, this section should accumulate
         # items into results.
-        if b_type == EnemySkillUnknown or issubclass(b_type, ESAction):
+        if b_type == ESUnknown or issubclass(b_type, ESAction):
             # Check if we should execute this action at all.
             if cond:
                 use_chance_at_hp = cond.use_chance(hp=ctx.hp)

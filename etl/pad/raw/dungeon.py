@@ -35,7 +35,7 @@ class SubDungeon(pad_util.Printable):
         # This next loop runs through the elements from raw[8] until it hits a 0. The 0 indicates the end of the list
         # of drops for the floor, the following segments are the dungeon modifiers
         pos = 8
-        while int(raw[pos]) is not 0:
+        while int(raw[pos]) != 0:
             pos += 1
         pos += 1
 

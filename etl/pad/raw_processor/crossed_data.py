@@ -9,7 +9,7 @@ from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
 from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
-from pad.raw.enemy_skills.enemy_skill_info import ESInstance, EnemySkillUnknown
+from pad.raw.enemy_skills.enemy_skill_info import ESInstance, ESUnknown
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
@@ -184,7 +184,7 @@ def _combine_es(jp_skills: List[ESInstance],
         raise ValueError('unexpected skill lengths')
     results = []
     for idx, jp_skill in enumerate(jp_skills):
-        if jp_skill.btype == EnemySkillUnknown:
+        if jp_skill.btype == ESUnknown:
             human_fix_logger.error('Detected an in-use unknown enemy skill: %d/%d: %s',
                                    jp_skill.enemy_skill_id, jp_skill.behavior.type, jp_skill.behavior.name)
         results.append(CrossServerESInstance(jp_skill, na_skills[idx], kr_skills[idx]))
