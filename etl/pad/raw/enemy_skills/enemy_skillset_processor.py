@@ -794,6 +794,11 @@ def compute_enemy_actions(ctx: Context, behaviors: List[ESInstance], hp_checkpoi
                 for x in repeating:
                     x.hp_range = comp_hp
                 comp_repeating.clear()
+            else:
+                # Don't continue scraping away if the intervening hp threshold is different.
+                # This fixes things like where the full HP turnset is X and the < N HP turnset
+                # is also X.
+                break
 
     return list(sorted(hp_to_actions.values(), key=lambda x: x.hp, reverse=True))
 
