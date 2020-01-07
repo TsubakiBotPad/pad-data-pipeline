@@ -111,13 +111,21 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
     add_behavior_group_from_behaviors(bg.children, BehaviorGroup.DISPEL_PLAYER, [moveset.dispel_action])
     add_behavior_group_from_behaviors(bg.children, BehaviorGroup.MONSTER_STATUS, [moveset.status_action])
 
+    before_idx = len(bg.children)
     for action in moveset.hp_actions:
         hg = bg.children.add().group
         hg.group_type = BehaviorGroup.STANDARD
         hg.condition.hp_threshold = action.hp or 1  # Manually adjust '0' HP groups to <1 (resolve triggers)
 
         for time_action in action.timed:
-            tg = hg.children.add().group
+            if action.hp == 100 and time_action.execute_above_hp == 1:
+                # Insert 'always on turn x' at the top
+                bg.children.insert(before_idx, BehaviorItem())
+                tg = bg.children[before_idx].group
+                before_idx += 1
+            else:
+                tg = hg.children.add().group
+
             tg.condition.trigger_turn = time_action.turn
             if time_action.end_turn:
                 tg.condition.trigger_turn_end = time_action.end_turn
