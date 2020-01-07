@@ -12,6 +12,7 @@ from pad.raw.enemy_skills.enemy_skill_text import *
 
 human_fix_logger = logging.getLogger('human_fix')
 
+
 def attribute_bitmap(bits, inverse=False, bit_len=9):
     if bits is None:
         return []
@@ -106,6 +107,7 @@ def positions_2d_bitmap(bits_arr):
 
 class ESCondition(object):
     skill_types = []
+
     def __init__(self, ai, rnd, params_arr):
         # If the monster has a hp_threshold value, the % chance is AI+RND under the threshold.
         self._ai = ai
@@ -180,6 +182,7 @@ class ESCondition(object):
 
 class ESAttack(object):
     skill_types = []
+
     def __init__(self, atk_multiplier, min_hits=1, max_hits=1):
         self.atk_multiplier = atk_multiplier
         self.min_hits = min_hits
@@ -247,6 +250,7 @@ class ESDeathAction(object):
 # Action
 class ESAction(ESBehavior):
     skill_types = []
+
     def __init__(self, skill: EnemySkill, attack=None):
         super().__init__(skill)
         self._attack = attack if attack is not None else ESAttack.new_instance(self.params[14])
@@ -271,6 +275,7 @@ class ESAction(ESBehavior):
 
 class ESBehaviorAttack(ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -280,6 +285,7 @@ class ESBehaviorAttack(ESAction):
 
 class ESInactivity(ESAction):
     skill_types = [16, 66]
+
     def __init__(self, skill):
         super().__init__(skill)
 
@@ -289,6 +295,7 @@ class ESInactivity(ESAction):
 
 class ESDeathCry(ESDeathAction, ESAction):
     skill_types = [69]
+
     def __init__(self, skill):
         super().__init__(skill)
         self.message = self.params[0]
@@ -299,22 +306,25 @@ class ESDeathCry(ESDeathAction, ESAction):
 
 class ESAttackSinglehit(ESBehaviorAttack):
     skill_types = [82]
+
     def __init__(self, skill):
         super().__init__(skill)
         self.attack = ESAttack.new_instance(100)
 
-#'Fake' Behavior - Stand-In For Default Attack
+
+# 'Fake' Behavior - Stand-In For Default Attack
 class ESDefaultAttack(ESAttackSinglehit):
     skill_types = []
 
     def __init__(self):
-        raw = [-2, Describe.default_attack(), -2, 0]
+        raw = ['-2', Describe.default_attack(), '-2', '0']
         dummy_skill = EnemySkill(raw)
         super().__init__(dummy_skill)
 
 
 class ESAttackMultihit(ESBehaviorAttack):
     skill_types = [15]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attack = ESAttack.new_instance(self.params[3], self.params[1], self.params[2])
@@ -322,6 +332,7 @@ class ESAttackMultihit(ESBehaviorAttack):
 
 class ESAttackPreemptive(ESBehaviorAttack):
     skill_types = [47]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attack = ESAttack.new_instance(self.params[2])
@@ -329,6 +340,7 @@ class ESAttackPreemptive(ESBehaviorAttack):
 
 class ESBind(ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.min_turns = self.params[2]
@@ -343,6 +355,7 @@ class ESBind(ESAction):
 
 class ESBindAttack(ESBind):
     skill_types = [63]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = bind_bitmap(self.params[4])
@@ -352,6 +365,7 @@ class ESBindAttack(ESBind):
 
 class ESBindRandom(ESBind):
     skill_types = [1]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_count = self.params[1]
@@ -360,6 +374,7 @@ class ESBindRandom(ESBind):
 
 class ESBindTarget(ESBind):
     skill_types = [54]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = bind_bitmap(self.params[1])
@@ -368,6 +383,7 @@ class ESBindTarget(ESBind):
 
 class ESBindRandomSub(ESBindRandom):
     skill_types = [65]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = TargetType.subs
@@ -375,6 +391,7 @@ class ESBindRandomSub(ESBindRandom):
 
 class ESBindAttribute(ESBind):
     skill_types = [2]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_attribute = self.params[1]
@@ -390,6 +407,7 @@ class ESBindAttribute(ESBind):
 
 class ESBindTyping(ESBind):
     skill_types = [3]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_typing = self.params[1]
@@ -405,6 +423,7 @@ class ESBindTyping(ESBind):
 
 class ESBindSkill(ESAction):
     skill_types = [14]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.min_turns = self.params[1]
@@ -416,6 +435,7 @@ class ESBindSkill(ESAction):
 
 class ESBindAwoken(ESAction):
     skill_types = [88]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -429,6 +449,7 @@ class ESBindAwoken(ESAction):
 
 class ESOrbChange(ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill)
         self.orb_from = orb_from
@@ -447,6 +468,7 @@ class ESOrbChange(ESAction):
 # Prototype
 class ESOrbChangeConditional(ABC, ESOrbChange):
     skill_types = []
+
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill, orb_from, orb_to)
 
@@ -456,6 +478,7 @@ class ESOrbChangeConditional(ABC, ESOrbChange):
 
 class ESOrbChangeSingle(ESOrbChangeConditional):
     skill_types = [4]
+
     def __init__(self, skill: EnemySkill):
         from_attr = skill.params[1]
         to_attr = skill.params[2]
@@ -464,6 +487,7 @@ class ESOrbChangeSingle(ESOrbChangeConditional):
 
 class ESOrbChangeAttackBits(ESOrbChangeConditional):
     skill_types = [108]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(
             skill,
@@ -474,6 +498,7 @@ class ESOrbChangeAttackBits(ESOrbChangeConditional):
 
 class ESJammerChangeSingle(ESOrbChangeConditional):
     skill_types = [12]
+
     def __init__(self, skill: EnemySkill):
         from_attr = skill.params[1]
         to_attr = 6
@@ -485,6 +510,7 @@ class ESJammerChangeSingle(ESOrbChangeConditional):
 
 class ESJammerChangeRandom(ESOrbChange):
     skill_types = [13]
+
     def __init__(self, skill: EnemySkill):
         from_attr = -1
         to_attr = 6
@@ -494,6 +520,7 @@ class ESJammerChangeRandom(ESOrbChange):
 
 class ESPoisonChangeSingle(ESOrbChangeConditional):
     skill_types = [56]
+
     def __init__(self, skill: EnemySkill):
         from_attr = skill.params[1]
         to_attr = 7
@@ -502,6 +529,7 @@ class ESPoisonChangeSingle(ESOrbChangeConditional):
 
 class ESPoisonChangeRandom(ESOrbChange):
     skill_types = [57]
+
     def __init__(self, skill: EnemySkill):
         from_attr = -1
         to_attr = 7
@@ -511,6 +539,7 @@ class ESPoisonChangeRandom(ESOrbChange):
 
 class ESPoisonChangeRandomCount(ESOrbChange):
     skill_types = [60]
+
     def __init__(self, skill: EnemySkill):
         from_attr = -1
         to_attr = 7
@@ -521,6 +550,7 @@ class ESPoisonChangeRandomCount(ESOrbChange):
 
 class ESMortalPoisonChangeRandom(ESOrbChange):
     skill_types = [61]
+
     def __init__(self, skill: EnemySkill):
         from_attr = -1
         to_attr = 8
@@ -530,6 +560,7 @@ class ESMortalPoisonChangeRandom(ESOrbChange):
 
 class ESOrbChangeAttack(ESOrbChange):
     skill_types = [48]
+
     def __init__(self, skill: EnemySkill, orb_from=None, orb_to=None):
         from_attr = orb_from or skill.params[2]
         to_attr = orb_to or skill.params[3]
@@ -539,6 +570,7 @@ class ESOrbChangeAttack(ESOrbChange):
 
 class ESPoisonChangeRandomAttack(ESOrbChangeAttack):
     skill_types = [64]
+
     def __init__(self, skill: EnemySkill):
         from_attr = -1
         to_attr = 7
@@ -551,6 +583,7 @@ class ESPoisonChangeRandomAttack(ESOrbChangeAttack):
 
 class ESBlind(ESAction):
     skill_types = [5, 62]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attack = ESAttack.new_instance(self.params[1])
@@ -561,6 +594,7 @@ class ESBlind(ESAction):
 
 class ESBlindStickyRandom(ESAction):
     skill_types = [97]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -573,6 +607,7 @@ class ESBlindStickyRandom(ESAction):
 
 class ESBlindStickyFixed(ESAction):
     skill_types = [98]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -585,6 +620,7 @@ class ESBlindStickyFixed(ESAction):
 
 class ESDispel(ESAction):
     skill_types = [6]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -594,6 +630,7 @@ class ESDispel(ESAction):
 
 class ESStatusShield(ESAction):
     skill_types = [20]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -604,6 +641,7 @@ class ESStatusShield(ESAction):
 
 class ESRecover(ESAction):
     skill_types = []
+
     def __init__(self, skill, target):
         super().__init__(skill)
         self.min_amount = self.params[1]
@@ -616,12 +654,14 @@ class ESRecover(ESAction):
 
 class ESRecoverEnemy(ESRecover):
     skill_types = [7, 86]
+
     def __init__(self, skill):
         super().__init__(skill, target=TargetType.enemy)
 
 
 class ESRecoverEnemyAlly(ESRecover):
     skill_types = [52]
+
     def __init__(self, skill):
         super().__init__(skill, target=TargetType.enemy_ally)
         self.enemy_count = 1
@@ -629,12 +669,14 @@ class ESRecoverEnemyAlly(ESRecover):
 
 class ESRecoverPlayer(ESRecover):
     skill_types = [55]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, target=TargetType.player)
 
 
 class ESEnrage(ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.multiplier = 1
@@ -646,6 +688,7 @@ class ESEnrage(ESAction):
 
 class ESStorePower(ESEnrage):
     skill_types = [8]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.multiplier = 100 + self.params[1]
@@ -654,12 +697,14 @@ class ESStorePower(ESEnrage):
 
 class ESEnrageAttackUp(ABC, ESEnrage):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
 
 class ESAttackUPRemainingEnemies(ESEnrageAttackUp):
     skill_types = [17]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.enemy_count = self.params[1]
@@ -672,6 +717,7 @@ class ESAttackUPRemainingEnemies(ESEnrageAttackUp):
 
 class ESAttackUpStatus(ESEnrageAttackUp):
     skill_types = [18]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.multiplier = self.params[2]
@@ -684,6 +730,7 @@ class ESAttackUpStatus(ESEnrageAttackUp):
 
 class ESAttackUPCooldown(ESEnrageAttackUp):
     skill_types = [19]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         # enrage cannot trigger until this many turns have passed
@@ -701,6 +748,7 @@ class ESAttackUPCooldown(ESEnrageAttackUp):
 
 class ESDebuff(ABC, ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -708,6 +756,7 @@ class ESDebuff(ABC, ESAction):
 
 class ESDebuffMovetime(ESDebuff):
     skill_types = [39]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.debuff_type = Status.movetime
@@ -729,6 +778,7 @@ class ESDebuffMovetime(ESDebuff):
 
 class ESDebuffRCV(ESDebuff):
     skill_types = [105]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.debuff_type = Status.rcv
@@ -741,6 +791,7 @@ class ESDebuffRCV(ESDebuff):
 
 class ESEndBattle(ESAction):
     skill_types = [40]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -753,6 +804,7 @@ class ESEndBattle(ESAction):
 
 class ESChangeAttribute(ESAction):
     skill_types = [46]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = list(OrderedDict.fromkeys(self.params[1:6]))
@@ -764,6 +816,7 @@ class ESChangeAttribute(ESAction):
 
 class ESGravity(ESAction):
     skill_types = [50]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.percent = self.params[1]
@@ -774,6 +827,7 @@ class ESGravity(ESAction):
 
 class ESAbsorb(ABC, ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.min_turns = self.params[1]
@@ -787,6 +841,7 @@ class ESAbsorb(ABC, ESAction):
 
 class ESAbsorbAttribute(ESAbsorb):
     skill_types = [53]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[3])
@@ -798,6 +853,7 @@ class ESAbsorbAttribute(ESAbsorb):
 
 class ESAbsorbCombo(ESAbsorb):
     skill_types = [67]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.absorb_threshold = self.params[3]
@@ -806,6 +862,7 @@ class ESAbsorbCombo(ESAbsorb):
 
 class ESAbsorbThreshold(ESAbsorb):
     skill_types = [87]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -815,8 +872,10 @@ class ESAbsorbThreshold(ESAbsorb):
     def description(self):
         return Describe.absorb(self.absorb_type, self.absorb_threshold, self.turns)
 
+
 class ESVoidShield(ESAction):
     skill_types = [71]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -829,6 +888,7 @@ class ESVoidShield(ESAction):
 
 class ESDamageShield(ESAction):
     skill_types = [74]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -841,6 +901,7 @@ class ESDamageShield(ESAction):
 
 class ESInvulnerableOn(ESAction):
     skill_types = [119, 123]  # hexa's invulnerable gets special type because reasons
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -851,6 +912,7 @@ class ESInvulnerableOn(ESAction):
 
 class ESInvulnerableOff(ESAction):
     skill_types = [121]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -860,6 +922,7 @@ class ESInvulnerableOff(ESAction):
 
 class ESSkyfall(ESAction):
     skill_types = [68, 96]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.min_turns = self.params[2]
@@ -878,6 +941,7 @@ class ESSkyfall(ESAction):
 
 class ESLeaderSwap(ESAction):
     skill_types = [75]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.turns = self.params[1]
@@ -888,6 +952,7 @@ class ESLeaderSwap(ESAction):
 
 class ESFixedOrbSpawn(ABC, ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill, position_type, positions, attributes):
         super().__init__(skill)
         self.position_type = position_type
@@ -897,6 +962,7 @@ class ESFixedOrbSpawn(ABC, ESAction):
 
 class ESRowColSpawn(ESFixedOrbSpawn):
     skill_types = []
+
     def __init__(self, skill: EnemySkill, position_type):
         self.position_type = position_type
         super().__init__(
@@ -945,30 +1011,35 @@ class ESRowColSpawnMulti(ESFixedOrbSpawn):
 
 class ESColumnSpawn(ESRowColSpawn):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, position_type=OrbShape.column)
 
 
 class ESColumnSpawnMulti(ESRowColSpawnMulti):
     skill_types = [76, 77]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, position_type=OrbShape.column)
 
 
 class ESRowSpawn(ESRowColSpawn):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, position_type=OrbShape.row)
 
 
 class ESRowSpawnMulti(ESRowColSpawnMulti):
     skill_types = [78, 79]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, position_type=OrbShape.row)
 
 
 class ESRandomSpawn(ESAction):
     skill_types = [92]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.count = self.params[1]
@@ -990,6 +1061,7 @@ class ESRandomSpawn(ESAction):
 
 class ESBombRandomSpawn(ESAction):
     skill_types = [102]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.count = self.params[2]
@@ -1002,6 +1074,7 @@ class ESBombRandomSpawn(ESAction):
 
 class ESBombFixedSpawn(ESAction):
     skill_types = [103]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.count = self.params[2]
@@ -1021,6 +1094,7 @@ class ESBombFixedSpawn(ESAction):
 
 class ESBaseBoardChange(ABC, ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = []
@@ -1031,6 +1105,7 @@ class ESBaseBoardChange(ABC, ESAction):
 
 class ESBoardChange(ESBaseBoardChange):
     skill_types = [84]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[1])
@@ -1038,6 +1113,7 @@ class ESBoardChange(ESBaseBoardChange):
 
 class ESBoardChangeAttackFlat(ESBaseBoardChange):
     skill_types = [81]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = self.params[2:self.params.index(-1)]
@@ -1046,6 +1122,7 @@ class ESBoardChangeAttackFlat(ESBaseBoardChange):
 
 class ESBoardChangeAttackBits(ESBaseBoardChange):
     skill_types = [85]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[2])
@@ -1054,6 +1131,7 @@ class ESBoardChangeAttackBits(ESBaseBoardChange):
 
 class ESSkillSet(ESAction):
     skill_types = [83]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.skill_ids = list(filter(None, self.params[1:11]))  # type: List[int]
@@ -1089,6 +1167,7 @@ class ESSkillSet(ESAction):
 
 class ESSkillSetOnDeath(ESDeathAction, ESSkillSet):
     skill_types = [95]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1105,6 +1184,7 @@ class ESSkillSetOnDeath(ESDeathAction, ESSkillSet):
 
 class ESSkillDelay(ESAction):
     skill_types = [89]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.min_turns = self.params[1]
@@ -1116,6 +1196,7 @@ class ESSkillDelay(ESAction):
 
 class ESOrbLock(ESAction):
     skill_types = [94]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[1])
@@ -1130,6 +1211,7 @@ class ESOrbLock(ESAction):
 
 class ESOrbSeal(ABC, ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[2]
@@ -1142,6 +1224,7 @@ class ESOrbSeal(ABC, ESAction):
 
 class ESOrbSealColumn(ESOrbSeal):
     skill_types = [99]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.position_type = OrbShape.column
@@ -1149,6 +1232,7 @@ class ESOrbSealColumn(ESOrbSeal):
 
 class ESOrbSealRow(ESOrbSeal):
     skill_types = [100]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.position_type = OrbShape.row
@@ -1156,6 +1240,7 @@ class ESOrbSealRow(ESOrbSeal):
 
 class ESCloud(ESAction):
     skill_types = [104]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -1171,6 +1256,7 @@ class ESCloud(ESAction):
 
 class ESFixedStart(ESAction):
     skill_types = [101]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1180,6 +1266,7 @@ class ESFixedStart(ESAction):
 
 class ESAttributeBlock(ESAction):
     skill_types = [107]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -1191,6 +1278,7 @@ class ESAttributeBlock(ESAction):
 
 class ESSpinners(ABC, ESAction):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -1199,6 +1287,7 @@ class ESSpinners(ABC, ESAction):
 
 class ESSpinnersRandom(ESSpinners):
     skill_types = [109]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.count = self.params[3]
@@ -1209,6 +1298,7 @@ class ESSpinnersRandom(ESSpinners):
 
 class ESSpinnersFixed(ESSpinners):
     skill_types = [110]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.position_map, self.position_rows, self.position_cols = positions_2d_bitmap(self.params[3:8])
@@ -1219,6 +1309,7 @@ class ESSpinnersFixed(ESSpinners):
 
 class ESMaxHPChange(ESAction):
     skill_types = [111]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[3]
@@ -1235,6 +1326,7 @@ class ESMaxHPChange(ESAction):
 
 class ESFixedTarget(ESAction):
     skill_types = [112]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turn_count = self.params[1]
@@ -1245,6 +1337,7 @@ class ESFixedTarget(ESAction):
 
 class ESGachaFever(ESAction):
     skill_types = [124]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attribute = self.params[1]
@@ -1256,6 +1349,7 @@ class ESGachaFever(ESAction):
 
 class ESLeaderAlter(ESAction):
     skill_types = [125]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -1267,6 +1361,7 @@ class ESLeaderAlter(ESAction):
 
 class ES7x6Change(ESAction):
     skill_types = [126]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -1278,6 +1373,7 @@ class ES7x6Change(ESAction):
 
 class ESNoSkyfall(ESAction):
     skill_types = [127]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[2]
@@ -1289,6 +1385,7 @@ class ESNoSkyfall(ESAction):
 # Passive
 class ESPassive(ESBehavior):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1298,6 +1395,7 @@ class ESPassive(ESBehavior):
 
 class ESAttributeResist(ESPassive):
     skill_types = [72]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = attribute_bitmap(self.params[1])
@@ -1310,6 +1408,7 @@ class ESAttributeResist(ESPassive):
 
 class ESResolve(ESPassive):
     skill_types = [73]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.hp_threshold = self.params[1]
@@ -1320,6 +1419,7 @@ class ESResolve(ESPassive):
 
 class ESTurnChangeRemainingEnemies(ESPassive):
     skill_types = [122]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turn_counter = self.params[2]
@@ -1331,6 +1431,7 @@ class ESTurnChangeRemainingEnemies(ESPassive):
 
 class ESTurnChangePassive(ESPassive):
     skill_types = [106]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.hp_threshold = self.params[1]
@@ -1342,6 +1443,7 @@ class ESTurnChangePassive(ESPassive):
 
 class ESTypeResist(ESPassive):
     skill_types = [118]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.types = typing_bitmap(self.params[1])
@@ -1355,6 +1457,7 @@ class ESTypeResist(ESPassive):
 # Logic
 class ESLogic(ESBehavior):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1368,6 +1471,7 @@ class ESLogic(ESBehavior):
 
 class ESNone(ESLogic):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1414,6 +1518,7 @@ class ESSetCounter(ESLogic):
 
 class ESSetCounterIf(ESLogic):
     skill_types = [38]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.counter_is = None
@@ -1425,6 +1530,7 @@ class ESSetCounterIf(ESLogic):
 
 class ESBranch(ESLogic):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.branch_condition = None
@@ -1439,6 +1545,7 @@ class ESBranch(ESLogic):
 
 class ESBranchFlag0(ESBranch):
     skill_types = [23]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.branch_condition = 'flag'
@@ -1450,6 +1557,7 @@ class ESBranchFlag0(ESBranch):
 
 class ESBranchFlag(ESBranch):
     skill_types = [43]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.branch_condition = 'flag'
@@ -1499,6 +1607,7 @@ class ESBranchLevel(ESBranch):
 
 class ESEndPath(ESLogic):
     skill_types = [36]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1508,6 +1617,7 @@ class ESEndPath(ESLogic):
 
 class ESCountdown(ESLogic):
     skill_types = [37]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1533,6 +1643,7 @@ class ESCountdownMessage(ESBehavior):
 
 class ESPreemptive(ESLogic):
     skill_types = [49]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.level = self.params[1]
@@ -1543,6 +1654,7 @@ class ESPreemptive(ESLogic):
 
 class ESBranchCard(ESBranch):
     skill_types = [90]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.branch_condition = 'player_cards'
@@ -1556,6 +1668,7 @@ class ESBranchCard(ESBranch):
 
 class ESBranchCombo(ESBranch):
     skill_types = [113]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.branch_condition = 'combo'
@@ -1564,6 +1677,7 @@ class ESBranchCombo(ESBranch):
 
 class ESBranchRemainingEnemies(ESBranch):
     skill_types = [120]
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.branch_condition = 'remaining enemies'
@@ -1572,12 +1686,14 @@ class ESBranchRemainingEnemies(ESBranch):
 
 class ESUnknown(ESBehavior):
     skill_types = []
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
 
 class ESInstance(Printable):
     skill_types = []
+
     def __init__(self, behavior: ESBehavior, ref: ESRef, monster_card: Card):
         self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
@@ -1647,6 +1763,7 @@ class ESInstance(Printable):
 
     def __eq__(self, other):
         return other and self.enemy_skill_id == other.enemy_skill_id
+
 
 ENEMY_SKILLS = [
     ESBindRandom,
@@ -1745,8 +1862,8 @@ ENEMY_SKILLS = [
     ESTypeResist,
 ]
 
-BEHAVIOR_MAP = {t:s for s in ENEMY_SKILLS for t in s.skill_types}
+BEHAVIOR_MAP = {t: s for s in ENEMY_SKILLS for t in s.skill_types}
 BEHAVIOR_MAP[0] = ESNone
 BEHAVIOR_MAP[9] = ESUnknown
-BEHAVIOR_MAP[93] = ESNone #FF Animation
+BEHAVIOR_MAP[93] = ESNone  # FF Animation
 BEHAVIOR_MAP[21] = ESUnknown
