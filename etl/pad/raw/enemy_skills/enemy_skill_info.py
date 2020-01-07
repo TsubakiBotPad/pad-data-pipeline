@@ -1580,9 +1580,9 @@ class ESBranchHP(ESBranch):
 class ESBranchCounter(ESBranch):
     skill_types = [30, 31, 32]
     COUNTER_COMPARE_MAP = {
-        30: '<',
+        30: '<=',
         31: '=',
-        32: '>'
+        32: '>='
     }
 
     def __init__(self, skill: EnemySkill):
