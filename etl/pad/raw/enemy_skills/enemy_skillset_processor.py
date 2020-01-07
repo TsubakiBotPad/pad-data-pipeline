@@ -560,9 +560,9 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             # Branch based on the counter value.
             if b.compare == '=':
                 take_branch = ctx.counter == b.branch_value
-            elif b.compare == '<':
+            elif b.compare == '<=':
                 take_branch = ctx.counter <= b.branch_value
-            elif b.compare == '>':
+            elif b.compare == '>=':
                 take_branch = ctx.counter >= b.branch_value
             else:
                 raise ValueError('unsupported counter operation:', b.compare)
