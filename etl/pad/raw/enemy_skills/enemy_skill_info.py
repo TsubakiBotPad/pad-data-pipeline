@@ -106,8 +106,6 @@ def positions_2d_bitmap(bits_arr):
 # Condition subclass
 
 class ESCondition(object):
-    skill_types = []
-
     def __init__(self, ai, rnd, params_arr):
         # If the monster has a hp_threshold value, the % chance is AI+RND under the threshold.
         self._ai = ai
@@ -181,8 +179,6 @@ class ESCondition(object):
 
 
 class ESAttack(object):
-    skill_types = []
-
     def __init__(self, atk_multiplier, min_hits=1, max_hits=1):
         self.atk_multiplier = atk_multiplier
         self.min_hits = min_hits
@@ -240,7 +236,6 @@ class ESBehavior(Printable):
 
 
 class ESDeathAction(object):
-    skill_types = []
     """This is just a marker class for death actions."""
 
     def has_action(self) -> bool:
@@ -249,8 +244,6 @@ class ESDeathAction(object):
 
 # Action
 class ESAction(ESBehavior):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill, attack=None):
         super().__init__(skill)
         self._attack = attack if attack is not None else ESAttack.new_instance(self.params[14])
@@ -263,7 +256,7 @@ class ESAction(ESBehavior):
     @attack.setter
     def attack(self, value):
         self._attack = value
-
+    
     def full_description(self):
         if isinstance(self, ESBehaviorAttack):
             return self.description()
@@ -274,8 +267,6 @@ class ESAction(ESBehavior):
 
 
 class ESBehaviorAttack(ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -314,8 +305,6 @@ class ESAttackSinglehit(ESBehaviorAttack):
 
 # 'Fake' Behavior - Stand-In For Default Attack
 class ESDefaultAttack(ESAttackSinglehit):
-    skill_types = []
-
     def __init__(self):
         raw = ['-2', Describe.default_attack(), '-2', '0']
         dummy_skill = EnemySkill(raw)
@@ -339,8 +328,6 @@ class ESAttackPreemptive(ESBehaviorAttack):
 
 
 class ESBind(ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.min_turns = self.params[2]
@@ -448,8 +435,6 @@ class ESBindAwoken(ESAction):
 
 
 class ESOrbChange(ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill)
         self.orb_from = orb_from
@@ -467,8 +452,6 @@ class ESOrbChange(ESAction):
 
 # Prototype
 class ESOrbChangeConditional(ABC, ESOrbChange):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill, orb_from, orb_to)
 
@@ -640,8 +623,6 @@ class ESStatusShield(ESAction):
 
 
 class ESRecover(ESAction):
-    skill_types = []
-
     def __init__(self, skill, target):
         super().__init__(skill)
         self.min_amount = self.params[1]
@@ -675,8 +656,6 @@ class ESRecoverPlayer(ESRecover):
 
 
 class ESEnrage(ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.multiplier = 1
@@ -696,8 +675,6 @@ class ESStorePower(ESEnrage):
 
 
 class ESEnrageAttackUp(ABC, ESEnrage):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -747,8 +724,6 @@ class ESAttackUPCooldown(ESEnrageAttackUp):
 
 
 class ESDebuff(ABC, ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -826,8 +801,6 @@ class ESGravity(ESAction):
 
 
 class ESAbsorb(ABC, ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.min_turns = self.params[1]
@@ -951,8 +924,6 @@ class ESLeaderSwap(ESAction):
 
 
 class ESFixedOrbSpawn(ABC, ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill, position_type, positions, attributes):
         super().__init__(skill)
         self.position_type = position_type
@@ -961,8 +932,6 @@ class ESFixedOrbSpawn(ABC, ESAction):
 
 
 class ESRowColSpawn(ESFixedOrbSpawn):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill, position_type):
         self.position_type = position_type
         super().__init__(
@@ -979,7 +948,6 @@ class ESRowColSpawn(ESFixedOrbSpawn):
 
 
 class ESRowColSpawnMulti(ESFixedOrbSpawn):
-    skill_types = []
     RANGE_MAP = {
         76: range(1, 4, 2),
         77: range(1, 6, 2),
@@ -1010,8 +978,6 @@ class ESRowColSpawnMulti(ESFixedOrbSpawn):
 
 
 class ESColumnSpawn(ESRowColSpawn):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, position_type=OrbShape.column)
 
@@ -1024,8 +990,6 @@ class ESColumnSpawnMulti(ESRowColSpawnMulti):
 
 
 class ESRowSpawn(ESRowColSpawn):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, position_type=OrbShape.row)
 
@@ -1093,8 +1057,6 @@ class ESBombFixedSpawn(ESAction):
 
 
 class ESBaseBoardChange(ABC, ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attributes = []
@@ -1210,8 +1172,6 @@ class ESOrbLock(ESAction):
 
 
 class ESOrbSeal(ABC, ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[2]
@@ -1277,8 +1237,6 @@ class ESAttributeBlock(ESAction):
 
 
 class ESSpinners(ABC, ESAction):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
@@ -1384,8 +1342,6 @@ class ESNoSkyfall(ESAction):
 
 # Passive
 class ESPassive(ESBehavior):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1456,11 +1412,6 @@ class ESTypeResist(ESPassive):
 
 # Logic
 class ESLogic(ESBehavior):
-    skill_types = []
-
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-
     @property
     def name(self):
         return type(self).__name__
@@ -1470,8 +1421,6 @@ class ESLogic(ESBehavior):
 
 
 class ESNone(ESLogic):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
@@ -1510,10 +1459,10 @@ class ESSetCounter(ESLogic):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.counter = None
-        self.set = self.COUNTER_SET_MAP[skill.type]
+        self.operation = self.COUNTER_SET_MAP[skill.type]
 
     def description(self):
-        return 'counter {} {}'.format(self.set, self.counter)
+        return 'counter {} {}'.format(self.operation, self.counter)
 
 
 class ESSetCounterIf(ESLogic):
@@ -1529,43 +1478,41 @@ class ESSetCounterIf(ESLogic):
 
 
 class ESBranch(ESLogic):
-    skill_types = []
-
+    branch_condition = None
+        
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = None
-        self.compare = '='
+        self.operation = '='
         self.branch_value = None
         self.target_round = None
         self.target_round_offset = 0
 
     def description(self):
-        return Describe.branch(self.branch_condition, self.compare, self.branch_value, self.target_round)
-
-
-class ESBranchFlag0(ESBranch):
-    skill_types = [23]
-
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-        self.branch_condition = 'flag'
-        self.compare = '&'
-        # For legacy reasons we treat all branches as 0 offset and manually offset by 1.
-        # This +1 fixes it for this rarely used branch type.
-        self.target_round_offset = 1
+        return Describe.branch(self.branch_condition, self.operation, self.branch_value, self.target_round)
 
 
 class ESBranchFlag(ESBranch):
     skill_types = [43]
+    branch_condition = 'flag'
+    
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = '&'
+
+
+class ESBranchFlag0(ESBranchFlag):
+    skill_types = [23]
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'flag'
-        self.compare = '&'
+        # For legacy reasons we treat all branches as 0 offset and manually offset by 1.
+        # This +1 fixes it for this rarely used branch type.
+        self.target_round_offset = 1
 
-
+        
 class ESBranchHP(ESBranch):
     skill_types = [28, 29]
+    branch_condition = 'hp'
     HP_COMPARE_MAP = {
         28: '<',
         29: '>'
@@ -1573,12 +1520,12 @@ class ESBranchHP(ESBranch):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'hp'
-        self.compare = self.HP_COMPARE_MAP[skill.type]
+        self.operation = self.HP_COMPARE_MAP[skill.type]
 
 
 class ESBranchCounter(ESBranch):
     skill_types = [30, 31, 32]
+    branch_condition = 'counter'
     COUNTER_COMPARE_MAP = {
         30: '<=',
         31: '=',
@@ -1587,12 +1534,12 @@ class ESBranchCounter(ESBranch):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'counter'
-        self.compare = self.COUNTER_COMPARE_MAP[skill.type]
+        self.operation = self.COUNTER_COMPARE_MAP[skill.type]
 
 
 class ESBranchLevel(ESBranch):
     skill_types = [33, 34, 35]
+    branch_condition = 'level'
     LEVEL_COMPARE_MAP = {
         33: '<=',
         34: '=',
@@ -1601,9 +1548,51 @@ class ESBranchLevel(ESBranch):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.branch_condition = 'level'
-        self.compare = self.LEVEL_COMPARE_MAP[skill.type]
+        self.operation = self.LEVEL_COMPARE_MAP[skill.type]
 
+
+class ESBranchCard(ESBranch):
+    skill_types = [90]
+    branch_condition = 'player_cards'
+    
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = 'HAS'
+        self.branch_cards = list(filter(None, self.params))
+        self.branch_value = self.branch_cards
+
+    def description(self):
+        return Describe.branch(self.branch_condition, self.operation, self.branch_cards, self.target_round)
+
+
+class ESBranchCombo(ESBranch):
+    skill_types = [113]
+    branch_condition = 'combo'
+    
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = '>='
+
+
+class ESBranchRemainingEnemies(ESBranch):
+    skill_types = [120]
+    branch_condition = 'remaining enemies'
+    
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = '<='
+
+
+class ESPreemptive(ESLogic):
+    skill_types = [49]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.level = self.params[1]
+
+    def description(self):
+        return 'Enable preempt if level {}'.format(self.level)
+    
 
 class ESEndPath(ESLogic):
     skill_types = [36]
@@ -1628,7 +1617,6 @@ class ESCountdown(ESLogic):
 
 
 class ESCountdownMessage(ESBehavior):
-    skill_types = []
     """Dummy action class to represent displaying countdown numbers"""
 
     def __init__(self, current_counter=0):
@@ -1640,60 +1628,13 @@ class ESCountdownMessage(ESBehavior):
     def description(self):
         return Describe.countdown(self.current_counter)
 
-
-class ESPreemptive(ESLogic):
-    skill_types = [49]
-
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-        self.level = self.params[1]
-
-    def description(self):
-        return 'Enable preempt if level {}'.format(self.level)
-
-
-class ESBranchCard(ESBranch):
-    skill_types = [90]
-
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-        self.branch_condition = 'player_cards'
-        self.compare = 'HAS'
-        self.branch_list_value = list(filter(None, self.params))
-        self.branch_value = self.branch_list_value
-
-    def description(self):
-        return Describe.branch(self.branch_condition, self.compare, self.branch_list_value, self.target_round)
-
-
-class ESBranchCombo(ESBranch):
-    skill_types = [113]
-
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-        self.branch_condition = 'combo'
-        self.compare = '>='
-
-
-class ESBranchRemainingEnemies(ESBranch):
-    skill_types = [120]
-
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-        self.branch_condition = 'remaining enemies'
-        self.compare = '<='
-
-
+    
 class ESUnknown(ESBehavior):
-    skill_types = []
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
 
 
 class ESInstance(Printable):
-    skill_types = []
-
     def __init__(self, behavior: ESBehavior, ref: ESRef, monster_card: Card):
         self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
@@ -1712,30 +1653,30 @@ class ESInstance(Printable):
 
         # This seems bad but I'm not sure how to improve
         # Start terrible badness
-        if isinstance(self.behavior, ESFlagOperation):
+        if isinstance(self.behavior, (ESFlagOperation)):
             self.behavior.flag = ref.enemy_ai
             self.behavior.flag_bin = bin(ref.enemy_ai)
 
-        if isinstance(self.behavior, ESSetCounter):
+        if isinstance(self.behavior, (ESSetCounter)):
             self.behavior.counter = ref.enemy_ai if self.behavior.type == 25 else 1
 
-        if isinstance(self.behavior, ESSetCounterIf):
+        if isinstance(self.behavior, (ESSetCounterIf)):
             self.behavior.counter_is = ref.enemy_ai
             self.behavior.counter = ref.enemy_rnd
 
-        if isinstance(self.behavior, ESBranch):
+        if isinstance(self.behavior, (ESBranch)):
             self.behavior.branch_value = ref.enemy_ai
             self.behavior.target_round = ref.enemy_rnd + self.behavior.target_round_offset
 
-        if self.btype in [ESRecoverEnemyAlly, ESAttackUPRemainingEnemies, ESTurnChangeRemainingEnemies]:
+        if isinstance(self.behavior, (ESRecoverEnemyAlly, ESAttackUPRemainingEnemies, ESTurnChangeRemainingEnemies)):
             self._ensure_condition(ref)
             self.condition.enemies_remaining = self.behavior.enemy_count
 
-        if self.btype in [ESSkillSetOnDeath, ESDeathCry]:
+        if isinstance(self.behavior, (ESSkillSetOnDeath, ESDeathCry)):
             self._ensure_condition(ref)
             self.condition.on_death = True
 
-        if self.btype in [ESRandomSpawn]:
+        if isinstance(self.behavior, (ESRandomSpawn)):
             self._ensure_condition(ref)
             self.condition.condition_attributes = self.behavior.condition_attributes
         # End terrible badness
@@ -1762,7 +1703,10 @@ class ESInstance(Printable):
         return 'ESInstance - {} | {}'.format(self.behavior, self.ref)
 
     def __eq__(self, other):
-        return other and self.enemy_skill_id == other.enemy_skill_id
+        if isinstance(other, ESInstance):
+            return self.enemy_skill_id == other.enemy_skill_id
+        else:
+            return False
 
 
 ENEMY_SKILLS = [

@@ -123,7 +123,7 @@ def run(args):
         try:
             count += 1
             if count % 100 == 0:
-                print('processing {} of {}'.format(count, len(combined_cards)))
+                print('processing {:4d} of {}'.format(count, len(combined_cards)))
             monster_behavior = process_card(csc)
             if monster_behavior is None:
                 continue
