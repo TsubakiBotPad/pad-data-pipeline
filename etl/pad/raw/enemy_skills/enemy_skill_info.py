@@ -441,7 +441,7 @@ class ESBindAwoken(ESAction):
         self.turns = self.params[1]
 
     def is_conditional(self):
-        return True
+        return self.turns > 1
 
     def description(self):
         return Describe.bind(self.turns, None, None, target_types=TargetType.awokens)
