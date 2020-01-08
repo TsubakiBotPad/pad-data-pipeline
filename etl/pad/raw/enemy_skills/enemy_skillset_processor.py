@@ -187,100 +187,98 @@ class Context(object):
         if self.time_debuff > 0:
             self.time_debuff -= 1
 
-    def apply_skill_effects(self, behavior: ESBehavior) -> bool:
+    def apply_skill_effects(self, b: ESBehavior) -> bool:
         """Check context to see if a skill is allowed to be used, and update flag accordingly"""
-        b_type = type(behavior)
-        if issubclass(b_type, ESEnrageAttackUp):
-            if b_type == ESAttackUPRemainingEnemies \
-                    and behavior.enemy_count is not None \
-                    and self.enemies > behavior.enemy_count:
+        if isinstance(b, ESEnrageAttackUp):
+            if isinstance(b, ESAttackUPRemainingEnemies) \
+                    and b.enemy_count is not None \
+                    and self.enemies > b.enemy_count:
                 return False
             if self.enraged is None:
-                if b_type == ESAttackUPCooldown and behavior.turn_cooldown is not None:
-                    self.enraged = -behavior.turn_cooldown + 1
+                if isinstance(b, ESAttackUPCooldown) and b.turn_cooldown is not None:
+                    self.enraged = -b.turn_cooldown + 1
                     return False
                 else:
-                    self.enraged = behavior.turns
+                    self.enraged = b.turns
                     return True
             else:
                 if self.enraged == 0:
-                    self.enraged = behavior.turns
+                    self.enraged = b.turns
                     return True
                 else:
                     return False
-        elif b_type == ESDamageShield:
+        elif isinstance(b, ESDamageShield):
             if self.damage_shield == 0:
-                self.damage_shield = behavior.turns
+                self.damage_shield = b.turns
                 return True
             else:
                 return False
-        elif b_type == ESStatusShield:
+        elif isinstance(b, ESStatusShield):
             if self.status_shield == 0:
-                self.status_shield = behavior.turns
+                self.status_shield = b.turns
                 return True
             else:
                 return False
-        elif b_type == ESAbsorbCombo:
+        elif isinstance(b, ESAbsorbCombo):
             if self.combo_shield == 0:
-                self.combo_shield = behavior.max_turns
+                self.combo_shield = b.max_turns
                 return True
             else:
                 return False
-        elif b_type == ESAbsorbAttribute:
+        elif isinstance(b, ESAbsorbAttribute):
             if self.attribute_shield == 0:
-                self.attribute_shield = behavior.max_turns
+                self.attribute_shield = b.max_turns
                 return True
             else:
                 return False
-        elif b_type == ESAbsorbThreshold:
+        elif isinstance(b, ESAbsorbThreshold):
             if self.absorb_shield == 0:
-                self.absorb_shield = behavior.turns
+                self.absorb_shield = b.turns
                 return True
             else:
                 return False
-        elif b_type == ESVoidShield:
+        elif isinstance(b, ESVoidShield):
             if self.void_shield == 0:
-                self.void_shield = behavior.turns
+                self.void_shield = b.turns
                 return True
             else:
                 return False
-        elif b_type == ESDebuffMovetime:
+        elif isinstance(b, ESDebuffMovetime):
             if self.time_debuff == 0:
-                self.time_debuff = behavior.turns
+                self.time_debuff = b.turns
                 return True
             else:
                 return False
 
         return True
 
-    def check_no_apply_skill_effects(self, behavior: ESBehavior) -> bool:
+    def check_no_apply_skill_effects(self, b: ESBehavior) -> bool:
         """Check context to see if a skill is allowed to be used"""
-        b_type = type(behavior)
-        if issubclass(b_type, ESEnrageAttackUp):
-            if b_type == ESAttackUPRemainingEnemies \
-                    and behavior.enemy_count is not None \
-                    and self.enemies > behavior.enemy_count:
+        if isinstance(b, ESEnrageAttackUp):
+            if isinstance(b, ESAttackUPRemainingEnemies) \
+                    and b.enemy_count is not None \
+                    and self.enemies > b.enemy_count:
                 return False
             if self.enraged is None:
-                if b_type == ESAttackUPCooldown and behavior.turn_cooldown is not None:
+                if isinstance(b, ESAttackUPCooldown) and b.turn_cooldown is not None:
                     return False
                 else:
                     return True
             else:
                 return self.enraged == 0
-        elif b_type == ESDamageShield:
+        elif isinstance(b, ESDamageShield):
             return self.damage_shield == 0
-        elif b_type == ESStatusShield:
+        elif isinstance(b, ESStatusShield):
             return self.status_shield == 0
-        elif b_type == ESAbsorbCombo:
+        elif isinstance(b, ESAbsorbCombo):
             return self.combo_shield == 0
-        elif b_type == ESAbsorbAttribute:
+        elif isinstance(b, ESAbsorbAttribute):
             return self.attribute_shield == 0
-        elif b_type == ESAbsorbThreshold:
+        elif isinstance(b, ESAbsorbThreshold):
             return self.absorb_shield == 0
-        elif b_type == ESVoidShield:
+        elif isinstance(b, ESVoidShield):
             return self.void_shield == 0
-        elif b_type == ESDebuffMovetime:
+        elif isinstance(b, ESDebuffMovetime):
             return self.time_debuff == 0
 
         return True
@@ -420,23 +418,22 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             continue
 
         b = instance.behavior
-        b_type = type(b)
         cond = instance.condition
 
         # Detection for preempts, null the behavior afterwards so we don't trigger it again.
-        if b_type == ESPreemptive:
+        if isinstance(b, ESPreemptive):
             behaviors[idx] = None
             ctx.is_preemptive = b.level <= ctx.level
             idx += 1
             continue
 
-        if b_type == ESAttackPreemptive:
+        if isinstance(b, ESAttackPreemptive):
             behaviors[idx] = None
             ctx.is_preemptive = True
             results.append(instance)
             return results, card_branches, combo_branches
 
-        if b_type == ESAttackUpStatus:
+        if isinstance(b, ESAttackUpStatus):
             # This is a special case; it's not a terminal action unlike other enrages.
             results.append(instance)
             idx += 1
@@ -444,7 +441,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
         # Processing for actions and unparsed stuff, this section should accumulate
         # items into results.
-        if b_type == ESUnknown or issubclass(b_type, ESAction):
+        if isinstance(b, (ESUnknown, ESAction)):
             # Check if we should execute this action at all.
             if cond:
                 use_chance_at_hp = cond.use_chance(hp=ctx.hp)
@@ -453,7 +450,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                     idx += 1
                     continue
 
-                if use_chance_at_hp == 100 and b_type not in [ESDispel]:
+                if use_chance_at_hp == 100 and not isinstance(b, ESDispel):
                     # This always executes so it is a terminal action.
                     if not ctx.check_skill_use(cond):
                         idx += 1
@@ -479,7 +476,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                     continue
                 return results, card_branches, combo_branches
 
-        if b_type in [ESBranchFlag0, ESBranchFlag]:
+        if isinstance(b, ESBranchFlag):
             if b.branch_value == b.branch_value & ctx.flags:
                 # If we satisfy the flag, branch to it.
                 idx = b.target_round
@@ -488,7 +485,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                 idx += 1
             continue
 
-        if b_type == ESEndPath:
+        if isinstance(b, ESEndPath):
             # Forcibly ends the loop, generally used after multiple <100% actions.
             # Disabling default action for now; doesn't seem to improve things?
             # if len(results) == 0:
@@ -496,7 +493,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             #     results.append(default_attack())
             return results, card_branches, combo_branches
 
-        if b_type == ESFlagOperation:
+        if isinstance(b, ESFlagOperation):
             # Operations which change flag state, we always move to the next behavior after.
             if b.operation == 'OR':
                 ctx.flags = ctx.flags | b.flag
@@ -509,45 +506,45 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             idx += 1
             continue
 
-        if b_type == ESBranchHP:
+        if isinstance(b, ESBranchHP):
             # Branch based on current HP.
-            if b.compare == '<':
+            if b.operation == '<':
                 take_branch = ctx.hp < b.branch_value
             else:
                 take_branch = ctx.hp >= b.branch_value
             idx = b.target_round if take_branch else idx + 1
             continue
 
-        if b_type == ESBranchLevel:
+        if isinstance(b, ESBranchLevel):
             # Branch based on monster level.
-            if b.compare == '<=':
+            if b.operation == '<=':
                 take_branch = ctx.level <= b.branch_value
-            elif b.compare == '=':
+            elif b.operation == '=':
                 take_branch = ctx.level == b.branch_value
             else:
                 take_branch = ctx.level >= b.branch_value
             idx = b.target_round if take_branch else idx + 1
             continue
 
-        if b_type == ESSetCounter:
+        if isinstance(b, ESSetCounter):
             # Adjust the global counter value.
-            if b.set == '=':
+            if b.operation == '=':
                 ctx.counter = b.counter
-            elif b.set == '+':
+            elif b.operation == '+':
                 ctx.counter += b.counter
-            elif b.set == '-':
+            elif b.operation == '-':
                 ctx.counter -= b.counter
             idx += 1
             continue
 
-        if b_type == ESSetCounterIf:
+        if isinstance(b, ESSetCounterIf):
             # Adjust the counter if it has a specific value.
             if ctx.counter == b.counter_is:
                 ctx.counter = b.counter
             idx += 1
             continue
 
-        if b_type == ESCountdown:
+        if isinstance(b, ESCountdown):
             ctx.counter -= 1
             if ctx.counter > 0:
                 results.append(countdown_message())
@@ -556,33 +553,33 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                 idx += 1
                 continue
 
-        if b_type == ESBranchCounter:
+        if isinstance(b, ESBranchCounter):
             # Branch based on the counter value.
-            if b.compare == '=':
+            if b.operation == '=':
                 take_branch = ctx.counter == b.branch_value
-            elif b.compare == '<=':
+            elif b.operation == '<=':
                 take_branch = ctx.counter <= b.branch_value
-            elif b.compare == '>=':
+            elif b.operation == '>=':
                 take_branch = ctx.counter >= b.branch_value
             else:
-                raise ValueError('unsupported counter operation:', b.compare)
+                raise ValueError('unsupported counter operation:', b.operation)
             idx = b.target_round if take_branch else idx + 1
             continue
 
-        if b_type == ESBranchCard:
+        if isinstance(b, ESBranchCard):
             # Branch if it's checking for a card we have on the team.
-            card_on_team = any([card in ctx.cards for card in b.branch_list_value])
+            card_on_team = any([card in ctx.cards for card in b.branch_cards])
             idx = b.target_round if card_on_team else idx + 1
-            card_branches.append(b.branch_list_value)
+            card_branches.append(b.branch_cards)
             continue
 
-        if b_type == ESBranchCombo:
+        if isinstance(b, ESBranchCombo):
             # Branch if we made the appropriate number of combos last round.
             idx = b.target_round if ctx.combos >= b.branch_value else idx + 1
             combo_branches.append(b.branch_value)
             continue
 
-        if b_type == ESBranchRemainingEnemies:
+        if isinstance(b, ESBranchRemainingEnemies):
             # TODO: This should be <= probably
             if ctx.enemies == b.branch_value:
                 idx = b.target_round
@@ -590,7 +587,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                 idx += 1
             continue
 
-        raise ValueError('unsupported operation:', b_type, b)
+        raise ValueError('unsupported operation:', type(b), b)
 
     if iter_count == 1000:
         print('error, iter count exceeded 1000')
@@ -616,13 +613,13 @@ def info_from_behaviors(behaviors: List[ESInstance]):
         es_type = instance.btype
 
         # Extract the passives and null them out to simplify processing
-        if issubclass(es_type, ESPassive):
+        if isinstance(es, ESPassive):
             base_abilities.append(instance)
             behaviors[idx] = None
             continue
 
         # Extract death actions and null them out
-        if es_type in [ESDeathCry, ESSkillSetOnDeath]:
+        if isinstance(es, (ESDeathCry, ESSkillSetOnDeath)):
             # Skip pointless death actions
             if es.has_action():
                 death_actions.append(instance)
@@ -630,7 +627,7 @@ def info_from_behaviors(behaviors: List[ESInstance]):
             continue
 
         # Find candidate branch HP values
-        if es_type == ESBranchHP:
+        if isinstance(es, ESBranchHP):
             hp_checkpoints.add(es.branch_value)
             hp_checkpoints.add(es.branch_value - 1)
 
@@ -640,11 +637,11 @@ def info_from_behaviors(behaviors: List[ESInstance]):
             hp_checkpoints.add(cond.hp_threshold - 1)
 
         # Find checks for specific cards.
-        if es_type == ESBranchCard:
-            card_checkpoints.add(tuple(es.branch_list_value))
+        if isinstance(es, ESBranchCard):
+            card_checkpoints.add(tuple(es.branch_cards))
 
         # Find checks for specific amounts of enemies.
-        if es_type in [ESBranchRemainingEnemies, ESAttackUPRemainingEnemies, ESRecoverEnemyAlly]:
+        if isinstance(es, (ESBranchRemainingEnemies, ESAttackUPRemainingEnemies, ESRecoverEnemyAlly)):
             has_enemy_remaining_branch = True
 
     return base_abilities, hp_checkpoints, card_checkpoints, has_enemy_remaining_branch, death_actions
@@ -813,7 +810,7 @@ def make_repeating_comparable(hp: int, repeating: List[RepeatSkillGroup]):
     return [(y.enemy_skill_id, y.condition.use_chance(hp)) for x in repeating for y in x.skills]
 
 
-def convert(card: Card, enemy_behavior: List[ESInstance], level: int):
+def convert(card: Card, enemy_behavior: List[ESInstance], level: int) -> ProcessedSkillset:
     force_one_enemy = int(card.unknown_009) == 5
     enemy_skill_max_counter = card.enemy_skill_max_counter
     enemy_skill_counter_increment = card.enemy_skill_counter_increment
@@ -977,7 +974,7 @@ def extract_levels(enemy_behavior: List[ESInstance]):
     for b in enemy_behavior:
         if b.btype == ESBranchLevel:
             levels.add(b.behavior.branch_value)
-            if b.behavior.compare == '=':
+            if b.behavior.operation == '=':
                 # For this case, try both above and below the target level in addition.
                 if b.behavior.branch_value > 1:
                     levels.add(b.behavior.branch_value - 1)
@@ -989,7 +986,4 @@ def extract_levels(enemy_behavior: List[ESInstance]):
 
 
 def find_action_by_hp(hp: int, actions: List[HpActions]) -> Optional[HpActions]:
-    for a in actions:
-        if a.hp == hp:
-            return a
-    return None
+    return {a.hp:a for a in actions}.get(hp)
