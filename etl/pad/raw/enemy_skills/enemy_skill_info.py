@@ -1,14 +1,13 @@
 import copy
 import logging
 from abc import ABC
-from builtins import issubclass
 from collections import OrderedDict
 from typing import List, Optional
 
 from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import ESRef, Card
-from pad.raw.enemy_skills.enemy_skill_text import *
+from pad.raw.skills.en.enemy_skill_text import *
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -275,14 +274,14 @@ class ESBehaviorAttack(ESAction):
 
 
 class ESInactivity(ESAction):
-    skill_types = [16, 66]
-
-    def __init__(self, skill):
-        super().__init__(skill)
-
     def description(self):
         return Describe.skip()
+    
+class ESInactivity16(ESInactivity):
+    skill_types = [16]
 
+class ESInactivity66(ESInactivity):
+    skill_types = [66]
 
 class ESDeathCry(ESDeathAction, ESAction):
     skill_types = [69]
@@ -346,7 +345,8 @@ class ESBindAttack(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = bind_bitmap(self.params[4])
-        self.target_count = self.params[5]
+        if TargetType.both_leader not in self.targets:
+            self.target_count = self.params[5]
         self.attack = ESAttack.new_instance(self.params[1])
 
 
@@ -365,7 +365,7 @@ class ESBindTarget(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = bind_bitmap(self.params[1])
-        self.target_count = len(self.targets)
+        self.target_count = None
 
 
 class ESBindRandomSub(ESBindRandom):
@@ -388,9 +388,8 @@ class ESBindAttribute(ESBind):
         return True
 
     def description(self):
-        target_type = attributes_to_str([self.target_attribute])
-        return Describe.bind(self.min_turns, self.max_turns, target_types=target_type)
-
+        return Describe.bind(self.min_turns, self.max_turns,
+                             target_types=self.target_attribute, source=Source.attrs)
 
 class ESBindTyping(ESBind):
     skill_types = [3]
@@ -404,8 +403,8 @@ class ESBindTyping(ESBind):
         return True
 
     def description(self):
-        target_type = typing_to_str([self.target_typing])
-        return Describe.bind(self.min_turns, self.max_turns, target_types=target_type)
+        return Describe.bind(self.min_turns, self.max_turns,
+                             target_types=self.target_typing, source=Source.types)
 
 
 class ESBindSkill(ESAction):
@@ -565,8 +564,6 @@ class ESPoisonChangeRandomAttack(ESOrbChangeAttack):
 
 
 class ESBlind(ESAction):
-    skill_types = [5, 62]
-
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.attack = ESAttack.new_instance(self.params[1])
@@ -574,6 +571,11 @@ class ESBlind(ESAction):
     def description(self):
         return Describe.blind()
 
+class ESBlind5(ESBlind):
+    skill_types = [5]
+
+class ESBlind62(ESBlind):
+    skill_types = [62]
 
 class ESBlindStickyRandom(ESAction):
     skill_types = [97]
@@ -634,11 +636,14 @@ class ESRecover(ESAction):
 
 
 class ESRecoverEnemy(ESRecover):
-    skill_types = [7, 86]
-
     def __init__(self, skill):
         super().__init__(skill, target=TargetType.enemy)
 
+class ESRecoverEnemy7(ESRecoverEnemy):
+    skill_types = [7]
+
+class ESRecoverEnemy86(ESRecoverEnemy):
+    skill_types = [86]
 
 class ESRecoverEnemyAlly(ESRecover):
     skill_types = [52]
@@ -873,7 +878,7 @@ class ESDamageShield(ESAction):
 
 
 class ESInvulnerableOn(ESAction):
-    skill_types = [119, 123]  # hexa's invulnerable gets special type because reasons
+    skill_types = [119]
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
@@ -882,19 +887,19 @@ class ESInvulnerableOn(ESAction):
     def description(self):
         return Describe.damage_reduction(Source.all_sources, turns=self.turns)
 
+class ESInvulnerableOnHexazeon(ESInvulnerableOn):
+    skill_types = [123]
+
 
 class ESInvulnerableOff(ESAction):
     skill_types = [121]
-
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
-
+    
     def description(self):
         return Describe.invuln_off()
 
 
 class ESSkyfall(ESAction):
-    skill_types = [68, 96]
+    skill_types = [68]
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
@@ -904,11 +909,14 @@ class ESSkyfall(ESAction):
         self.chance = self.params[4]
 
     def description(self):
-        if self.type == 68:
-            return Describe.skyfall(self.attributes, self.chance,
+        return Describe.skyfall(self.attributes, self.chance,
                                     self.min_turns, self.max_turns)
-        elif self.type == 96:
-            return Describe.skyfall(self.attributes, self.chance,
+
+class ESSkyfallLocked(ESSkyfall):
+    skill_types = [96]
+
+    def description(self):
+        return Describe.skyfall(self.attributes, self.chance,
                                     self.min_turns, self.max_turns, True)
 
 
@@ -1139,7 +1147,7 @@ class ESSkillSetOnDeath(ESDeathAction, ESSkillSet):
             if isinstance(x, ESSkillSet):
                 if any([not isinstance(y, ESInactivity) for y in x.skills]):
                     return True
-            elif type(x) != ESInactivity:
+            elif not isinstance(x, ESInactivity):
                 return True
         return False
 
@@ -1639,7 +1647,8 @@ class ESInstance(Printable):
         self.enemy_skill_id = behavior.enemy_skill_id
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
-
+        self.ref = ref
+        
         # self.ai = ref.enemy_ai
         # self.rnd = ref.enemy_rnd
 
@@ -1647,7 +1656,7 @@ class ESInstance(Printable):
         self.max_counter = monster_card.enemy_skill_max_counter
         self.increment = monster_card.enemy_skill_counter_increment
 
-        if not issubclass(self.btype, ESLogic):
+        if not isinstance(self.behavior, ESLogic):
             if ref.enemy_ai > 0 or ref.enemy_rnd > 0:
                 self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
 
@@ -1686,10 +1695,6 @@ class ESInstance(Printable):
             self.condition = ESCondition(ref.enemy_ai, ref.enemy_rnd, self.behavior.params)
 
     @property
-    def btype(self):
-        return type(self.behavior)
-
-    @property
     def name(self):
         return self.behavior.name
 
@@ -1714,15 +1719,18 @@ ENEMY_SKILLS = [
     ESBindAttribute,
     ESBindTyping,
     ESOrbChangeSingle,
-    ESBlind,
+    ESBlind5,
+    ESBlind62,
     ESDispel,
-    ESRecoverEnemy,
+    ESRecoverEnemy7,
+    ESRecoverEnemy86,
     ESStorePower,
     ESJammerChangeSingle,
     ESJammerChangeRandom,
     ESBindSkill,
     ESAttackMultihit,
-    ESInactivity,
+    ESInactivity16,
+    ESInactivity66,
     ESAttackUPRemainingEnemies,
     ESAttackUpStatus,
     ESAttackUPCooldown,
@@ -1746,6 +1754,7 @@ ENEMY_SKILLS = [
     ESBindRandomSub,
     ESAbsorbCombo,
     ESSkyfall,
+    ESSkyfallLocked,
     ESDeathCry,
     ESVoidShield,
     ESDamageShield,
@@ -1780,6 +1789,7 @@ ENEMY_SKILLS = [
     ESMaxHPChange,
     ESFixedTarget,
     ESInvulnerableOn,
+    ESInvulnerableOnHexazeon,
     ESInvulnerableOff,
     ESGachaFever,
     ESLeaderAlter,
