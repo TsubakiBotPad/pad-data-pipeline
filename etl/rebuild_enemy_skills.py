@@ -5,7 +5,7 @@ Regenerates the flattened enemy skill list for all monsters.
 import argparse
 import logging
 import os
-from typing import List
+from typing import List, Set
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, LevelBehavior
 from pad.common.shared_types import Server
@@ -48,6 +48,7 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
 
     levels = enemy_skillset_processor.extract_levels(enemy_behavior)
     skill_listings = []  # type: List[LevelBehavior]
+    seen_level_behavior = set()  # type: Set[str]
     used_actions = []  # type: List[ESInstance]
     for level in sorted(levels):
         try:
@@ -55,6 +56,19 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
             if not skillset.has_actions():
                 continue
             flattened = enemy_skill_proto.flatten_skillset(level, skillset)
+
+            # Check if we've already seen this level behavior; zero out the level and stick it
+            # in a set containing all the levels we've seen. We want the behavior set at the
+            # lowest possible level.
+            zerod_flattened = LevelBehavior()
+            zerod_flattened.CopyFrom(flattened)
+            zerod_flattened.level = 0
+            zerod_value = zerod_flattened.SerializeToString()
+            if zerod_value in seen_level_behavior:
+                continue
+            else:
+                seen_level_behavior.add(zerod_value)
+
             used_actions.extend(debug_utils.extract_used_skills(skillset))
             skill_listings.append(flattened)
         except Exception as ex:

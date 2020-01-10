@@ -973,12 +973,12 @@ def extract_levels(enemy_behavior: List[ESInstance]):
     levels.add(1)
     for b in enemy_behavior:
         if b.btype == ESBranchLevel:
+            # Always extract the target level, the level above, and (if possible) the level below.
+            # These will be deduped later.
             levels.add(b.behavior.branch_value)
-            if b.behavior.operation == '=':
-                # For this case, try both above and below the target level in addition.
-                if b.behavior.branch_value > 1:
-                    levels.add(b.behavior.branch_value - 1)
-                levels.add(b.behavior.branch_value + 1)
+            levels.add(b.behavior.branch_value + 1)
+            if b.behavior.branch_value > 1:
+                levels.add(b.behavior.branch_value - 1)
 
         elif hasattr(b.behavior, 'level'):
             levels.add(b.behavior.level)
@@ -986,4 +986,4 @@ def extract_levels(enemy_behavior: List[ESInstance]):
 
 
 def find_action_by_hp(hp: int, actions: List[HpActions]) -> Optional[HpActions]:
-    return {a.hp:a for a in actions}.get(hp)
+    return {a.hp: a for a in actions}.get(hp)
