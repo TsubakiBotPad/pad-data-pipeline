@@ -412,7 +412,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
         # Extract the current behavior and its type.
         instance = behaviors[idx]
-        if instance is None or instance.btype == ESNone:
+        if instance is None or isinstance(instance.behavior, ESNone):
             # The current action could be None because we nulled it out in preprocessing, just continue.
             idx += 1
             continue
@@ -610,7 +610,6 @@ def info_from_behaviors(behaviors: List[ESInstance]):
 
         cond = instance.condition
         es = instance.behavior
-        es_type = instance.btype
 
         # Extract the passives and null them out to simplify processing
         if isinstance(es, ESPassive):
@@ -679,7 +678,7 @@ def extract_turn_behaviors(ctx: Context, behaviors: List[ESInstance], hp_checkpo
     return turn_data
 
 
-def extract_loop_indexes(turn_data: List[ESBehavior]) -> Tuple[int, int]:
+def extract_loop_indexes(turn_data: List[List[ESBehavior]]) -> Tuple[int, int]:
     """Find loops in the data."""
     # Loop over every turn
     for i_idx, check_data in enumerate(turn_data):
@@ -717,7 +716,6 @@ def extract_loop_indexes(turn_data: List[ESBehavior]) -> Tuple[int, int]:
 
         if len(possible_loops) > 0:
             return possible_loops[0][0], possible_loops[0][1]
-
     raise Exception('No loop found')
 
 
@@ -917,8 +915,8 @@ def clean_skillset(moveset: Moveset, hp_actions: List[HpActions]):
 
     def extract_and_clear_action(skills, action_type):
         """Clears an action by type from the skill list and returns any matches."""
-        actions = [s for s in skills if s.btype == action_type]
-        skills[:] = [s for s in skills if s.btype != action_type]
+        actions = [s for s in skills if isinstance(s.behavior, action_type)]
+        skills[:] = [s for s in skills if not isinstance(s.behavior, action_type)]
         return actions
 
     # Extract special hoisted actions if present, clearing them in their home sets.
@@ -972,7 +970,7 @@ def extract_levels(enemy_behavior: List[ESInstance]):
     levels = set()
     levels.add(1)
     for b in enemy_behavior:
-        if b.btype == ESBranchLevel:
+        if isinstance(b.behavior, ESBranchLevel):
             # Always extract the target level, the level above, and (if possible) the level below.
             # These will be deduped later.
             levels.add(b.behavior.branch_value)

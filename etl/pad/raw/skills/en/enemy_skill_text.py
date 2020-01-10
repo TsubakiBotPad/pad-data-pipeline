@@ -171,6 +171,9 @@ def ordinal(n):
 
 irregulars = {
     'status': 'statuses',
+    'both leaders': 'both leaders',
+    'active skills': 'active skills',
+    'awoken skills': 'awoken skills',
 }
 
 def pluralize(noun, number, irregular_plural=None):
@@ -183,6 +186,8 @@ def pluralize(noun, number, irregular_plural=None):
 def pluralize2(noun, number, max_number = None):
     if max_number is not None:
         number = minmax(number, max_number)
+    if number is None:
+        return noun
     irregular_plural = irregulars.get(noun)
     if number not in (1, '1'):
         noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
@@ -237,19 +242,12 @@ class Describe:
         return 'Do nothing'
 
     @staticmethod
-    def bind(min_turns, max_turns, target_count=None, target_types=TargetType.card):
+    def bind(min_turns, max_turns, target_count=None, target_types=TargetType.card, source:Source = None):
         if isinstance(target_types, TargetType): target_types = [target_types]
-        elif isinstance(target_types, str): target_types += ' cards'
+        elif source is not None: target_types = SOURCE_FUNCS[source]([target_types])+' cards'
         targets = targets_to_str(target_types)
-        
-        if target_count and target_types != [TargetType.both_leader]:
-            output = 'Bind {:s} '.format(pluralize2(targets, target_count))
-        else:
-            output = 'Bind {:s} '.format(targets)
-            if "2 both leaderss" in output:
-                print(target_types, targets, output)
-        output += 'for '
-        output += pluralize2('turn', minmax(min_turns, max_turns))
+        output = 'Bind {:s} '.format(pluralize2(targets, target_count))
+        output += 'for ' + pluralize2('turn', minmax(min_turns, max_turns))
         return output
 
     @staticmethod
@@ -362,16 +360,18 @@ class Describe:
     @staticmethod
     def damage_reduction(source_type: Source, source = None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)
+        if source_type != Source.all_sources:
+            source += ' ' + source_type.name
         if percent is None:
-            return 'Immune to damage from {:s} {:s} for {:s}' \
-                   .format(source, source_type.name, pluralize2('turn', turns))
+            return 'Immune to damage from {:s} for {:s}' \
+                   .format(source, pluralize2('turn', turns))
         else:
             if turns:
-                return 'Reduce damage from {:s} {:s} by {:d}% for {:s}' \
-                    .format(source, source_type.name, percent, pluralize2('turn', turns))
+                return 'Reduce damage from {:s} by {:d}% for {:s}' \
+                    .format(source, percent, pluralize2('turn', turns))
             else:
-                return 'Reduce damage from {:s} {:s} by {:d}%' \
-                       .format(source, source_type.name, percent)
+                return 'Reduce damage from {:s} by {:d}%' \
+                       .format(source, percent)
 
     @staticmethod
     def invuln_off():
@@ -521,3 +521,15 @@ class Describe:
     @staticmethod
     def join_skill_descs(descs):
         return ' + '.join(descs)
+
+
+__all__ = [
+    'TargetType',
+    'OrbShape',
+    'Status',
+    'Unit',
+    'Absorb',
+    'Source',
+    'Describe',
+    'attributes_to_str'
+]

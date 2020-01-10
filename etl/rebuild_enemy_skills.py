@@ -78,17 +78,17 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
                 # TODO: some monsters have whacked out behavior (they aren't real monsters)
                 # Should start ignoring those (e.g. pixel yuna).
                 print('\tLoop detection failure for', card.monster_no, card.name)
-
+                break
     if not skill_listings:
         return None
 
     unused_actions = []
     for b in enemy_behavior:
         try:
-            is_action = issubclass(b.btype, ESAction)
+            is_action = isinstance(b.behavior, ESAction)
             is_used = b not in used_actions
             already_in_unused = b not in unused_actions
-            is_death_action = issubclass(b.btype, ESDeathAction)
+            is_death_action = isinstance(b.behavior, ESDeathAction)
             if is_action and is_used and already_in_unused and not is_death_action:
                 unused_actions.append(b)
         except:
@@ -129,7 +129,7 @@ def run(args):
         fixed_card_id = input("enter a card id:").strip()
 
     count = 0
-    for csc in combined_cards:
+    for csc in combined_cards[count:]:
         merged_card = csc.na_card
         card = merged_card.card
         if fixed_card_id and csc.monster_id != int(fixed_card_id):

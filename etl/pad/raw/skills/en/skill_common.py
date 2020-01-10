@@ -13,7 +13,35 @@ def capitalize_first(x: str):
         return x.upper()
     else:
         return x[0].upper() + x[1:]
-    
+
+irregulars = {
+    'status': 'statuses',
+}
+
+def pluralize(noun, number, irregular_plural=None):
+    irregular_plural = irregular_plural or irregulars.get(noun)
+    if number not in (1, '1'):
+        noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
+    return noun
+
+
+def pluralize2(noun, number, max_number = None):
+    if max_number is not None:
+        number = minmax(number, max_number)
+    irregular_plural = irregulars.get(noun)
+    if number not in (1, '1'):
+        noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
+    return "{} {}".format(number, noun)
+
+def minmax(nmin, nmax, p=False):
+    if None in [nmin, nmax] or nmin == nmax:
+        return str(int(nmin or nmax))+("%" if p else '')
+    elif p:
+        return "{}%~{}%".format(int(nmin), int(nmax))
+    else:
+        return "{}~{}".format(int(nmin), int(nmax))
+
+
 class EnBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 

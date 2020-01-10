@@ -3,7 +3,7 @@ import json
 import os
 import sys
 
-from pad.raw.skills.en.skill_common import EnBaseTextConverter
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first
 from pad.raw.skills.leader_skill_text import LSTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -11,10 +11,6 @@ human_fix_logger = logging.getLogger('human_fix')
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 SERIES = json.load(open(os.path.join(__location__, "../../../storage_processor/series.json")))
 
-def capitalize_first(x: str):
-    if not x:
-        return x
-    return x[0].upper() + x[1:]
     
 class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
     _COLLAB_MAP = {x['collab_id']: x['name_na'] for x in SERIES if 'collab_id' in x}
@@ -267,3 +263,6 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
             else:
                 return tag_text
         return text
+
+
+__all__ = ['EnLSTextConverter']

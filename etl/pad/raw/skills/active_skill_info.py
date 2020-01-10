@@ -2,7 +2,7 @@ from collections import OrderedDict
 from typing import List
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.active_skill_text import ASTextConverter
+from pad.raw.skills.en.active_skill_text import EnASTextConverter as ASTextConverter
 
 
 def cc(x): return x
@@ -194,10 +194,7 @@ class OneAttrtoOneAttr(ActiveSkill):
 
 class OrbRefresh(ActiveSkill):
     skill_type = 10
-
-    def __init__(self, ms: MonsterSkill):
-        super().__init__(ms)
-
+    
     def text(self, converter: ASTextConverter) -> str:
         return converter.board_refresh(self)
 
@@ -687,8 +684,8 @@ class RowOrbChange(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [])
         # TODO: simplify this
-        self.rows = [{'index': 2-i, 'orbs': binary_con(orbs)} for
-                     indices, orbs in zip(data[::2], data[1::2]) for i in binary_con(indices)]
+        self.rows = [{'index': i, 'orbs': binary_con(orbs)} for indices, orbs in
+                     zip(data[::2], data[1::2]) for i in binary_con(indices)]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:

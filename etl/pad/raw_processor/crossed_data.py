@@ -184,7 +184,7 @@ def _combine_es(jp_skills: List[ESInstance],
         raise ValueError('unexpected skill lengths')
     results = []
     for idx, jp_skill in enumerate(jp_skills):
-        if jp_skill.btype == ESUnknown:
+        if isinstance(jp_skill.behavior, ESUnknown):
             human_fix_logger.error('Detected an in-use unknown enemy skill: %d/%d: %s',
                                    jp_skill.enemy_skill_id, jp_skill.behavior.type, jp_skill.behavior.name)
         results.append(CrossServerESInstance(jp_skill, na_skills[idx], kr_skills[idx]))

@@ -1,23 +1,30 @@
-from pad.raw.skills.active_skill_text import ASTextConverter
-from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first
+from pad.raw.skills.en.skill_common import EnBaseTextConverter
+from pad.raw.skills.en.skill_common import capitalize_first, pluralize, pluralize2
+
 
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
 
+ROW_INDEX = {
+    0: 'the top row',
+    1: 'the 2nd row from the top',
+    2: 'the middle row',
+    3: 'the 2nd row from the bottom',
+    4: 'the bottom row',
+}
 
-def parse_list(l):
-    if len(l) == 0:
-        return ""
-    elif len(l) == 1:
-        return l[0]
-    elif len(l) == 2:
-        return " and ".join(map(str, l))
-    l[-1] = "and " + str(l[-1])
-    return ", ".join(map(str, l))
+COLUMN_INDEX = {
+    0: 'the far left column',
+    1: 'the 2nd column from the left',
+    2: 'the 3rd column from the left',
+    3: 'the 3rd column from the right',
+    4: 'the 2nd column from the right',
+    5: 'the far right column',
+}
 
-class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
+class EnASTextConverter(EnBaseTextConverter):
     def fmt_repeated(self, text, amount):
-        return '{} {} times'.format(text, amount)
+        return '{} {:s}'.format(text, pluralize('time', amount))
 
     def fmt_mass_atk(self, mass_attack):
         if mass_attack:
@@ -26,7 +33,7 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
             return 'an enemy'
 
     def fmt_duration(self, duration):
-        return 'For {} {}, '.format(duration, 'turns' if duration > 1 else 'turn')
+        return 'For {:s}, '.format(pluralize2('turn',duration))
 
     def attr_nuke_convert(self, act):
         return 'Deal ' + fmt_mult(act.multiplier) + 'x ATK ' + self.ATTRIBUTES[int(
@@ -67,7 +74,7 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
         return 'Poison all enemies (' + fmt_mult(act.multiplier) + 'x ATK)'
 
     def ctw_convert(self, act):
-        return 'Freely move orbs for ' + str(act.duration) + ' seconds'
+        return 'Freely move orbs for {:s}'.format(pluralize2('second', act.duration))
 
     def gravity_convert(self, act):
         return 'Reduce enemies\' HP by ' + fmt_mult(act.percentage_hp * 100) + '%'
@@ -91,12 +98,12 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
             if skill_text:
                 skill_text += '; '
             skill_text += ('Remove all binds and awoken skill binds' if (unbind >= 9999 and awoken_unbind) else
-                           ('Reduce binds and awoken skill binds by {} turns'.format(awoken_unbind) if (
+                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind)) if (
                                    unbind and awoken_unbind) else
                             ('Remove all binds' if unbind >= 9999 else
-                             ('Reduce binds by {} turns'.format(unbind) if unbind else
+                             ('Reduce binds by {:s}'.format(pluralize2('turn',unbind)) if unbind else
                               ('Remove all awoken skill binds' if awoken_unbind >= 9999 else
-                               ('Reduce awoken skill binds by {} turns'.format(awoken_unbind)))))))
+                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind))))))))
         return skill_text
 
     def single_orb_change_convert(self, act):
@@ -104,7 +111,7 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
                self.ATTRIBUTES[act.from_1] + ' orbs to ' + self.ATTRIBUTES[act.to_1] + ' orbs'
 
     def delay_convert(self, act):
-        return 'Delay enemies for ' + str(act.turns) + ' turns'
+        return 'Delay enemies\' next attack by {:s}'.format(pluralize2('turn',act.turns))
 
     def defense_reduction_convert(self, act):
         return self.fmt_duration(act.duration) + \
@@ -151,7 +158,7 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
 
         if for_attr:
             if not len(for_attr) == 6:
-                color_text = ', '.join([self.ATTRIBUTES[i] for i in for_attr])
+                color_text = self.concat_list_and([self.ATTRIBUTES[i] for i in for_attr])
                 skill_text = 'Enhance all ' + color_text + ' orbs'
             else:
                 skill_text = 'Enhance all orbs'
@@ -160,7 +167,7 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
     def lock_convert(self, act):
         for_attr = act.orbs
 
-        color_text = 'all' if len(for_attr) == 10 else ', '.join(
+        color_text = 'all' if len(for_attr) == 10 else self.concat_list_and(
             [self.ATTRIBUTES[i] for i in for_attr])
         return 'Lock ' + color_text + ' orbs'
 
@@ -186,12 +193,12 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
             if skill_text:
                 skill_text += '; '
             skill_text += ('Remove all binds and awoken skill binds' if (unbind >= 9999 and awoken_unbind) else
-                           ('Reduce binds and awoken skill binds by {} turns'.format(awoken_unbind) if (
+                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind)) if (
                                    unbind and awoken_unbind) else
                             ('Remove all binds' if unbind >= 9999 else
-                             ('Reduce binds by {} turns'.format(unbind) if unbind else
+                             ('Reduce binds by {:s}'.format(pluralize2('turn',unbind)) if unbind else
                               ('Remove all awoken skill binds' if awoken_unbind >= 9999 else
-                               ('Reduce awoken skill binds by {} turns'.format(awoken_unbind)))))))
+                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind))))))))
 
         return skill_text
 
@@ -220,66 +227,60 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
     def awakening_heal_convert(self, act):
         skill_text = 'Heal {:d}x RCV for each '.format(int(act.amount_per))
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += ", ".join(filter(None, awakens))
+        skill_text += self.concat_list_and(filter(None, awakens))
         skill_text += ' awakening skill on the team'
         return skill_text
 
     def awakening_attack_boost_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'increase ATK by ' + \
-                     fmt_mult(act.amount_per * 100) + '% for each ['
+                     fmt_mult(act.amount_per * 100) + '% for each '
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += ", ".join(filter(None, awakens))
-        skill_text += '] awakening skill on the team'
+        skill_text += self.concat_list_and(filter(None, awakens))
+        skill_text += ' awakening skill on the team'
         return skill_text
 
     def awakening_shield_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'reduce damage taken by ' + \
-                     fmt_mult(act.amount_per * 100) + '% for each ['
+                     fmt_mult(act.amount_per * 100) + '% for each '
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += ", ".join(filter(None, awakens))
-        skill_text += '] awakening skill on the team'
+        skill_text += self.concat_list_and(filter(None, awakens))
+        skill_text += ' awakening skill on the team'
         return skill_text
 
     def change_enemies_attribute_convert(self, act):
         return 'Change all enemies to ' + self.ATTRIBUTES[act.attribute] + ' Att.'
 
     def haste_convert(self, act):
-        if act.turns == act.max_turns:
-            if act.turns > 1:
-                return 'Charge allies\' skill by ' + str(act.turns) + ' turns'
-            else:
-                return 'Charge allies\' skill by ' + str(act.turns) + ' turn'
-        else:
-            return 'Charge allies\' skill by ' + \
-                   str(act.turns) + '~' + str(act.max_turns) + ' turns'
+        return 'Charge all allies\' skills by {:s}'.format(pluralize2('turn', act.turns, act.max_turns))
 
     def random_orb_change_convert(self, act):
         from_attr = act.from_attr
         to_attr = act.to_attr
         skill_text = 'Change '
-        if from_attr == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
+        if from_attr == list(range(10)):
             skill_text += 'all orbs to '
         else:
-            skill_text += parse_list([self.ATTRIBUTES[i] for i in from_attr]) + ' orbs to '
-        skill_text += parse_list([self.ATTRIBUTES[i] for i in to_attr]) + ' orbs'
+            skill_text += self.concat_list_and([self.ATTRIBUTES[i] for i in from_attr]) + ' orbs to '
+        skill_text += self.concat_list_and([self.ATTRIBUTES[i] for i in to_attr]) + ' orbs'
         return skill_text
 
     def attack_attr_x_team_atk_convert(self, act):
         skill_text = 'Deal ' + self.ATTRIBUTES[act.attack_attribute] + \
                      ' damage equal to ' + fmt_mult(act.multiplier) + 'x of team\'s total '
-        skill_text += parse_list([self.ATTRIBUTES[a] for a in act.team_attributes]) + ' ATK to '
+        skill_text += self.concat_list_and([self.ATTRIBUTES[a] for a in act.team_attributes]) + ' ATK to '
         skill_text += self.fmt_mass_atk(act.mass_attack)
         return skill_text
 
     def spawn_orb_convert(self, act):
         skill_text = 'Create {} '.format(act.amount)
-        skill_text += parse_list([self.ATTRIBUTES[o] for o in act.orbs]) + ' orbs'
+        skill_text += self.concat_list_and([self.ATTRIBUTES[o] for o in act.orbs])
+        skill_text += ' ' + pluralize('orb', act.amount)
         if act.orbs != act.excluding_orbs and act.excluding_orbs != []:
             templist = set(act.excluding_orbs) - set(act.orbs)
             skill_text += ' over non '
-            skill_text += parse_list([self.ATTRIBUTES[o] for o in templist]) + ' orbs'
+            skill_text += self.concat_list_and([self.ATTRIBUTES[o] for o in templist]) + ' orbs'
         elif len(act.excluding_orbs) == 0:
-            skill_text += ' over any orb'
+            skill_text += ' over any ' + pluralize('orb', act.amount)
         return skill_text
 
     def move_time_buff_convert(self, act):
@@ -288,48 +289,27 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
                    fmt_mult(act.percentage) + 'x orb move time'
         elif act.percentage == 0:
             return self.fmt_duration(act.duration) + \
-                   'increase orb move time by ' + fmt_mult(act.static) + ' seconds'
+                   'increase orb move time by {:s}'.format(pluralize2('second', fmt_mult(act.static)))
         raise ValueError()
 
     def row_change_convert(self, act):
-        ROW_INDEX = {
-            2: 'the top row',
-            1: 'the 2nd row from the top',
-            0: 'the middle row',
-            -1: 'the 2nd row from the bottom',
-            -2: 'the bottom row',
-        }
         return self._line_change_convert(act.rows, ROW_INDEX)
 
     def column_change_convert(self, act):
-        COLUMN_INDEX = {
-            0: 'the far left column',
-            1: 'the 2nd column from the left',
-            2: 'the 3rd column from the left',
-            3: 'the 3rd column from the right',
-            4: 'the 2nd column from the right',
-            5: 'the far right column',
-        }
-
         return self._line_change_convert(act.columns, COLUMN_INDEX)
 
     def _line_change_convert(self, lines, index):
         skill_text = []
-        # lines :: List<(str:line_name, str:attribute)>
+        # TODO: simplify this
         lines = [(index[int(line['index'])], self.ATTRIBUTES[int(line['orbs'][0])]) for line in lines]
         skip = 0
         for c, line in enumerate(lines):
             if skip:
                 skip -= 1
                 continue
-
-            # If the current line is different than it's successor or it's the last item
             elif c == len(lines) - 1 or lines[c + 1][1] != line[1]:
                 skill_text.append('change {} to {} orbs'.format(*line))
-
-            # Otherwise, the current line has the same attribute as its successor
             else:
-                # Check how many successors share the attribute (and also how many to skip after)
                 while c + skip < len(lines) and lines[c + skip][1] == line[1]:
                     skip += 1
                 formatted = ' and '.join(map(lambda x: x[0], lines[c:c + skip]))
@@ -342,10 +322,10 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
         rate = fmt_mult(act.percentage * 100)
 
         if rate == '100':
-            skill_text += 'only {} orbs will appear'.format(', '.join(self.ATTRIBUTES[i] for i in act.orbs))
+            skill_text += 'only {} orbs will appear'.format(self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs))
         else:
             skill_text += '{} orbs are more likely to appear by {}%'.format(
-                ', '.join(self.ATTRIBUTES[i] for i in act.orbs),
+                self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs),
                 rate)
         return skill_text
 
@@ -364,7 +344,7 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
 
     def board_change_convert(self, act):
         skill_text = 'Change all orbs to '
-        skill_text += parse_list([self.ATTRIBUTES[a] for a in act.attributes]) + ' orbs'
+        skill_text += self.concat_list_and([self.ATTRIBUTES[a] for a in act.attributes]) + ' orbs'
         return skill_text
 
     def suicide_random_nuke_convert(self, act):
@@ -399,8 +379,8 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
 
     def type_attack_boost_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + fmt_mult(act.multiplier) + 'x ATK for '
-        skill_text += parse_list([self.TYPES[t] for t in act.types]) + ' type'
-        skill_text += 's' if 'and' in skill_text else ''
+        skill_text += self.concat_list_and([self.TYPES[t] for t in act.types]) + ' '
+        skill_text += pluralize('type', len(act.types))
         return skill_text
 
     def grudge_strike_convert(self, act):
@@ -433,22 +413,6 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
                                                                              self.fmt_mass_atk(act.mass_attack))
 
     def fixed_pos_convert(self, act):
-        ROW_INDEX = {
-            0: 'top row',
-            1: '2nd row from top',
-            2: '3rd row from bottom',
-            3: '2nd row from bottom',
-            4: 'bottom row',
-        }
-        COLUMN_INDEX = {
-            0: 'far left column',
-            1: '2nd column from left',
-            2: '3rd column from left',
-            3: '3rd column from right',
-            4: '2nd column from right',
-            5: 'far right column',
-        }
-
         board = [[], [], [], [], []]
         board[0] = list(act.row_pos_1)
         board[1] = list(act.row_pos_2)
@@ -521,7 +485,7 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
         return skill_text
 
     def match_disable_convert(self, act):
-        return 'Reduce unable to match orbs effect by {} turns'.format(act.duration)
+        return 'Reduce unable to match orbs effect by {:s}'.format(pluralize2('turn',act.duration))
 
     def board_refresh(self, act):
         return 'Replace all orbs'
@@ -537,10 +501,12 @@ class EnASTextConverter(ASTextConverter, EnBaseTextConverter):
 
     def random_skill(self, act):
         random_skills_text = []
-        for idx, s in enumerate(act.random_skills):
-            random_skills_text.append('{}) {}'.format(idx + 1, s.full_text(self)))
-        return 'Activate a random skill from the list: {}'.format(', '.join(random_skills_text))
+        for idx, s in enumerate(act.random_skills, 1):
+            random_skills_text.append('{}) {}'.format(idx, s.full_text(self)))
+        return 'Activate a random skill from the list: {}'.format(self.concat_list_and(random_skills_text))
 
     def change_monster(self, act):
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
 
+
+__all__ = ['EnASTextConverter']
