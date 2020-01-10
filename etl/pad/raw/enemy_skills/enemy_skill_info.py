@@ -256,7 +256,7 @@ class ESAction(ESBehavior):
     @attack.setter
     def attack(self, value):
         self._attack = value
-    
+
     def full_description(self):
         if isinstance(self, ESBehaviorAttack):
             return self.description()
@@ -1479,7 +1479,7 @@ class ESSetCounterIf(ESLogic):
 
 class ESBranch(ESLogic):
     branch_condition = None
-        
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = '='
@@ -1494,7 +1494,7 @@ class ESBranch(ESLogic):
 class ESBranchFlag(ESBranch):
     skill_types = [43]
     branch_condition = 'flag'
-    
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = '&'
@@ -1509,7 +1509,7 @@ class ESBranchFlag0(ESBranchFlag):
         # This +1 fixes it for this rarely used branch type.
         self.target_round_offset = 1
 
-        
+
 class ESBranchHP(ESBranch):
     skill_types = [28, 29]
     branch_condition = 'hp'
@@ -1543,7 +1543,7 @@ class ESBranchLevel(ESBranch):
     LEVEL_COMPARE_MAP = {
         33: '<=',
         34: '=',
-        35: '>'
+        35: '>='
     }
 
     def __init__(self, skill: EnemySkill):
@@ -1554,7 +1554,7 @@ class ESBranchLevel(ESBranch):
 class ESBranchCard(ESBranch):
     skill_types = [90]
     branch_condition = 'player_cards'
-    
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = 'HAS'
@@ -1568,7 +1568,7 @@ class ESBranchCard(ESBranch):
 class ESBranchCombo(ESBranch):
     skill_types = [113]
     branch_condition = 'combo'
-    
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = '>='
@@ -1577,7 +1577,7 @@ class ESBranchCombo(ESBranch):
 class ESBranchRemainingEnemies(ESBranch):
     skill_types = [120]
     branch_condition = 'remaining enemies'
-    
+
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = '<='
@@ -1592,7 +1592,7 @@ class ESPreemptive(ESLogic):
 
     def description(self):
         return 'Enable preempt if level {}'.format(self.level)
-    
+
 
 class ESEndPath(ESLogic):
     skill_types = [36]
@@ -1628,7 +1628,7 @@ class ESCountdownMessage(ESBehavior):
     def description(self):
         return Describe.countdown(self.current_counter)
 
-    
+
 class ESUnknown(ESBehavior):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
