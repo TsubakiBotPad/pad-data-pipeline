@@ -3,7 +3,7 @@ import json
 import os
 import sys
 
-from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first
+from pad.raw.skills.en.skill_common import *
 from pad.raw.skills.leader_skill_text import LSTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')

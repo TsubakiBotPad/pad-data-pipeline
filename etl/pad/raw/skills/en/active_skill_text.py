@@ -1,5 +1,4 @@
-from pad.raw.skills.en.skill_common import EnBaseTextConverter
-from pad.raw.skills.en.skill_common import capitalize_first, pluralize, pluralize2
+from pad.raw.skills.en.skill_common import *
 
 
 def fmt_mult(x):
@@ -24,7 +23,7 @@ COLUMN_INDEX = {
 
 class EnASTextConverter(EnBaseTextConverter):
     def fmt_repeated(self, text, amount):
-        return '{} {:s}'.format(text, pluralize('time', amount))
+        return '{} {:s}'.format(text, pluralize2('time', amount))
 
     def fmt_mass_atk(self, mass_attack):
         if mass_attack:
@@ -257,7 +256,7 @@ class EnASTextConverter(EnBaseTextConverter):
         from_attr = act.from_attr
         to_attr = act.to_attr
         skill_text = 'Change '
-        if from_attr == list(range(10)):
+        if from_attr == self.ALL_ATTRS:
             skill_text += 'all orbs to '
         else:
             skill_text += self.concat_list_and([self.ATTRIBUTES[i] for i in from_attr]) + ' orbs to '

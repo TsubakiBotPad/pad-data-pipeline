@@ -1,3 +1,5 @@
+from pad.raw.skills.en.skill_common import *
+
 from enum import Enum
 
 def concat_list_and(l, conj = 'and'):
@@ -169,41 +171,8 @@ SOURCE_FUNCS = {
 def ordinal(n):
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
 
-irregulars = {
-    'status': 'statuses',
-    'both leaders': 'both leaders',
-    'active skills': 'active skills',
-    'awoken skills': 'awoken skills',
-}
 
-def pluralize(noun, number, irregular_plural=None):
-    irregular_plural = irregular_plural or irregulars.get(noun)
-    if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
-    return noun
-
-
-def pluralize2(noun, number, max_number = None):
-    if max_number is not None:
-        number = minmax(number, max_number)
-    if number is None:
-        return noun
-    irregular_plural = irregulars.get(noun)
-    if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
-    return "{} {}".format(number, noun)
-
-
-def minmax(nmin, nmax, p=False):
-    if None in [nmin, nmax] or nmin == nmax:
-        return str(int(nmin or nmax))+("%" if p else '')
-    elif p:
-        return "{}%~{}%".format(int(nmin), int(nmax))
-    else:
-        return "{}~{}".format(int(nmin), int(nmax))
-
-
-class Describe:
+class Describe(EnBaseTextConverter):
     @staticmethod
     def not_set():
         return 'No description set'
@@ -417,8 +386,12 @@ class Describe:
 
     @staticmethod
     def orb_lock(count, attributes):
-        if count == 42:
+        if count == 42 and attributes == Describe.ATTRS_EXCEPT_BOMBS:
+            return 'Lock all orbs'
+        elif count == 42:
             return 'Lock all {:s} orbs'.format(attributes_to_str(attributes))
+        elif attributes == Describe.ATTRS_EXCEPT_BOMBS:
+            return 'Lock {:d} random {:s}'.format(count, pluralize('orb',count))
         else:
             return 'Lock {:d} random {:s} {:s}'.format(count, attributes_to_str(attributes), pluralize('orb', count))
 
