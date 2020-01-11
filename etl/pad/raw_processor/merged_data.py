@@ -11,7 +11,7 @@ from pad.common import pad_util
 from pad.common.monster_id_mapping import nakr_no_to_monster_id, jp_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterNo, MonsterId
 from pad.raw import Bonus, Card, Dungeon, ESRef, EnemySkill, Enemy
-from pad.raw.enemy_skills.enemy_skill_info import ESInstance
+from pad.raw.skills.enemy_skill_info import ESInstance
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
 

@@ -2,7 +2,7 @@ import logging
 from typing import List, Dict, Optional
 
 from pad.raw import EnemySkill
-from pad.raw.enemy_skills.enemy_skill_info import ESBehavior, BEHAVIOR_MAP, ESUnknown, ESSkillSet
+from pad.raw.skills.enemy_skill_info import ESBehavior, BEHAVIOR_MAP, ESUnknown, ESSkillSet
 
 logger = logging.getLogger('processor')
 human_fix_logger = logging.getLogger('human_fix')

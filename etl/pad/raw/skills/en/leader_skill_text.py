@@ -4,7 +4,7 @@ import os
 import sys
 
 from pad.raw.skills.en.skill_common import *
-from pad.raw.skills.leader_skill_text import LSTextConverter
+from pad.raw.skills.leader_skill_conversion import LSTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')
 

@@ -9,7 +9,7 @@ from pad.common import dungeon_types, pad_util
 from pad.common.shared_types import MonsterId, DungeonId
 from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
-from pad.raw.enemy_skills.enemy_skill_info import ESInstance, ESUnknown
+from pad.raw.skills.enemy_skill_info import ESInstance, ESUnknown
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter

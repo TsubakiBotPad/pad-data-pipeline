@@ -11,7 +11,7 @@ from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, LevelBehavior
 from pad.common.shared_types import Server
 from pad.raw.enemy_skills import enemy_skillset_processor, debug_utils, enemy_skill_proto
 from pad.raw.enemy_skills.debug_utils import save_monster_behavior, save_behavior_plain
-from pad.raw.enemy_skills.enemy_skill_info import ESAction, ESInstance, ESDeathAction
+from pad.raw.skills.enemy_skill_info import ESAction, ESInstance, ESDeathAction
 from pad.raw.enemy_skills.enemy_skill_proto import safe_save_to_file, clean_monster_behavior, add_unused
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard

@@ -54,27 +54,6 @@ def typing_to_str(types):
     return concat_list_and([TYPING_MAP[x] for x in types])
 
 
-class TargetType(Enum):
-    unset = -1
-    # Selective Subs
-    random = 0
-    self_leader = 1
-    both_leader = 2
-    friend_leader = 3
-    subs = 4
-    attributes = 5
-    types = 6
-    card = 6.5
-
-    # Specific Players/Enemies
-    player = 7
-    enemy = 8
-    enemy_ally = 9
-
-    #Full Team Aspect
-    awokens = 10
-    actives = 11
-
 TARGET_NAMES = {
     TargetType.unset: '<targets unset>',
     
@@ -105,13 +84,6 @@ def targets_to_str(targets):
     return  targets if isinstance(targets,str)\
                     else ' and '.join([TARGET_NAMES[x] for x in targets])
 
-
-class OrbShape(Enum):
-    l_shape = 0
-    cross = 1
-    column = 2
-    row = 4
-
 ORB_SHAPES = {
     OrbShape.l_shape: 'L shape',
     OrbShape.cross: 'cross',
@@ -122,12 +94,6 @@ ORB_SHAPES = {
 def orbshape_to_str(shapes):
     return concat_list_and([ORB_SHAPES[x] for x in shapes])
 
-class Status(Enum):
-    movetime = 0
-    atk = 1
-    hp = 2
-    rcv = 4
-
 STATUSES = {
     Status.movetime: 'movetime',
     Status.atk: 'ATK',
@@ -136,12 +102,6 @@ STATUSES = {
 }
 
 
-class Unit(Enum):
-    unknown = -1
-    seconds = 0
-    percent = 1
-    none = 2
-
 UNITS = {
     Unit.unknown: '?',
     Unit.seconds: 's',
@@ -149,17 +109,6 @@ UNITS = {
     Unit.none: '',
 }
 
-class Absorb(Enum):
-    unknown = -1
-    attr = 0
-    combo = 1
-    damage = 2
-
-
-class Source(Enum):
-    all_sources = 0
-    types = 1
-    attrs = 2
 
 SOURCE_FUNCS = {
     Source.all_sources: lambda x: 'all sources',
@@ -172,7 +121,7 @@ def ordinal(n):
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
 
 
-class Describe(EnBaseTextConverter):
+class EnESTextConverter(EnBaseTextConverter):
     @staticmethod
     def not_set():
         return 'No description set'
@@ -357,11 +306,13 @@ class Describe(EnBaseTextConverter):
     @staticmethod
     def row_col_spawn(position_type, positions, attributes):
         return 'Change the {:s} {:s} to {:s} orbs'.format(
-            ', '.join([ordinal(x) for x in positions]), ORB_SHAPES[position_type], attributes_to_str(attributes))
+            concat_list_and([ordinal(x) for x in positions]),
+            pluralize(ORB_SHAPES[position_type], len(positions)),
+            attributes_to_str(attributes))
 
     @staticmethod
     def row_col_multi(desc_arr):
-        return 'Change ' + ', '.join(desc_arr)
+        return 'Change ' + concat_list_and(desc_arr)
 
     @staticmethod
     def board_change(attributes):
@@ -370,7 +321,7 @@ class Describe(EnBaseTextConverter):
     @staticmethod
     def random_orb_spawn(count, attributes):
         if count == 42:
-            return Describe.board_change(attributes)
+            return EnESTextConverter.board_change(attributes)
         else:
             return 'Spawn {:d} random {:s} {:s}' \
                 .format(count, attributes_to_str(attributes, 'or'), pluralize('orb', count))
@@ -386,11 +337,11 @@ class Describe(EnBaseTextConverter):
 
     @staticmethod
     def orb_lock(count, attributes):
-        if count == 42 and attributes == Describe.ATTRS_EXCEPT_BOMBS:
+        if count == 42 and attributes == EnESTextConverter.ATTRS_EXCEPT_BOMBS:
             return 'Lock all orbs'
         elif count == 42:
             return 'Lock all {:s} orbs'.format(attributes_to_str(attributes))
-        elif attributes == Describe.ATTRS_EXCEPT_BOMBS:
+        elif attributes == EnESTextConverter.ATTRS_EXCEPT_BOMBS:
             return 'Lock {:d} random {:s}'.format(count, pluralize('orb',count))
         else:
             return 'Lock {:d} random {:s} {:s}'.format(count, attributes_to_str(attributes), pluralize('orb', count))
@@ -503,6 +454,6 @@ __all__ = [
     'Unit',
     'Absorb',
     'Source',
-    'Describe',
+    'EnESTextConverter',
     'attributes_to_str'
 ]

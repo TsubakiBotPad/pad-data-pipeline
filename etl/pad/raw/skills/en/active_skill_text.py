@@ -26,10 +26,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return '{} {:s}'.format(text, pluralize2('time', amount))
 
     def fmt_mass_atk(self, mass_attack):
-        if mass_attack:
-            return 'all enemies'
-        else:
-            return 'an enemy'
+        return 'all enemies' if mass_attack else 'an enemy'
 
     def fmt_duration(self, duration):
         return 'For {:s}, '.format(pluralize2('turn',duration))
@@ -426,12 +423,12 @@ class EnASTextConverter(EnBaseTextConverter):
 
         skill_text = ''
         if orb_count == 4:
-            if len(board[0]) == 2 and len(board[4]) == 2:
+            if len(board[0]) == len(board[4]) == 2:
                 skill_text += 'Create 4 {} orbs at the corners of the board'.format(
                     self.ATTRIBUTES[act.attribute])
         if not (orb_count % 5):
             for x in range(1, len(board) - 1):  # Check for cross
-                if len(board[x]) == 3 and len(board[x - 1]) == 1 and len(board[x + 1]) == 1:  # Check for cross
+                if len(board[x]) == 3 and len(board[x - 1]) == len(board[x + 1]) == 1:  # Check for cross
                     row_pos = x
                     col_pos = board[x][1]
                     shape = 'cross'
@@ -460,7 +457,7 @@ class EnASTextConverter(EnBaseTextConverter):
 
         if not (orb_count % 9):
             for x in range(1, len(board) - 1):  # Check for square
-                if len(board[x]) == 3 and len(board[x - 1]) == 3 and len(board[x + 1]) == 3:
+                if len(board[x]) == len(board[x - 1]) == len(board[x + 1]) == 3:
                     row_pos = x
                     col_pos = board[x][1]
                     shape = 'square'
@@ -468,7 +465,7 @@ class EnASTextConverter(EnBaseTextConverter):
                     output.append(result)
                     del board[x][1]
         if orb_count == 18:
-            if len(board[0]) == 6 and len(board[4]) == 6 and len(board[1]) + len(board[2]) + len(board[3]) == 6:
+            if len(board[0]) == len(board[4]) == len(board[1]) + len(board[2]) + len(board[3]) == 6:
                 skill_text += 'Change the outermost orbs of the board to {} orbs'.format(
                     self.ATTRIBUTES[act.attribute])
 
@@ -476,7 +473,7 @@ class EnASTextConverter(EnBaseTextConverter):
             for entry in output:
                 if skill_text:
                     skill_text += '; '
-                skill_text += 'Create {} of {} orbs with center at {} and {}'.format(entry[0],
+                skill_text += 'Create {} of {} orbs with its center at {} and {}'.format(indef_article(entry[0]),
                                                                                      self.ATTRIBUTES[act.attribute],
                                                                                      ROW_INDEX[entry[1]],
                                                                                      COLUMN_INDEX[entry[2]])
@@ -490,7 +487,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'Replace all orbs'
 
     def leader_swap(self, act):
-        return 'Becomes Team leader, changes back when used again'
+        return 'Becomes Team leader; changes back when used again'
 
     def unlock_all_orbs(self, act):
         return 'Unlock all orbs'

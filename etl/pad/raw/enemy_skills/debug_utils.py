@@ -1,10 +1,10 @@
 from typing import List
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Condition, Behavior
-from pad.raw.enemy_skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack
+from pad.raw.skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset
 from pad.raw_processor.crossed_data import CrossServerCard
-
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as ESTextConverter
 
 def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehavior):
     output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)
@@ -122,14 +122,14 @@ def format_behavior(indent_str, behavior: Behavior, library):
             skill_name = 'unknown_name'
     output = '{}({}:{}) {}'.format(indent_str, skill.enemy_skill_id, skill.type, skill_name)
     if not behavior.child_ids:
-        output += '\n{}{}'.format(indent_str, skill.full_description())
+        output += '\n{}{}'.format(indent_str, skill.full_description(ESTextConverter))
     for child_id in behavior.child_ids:
         child_skill = library.get(child_id)
 
         output += '\n{} - ({}:{}) {}'.format(indent_str,
                                              child_skill.enemy_skill_id,
                                              child_skill.type,
-                                             child_skill.full_description())
+                                             child_skill.full_description(ESTextConverter))
 
     cond_str = format_condition(behavior.condition)
     if cond_str:
@@ -154,7 +154,7 @@ def save_behavior_plain(file_path: str, csc: CrossServerCard, behavior: List[ESI
 
 def format_behavior_plain(o: ESInstance):
     def fmt_cond(c):
-        msg = 'Condition: {} (ai:{} rnd:{})'.format(c.description(), c._ai, c._rnd)
+        msg = 'Condition: {} (ai:{} rnd:{})'.format(c.description(ESTextConverter), c._ai, c._rnd)
         if c.one_time:
             msg += ' (cost: {})'.format(c.one_time)
         elif c.forced_one_time:
@@ -166,18 +166,18 @@ def format_behavior_plain(o: ESInstance):
 
     if isinstance(o.behavior, ESSkillSet):
         msg = 'SkillSet:'
-        if o.condition and o.condition.description():
+        if o.condition and o.condition.description(ESTextConverter):
             msg += '\n\t{}'.format(fmt_cond(o.condition))
         for idx, behavior in enumerate(o.behavior.skills):
             msg += '\n\t[{}] {}'.format(idx, fmt_action_name(behavior))
-            msg += '\n\t{}'.format(behavior.full_description())
+            msg += '\n\t{}'.format(behavior.full_description(ESTextConverter))
         return msg
     else:
         msg = fmt_action_name(o.behavior)
-        if o.condition and (o.condition.description() or o.condition.one_time or o.condition.forced_one_time):
+        if o.condition and (o.condition.description(ESTextConverter) or o.condition.one_time or o.condition.forced_one_time):
             msg += '\n{}'.format(fmt_cond(o.condition))
 
-        msg += '\n{}'.format(o.behavior.full_description())
+        msg += '\n{}'.format(o.behavior.full_description(ESTextConverter))
         return msg
 
 

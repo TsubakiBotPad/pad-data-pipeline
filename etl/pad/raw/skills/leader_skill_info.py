@@ -3,8 +3,8 @@ from typing import List, Optional
 from functools import reduce
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.leader_skill_common import ThresholdType, Tag, sort_tags
-from pad.raw.skills.leader_skill_text import LSTextConverter
+from pad.raw.skills.leader_skill_conversion import LSTextConverter
+from pad.raw.skills.en.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
 
