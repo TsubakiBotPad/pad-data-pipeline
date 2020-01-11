@@ -16,21 +16,26 @@ def capitalize_first(x: str):
 
 irregulars = {
     'status': 'statuses',
+    'both leaders': 'both leaders',
+    'active skills': 'active skills',
+    'awoken skills': 'awoken skills',
 }
 
-def pluralize(noun, number, irregular_plural=None):
-    irregular_plural = irregular_plural or irregulars.get(noun)
+def pluralize(noun, number):
+    irregular_plural = irregulars.get(noun)
     if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
+        noun = irregular_plural or noun + 's'
     return noun
 
 
 def pluralize2(noun, number, max_number = None):
     if max_number is not None:
         number = minmax(number, max_number)
+    if number is None:
+        return noun
     irregular_plural = irregulars.get(noun)
     if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'  # Removes possibility to use '' as irregular_plural
+        noun = irregular_plural or noun + 's'
     return "{} {}".format(number, noun)
 
 def minmax(nmin, nmax, p=False):
@@ -84,6 +89,9 @@ class EnBaseTextConverter(BaseTextConverter):
     def AWAKENING_MAP(self) -> Dict[int, str]:
         return self._AWAKENING_MAP
 
+    ATTRS_EXCEPT_BOMBS = list(range(9))
+    ALL_ATTRS =  list(range(10))
+
     def all_stats(self, multiplier):
         return '{}x all stats'.format(multiplier)
 
@@ -121,3 +129,13 @@ class EnBaseTextConverter(BaseTextConverter):
     @staticmethod
     def concat_list_semicolons(list_to_concat):
         return '; '.join(filter(None, list_to_concat))
+
+
+__all__ = [
+    'capitalize_first',
+    'irregulars',
+    'pluralize',
+    'pluralize2',
+    'minmax',
+    'EnBaseTextConverter',
+    ]
