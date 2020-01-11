@@ -6,7 +6,7 @@ from dadguide_proto import enemy_skills_pb2
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.db.db_util import DbWrapper
 from pad.raw.enemy_skills import enemy_skill_proto
-from pad.raw.enemy_skills.enemy_skill_info import ESLogic
+from pad.raw.skills.enemy_skill_info import ESLogic
 from pad.raw_processor import crossed_data
 from pad.storage.enemy_skill import EnemySkill, EnemyData
 

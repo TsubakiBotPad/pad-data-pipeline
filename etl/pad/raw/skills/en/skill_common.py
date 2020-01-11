@@ -1,11 +1,21 @@
 import json, os
-from typing import Dict
+from typing import Dict, List
+from enum import Enum
 
-from pad.raw.skills.skill_common import BaseTextConverter
+from pad.raw.skills.skill_common import *
+import pad.raw.skills.skill_common as base_skill_common
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))
 
+__all__ = list(filter(lambda x: not x.startswith('__'), dir(base_skill_common)))
+
+def public(x):
+    global __all__
+    __all__.append(x.__name__)
+    return x
+
+@public    
 def capitalize_first(x: str):
     if not x:
         return x
@@ -14,6 +24,14 @@ def capitalize_first(x: str):
     else:
         return x[0].upper() + x[1:]
 
+article_irregulars = {
+    'L shape':'an L shape',
+}
+
+@public 
+def indef_article(noun):
+    return article_irregulars.get(noun, 'a{} {}'.format('n' if noun[0] in 'aeiou' else '', noun))
+
 irregulars = {
     'status': 'statuses',
     'both leaders': 'both leaders',
@@ -21,13 +39,14 @@ irregulars = {
     'awoken skills': 'awoken skills',
 }
 
+@public 
 def pluralize(noun, number):
     irregular_plural = irregulars.get(noun)
     if number not in (1, '1'):
         noun = irregular_plural or noun + 's'
     return noun
 
-
+@public 
 def pluralize2(noun, number, max_number = None):
     if max_number is not None:
         number = minmax(number, max_number)
@@ -38,6 +57,7 @@ def pluralize2(noun, number, max_number = None):
         noun = irregular_plural or noun + 's'
     return "{} {}".format(number, noun)
 
+@public 
 def minmax(nmin, nmax, p=False):
     if None in [nmin, nmax] or nmin == nmax:
         return str(int(nmin or nmax))+("%" if p else '')
@@ -46,7 +66,7 @@ def minmax(nmin, nmax, p=False):
     else:
         return "{}~{}".format(int(nmin), int(nmax))
 
-
+@public 
 class EnBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
@@ -129,13 +149,3 @@ class EnBaseTextConverter(BaseTextConverter):
     @staticmethod
     def concat_list_semicolons(list_to_concat):
         return '; '.join(filter(None, list_to_concat))
-
-
-__all__ = [
-    'capitalize_first',
-    'irregulars',
-    'pluralize',
-    'pluralize2',
-    'minmax',
-    'EnBaseTextConverter',
-    ]

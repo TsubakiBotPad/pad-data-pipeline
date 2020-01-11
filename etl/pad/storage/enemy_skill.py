@@ -1,7 +1,7 @@
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerESInstance
-
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as ESTextConverter
 
 class EnemySkill(SimpleSqlItem):
     """Enemy skill data."""
@@ -31,7 +31,7 @@ class EnemySkill(SimpleSqlItem):
         atk_mult = exemplar.attack.atk_multiplier if has_attack else 0
 
         # TODO: support for jp/kr descriptions
-        desc = exemplar.full_description()
+        desc = exemplar.full_description(ESTextConverter)
 
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,

@@ -5,7 +5,7 @@ called a ProcessedSkillset.
 import collections
 from typing import Set, Tuple
 
-from pad.raw.enemy_skills.enemy_skill_info import *
+from pad.raw.skills.enemy_skill_info import *
 
 
 class StandardSkillGroup(object):

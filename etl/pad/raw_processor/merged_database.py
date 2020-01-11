@@ -7,7 +7,7 @@ from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange
 from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill, extra_egg_machine
-from pad.raw.enemy_skills.enemy_skill_info import ESInstance, ESBehavior
+from pad.raw.skills.enemy_skill_info import ESInstance, ESBehavior
 from pad.raw.enemy_skills.enemy_skill_parser import BehaviorParser
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
