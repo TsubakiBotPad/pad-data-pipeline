@@ -25,9 +25,9 @@ class ScheduleEvent(SimpleSqlItem):
             group_name=o.group.name if o.group else None,
             dungeon_id=o.dungeon.dungeon_id if o.dungeon else None,
             url=None,
-            info_jp='dummy text',
-            info_na='dummy text',
-            info_kr='dummy text'
+            info_jp=None,
+            info_na=None,
+            info_kr=None
         )
 
     def __init__(self,
