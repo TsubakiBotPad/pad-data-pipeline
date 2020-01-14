@@ -60,6 +60,10 @@ class MergedCard(pad_util.Printable):
         self.monster_id = self.no_to_id(card.monster_no)
         self.card = card
 
+        self.linked_monster_id = None  # type: Optional[int]
+        if self.card.linked_monster_no:
+            self.linked_monster_id = self.no_to_id(card.linked_monster_no)
+
         self.active_skill_id = active_skill.skill_id if active_skill else None
         self.active_skill = active_skill
 

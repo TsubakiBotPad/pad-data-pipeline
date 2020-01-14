@@ -1,11 +1,13 @@
 """
 Parses card data.
 """
-
-from typing import List, Any
+import logging
+from typing import List, Any, Optional
 
 from pad.common import pad_util
 from pad.common.shared_types import AttrId, MonsterNo, SkillId, TypeId, Curve
+
+human_fix_logger = logging.getLogger('human_fix')
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_card_data.json'
@@ -186,7 +188,17 @@ class Card(pad_util.Printable):
         # Number of the orb skin unlocked, 1-indexed, 0 if no orb skin
         self.orb_skin_id = int(raw[70])
 
-        self.other_fields = raw[71:]
+        # Seems like this could have multiple values. Only value so far is: 'link:5757'
+        self.tags = raw[71]
+        self.linked_monster_no = None  # type: Optional[MonsterNo]
+
+        if self.tags:
+            if 'link:' in self.tags:
+                self.linked_monster_no = MonsterNo(int(self.tags[len('link:'):]))
+            else:
+                human_fix_logger.error('Unexpected tag value: %s', self.tags)
+
+        self.other_fields = raw[72:]
 
     def enemy(self) -> Enemy:
         return Enemy(self.enemy_turns,
