@@ -58,15 +58,6 @@ def pluralize2(noun, number, max_number = None):
     return "{} {}".format(number, noun)
 
 @public 
-def minmax(nmin, nmax, p=False):
-    if None in [nmin, nmax] or nmin == nmax:
-        return str(int(nmin or nmax))+("%" if p else '')
-    elif p:
-        return "{}%~{}%".format(int(nmin), int(nmax))
-    else:
-        return "{}~{}".format(int(nmin), int(nmax))
-
-@public 
 class EnBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
@@ -108,9 +99,6 @@ class EnBaseTextConverter(BaseTextConverter):
     @property
     def AWAKENING_MAP(self) -> Dict[int, str]:
         return self._AWAKENING_MAP
-
-    ATTRS_EXCEPT_BOMBS = list(range(9))
-    ALL_ATTRS =  list(range(10))
 
     def all_stats(self, multiplier):
         return '{}x all stats'.format(multiplier)

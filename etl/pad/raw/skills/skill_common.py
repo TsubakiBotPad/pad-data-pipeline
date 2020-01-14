@@ -9,7 +9,7 @@ def public(x):
     return x
 
 @public
-class I13NotImplemented(Exception):
+class I13NotImplemented(NotImplementedError):
     pass
 
 @public
@@ -24,6 +24,15 @@ def multi_getattr(o, *args):
             return v
     raise Exception('Attributs not found:' + str(args))
 
+@public 
+def minmax(nmin, nmax, p=False):
+    if None in [nmin, nmax] or nmin == nmax:
+        return str(int(nmin or nmax))+("%" if p else '')
+    elif p:
+        return "{}%~{}%".format(int(nmin), int(nmax))
+    else:
+        return "{}~{}".format(int(nmin), int(nmax))
+    
 @public
 class BaseTextConverter(object):
     """Contains code shared across AS and LS converters."""
@@ -74,6 +83,9 @@ class BaseTextConverter(object):
     def concat_list_semicolons(list_to_concat):
         raise I13NotImplemented()
 
+    ATTRS_EXCEPT_BOMBS = list(range(9))
+    ALL_ATTRS =  list(range(10))
+    
     #############################################################################
     # Everything below here are common helpers
     #############################################################################
@@ -201,7 +213,7 @@ class TargetType(Enum):
     both_leader = 2
     friend_leader = 3
     subs = 4
-    attributes = 5
+    attrs = 5
     types = 6
     card = 6.5
 
@@ -245,8 +257,8 @@ class Absorb(Enum):
 @public
 class Source(Enum):
     all_sources = 0
-    types = 1
-    attrs = 2
+    attrs = 5
+    types = 6
 
 
 #LS FUNCTIONS

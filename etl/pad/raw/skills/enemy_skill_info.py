@@ -8,6 +8,7 @@ from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import ESRef, Card
 from pad.raw.skills.en.enemy_skill_text import *
+from pad.raw.skills.en.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -345,7 +346,7 @@ class ESBindAttack(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = bind_bitmap(self.params[4])
-        if TargetType.both_leader not in self.targets:
+        if 'leader' not in ''.join(map(str,self.targets)):
             self.target_count = self.params[5]
         self.attack = ESAttack.new_instance(self.params[1])
 
@@ -382,7 +383,7 @@ class ESBindAttribute(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.target_attribute = self.params[1]
-        self.targets = [TargetType.attributes]
+        self.targets = [TargetType.attrs]
 
     def is_conditional(self):
         return True
@@ -974,7 +975,7 @@ class ESRowColSpawnMulti(ESFixedOrbSpawn):
         self.attack = ESAttack.new_instance(self.params[7]) if skill.type in [77, 79] else None
 
     def description(self, converter):
-        desc_arr = [converter.row_col_spawn(self.position_type, self.pos_nested[i], self.att_nested[i])[7:]
+        desc_arr = [converter.row_col_spawn(self.position_type, self.pos_nested[i], self.att_nested[i])
                     for i in range(len(self.pos_nested))]
         return converter.row_col_multi(desc_arr)
 
