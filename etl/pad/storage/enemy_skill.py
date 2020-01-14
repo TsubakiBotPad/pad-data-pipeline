@@ -1,7 +1,9 @@
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerESInstance
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as ESTextConverter
+from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+#from pad.raw.skills.kr.enemy_skill_text import KrESTextConverter
 
 class EnemySkill(SimpleSqlItem):
     """Enemy skill data."""
@@ -30,17 +32,18 @@ class EnemySkill(SimpleSqlItem):
         max_hits = exemplar.attack.max_hits if has_attack else 0
         atk_mult = exemplar.attack.atk_multiplier if has_attack else 0
 
-        # TODO: support for jp/kr descriptions
-        desc = exemplar.full_description(ESTextConverter)
-
+        jp_desc = exemplar.full_description(JpESTextConverter)
+        en_desc = exemplar.full_description(EnESTextConverter)
+       #kr_desc = exemplar.full_description(KrESTextConverter)
+        
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,
             name_jp=o.jp_skill.name,
             name_na=o.na_skill.name,
             name_kr=o.kr_skill.name,
-            desc_jp=desc,
-            desc_na=desc,
-            desc_kr=desc,
+            desc_jp=jp_desc,
+            desc_na=en_desc,
+            desc_kr=en_desc,
             min_hits=min_hits,
             max_hits=max_hits,
             atk_mult=atk_mult)

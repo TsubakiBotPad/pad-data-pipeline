@@ -1,11 +1,11 @@
 [
   {
     "enemy_skill_id": -1,
+    "name_jp": "カウントダウン",
     "name_na": "Countdown",
-    "name_jp": "Countdown",
     "name_kr": "Countdown",
+    "desc_jp": "カウントを表示、ターンスキップ",
     "desc_na": "Display counter and skip turn",
-    "desc_jp": "Display counter and skip turn",
     "desc_kr": "Display counter and skip turn",
     "min_hits": 0,
     "max_hits": 0,
@@ -13,11 +13,11 @@
   },
   {
     "enemy_skill_id": -2,
+    "name_jp": "一回攻撃",
     "name_na": "Single hit attack",
-    "name_jp": "Single hit attack",
     "name_kr": "Single hit attack",
+    "desc_jp": "一回攻撃",
     "desc_na": "Attack one time",
-    "desc_jp": "Attack one time",
     "desc_kr": "Attack one time",
     "min_hits": 1,
     "max_hits": 1,

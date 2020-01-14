@@ -10,11 +10,25 @@ import padtools
 
 from pad.common import pad_util
 from pad.common.shared_types import Server
+
+#from pad.raw.skills.jp.active_skill_text import JpASTextConverter
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
+#from pad.raw.skills.kr.active_skill_text import KrASTextConverter
+AS_CONVERTERS = (EnASTextConverter(), EnASTextConverter(), EnASTextConverter())
+
+#from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
+#from pad.raw.skills.kr.leader_skill_text import KrLSTextConverter
+LS_CONVERTERS = (EnLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
+
+from pad.raw.skills.jp.enemy_skill_text  import JpESTextConverter
+from pad.raw.skills.en.enemy_skill_text  import EnESTextConverter
+#from pad.raw.skills.kr.enemy_skill_text  import KrESTextConverter
+ES_CONVERTERS = (JpESTextConverter(), EnESTextConverter(), EnESTextConverter())
+
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase
-
+from pad.raw.skills.enemy_skill_info import BEHAVIOR_MAP
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Runs the integration test.", add_help=False)
@@ -99,25 +113,27 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
             f.write('\n')
 
             if c.active_skill:
-                dump_skill(f, c.active_skill, EnASTextConverter())
+                dump_skill(f, c.active_skill, AS_CONVERTERS)
 
             if c.leader_skill:
-                dump_skill(f, c.leader_skill, EnLSTextConverter())
+                dump_skill(f, c.leader_skill, LS_CONVERTERS)
 
     as_file = os.path.join(output_dir, 'active_skills.txt')
     with open(as_file, 'w', encoding='utf-8') as f:
-        converter = EnASTextConverter()
         for css in db.active_skills:
-            dump_skill(f, css, converter)
+            dump_skill(f, css, AS_CONVERTERS)
 
     ls_file = os.path.join(output_dir, 'leader_skills.txt')
     with open(ls_file, 'w', encoding='utf-8') as f:
-        converter = EnLSTextConverter()
         for css in db.leader_skills:
-            dump_skill(f, css, converter)
+            dump_skill(f, css, LS_CONVERTERS)
 
     # TODO: write ES
-    # es_file = os.path.join(output_dir, 'enemy_skills.txt')
+    es_file = os.path.join(output_dir, 'enemy_skills.txt')
+    with open(es_file, 'w', encoding='utf-8') as f:
+        for css in db.enemy_skills:
+            dump_enemy_skill(f, css, ES_CONVERTERS)
+            
     # TODO: write dungeons, exchanges, egg machines?
 
 
@@ -126,14 +142,26 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
 def dump_skill(f, css, converter):
     jp_skill = css.jp_skill
     na_skill = css.na_skill
+    kr_skill = css.kr_skill
     f.write('# {}/{} - {}\n'.format(jp_skill.skill_id, jp_skill.skill_type, na_skill.name))
     f.write('Tags: {}\n'.format(','.join(map(lambda x: x.name, css.skill_type_tags))))
     f.write('Game: {}\n'.format(na_skill.raw_description))
-    f.write('EN: {}\n'.format(jp_skill.full_text(converter)))
-    # TODO: add JP/KR text converters
+    f.write('JP: {}\n'.format(jp_skill.full_text(converter[0])))
+    f.write('EN: {}\n'.format(jp_skill.full_text(converter[1])))
+    f.write('KR: {}\n'.format(jp_skill.full_text(converter[2])))
     f.write('\n')
 
-
+def dump_enemy_skill(f, css, converter):
+    jp_skill = css.jp_skill
+    na_skill = css.na_skill
+    kr_skill = css.kr_skill
+    f.write('# {}/{} - {}\n'.format(jp_skill.enemy_skill_id, jp_skill.type, na_skill.name))
+    skill = BEHAVIOR_MAP[jp_skill.type](jp_skill)
+    f.write('JP: {}\n'.format(skill.description(converter[0])))
+    f.write('EN: {}\n'.format(skill.description(converter[1])))
+    f.write('KR: {}\n'.format(skill.description(converter[2])))
+    f.write('\n')    
+    
 # def save_database(output_dir: str, db: Database):
 #     output_dir = os.path.join(output_dir, db.server.name)
 #
