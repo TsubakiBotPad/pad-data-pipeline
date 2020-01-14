@@ -1,13 +1,22 @@
 import json, os
-from typing import Dict
+from typing import Dict, List
+from enum import Enum
 
-from pad.raw.skills.skill_common import BaseTextConverter
-from pad.raw.skills.en.skill_common import EnBaseTextConverter as DefaultTextConverter
+from pad.raw.skills.skill_common import *
+import pad.raw.skills.skill_common as base_skill_common
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))
-    
-class JpBaseTextConverter(DefaultTextConverter):
+
+__all__ = list(filter(lambda x: not x.startswith('__'), dir(base_skill_common)))
+
+def public(x):
+    global __all__
+    __all__.append(x.__name__)
+    return x
+
+@public
+class JpBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
     _ATTRS = {0: '火',
@@ -86,3 +95,17 @@ class JpBaseTextConverter(DefaultTextConverter):
     @staticmethod
     def concat_list_semicolons(list_to_concat):
         return '。'.join(filter(None, list_to_concat))
+
+    @staticmethod
+    def big_number(n):
+        if   n       == 0: return str(int(n//1e0))+''
+        elif n % 1e8 == 0: return str(int(n//1e8))+'億'
+        elif n % 1e7 == 0: return str(int(n//1e7))+'千万'
+        elif n % 1e4 == 0: return str(int(n//1e4))+'万'
+        elif n % 1e3 == 0: return str(int(n//1e3))+'千'
+        
+        elif n < 1e4: return str(n)
+        elif n < 1e8: return str(n)[:-4]+'万'+str(n)[-4:]
+        else:         return str(n)[:-8]+'億'+str(n)[-8:-4]+'万'+str(n)[-4:]
+            
+

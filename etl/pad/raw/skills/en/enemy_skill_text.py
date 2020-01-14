@@ -2,6 +2,10 @@ from pad.raw.skills.en.skill_common import *
 
 from enum import Enum
 
+import logging
+
+human_fix_logger = logging.getLogger('human_fix')
+
 def concat_list_and(l, conj = 'and'):
     l = [str(i) for i in l if i]
     if len(l) == 0:
@@ -63,7 +67,7 @@ TARGET_NAMES = {
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
     TargetType.subs: 'random sub',
-    TargetType.attributes: 'attributes',
+    TargetType.attrs: 'attributes',
     TargetType.types: 'type',
     TargetType.card: 'card',
 
@@ -142,7 +146,7 @@ class EnESTextConverter(EnBaseTextConverter):
                 output.append(', one-time use')
             else:
                 output.append('one-time use')
-        return ' '.join(output).capitalize() if len(output) > 0 else None
+        return capitalize_first(' '.join(output)) if len(output) > 0 else None
 
     @staticmethod
     def attack(mult, min_hit=1, max_hit=1):
@@ -172,18 +176,31 @@ class EnESTextConverter(EnBaseTextConverter):
     def orb_change(orb_from, orb_to, random_count=None, exclude_hearts=False):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
+        orb_from = attributes_to_str(orb_from)
+
         if not isinstance(orb_to, list):
             orb_to = [orb_to]
+        orb_to = attributes_to_str(orb_to)
+
 
         output = 'Change '
-        output += attributes_to_str(orb_from)
         if random_count is not None:
-            output += ' {}'.format(random_count)
+            if orb_from == 'Random':
+                output += '{} random {:s}'.format(random_count,pluralize('orb',random_count))
+            else:
+                output += '{} random {} {}'.format(random_count,orbs_from,pluralize('orb',random_count))
+            if exclude_hearts:
+                output += ' (excluding hearts)'
+        else:
+            if 'Random' in orb_from:
+                output += 'a random attribute'
+            else:
+                output += 'all {} orbs'.format(orb_from)
         output += ' to '
-        output += attributes_to_str(orb_to)
-        if exclude_hearts:
-            output += ' (excluding hearts)'
-
+        if 'Random' in orb_to:
+            output += 'a random attribute'
+        else:
+            output += '{} {}'.format(orb_to, 'orbs')
         return output
 
     @staticmethod
@@ -209,7 +226,7 @@ class EnESTextConverter(EnBaseTextConverter):
     @staticmethod
     def recover(min_amount, max_amount, target_type):
         target = targets_to_str([target_type])
-        return '{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)).capitalize()
+        return capitalize_first('{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)))
 
     @staticmethod
     def enrage(mult, turns):
@@ -223,12 +240,14 @@ class EnESTextConverter(EnBaseTextConverter):
 
     @staticmethod
     def debuff(d_type, amount, unit, turns):
-        d_type = STATUSES[d_type] or ''
         amount = amount or 0
+        if amount % 1 != 0:
+            human_fix_logger.error("Amount {} will be truncated.  Change debuff".format(amount))
+        d_type = STATUSES[d_type] or ''
         unit = UNITS[unit]
         turns = turns or 0
-        return '{:s} {:.0f}{:s} for {:s}' \
-            .format(d_type.capitalize(), amount, unit, pluralize2('turn', turns))
+        return '{:s} {:+.0f}{:s} for {:s}' \
+            .format(capitalize_first(d_type), amount, unit, pluralize2('turn', turns))
 
     @staticmethod
     def end_battle():
@@ -312,7 +331,7 @@ class EnESTextConverter(EnBaseTextConverter):
 
     @staticmethod
     def row_col_multi(desc_arr):
-        return 'Change ' + concat_list_and(desc_arr)
+        return 'Change ' + concat_list_and(map(lambda x: x[7:], desc_arr))
 
     @staticmethod
     def board_change(attributes):
@@ -356,19 +375,20 @@ class EnESTextConverter(EnBaseTextConverter):
     @staticmethod
     def cloud(turns, width, height, x, y):
         if width == 6 and height == 1:
-            shape = 'Row of'
+            shape = 'row'
         elif width == 1 and height == 5:
-            shape = 'Column of'
+            shape = 'column'
         else:
-            shape = '{:d}x{:d}'.format(width, height)
+            shape = '{:d}×{:d}'.format(width, height)
+            shape += ' square' if width == height else ' rectangle'
         pos = []
         if x is not None and shape != 'Row of':
             pos.append('{:s} row'.format(ordinal(x)))
         if y is not None and shape != 'Column of':
             pos.append('{:s} column'.format(ordinal(y)))
         if len(pos) == 0:
-            pos.append('random location')
-        return '{:s} cloud appear for {:s} at {:s}' \
+            pos.append('a random location')
+        return 'A {:s} of clouds appears for {:s} at {:s}' \
             .format(shape, pluralize2('turn', turns), ', '.join(pos))
 
     @staticmethod
@@ -447,13 +467,4 @@ class EnESTextConverter(EnBaseTextConverter):
         return ' + '.join(descs)
 
 
-__all__ = [
-    'TargetType',
-    'OrbShape',
-    'Status',
-    'Unit',
-    'Absorb',
-    'Source',
-    'EnESTextConverter',
-    'attributes_to_str'
-]
+__all__ = ['EnESTextConverter']
