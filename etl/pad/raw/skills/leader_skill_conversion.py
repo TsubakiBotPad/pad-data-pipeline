@@ -352,6 +352,16 @@ class LSTextConverter(BaseTextConverter):
     def collab_bonus_text(self, bonus, name):
         raise I13NotImplemented()
 
+    def group_bonus_convert(self, ls):
+        return self.group_bonus_text(self.fmt_stats_type_attr_bonus(ls), self.get_group_name(ls.group_id))
+
+    def get_group_name(self, group_id):
+        raise I13NotImplemented()
+
+    def group_bonus_text(self, bonus, name):
+        raise I13NotImplemented()
+
+
     def multi_mass_match_convert(self, ls):
         return self.multi_mass_match_text(ls.atk, ls.bonus_combo, ls.min_match, ls.attributes)
 
