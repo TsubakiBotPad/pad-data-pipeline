@@ -333,7 +333,7 @@ class ESAttackPreemptive(ESBehaviorAttack):
 class ESBind(ESAction):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.min_turns = self.params[2]
+        self.min_turns = self.params[2] or 0
         self.max_turns = self.params[3]
         self.target_count = None
         self.targets = [TargetType.unset]
@@ -417,7 +417,7 @@ class ESBindSkill(ESAction):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.min_turns = self.params[1]
+        self.min_turns = self.params[1] or 0
         self.max_turns = self.params[2]
 
     def description(self, converter):
@@ -815,7 +815,7 @@ class ESGravity(ESAction):
 class ESAbsorb(ABC, ESAction):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.min_turns = self.params[1]
+        self.min_turns = self.params[1] or 0
         self.max_turns = self.params[2]
         self.absorb_type = Absorb.unknown
         self.absorb_threshold = -1
@@ -911,7 +911,7 @@ class ESSkyfall(ESAction):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.min_turns = self.params[2]
+        self.min_turns = self.params[2] or 0
         self.max_turns = self.params[3]
         self.attributes = attribute_bitmap(self.params[1])
         self.chance = self.params[4]
