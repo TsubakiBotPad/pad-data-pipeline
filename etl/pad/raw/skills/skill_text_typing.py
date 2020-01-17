@@ -68,6 +68,7 @@ class ASCondition(Enum):
     VOID_SKYFALLS = 260
     ORB_LOCK = 270
     COMBO_ROOT = 280
+    REDUCE_MATCH_RESTRICTION = 281
 
 
 class LSCondition(Enum):
@@ -251,6 +252,9 @@ def parse_as_conditions(skill_text: str) -> List[ASCondition]:
 
     if 'show path to' in skill_text:
         results.add(ASCondition.COMBO_ROOT)
+
+    if 'reduce unable to match' in skill_text:
+        results.add(ASCondition.REDUCE_MATCH_RESTRICTION)
 
     return results
 

@@ -322,6 +322,13 @@
     "order_idx": 280
   },
   {
+    "active_tag_id": 281,
+    "name_jp": "Reduce Match Restriction",
+    "name_kr": "Reduce Match Restriction",
+    "name_na": "Reduce Match Restriction",
+    "order_idx": 281
+  },
+  {
     "active_tag_id": 999,
     "name_jp": "その他",
     "name_kr": "기타",
