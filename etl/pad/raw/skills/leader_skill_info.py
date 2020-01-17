@@ -1703,6 +1703,20 @@ class ColorComboBonusDamage(LeaderSkill):
     def text(self, converter: LSTextConverter) -> str:
         return converter.color_combo_bonus_damage_convert(self)
 
+class GroupConditionalBoost(LeaderSkill):
+    skill_type = 203
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 100, 100, 100])
+        self.group_id = data[0]
+        hp  = multi_floor(data[1])
+        atk = multi_floor(data[2])
+        rcv = multi_floor(data[3])
+        super().__init__(203, ms, hp=hp, atk=atk, rcv=rcv)
+
+    def text(self, converter: LSTextConverter) -> str:
+        return converter.group_bonus_convert(self)
+
 
 def convert(skill_list: List[MonsterSkill]):
     results = {}
@@ -1822,6 +1836,7 @@ ALL_LEADER_SKILLS = [
     AdvancedBlobMatch,
     SevenBySix,
     NoSkyfallBoost,
+    GroupConditionalBoost,
     AttrComboConditionalAtkRcvBoost,
     RainbowAtkRcv,
     AtkRcvComboScale,
@@ -1843,5 +1858,5 @@ ALL_LEADER_SKILLS = [
     HealMatchBoostUnbind,
     RainbowBonusDamage,
     BlobBonusDamage,
-    ColorComboBonusDamage
+    ColorComboBonusDamage,
 ]

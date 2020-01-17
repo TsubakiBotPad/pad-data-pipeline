@@ -14,6 +14,7 @@ SERIES = json.load(open(os.path.join(__location__, "../../../storage_processor/s
     
 class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
     _COLLAB_MAP = {x['collab_id']: x['name_na'] for x in SERIES if 'collab_id' in x}
+    _GROUP_MAP  = {0: 'Pixel Evolutions'}
 
     def n_attr_or_heal(self, attr, n_attr, format_string, is_range=False):
         if attr == [0, 1, 2, 3, 4]:
@@ -183,8 +184,16 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
             human_fix_logger.warning('Missing collab name for %s', collab_id)
         return self._COLLAB_MAP.get(collab_id, '<not populated:{}>'.format(collab_id))
 
+    def get_group_name(self, group_id):
+        if group_id not in self._GROUP_MAP:
+            human_fix_logger.warning('Missing group name for %s', group_id)
+        return self._GROUP_MAP.get(group_id, '<not populated:{}>'.format(group_id))
+
     def collab_bonus_text(self, bonus, name):
         return '{} when all cards are from {}'.format(bonus, name)
+
+    def group_bonus_text(self, bonus, name):
+        return '{} when all cards are {}'.format(bonus, name)
 
     def multi_mass_match_text(self, atk, bonus_combo, min_match, num_attr):
         if atk not in [0, 1]:
@@ -207,7 +216,7 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
             skill_text = mult_text
         else:
             skill_text = '???'
-        skill_text += ' when matching 5' + attr + ' orbs in L shape'
+        skill_text += ' when matching 5' + attr + ' orbs in an L shape'
         return skill_text
 
     def add_combo_att_text(self, mult, attr_condition_text, bonus_combo):
