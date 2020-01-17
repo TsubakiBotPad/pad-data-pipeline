@@ -155,7 +155,7 @@ class ESCondition(object):
 
     def description(self, converter):
         desc = converter.condition(max(self._ai, self._rnd), self.hp_threshold,
-                                  self.one_time is not None or self.forced_one_time is not None)
+                                   self.one_time is not None or self.forced_one_time is not None)
         # TODO: figure out if this is still needed
         if self.enemies_remaining:
             desc = desc + ', ' if desc else ''
@@ -277,12 +277,15 @@ class ESBehaviorAttack(ESAction):
 class ESInactivity(ESAction):
     def description(self, converter):
         return converter.skip()
-    
+
+
 class ESInactivity16(ESInactivity):
     skill_types = [16]
 
+
 class ESInactivity66(ESInactivity):
     skill_types = [66]
+
 
 class ESDeathCry(ESDeathAction, ESAction):
     skill_types = [69]
@@ -337,7 +340,7 @@ class ESBind(ESAction):
 
     def description(self, converter):
         return converter.bind(self.min_turns, self.max_turns,
-                             self.target_count, self.targets)
+                              self.target_count, self.targets)
 
 
 class ESBindAttack(ESBind):
@@ -346,7 +349,7 @@ class ESBindAttack(ESBind):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.targets = bind_bitmap(self.params[4])
-        if 'leader' not in ''.join(map(str,self.targets)):
+        if 'leader' not in ''.join(map(str, self.targets)):
             self.target_count = self.params[5]
         self.attack = ESAttack.new_instance(self.params[1])
 
@@ -390,7 +393,8 @@ class ESBindAttribute(ESBind):
 
     def description(self, converter):
         return converter.bind(self.min_turns, self.max_turns,
-                             target_types=self.target_attribute, source=Source.attrs)
+                              target_types=self.target_attribute, source=Source.attrs)
+
 
 class ESBindTyping(ESBind):
     skill_types = [3]
@@ -405,7 +409,7 @@ class ESBindTyping(ESBind):
 
     def description(self, converter):
         return converter.bind(self.min_turns, self.max_turns,
-                             target_types=self.target_typing, source=Source.types)
+                              target_types=self.target_typing, source=Source.types)
 
 
 class ESBindSkill(ESAction):
@@ -447,7 +451,7 @@ class ESOrbChange(ESAction):
 
     def description(self, converter):
         return converter.orb_change(self.orb_from, self.orb_to,
-                                   random_count=self.random_count, exclude_hearts=self.exclude_hearts)
+                                    random_count=self.random_count, exclude_hearts=self.exclude_hearts)
 
 
 # Prototype
@@ -572,11 +576,14 @@ class ESBlind(ESAction):
     def description(self, converter):
         return converter.blind()
 
+
 class ESBlind5(ESBlind):
     skill_types = [5]
 
+
 class ESBlind62(ESBlind):
     skill_types = [62]
+
 
 class ESBlindStickyRandom(ESAction):
     skill_types = [97]
@@ -640,11 +647,14 @@ class ESRecoverEnemy(ESRecover):
     def __init__(self, skill):
         super().__init__(skill, target=TargetType.enemy)
 
+
 class ESRecoverEnemy7(ESRecoverEnemy):
     skill_types = [7]
 
+
 class ESRecoverEnemy86(ESRecoverEnemy):
     skill_types = [86]
+
 
 class ESRecoverEnemyAlly(ESRecover):
     skill_types = [52]
@@ -705,7 +715,7 @@ class ESAttackUpStatus(ESEnrageAttackUp):
 
     def debug_description(self):
         return super().description() + ' after being affected by a status effect'
- 
+
 
 class ESAttackUPCooldown(ESEnrageAttackUp):
     skill_types = [19]
@@ -723,6 +733,7 @@ class ESAttackUPCooldown(ESEnrageAttackUp):
         if self.turn_cooldown:
             desc += ' after {} turns'.format(self.turn_cooldown)
         return desc
+
 
 class ESDebuff(ABC, ESAction):
     def __init__(self, skill: EnemySkill):
@@ -883,13 +894,14 @@ class ESInvulnerableOn(ESAction):
     def description(self, converter):
         return converter.damage_reduction(Source.all_sources, turns=self.turns)
 
+
 class ESInvulnerableOnHexazeon(ESInvulnerableOn):
     skill_types = [123]
 
 
 class ESInvulnerableOff(ESAction):
     skill_types = [121]
-    
+
     def description(self, converter):
         return converter.invuln_off()
 
@@ -906,14 +918,15 @@ class ESSkyfall(ESAction):
 
     def description(self, converter):
         return converter.skyfall(self.attributes, self.chance,
-                                    self.min_turns, self.max_turns)
+                                 self.min_turns, self.max_turns)
+
 
 class ESSkyfallLocked(ESSkyfall):
     skill_types = [96]
 
     def description(self, converter):
         return converter.skyfall(self.attributes, self.chance,
-                                    self.min_turns, self.max_turns, True)
+                                 self.min_turns, self.max_turns, True)
 
 
 class ESLeaderSwap(ESAction):
@@ -1021,7 +1034,7 @@ class ESRandomSpawn(ESAction):
 
     def is_conditional(self):
         return self.condition_attributes
-    
+
 
 class ESBombRandomSpawn(ESAction):
     skill_types = [102]
@@ -1150,7 +1163,7 @@ class ESSkillDelay(ESAction):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.min_turns = self.params[1]
+        self.min_turns = self.params[1] or 0
         self.max_turns = self.params[2]
 
     def description(self, converter):
@@ -1641,7 +1654,7 @@ class ESInstance(Printable):
         self.behavior = copy.deepcopy(behavior)
         self.condition = None  # type: Optional[ESCondition]
         self.ref = ref
-        
+
         # self.ai = ref.enemy_ai
         # self.rnd = ref.enemy_rnd
 
