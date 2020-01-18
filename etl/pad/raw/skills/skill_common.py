@@ -3,18 +3,22 @@ from enum import Enum
 
 __all__ = []
 
+
 def public(x):
     global __all__
     __all__.append(x.__name__)
     return x
 
+
 @public
 class I13NotImplemented(NotImplementedError):
     pass
 
+
 @public
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
+
 
 @public
 def multi_getattr(o, *args):
@@ -24,15 +28,17 @@ def multi_getattr(o, *args):
             return v
     raise Exception('Attributs not found:' + str(args))
 
-@public 
+
+@public
 def minmax(nmin, nmax, p=False):
     if None in [nmin, nmax] or nmin == nmax:
-        return str(int(nmin or nmax))+("%" if p else '')
+        return str(int(nmin or nmax)) + ("%" if p else '')
     elif p:
         return "{}%~{}%".format(int(nmin), int(nmax))
     else:
         return "{}~{}".format(int(nmin), int(nmax))
-    
+
+
 @public
 class BaseTextConverter(object):
     """Contains code shared across AS and LS converters."""
@@ -45,9 +51,15 @@ class BaseTextConverter(object):
     def ATTRIBUTES(self) -> Dict[int, str]:
         raise I13NotImplemented()
 
+    def attributes_to_str(self, attributes):
+        return self.concat_list_and([self.ATTRIBUTES[x] for x in attributes])
+
     @property
     def TYPES(self) -> Dict[int, str]:
         raise I13NotImplemented()
+
+    def typing_to_str(self, types):
+        return self.concat_list_and([self.TYPES[x] for x in types])
 
     @property
     def AWAKENING_MAP(self) -> Dict[int, str]:
@@ -76,7 +88,7 @@ class BaseTextConverter(object):
         raise I13NotImplemented()
 
     @staticmethod
-    def concat_list_and(list_to_concat):
+    def concat_list_and(list_to_concat, conj):
         raise I13NotImplemented()
 
     @staticmethod
@@ -84,13 +96,13 @@ class BaseTextConverter(object):
         raise I13NotImplemented()
 
     ATTRS_EXCEPT_BOMBS = list(range(9))
-    ALL_ATTRS =  list(range(10))
-    
+    ALL_ATTRS = list(range(10))
+
     #############################################################################
     # Everything below here are common helpers
     #############################################################################
 
-    def attributes_format(self, attributes: List[int], sep: str=', ') -> str:
+    def attributes_format(self, attributes: List[int], sep: str = ', ') -> str:
         return sep.join([self.ATTRIBUTES[i] for i in attributes])
 
     def types_format(self, types: List[int]) -> str:
@@ -143,24 +155,22 @@ class BaseTextConverter(object):
 
         return skill_text
 
-    def fmt_multi_attr(self, attributes, conjunction='or'):
-        # TODO: Returned value shouldn't start with a space
-        prefix = ' '
+    def fmt_multi_attr(self, attributes, conj='or'):
+        prefix = ''
         if 1 <= len(attributes) <= 7:
             attr_list = [self.ATTRIBUTES[i] for i in attributes]
         elif 7 <= len(attributes) < 10:
-            att_sym_diff = sorted(list(set(self.ATTRIBUTES) - set(attributes)), key=lambda x: self.ATTRIBUTES[x])
+            # TODO: this is kind of weird maybe needs fixing
+            # All the attributes except the duplicate 'None' for fire, random, locked bomb, etc
+            non_attrs = [x for x in self.ATTRIBUTES.keys() if x is not None and x >= 0]
+            attrs = list(set(non_attrs) - set(attributes))
+            att_sym_diff = sorted(attrs, key=lambda x: self.ATTRIBUTES[x])
             attr_list = [self.ATTRIBUTES[i] for i in att_sym_diff]
-            prefix = ' non '
+            prefix = 'non '
         else:
-            return '' if conjunction == 'or' else ' all'
+            return '' if conj == 'or' else ' all'
 
-        if len(attr_list) == 1:
-            return prefix + attr_list[0]
-        elif len(attributes) == 2:
-            return prefix + ' '.join([attr_list[0], conjunction, attr_list[1]])
-        else:
-            return prefix + ', '.join(attr for attr in attr_list[:-1]) + ', {} {}'.format(conjunction, attr_list[-1])
+        return prefix + self.concat_list_and(attr_list, conj)
 
     def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult):
         if hp_mult == atk_mult and atk_mult == rcv_mult:
@@ -170,7 +180,7 @@ class BaseTextConverter(object):
 
         mults = [(self.hp(), hp_mult), (self.atk(), atk_mult), (self.rcv(), rcv_mult)]
         mults = list(filter(lambda x: x[1] != 1, mults))
-        mults.sort(key=lambda x:x[1], reverse=True)
+        mults.sort(key=lambda x: x[1], reverse=True)
 
         chunks = []
         x = 0
@@ -201,9 +211,20 @@ class BaseTextConverter(object):
             color_text = self.attributes_format(reduct_att)
             return self.reduce_attr_pct(color_text, shield_text)
 
+    def attributes_to_str(self, attributes: List[int], concat=None) -> str:
+        concatf = concat or self.concat_list_and
+        if isinstance(concat, str):
+            concatf = lambda x: self.concat_list_and(x, concat)
+        return concatf([self.ATTRIBUTES[i] for i in attributes])
+
+    def typing_to_str(self, types: List[int], concat=None) -> str:
+        concatf = concat or self.concat_list_and
+        if isinstance(concat, str):
+            concatf = lambda x: self.concat_list_and(x, concat)
+        return concatf([self.TYPES[i] for i in types])
 
 
-#ENUMS
+# ENUMS
 @public
 class TargetType(Enum):
     unset = -1
@@ -222,16 +243,18 @@ class TargetType(Enum):
     enemy = 8
     enemy_ally = 9
 
-    #Full Team Aspect
+    # Full Team Aspect
     awokens = 10
     actives = 11
-    
+
+
 @public
 class OrbShape(Enum):
     l_shape = 0
     cross = 1
     column = 2
     row = 4
+
 
 @public
 class Status(Enum):
@@ -240,12 +263,14 @@ class Status(Enum):
     hp = 2
     rcv = 3
 
-@public  
+
+@public
 class Unit(Enum):
     unknown = -1
     seconds = 0
     percent = 1
     none = 2
+
 
 @public
 class Absorb(Enum):
@@ -254,6 +279,7 @@ class Absorb(Enum):
     combo = 1
     damage = 2
 
+
 @public
 class Source(Enum):
     all_sources = 0
@@ -261,23 +287,26 @@ class Source(Enum):
     types = 6
 
 
-#LS FUNCTIONS
+# LS FUNCTIONS
 @public
 class ThresholdType(Enum):
     BELOW = '<'
     ABOVE = '>'
 
+
 @public
-class Tag(Enum):  
+class Tag(Enum):
     NO_SKYFALL = 0
     BOARD_7X6 = 1
     DISABLE_POISON = 2
     FIXED_TIME = 3
     ERASE_P = 4
 
+
 @public
 def sort_tags(tags):
     return sorted(tags, key=lambda x: x.value)
+
 
 @public
 class AttributeDict(dict):
@@ -287,4 +316,3 @@ class AttributeDict(dict):
         return self[key]
 
     __setattr__ = dict.__setitem__
-

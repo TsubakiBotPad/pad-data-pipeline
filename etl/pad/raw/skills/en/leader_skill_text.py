@@ -20,7 +20,9 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
             return format_string.format(n_attr) + ' colors'
         elif attr == [0, 1, 2, 3, 4, 5]:
             return format_string.format(n_attr) + ' colors ({}+heal)'.format(n_attr - 1)
-        attr_text = self.attributes_format(attr)
+        attr_text = self.attributes_to_str(attr)
+        # TODO: delete the next line, tieout only
+        attr_text = attr_text.replace(', and ', ', ').replace(' and ', ', ')
         if len(attr) > n_attr and is_range:
             return '{} of {}'.format(str(n_attr), attr_text)
         elif len(attr) > n_attr:
@@ -98,7 +100,10 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
         skill_text += ' when matching {}'.format(min_count)
         if or_more:
             skill_text += ' or more connected'
-        skill_text += '{} orbs'.format(attr)
+        if attr:
+            skill_text += ' {} orbs'.format(attr)
+        else:
+            skill_text += ' orbs'
         if not max_mult:
             return skill_text
         skill_text += ' up to {}x at {} orbs'.format(max_mult, max_count)
@@ -199,11 +204,11 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
             skill_text = self.fmt_multiplier_text(1, atk, 1) + ' and increase '
         else:
             skill_text = 'Increase '
-        skill_text += 'combo by {} when matching {} or more connected'.format(
+        skill_text += 'combo by {} when matching {} or more connected '.format(
             bonus_combo,
             min_match
         )
-        skill_text += self.fmt_multi_attr(num_attr, conjunction='and') + ' orbs at once'
+        skill_text += self.fmt_multi_attr(num_attr, conj='and') + ' orbs at once'
         return skill_text
 
     def l_match_text(self, mult_text, reduct_text, attr):
@@ -215,7 +220,11 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
             skill_text = mult_text
         else:
             skill_text = '???'
-        skill_text += ' when matching 5' + attr + ' orbs in an L shape'
+        attr = attr.strip()
+        if attr:
+            skill_text += ' when matching 5 {} orbs in an L shape'.format(attr)
+        else:
+            skill_text += ' when matching 5 orbs in an L shape'
         return skill_text
 
     def add_combo_att_text(self, mult, attr_condition_text, bonus_combo):
@@ -242,7 +251,7 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
         skill_text = '{} additional damage when matching {} or more'.format(bonus_damage, min_match)
 
         if attr_text:
-            skill_text += '{} orbs'.format(attr_text)
+            skill_text += ' {} orbs'.format(attr_text)
         else:
             skill_text += ' orbs'
 
@@ -251,7 +260,7 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
     def color_combo_bonus_damage_text(self, bonus_damage, min_combo, attr_text):
         skill_text = '{} additional damage when attacking with {} or more'.format(bonus_damage, min_combo)
         if attr_text:
-            skill_text += '{} combos'.format(attr_text)
+            skill_text += ' {} combos'.format(attr_text)
         else:
             skill_text += ' combos'
         return skill_text

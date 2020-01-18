@@ -713,8 +713,8 @@ class ESAttackUpStatus(ESEnrageAttackUp):
         self.multiplier = self.params[2]
         self.turns = self.params[1]
 
-    def debug_description(self):
-        return super().description() + ' after being affected by a status effect'
+    def debug_description(self, converter):
+        return super().description(converter) + ' after being affected by a status effect'
 
 
 class ESAttackUPCooldown(ESEnrageAttackUp):
@@ -728,8 +728,8 @@ class ESAttackUPCooldown(ESEnrageAttackUp):
         self.multiplier = self.params[3]
         self.turns = self.params[2]
 
-    def debug_description(self):
-        desc = super().description()
+    def debug_description(self, converter):
+        desc = super().description(converter)
         if self.turn_cooldown:
             desc += ' after {} turns'.format(self.turn_cooldown)
         return desc

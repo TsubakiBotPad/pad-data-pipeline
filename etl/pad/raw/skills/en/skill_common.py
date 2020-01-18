@@ -71,6 +71,9 @@ class EnBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
     _ATTRS = {
+        -9: 'locked Bomb',
+        -1: 'Random',
+        None: 'Fire',
         0: 'Fire',
         1: 'Water',
         2: 'Wood',
