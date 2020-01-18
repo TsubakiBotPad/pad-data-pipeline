@@ -209,7 +209,7 @@ def parse_as_conditions(skill_text: str) -> List[ASCondition]:
     elif any(['damage to all {} att'.format(x) in skill_text for x in colors]):
         results.add(ASCondition.ATTRIBUTE_ATTACK)
 
-    if 'column to' in skill_text or 'row to' in skill_text:
+    if any([x in skill_text for x in ['column to', 'row to', 'column from', 'row from']]):
         results.add(ASCondition.LINE_ORBS_CONVERTER)
 
     if 'increase orb move time' in skill_text:
