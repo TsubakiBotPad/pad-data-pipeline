@@ -28,17 +28,16 @@ def multi_getattr(o, *args):
             return v
     raise Exception('Attributs not found:' + str(args))
 
-
-@public
-def minmax(nmin, nmax, p=False):
+@public 
+def minmax(nmin, nmax, p = False, fmt = False):
+    fmt = fmt_mult if fmt else (lambda x: x)
     if None in [nmin, nmax] or nmin == nmax:
-        return str(int(nmin or nmax)) + ("%" if p else '')
+        return str(fmt(nmin or nmax))+("%" if p else '')
     elif p:
-        return "{}%~{}%".format(int(nmin), int(nmax))
+        return "{}%~{}%".format(fmt(int(nmin)), fmt(int(nmax)))
     else:
-        return "{}~{}".format(int(nmin), int(nmax))
-
-
+        return "{}~{}".format(fmt(int(nmin)), fmt(int(nmax)))
+    
 @public
 class BaseTextConverter(object):
     """Contains code shared across AS and LS converters."""

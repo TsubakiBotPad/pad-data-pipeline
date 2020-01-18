@@ -153,10 +153,12 @@ def parse_as_conditions(skill_text: str) -> Set[ASCondition]:
     if 'orbs at random' in skill_text:
         results.add(ASCondition.ORB_CONVERT)
 
-    all_colors = colors + ['heal', 'poison', 'mortal poison', 'jammer']
+    all_colors = colors + ['heal', 'poison', 'mortal poison', 'jammer', 'bomb']
     if any(['change {} orbs'.format(x) in skill_text for x in all_colors]):
         results.add(ASCondition.ORB_CONVERT)
     if any(['change {}, '.format(x) in skill_text for x in all_colors]):
+        results.add(ASCondition.ORB_CONVERT)
+    if any(['change {} and '.format(x) in skill_text for x in all_colors]):
         results.add(ASCondition.ORB_CONVERT)
 
     skill_mod = re.sub(r'0[.]\d+x', ' ', skill_text)
