@@ -1,10 +1,5 @@
 from pad.raw.skills.en.skill_common import *
 
-
-def fmt_mult(x):
-    return str(round(float(x), 2)).rstrip('0').rstrip('.')
-
-
 ROW_INDEX = {
     0: 'the top row',
     1: 'the 2nd row from the top',
@@ -117,9 +112,9 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def double_orb_convert(self, act):
         if act.to_1 == act.to_2:
-            skill_text = 'Change {}, {} orbs to {} orbs'.format(self.ATTRIBUTES[int(act.from_1)],
-                                                                self.ATTRIBUTES[int(act.from_2)],
-                                                                self.ATTRIBUTES[int(act.to_1)])
+            skill_text = 'Change {} and {} orbs to {} orbs'.format(self.ATTRIBUTES[int(act.from_1)],
+                                                                   self.ATTRIBUTES[int(act.from_2)],
+                                                                   self.ATTRIBUTES[int(act.to_1)])
         else:
             skill_text = 'Change {} orbs to {} orbs; Change {} orbs to {} orbs'.format(
                 self.ATTRIBUTES[int(act.from_1)],
@@ -344,24 +339,13 @@ class EnASTextConverter(EnBaseTextConverter):
         return skill_text
 
     def suicide_random_nuke_convert(self, act):
-        if act.hp_remaining == 0:
-            skill_text = 'Reduce HP to 1; '
-        else:
-            skill_text = 'Reduce HP by ' + fmt_mult((1 - act.hp_remaining) * 100) + '%; '
-        if act.minimum_multiplier != act.maximum_multiplier:
-            skill_text += 'Randomized ' + self.ATTRIBUTES[act.attribute] + ' damage to ' + self.fmt_mass_atk(
-                act.mass_attack) + '(' + fmt_mult(act.minimum_multiplier) + '~' + fmt_mult(
-                act.maximum_multiplier) + 'x)'
-        else:
-            skill_text += 'Deal ' + fmt_mult(act.maximum_multiplier) + 'x ' + \
-                          self.ATTRIBUTES[act.attribute] + ' damage to ' + self.fmt_mass_atk(act.mass_attack)
+        skill_text = self.suicide_convert(act) + '; '
+        skill_text += 'Deal ' + minmax(act.maximum_multiplier, act.minimum_multiplier, fmt=True) \
+                      + 'x ' + self.ATTRIBUTES[act.attribute] + ' damage to ' + self.fmt_mass_atk(act.mass_attack)
         return skill_text
 
     def suicide_nuke_convert(self, act):
-        if act.hp_remaining == 0:
-            skill_text = 'Reduce HP to 1; '
-        else:
-            skill_text = 'Reduce HP by ' + fmt_mult(act.hp_remaining * 100) + '%; '
+        skill_text = self.suicide_convert(act) + '; '
         skill_text += 'Deal ' + str(act.damage) + ' ' + self.ATTRIBUTES[
             act.attribute] + ' damage to ' + self.fmt_mass_atk(
             act.mass_attack)
@@ -418,8 +402,8 @@ class EnASTextConverter(EnBaseTextConverter):
         orb_count = 0
 
         output = []
-        for x in board:
-            orb_count += len(x)
+        for row_num in board:
+            orb_count += len(row_num)
 
         skill_text = ''
         if orb_count == 4:
@@ -427,43 +411,44 @@ class EnASTextConverter(EnBaseTextConverter):
                 skill_text += 'Create 4 {} orbs at the corners of the board'.format(
                     self.ATTRIBUTES[act.attribute])
         if not (orb_count % 5):
-            for x in range(1, len(board) - 1):  # Check for cross
-                if len(board[x]) == 3 and len(board[x - 1]) == len(board[x + 1]) == 1:  # Check for cross
-                    row_pos = x
-                    col_pos = board[x][1]
+            for row_num in range(1, len(board) - 1):  # Check for cross
+                if len(board[row_num]) == 3 and len(board[row_num - 1]) == \
+                        len(board[row_num + 1]) == 1:  # Check for cross
+                    row_pos = row_num
+                    col_pos = board[row_num][1]
                     shape = 'cross'
                     result = (shape, row_pos, col_pos)
                     output.append(result)
-                    del board[x][1]
-            for x in range(0, len(board)):  # Check for L
-                if len(board[x]) == 3:
-                    row_pos = x
-                    if x < 2:
-                        col_pos = board[x + 1][0]
-                        del board[x + 1][0]
-                    elif x > 2:
-                        col_pos = board[x - 1][0]
-                        del board[x - 1][0]
-                    elif len(board[x + 1]) > 0:
-                        col_pos = board[x + 1][0]
-                        del board[x + 1][0]
+                    del board[row_num][1]
+            for row_num in range(0, len(board)):  # Check for L
+                if len(board[row_num]) == 3:
+                    row_pos = row_num
+                    if row_num < 2:
+                        col_pos = board[row_num + 1][0]
+                        del board[row_num + 1][0]
+                    elif row_num > 2:
+                        col_pos = board[row_num - 1][0]
+                        del board[row_num - 1][0]
+                    elif len(board[row_num + 1]) > 0:
+                        col_pos = board[row_num + 1][0]
+                        del board[row_num + 1][0]
                     else:
-                        col_pos = board[x - 1][0]
-                        del board[x - 1][0]
+                        col_pos = board[row_num - 1][0]
+                        del board[row_num - 1][0]
 
                     shape = 'L shape'
                     result = (shape, row_pos, col_pos)
                     output.append(result)
 
         if not (orb_count % 9):
-            for x in range(1, len(board) - 1):  # Check for square
-                if len(board[x]) == len(board[x - 1]) == len(board[x + 1]) == 3:
-                    row_pos = x
-                    col_pos = board[x][1]
+            for row_num in range(1, len(board) - 1):  # Check for square
+                if len(board[row_num]) == len(board[row_num - 1]) == len(board[row_num + 1]) == 3:
+                    row_pos = row_num
+                    col_pos = board[row_num][1]
                     shape = 'square'
                     result = (shape, row_pos, col_pos)
                     output.append(result)
-                    del board[x][1]
+                    del board[row_num][1]
         if orb_count == 18:
             if len(board[0]) == len(board[4]) == len(board[1]) + len(board[2]) + len(board[3]) == 6:
                 skill_text += 'Change the outermost orbs of the board to {} orbs'.format(
