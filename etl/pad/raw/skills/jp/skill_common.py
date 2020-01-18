@@ -23,6 +23,9 @@ class JpBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
     _ATTRS = {
+        -9: 'ロックされた爆弾',
+        -1: 'ランダム属性の',
+        None: '火',
         0: '火',
         1: '水',
         2: '木',

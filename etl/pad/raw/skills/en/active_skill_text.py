@@ -308,7 +308,7 @@ class EnASTextConverter(EnBaseTextConverter):
             else:
                 while c + skip < len(lines) and lines[c + skip][1] == line[1]:
                     skip += 1
-                formatted = ' and '.join(map(lambda x: x[0], lines[c:c + skip]))
+                formatted = ' and '.join(map(lambda l: l[0], lines[c:c + skip]))
                 skill_text.append("change {} to {} orbs".format(formatted, line[1]))
                 skip -= 1
         return capitalize_first(' and '.join(skill_text))

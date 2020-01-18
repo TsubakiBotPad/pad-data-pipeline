@@ -1501,10 +1501,10 @@ class FixedMovementTime(LeaderSkill):
             # Ignore this case; bad skill
             pass
         elif self.time in [3, 4, 5, 6]:
-            self.tags.append((Tag.FIXED_TIME, (self.time)))
+            self.tags.append((Tag.FIXED_TIME, self.time))
         else:
             human_fix_logger.warning('Unexpected fixed time:' + str(self.time))
-            self.tags.append((Tag.FIXED_TIME, (self.time)))
+            self.tags.append((Tag.FIXED_TIME, self.time))
 
         hp = multi_floor(data[3])
         atk = multi_floor(data[4])

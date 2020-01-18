@@ -32,9 +32,9 @@ class EnemySkill(SimpleSqlItem):
         max_hits = exemplar.attack.max_hits if has_attack else 0
         atk_mult = exemplar.attack.atk_multiplier if has_attack else 0
 
-        jp_desc = exemplar.full_description(JpESTextConverter)
-        en_desc = exemplar.full_description(EnESTextConverter)
-       #kr_desc = exemplar.full_description(KrESTextConverter)
+        jp_desc = exemplar.full_description(JpESTextConverter())
+        en_desc = exemplar.full_description(EnESTextConverter())
+       #kr_desc = exemplar.full_description(KrESTextConverter())
         
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,

@@ -4,7 +4,9 @@ from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Cond
 from pad.raw.skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset
 from pad.raw_processor.crossed_data import CrossServerCard
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as ESTextConverter
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+
+ESTextConverter = EnESTextConverter()
 
 def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehavior):
     output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)

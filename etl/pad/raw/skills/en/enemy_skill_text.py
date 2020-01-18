@@ -1,67 +1,13 @@
 from pad.raw.skills.en.skill_common import *
 
-from enum import Enum
-
 import logging
 
 human_fix_logger = logging.getLogger('human_fix')
 
-def concat_list_and(l, conj = 'and'):
-    l = [str(i) for i in l if i]
-    if len(l) == 0:
-        return ""
-    elif len(l) == 1:
-        return l[0]
-    elif len(l) == 2:
-        return " {} ".format(conj).join(l)
-    l[-1] = "{} ".format(conj) + l[-1]
-    return ", ".join(l)
-
-ATTRIBUTE_MAP = {
-    # TODO: tieout
-    -9: 'locked Bomb',
-    -1: 'Random',
-    None: 'Fire',
-    0: 'Fire',
-    1: 'Water',
-    2: 'Wood',
-    3: 'Light',
-    4: 'Dark',
-    5: 'Heal',
-    6: 'Jammer',
-    7: 'Poison',
-    8: 'Mortal Poison',
-    9: 'Bomb',
-}
-
-
-def attributes_to_str(attributes, conj='and'):
-    return concat_list_and([ATTRIBUTE_MAP[x] for x in attributes],conj)
-
-
-TYPING_MAP = {
-    1: 'Balanced',
-    2: 'Physical',
-    3: 'Healer',
-    4: 'Dragon',
-    5: 'God',
-    6: 'Attacker',
-    7: 'Devil',
-    8: 'Machine',
-    12: 'Awaken Material',
-    14: 'Enhance Material',
-    15: 'Redeemable Material'
-}
-
-
-def typing_to_str(types):
-    return concat_list_and([TYPING_MAP[x] for x in types])
-
-
 TARGET_NAMES = {
     TargetType.unset: '<targets unset>',
-    
-    #Specific Subs
+
+    # Specific Subs
     TargetType.random: 'random card',
     TargetType.self_leader: 'player leader',
     TargetType.both_leader: 'both leaders',
@@ -71,22 +17,21 @@ TARGET_NAMES = {
     TargetType.types: 'type',
     TargetType.card: 'card',
 
-    #Specific Players/Enemies (For Recovery)
+    # Specific Players/Enemies (For Recovery)
     TargetType.player: 'player',
     TargetType.enemy: 'enemy',
     TargetType.enemy_ally: 'enemy ally',
 
-    #Full Team Aspect
+    # Full Team Aspect
     TargetType.awokens: 'awoken skills',
     TargetType.actives: 'active skills',
-
-
 }
 
 
 def targets_to_str(targets):
-    return  targets if isinstance(targets,str)\
-                    else ' and '.join([TARGET_NAMES[x] for x in targets])
+    return targets if isinstance(targets, str) \
+        else ' and '.join([TARGET_NAMES[x] for x in targets])
+
 
 ORB_SHAPES = {
     OrbShape.l_shape: 'L shape',
@@ -95,16 +40,12 @@ ORB_SHAPES = {
     OrbShape.row: 'row',
 }
 
-def orbshape_to_str(shapes):
-    return concat_list_and([ORB_SHAPES[x] for x in shapes])
-
 STATUSES = {
     Status.movetime: 'movetime',
     Status.atk: 'ATK',
     Status.hp: 'HP',
     Status.rcv: 'RCV',
 }
-
 
 UNITS = {
     Unit.unknown: '?',
@@ -113,29 +54,25 @@ UNITS = {
     Unit.none: '',
 }
 
-
 SOURCE_FUNCS = {
     Source.all_sources: lambda x: 'all sources',
-    Source.types: typing_to_str,
-    Source.attrs: attributes_to_str,
+    Source.types: EnBaseTextConverter().typing_to_str,
+    Source.attrs: EnBaseTextConverter().attributes_to_str,
 }
-    
+
 
 def ordinal(n):
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
 
 
 class EnESTextConverter(EnBaseTextConverter):
-    @staticmethod
-    def not_set():
+    def not_set(self):
         return 'No description set'
 
-    @staticmethod
-    def default_attack():
+    def default_attack(self):
         return 'Default Attack'
-    
-    @staticmethod
-    def condition(chance, hp=None, one_time=False):
+
+    def condition(self, chance, hp=None, one_time=False):
         output = []
         if 0 < chance < 100 and not one_time:
             output.append('{:d}% chance'.format(chance))
@@ -148,8 +85,7 @@ class EnESTextConverter(EnBaseTextConverter):
                 output.append('one-time use')
         return capitalize_first(' '.join(output)) if len(output) > 0 else None
 
-    @staticmethod
-    def attack(mult, min_hit=1, max_hit=1):
+    def attack(self, mult, min_hit=1, max_hit=1):
         if mult is None:
             return None
         output = 'Deal {:s}% damage'. \
@@ -159,36 +95,34 @@ class EnESTextConverter(EnBaseTextConverter):
                 format(pluralize2("hit", minmax(min_hit, max_hit)), mult)
         return output
 
-    @staticmethod
-    def skip():
+    def skip(self):
         return 'Do nothing'
 
-    @staticmethod
-    def bind(min_turns, max_turns, target_count=None, target_types=TargetType.card, source:Source = None):
-        if isinstance(target_types, TargetType): target_types = [target_types]
-        elif source is not None: target_types = SOURCE_FUNCS[source]([target_types])+' cards'
+    def bind(self, min_turns, max_turns, target_count=None, target_types=TargetType.card, source: Source = None):
+        if isinstance(target_types, TargetType):
+            target_types = [target_types]
+        elif source is not None:
+            target_types = SOURCE_FUNCS[source]([target_types]) + ' cards'
         targets = targets_to_str(target_types)
         output = 'Bind {:s} '.format(pluralize2(targets, target_count))
         output += 'for ' + pluralize2('turn', minmax(min_turns, max_turns))
         return output
 
-    @staticmethod
-    def orb_change(orb_from, orb_to, random_count=None, exclude_hearts=False):
+    def orb_change(self, orb_from, orb_to, random_count=None, exclude_hearts=False):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
-        orb_from = attributes_to_str(orb_from)
+        orb_from = self.attributes_to_str(orb_from)
 
         if not isinstance(orb_to, list):
             orb_to = [orb_to]
-        orb_to = attributes_to_str(orb_to)
-
+        orb_to = self.attributes_to_str(orb_to)
 
         output = 'Change '
         if random_count is not None:
             if orb_from == 'Random':
-                output += '{} random {:s}'.format(random_count,pluralize('orb',random_count))
+                output += '{} random {:s}'.format(random_count, pluralize('orb', random_count))
             else:
-                output += '{} random {} {}'.format(random_count,orbs_from,pluralize('orb',random_count))
+                output += '{} random {} {}'.format(random_count, orb_from, pluralize('orb', random_count))
             if exclude_hearts:
                 output += ' (excluding hearts)'
         else:
@@ -203,43 +137,35 @@ class EnESTextConverter(EnBaseTextConverter):
             output += '{} {}'.format(orb_to, 'orbs')
         return output
 
-    @staticmethod
-    def blind():
+    def blind(self):
         return 'Blind all orbs on the board'
 
-    @staticmethod
-    def blind_sticky_random(turns, min_count, max_count):
+    def blind_sticky_random(self, turns, min_count, max_count):
         if min_count == 42:
             return 'Blind all orbs for {:s}'.format(pluralize2('turn', turns))
         else:
             return 'Blind random {:s} orbs for {:s}' \
                 .format(minmax(min_count, max_count), pluralize2('turn', turns))
 
-    @staticmethod
-    def blind_sticky_fixed(turns):
+    def blind_sticky_fixed(self, turns):
         return 'Blind orbs in specific positions for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def dispel_buffs():
+    def dispel_buffs(self):
         return 'Voids player buff effects'
 
-    @staticmethod
-    def recover(min_amount, max_amount, target_type):
+    def recover(self, min_amount, max_amount, target_type):
         target = targets_to_str([target_type])
         return capitalize_first('{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)))
 
-    @staticmethod
-    def enrage(mult, turns):
+    def enrage(self, mult, turns):
         output = 'Increase damage to {:d}% for the next '.format(mult)
         output += pluralize2('turn', turns) if turns else 'attack'
         return output
 
-    @staticmethod
-    def status_shield(turns):
+    def status_shield(self, turns):
         return 'Voids status ailments for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def debuff(d_type, amount, unit, turns):
+    def debuff(self, d_type, amount, unit, turns):
         amount = amount or 0
         if amount % 1 != 0:
             human_fix_logger.error("Amount {} will be truncated.  Change debuff".format(amount))
@@ -249,25 +175,21 @@ class EnESTextConverter(EnBaseTextConverter):
         return '{:s} {:+.0f}{:s} for {:s}' \
             .format(capitalize_first(d_type), amount, unit, pluralize2('turn', turns))
 
-    @staticmethod
-    def end_battle():
+    def end_battle(self):
         return 'Reduce self HP to 0'
 
-    @staticmethod
-    def change_attribute(attributes):
+    def change_attribute(self, attributes):
         if len(attributes) == 1:
-            return 'Change own attribute to {}'.format(ATTRIBUTE_MAP[attributes[0]])
+            return 'Change own attribute to {}'.format(self.ATTRIBUTES[attributes[0]])
         else:
-            return 'Change own attribute to random one of ' + attributes_to_str(attributes,'or')
+            return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
 
-    @staticmethod
-    def gravity(percent):
+    def gravity(self, percent):
         return 'Player -{:d}% HP'.format(percent)
 
-    @staticmethod
-    def absorb(abs_type: Absorb, condition, min_turns, max_turns=None):
+    def absorb(self, abs_type: Absorb, condition, min_turns, max_turns=None):
         if abs_type == Absorb.attr:
-            source = attributes_to_str(condition)
+            source = self.attributes_to_str(condition)
             return 'Absorb {:s} damage for {:s}' \
                 .format(source, pluralize2("turn", min_turns, max_turns))
         elif abs_type == Absorb.combo:
@@ -275,105 +197,91 @@ class EnESTextConverter(EnBaseTextConverter):
         elif abs_type == Absorb.damage:
             source = 'damage >= {:,d}'.format(condition)
         else:
-            human_fix_logger.warning("unknown absorb type: {}".format(abs_type))
-            
+            raise ValueError("unknown absorb type: {}".format(abs_type))
+
         return 'Absorb damage when {:s} for {:s}' \
             .format(source, pluralize2("turn", min_turns, max_turns))
 
-    @staticmethod
-    def skyfall(attributes, chance, min_turns, max_turns=None, locked=False):
+    def skyfall(self, attributes, chance, min_turns, max_turns=None, locked=False):
         lock = 'Locked ' if locked else ''
-        orbs = attributes_to_str(attributes)
+        orbs = self.attributes_to_str(attributes)
         # TODO: tieout
         if lock and orbs == 'Random':
             orbs = orbs.lower()
         return '{:s}{:s} skyfall +{:d}% for {:s}' \
             .format(lock, orbs, chance, pluralize2('turn', min_turns, max_turns))
 
-    @staticmethod
-    def void(threshold, turns):
+    def void(self, threshold, turns):
         return 'Void damage >= {:d} for {:s}'.format(threshold, pluralize2('turn', turns))
 
-    @staticmethod
-    def damage_reduction(source_type: Source, source = None, percent=None, turns=None):
+    def damage_reduction(self, source_type: Source, source=None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)
         if source_type != Source.all_sources:
             source += ' ' + source_type.name
         if percent is None:
             return 'Immune to damage from {:s} for {:s}' \
-                   .format(source, pluralize2('turn', turns))
+                .format(source, pluralize2('turn', turns))
         else:
             if turns:
                 return 'Reduce damage from {:s} by {:d}% for {:s}' \
                     .format(source, percent, pluralize2('turn', turns))
             else:
                 return 'Reduce damage from {:s} by {:d}%' \
-                       .format(source, percent)
+                    .format(source, percent)
 
-    @staticmethod
-    def invuln_off():
+    def invuln_off(self):
         return 'Remove damage immunity effect'
 
-    @staticmethod
-    def resolve(percent):
+    def resolve(self, percent):
         return 'Survive attacks with 1 HP when HP > {:d}%'.format(percent)
 
-    @staticmethod
-    def leadswap(turns):
+    def leadswap(self, turns):
         return 'Leader changes to random sub for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def row_col_spawn(position_type, positions, attributes):
+    def row_col_spawn(self, position_type, positions, attributes):
         return 'Change the {:s} {:s} to {:s} orbs'.format(
-            concat_list_and([ordinal(x) for x in positions]),
+            self.concat_list_and([ordinal(x) for x in positions]),
             pluralize(ORB_SHAPES[position_type], len(positions)),
-            attributes_to_str(attributes))
+            self.attributes_to_str(attributes))
 
-    @staticmethod
-    def row_col_multi(desc_arr):
-        return 'Change ' + concat_list_and(map(lambda x: x[7:], desc_arr))
+    def row_col_multi(self, desc_arr):
+        return 'Change ' + self.concat_list_and(map(lambda x: x[7:], desc_arr))
 
-    @staticmethod
-    def board_change(attributes):
-        return 'Change all orbs to {:s}'.format(attributes_to_str(attributes))
+    def board_change(self, attributes):
+        return 'Change all orbs to {:s}'.format(self.attributes_to_str(attributes))
 
-    @staticmethod
-    def random_orb_spawn(count, attributes):
+    def random_orb_spawn(self, count, attributes):
         if count == 42:
-            return EnESTextConverter.board_change(attributes)
+            return self.board_change(attributes)
         else:
             return 'Spawn {:d} random {:s} {:s}' \
-                .format(count, attributes_to_str(attributes, 'or'), pluralize('orb', count))
+                .format(count, self.attributes_to_str(attributes, 'or'), pluralize('orb', count))
 
-    @staticmethod
-    def fixed_orb_spawn(attributes):
-        return 'Spawn {:s} orbs in the specified positions'.format(attributes_to_str(attributes))
+    def fixed_orb_spawn(self, attributes):
+        return 'Spawn {:s} orbs in the specified positions'.format(self.attributes_to_str(attributes))
 
-    @staticmethod
-    def skill_delay(min_turns, max_turns):
+    def skill_delay(self, min_turns, max_turns):
         return 'Delay active skills by {:s}' \
             .format(pluralize2('turn', minmax(min_turns, max_turns)))
 
-    @staticmethod
-    def orb_lock(count, attributes):
-        if count == 42 and attributes == EnESTextConverter.ATTRS_EXCEPT_BOMBS:
+    def orb_lock(self, count, attributes):
+        if count == 42 and attributes == self.ATTRS_EXCEPT_BOMBS:
             return 'Lock all orbs'
         elif count == 42:
-            return 'Lock all {:s} orbs'.format(attributes_to_str(attributes))
-        elif attributes == EnESTextConverter.ATTRS_EXCEPT_BOMBS:
-            return 'Lock {:d} random {:s}'.format(count, pluralize('orb',count))
+            return 'Lock all {:s} orbs'.format(self.attributes_to_str(attributes))
+        elif attributes == self.ATTRS_EXCEPT_BOMBS:
+            return 'Lock {:d} random {:s}'.format(count, pluralize('orb', count))
         else:
-            return 'Lock {:d} random {:s} {:s}'.format(count, attributes_to_str(attributes), pluralize('orb', count))
+            return 'Lock {:d} random {:s} {:s}'.format(count, self.attributes_to_str(attributes),
+                                                       pluralize('orb', count))
 
-    @staticmethod
-    def orb_seal(turns, position_type, positions):
+    def orb_seal(self, turns, position_type, positions):
         return 'Seal the {:s} {:s} for {:s}' \
-            .format(concat_list_and([ordinal(x) for x in positions]),
+            .format(self.concat_list_and([ordinal(x) for x in positions]),
                     pluralize(ORB_SHAPES[position_type], len(positions)),
                     pluralize2('turn', turns))
 
-    @staticmethod
-    def cloud(turns, width, height, x, y):
+    def cloud(self, turns, width, height, x, y):
         if width == 6 and height == 1:
             shape = 'row'
         elif width == 1 and height == 5:
@@ -391,24 +299,20 @@ class EnESTextConverter(EnBaseTextConverter):
         return 'A {:s} of clouds appears for {:s} at {:s}' \
             .format(shape, pluralize2('turn', turns), ', '.join(pos))
 
-    @staticmethod
-    def fixed_start():
+    def fixed_start(self):
         return 'Fix orb movement starting point to random position on the board'
 
-    @staticmethod
-    def turn_change(turn_counter, threshold=None):
+    def turn_change(self, turn_counter, threshold=None):
         if threshold:
             return 'Enemy turn counter change to {:d} when HP <= {:d}%'.format(turn_counter, threshold)
         else:
             return 'Enemy turn counter change to {:d}'.format(turn_counter)
 
-    @staticmethod
-    def attribute_block(turns, attributes):
+    def attribute_block(self, turns, attributes):
         return 'Unable to match {:s} orbs for {:s}' \
-            .format(attributes_to_str(attributes), pluralize2('turn', turns))
+            .format(self.attributes_to_str(attributes), pluralize2('turn', turns))
 
-    @staticmethod
-    def spinners(turns, speed, random_num=None):
+    def spinners(self, turns, speed, random_num=None):
         if random_num is None:
             return 'Specific orbs change every {:.1f}s for {:s}' \
                 .format(speed / 100, pluralize2('turn', turns))
@@ -416,54 +320,43 @@ class EnESTextConverter(EnBaseTextConverter):
             return 'Random {:d} orbs change every {:.1f}s for {:s}' \
                 .format(random_num, speed / 100, pluralize2('turn', turns))
 
-    @staticmethod
-    def max_hp_change(turns, max_hp, percent):
+    def max_hp_change(self, turns, max_hp, percent):
         if percent:
             return 'Change player HP to {:d}% for {:s}'.format(max_hp, pluralize2('turn', turns))
         else:
             return 'Change player HP to {:d} for {:s}'.format(max_hp, pluralize2('turn', turns))
 
-    @staticmethod
-    def fixed_target(turns):
+    def fixed_target(self, turns):
         return 'Forces attacks to hit this enemy for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def death_cry(message):
+    def death_cry(self, message):
         if message is None:
             return 'Show death effect'
         else:
             return 'Show message: {:s}'.format(message)
 
-    @staticmethod
-    def attribute_exists(atts):
-        return 'when {:s} orbs are on the board'.format(attributes_to_str(atts,'or'))
+    def attribute_exists(self, atts):
+        return 'when {:s} orbs are on the board'.format(self.attributes_to_str(atts, 'or'))
 
-    @staticmethod
-    def countdown(counter):
+    def countdown(self, counter):
         return 'Display \'{:d}\' and skip turn'.format(counter)
 
-    @staticmethod
-    def gacha_fever(attribute, orb_req):
-        return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, ATTRIBUTE_MAP[attribute], pluralize('orb', orb_req))
+    def gacha_fever(self, attribute, orb_req):
+        return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, self.ATTRIBUTES[attribute], pluralize('orb', orb_req))
 
-    @staticmethod
-    def lead_alter(turns, target):
+    def lead_alter(self, turns, target):
         return 'Change leader to [{:d}] for {:s}'.format(target, pluralize2('turn', turns))
 
-    @staticmethod
-    def force_7x6(turns):
+    def force_7x6(self, turns):
         return 'Change board size to 7x6 for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def no_skyfall(turns):
+    def no_skyfall(self, turns):
         return 'No skyfall for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def branch(condition, compare, value, rnd):
+    def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
 
-    @staticmethod
-    def join_skill_descs(descs):
+    def join_skill_descs(self, descs):
         return ' + '.join(descs)
 
 

@@ -1,5 +1,7 @@
 import json
 import os
+from typing import Dict, List
+from enum import Enum
 
 from pad.raw.skills.skill_common import *
 import pad.raw.skills.skill_common as base_skill_common
@@ -69,6 +71,9 @@ class KrBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
     _ATTRS = {
+        -9: 'locked Bomb',
+        -1: 'Random',
+        None: 'Fire',
         0: 'Fire',
         1: 'Water',
         2: 'Wood',

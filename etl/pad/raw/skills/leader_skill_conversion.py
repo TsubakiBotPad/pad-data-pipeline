@@ -100,6 +100,10 @@ class LSTextConverter(BaseTextConverter):
             max_mult = fmt_mult(max_mult) if len(attributes) != min_match else None
             max_match = len(attributes)
             return self.multi_of_one_attribute_match_text(intro, min_match, attr_text, max_mult, max_match)
+        # TODO: swap to this later
+        # min_colors = self.attributes_to_str(attributes[:min_match])
+        # alt_colors = self.attributes_to_str(attributes[1:]) if len(attributes) > min_match else None
+        # all_colors = self.attributes_to_str(attributes)
         min_colors = self.attributes_format(attributes[:min_match], sep='+')
         alt_colors = self.attributes_format(attributes[1:], sep='+') if len(attributes) > min_match else None
         all_colors = self.attributes_format(attributes, sep='+')
@@ -360,7 +364,6 @@ class LSTextConverter(BaseTextConverter):
 
     def group_bonus_text(self, bonus, name):
         raise I13NotImplemented()
-
 
     def multi_mass_match_convert(self, ls):
         return self.multi_mass_match_text(ls.atk, ls.bonus_combo, ls.min_match, ls.attributes)
