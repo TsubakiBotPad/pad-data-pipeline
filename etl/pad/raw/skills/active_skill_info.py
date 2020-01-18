@@ -38,8 +38,8 @@ def atk_from_slice(x): return multi(x[2]) if 1 in x[:2] else 1.0
 def rcv_from_slice(x): return multi(x[2]) if 2 in x[:2] else 1.0
 
 
-def merge_defaults(input, defaults):
-    return list(input) + defaults[len(input):]
+def merge_defaults(inp, defaults):
+    return list(inp) + defaults[len(inp):]
 
 
 class ActiveSkill(object):
@@ -194,7 +194,7 @@ class OneAttrtoOneAttr(ActiveSkill):
 
 class OrbRefresh(ActiveSkill):
     skill_type = 10
-    
+
     def text(self, converter: ASTextConverter) -> str:
         return converter.board_refresh(self)
 
@@ -518,7 +518,7 @@ class AttrBurstMultiPart(ActiveSkill):
 
     def text(self, converter: ASTextConverter) -> str:
         if self.duration == 0:
-            return None
+            return ''
         return converter.attribute_attack_boost_convert(self)
 
 
@@ -618,7 +618,7 @@ class TwoPartActiveSkill(ActiveSkill):
                 text_to_item[p_text].repeat += 1
             else:
                 text_to_item[p_text] = PartWithTextAndCount(p, p_text)
-                
+
         return '; '.join(map(lambda x: x.full_text(converter), text_to_item.values()))
 
 
@@ -835,7 +835,8 @@ class ThreeAttrtoOneAttr(ActiveSkill):
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_orb_change_convert(self)
-    
+
+
 class AwokenSkillBurst(ActiveSkill):
     skill_type = 156
 
@@ -846,7 +847,7 @@ class AwokenSkillBurst(ActiveSkill):
         self.toggle = data[4]
         self.amount_per = None
         if self.toggle == 1:
-            self.amount_per = data[5]/100
+            self.amount_per = data[5] / 100
         elif self.toggle == 2:
             self.amount_per = (data[5] - 100) / 100
         elif self.toggle == 3:
@@ -861,12 +862,10 @@ class AwokenSkillBurst(ActiveSkill):
         elif self.toggle == 3:
             return converter.awakening_shield_convert(self)
         else:
-            return None
+            return ''
+
 
 class AwokenSkillBurst2(ActiveSkill):
-    #TODO: Figure out what this actually is
-    #http://www.puzzledragonx.com/en/skill.asp?s=5665
-    #http://www.puzzledragonx.com/en/skill.asp?s=5803
     skill_type = 168
 
     def __init__(self, ms: MonsterSkill):
@@ -878,7 +877,7 @@ class AwokenSkillBurst2(ActiveSkill):
         self.amount_per = None
         if self.toggle == 1:
             self.amount_per = data[7]
-        elif self.toggle in [0,2]:
+        elif self.toggle in [0, 2]:
             self.amount_per = data[7] / 100
         elif self.toggle == 3:
             self.amount_per = multi(data[7])
@@ -887,13 +886,12 @@ class AwokenSkillBurst2(ActiveSkill):
     def text(self, converter: ASTextConverter) -> str:
         if self.toggle == 1:
             return converter.awakening_heal_convert(self)
-        elif self.toggle in [0,2]:
+        elif self.toggle in [0, 2]:
             return converter.awakening_attack_boost_convert(self)
         elif self.toggle == 3:
             return converter.awakening_shield_convert(self)
         else:
-            return None
-
+            return ''
 
 
 class AddAdditionalCombos(ActiveSkill):
@@ -1060,6 +1058,7 @@ class ReduceDisableMatch(ActiveSkill):
     def text(self, converter: ASTextConverter) -> str:
         return converter.match_disable_convert(self)
 
+
 class ChangeMonster(ActiveSkill):
     skill_type = 202
 
@@ -1070,6 +1069,7 @@ class ChangeMonster(ActiveSkill):
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_monster(self)
+
 
 def convert(skill_list: List[MonsterSkill]):
     skill_type_to_constructor = {}

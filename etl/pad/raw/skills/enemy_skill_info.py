@@ -1149,11 +1149,11 @@ class ESSkillSetOnDeath(ESDeathAction, ESSkillSet):
 
     def has_action(self) -> bool:
         """Helper that determines if the skillset does stuff other than emote."""
-        for x in self.skills:
-            if isinstance(x, ESSkillSet):
-                if any([not isinstance(y, ESInactivity) for y in x.skills]):
+        for skill in self.skills:
+            if isinstance(skill, ESSkillSet):
+                if any([not isinstance(y, ESInactivity) for y in skill.skills]):
                     return True
-            elif not isinstance(x, ESInactivity):
+            elif not isinstance(skill, ESInactivity):
                 return True
         return False
 
@@ -1668,18 +1668,18 @@ class ESInstance(Printable):
 
         # This seems bad but I'm not sure how to improve
         # Start terrible badness
-        if isinstance(self.behavior, (ESFlagOperation)):
+        if isinstance(self.behavior, ESFlagOperation):
             self.behavior.flag = ref.enemy_ai
             self.behavior.flag_bin = bin(ref.enemy_ai)
 
-        if isinstance(self.behavior, (ESSetCounter)):
+        if isinstance(self.behavior, ESSetCounter):
             self.behavior.counter = ref.enemy_ai if self.behavior.type == 25 else 1
 
-        if isinstance(self.behavior, (ESSetCounterIf)):
+        if isinstance(self.behavior, ESSetCounterIf):
             self.behavior.counter_is = ref.enemy_ai
             self.behavior.counter = ref.enemy_rnd
 
-        if isinstance(self.behavior, (ESBranch)):
+        if isinstance(self.behavior, ESBranch):
             self.behavior.branch_value = ref.enemy_ai
             self.behavior.target_round = ref.enemy_rnd + self.behavior.target_round_offset
 
@@ -1691,7 +1691,7 @@ class ESInstance(Printable):
             self._ensure_condition(ref)
             self.condition.on_death = True
 
-        if isinstance(self.behavior, (ESRandomSpawn)):
+        if isinstance(self.behavior, ESRandomSpawn):
             self._ensure_condition(ref)
             self.condition.condition_attributes = self.behavior.condition_attributes
         # End terrible badness
