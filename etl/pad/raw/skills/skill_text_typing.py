@@ -220,7 +220,7 @@ def parse_as_conditions(skill_text: str) -> List[ASCondition]:
     if 'change own att' in skill_text:
         results.add(ASCondition.CHANGE_ATTRIBUTE)
 
-    if 'skills charged by' in skill_text:
+    if 'skills charged by' in skill_text or 'charge all allies' in skill_text:
         results.add(ASCondition.REDUCE_SKILL_TURN)
 
     if 'replace all orbs' in skill_text:
