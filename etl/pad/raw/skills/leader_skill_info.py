@@ -87,7 +87,7 @@ class LeaderSkill(object):
         return converter.full_text(self.text(converter), self.tags)
 
 
-class AttrAtkBoost(LeaderSkill):
+class LSAttrAtkBoost(LeaderSkill):
     skill_type = 11
 
     def __init__(self, ms: MonsterSkill):
@@ -99,7 +99,7 @@ class AttrAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class BonusAttack(LeaderSkill):
+class LSBonusAttack(LeaderSkill):
     skill_type = 12
 
     def __init__(self, ms: MonsterSkill):
@@ -110,7 +110,7 @@ class BonusAttack(LeaderSkill):
         return converter.after_attack_convert(self)
 
 
-class Autoheal(LeaderSkill):
+class LSAutoheal(LeaderSkill):
     skill_type = 13
 
     def __init__(self, ms: MonsterSkill):
@@ -122,7 +122,7 @@ class Autoheal(LeaderSkill):
         return converter.heal_on_convert(self)
 
 
-class Resolve(LeaderSkill):
+class LSResolve(LeaderSkill):
     skill_type = 14
 
     def __init__(self, ms: MonsterSkill):
@@ -134,7 +134,7 @@ class Resolve(LeaderSkill):
         return converter.resolve_convert(self)
 
 
-class MovementTimeIncrease(LeaderSkill):
+class LSMovementTimeIncrease(LeaderSkill):
     skill_type = 15
 
     def __init__(self, ms: MonsterSkill):
@@ -146,7 +146,7 @@ class MovementTimeIncrease(LeaderSkill):
         return converter.bonus_time_convert(self)
 
 
-class DamageReduction(LeaderSkill):
+class LSDamageReduction(LeaderSkill):
     skill_type = 16
 
     def __init__(self, ms: MonsterSkill):
@@ -158,7 +158,7 @@ class DamageReduction(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrDamageReduction(LeaderSkill):
+class LSAttrDamageReduction(LeaderSkill):
     skill_type = 17
 
     def __init__(self, ms: MonsterSkill):
@@ -171,7 +171,7 @@ class AttrDamageReduction(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TypeAtkBoost(LeaderSkill):
+class LSTypeAtkBoost(LeaderSkill):
     skill_type = 22
 
     def __init__(self, ms: MonsterSkill):
@@ -184,7 +184,7 @@ class TypeAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TypeHpBoost(LeaderSkill):
+class LSTypeHpBoost(LeaderSkill):
     skill_type = 23
 
     def __init__(self, ms: MonsterSkill):
@@ -197,7 +197,7 @@ class TypeHpBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TypeRcvBoost(LeaderSkill):
+class LSTypeRcvBoost(LeaderSkill):
     skill_type = 24
 
     def __init__(self, ms: MonsterSkill):
@@ -210,7 +210,7 @@ class TypeRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class StaticAtkBoost(LeaderSkill):
+class LSStaticAtkBoost(LeaderSkill):
     skill_type = 26
 
     def __init__(self, ms: MonsterSkill):
@@ -222,7 +222,7 @@ class StaticAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrAtkRcvBoost(LeaderSkill):
+class LSAttrAtkRcvBoost(LeaderSkill):
     skill_type = 28
 
     def __init__(self, ms: MonsterSkill):
@@ -235,7 +235,7 @@ class AttrAtkRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AllStatBoost(LeaderSkill):
+class LSAllStatBoost(LeaderSkill):
     skill_type = 29
 
     def __init__(self, ms: MonsterSkill):
@@ -248,7 +248,7 @@ class AllStatBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TwoTypeHpBoost(LeaderSkill):
+class LSTwoTypeHpBoost(LeaderSkill):
     skill_type = 30
 
     def __init__(self, ms: MonsterSkill):
@@ -261,7 +261,7 @@ class TwoTypeHpBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TwoTypeAtkBoost(LeaderSkill):
+class LSTwoTypeAtkBoost(LeaderSkill):
     skill_type = 31
 
     def __init__(self, ms: MonsterSkill):
@@ -274,7 +274,7 @@ class TwoTypeAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TaikoDrum(LeaderSkill):
+class LSTaikoDrum(LeaderSkill):
     skill_type = 33
 
     def __init__(self, ms: MonsterSkill):
@@ -284,7 +284,7 @@ class TaikoDrum(LeaderSkill):
         return converter.taiko_convert(converter)
 
 
-class TwoAttrDamageReduction(LeaderSkill):
+class LSTwoAttrDamageReduction(LeaderSkill):
     skill_type = 36
 
     def __init__(self, ms: MonsterSkill):
@@ -297,7 +297,7 @@ class TwoAttrDamageReduction(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class LowHpShield(LeaderSkill):
+class LSLowHpShield(LeaderSkill):
     skill_type = 38
 
     def __init__(self, ms: MonsterSkill):
@@ -311,7 +311,7 @@ class LowHpShield(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class LowHpAtkOrRcvBoost(LeaderSkill):
+class LSLowHpAtkOrRcvBoost(LeaderSkill):
     skill_type = 39
 
     def __init__(self, ms: MonsterSkill):
@@ -326,7 +326,7 @@ class LowHpAtkOrRcvBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class TwoAttrAtkBoost(LeaderSkill):
+class LSTwoAttrAtkBoost(LeaderSkill):
     skill_type = 40
 
     def __init__(self, ms: MonsterSkill):
@@ -338,7 +338,7 @@ class TwoAttrAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class Counterattack(LeaderSkill):
+class LSCounterattack(LeaderSkill):
     skill_type = 41
 
     def __init__(self, ms: MonsterSkill):
@@ -352,7 +352,7 @@ class Counterattack(LeaderSkill):
         return converter.counter_attack_convert(self)
 
 
-class HighHpShield(LeaderSkill):
+class LSHighHpShield(LeaderSkill):
     skill_type = 43
 
     def __init__(self, ms: MonsterSkill):
@@ -367,7 +367,7 @@ class HighHpShield(LeaderSkill):
         return converter.random_shield_threshold_stats(self)
 
 
-class HighHpAtkBoost(LeaderSkill):
+class LSHighHpAtkBoost(LeaderSkill):
     skill_type = 44
 
     def __init__(self, ms: MonsterSkill):
@@ -381,7 +381,7 @@ class HighHpAtkBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class AttrAtkHpBoost(LeaderSkill):
+class LSAttrAtkHpBoost(LeaderSkill):
     skill_type = 45
 
     def __init__(self, ms: MonsterSkill):
@@ -395,7 +395,7 @@ class AttrAtkHpBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TwoAttrHpBoost(LeaderSkill):
+class LSTwoAttrHpBoost(LeaderSkill):
     skill_type = 46
 
     def __init__(self, ms: MonsterSkill):
@@ -407,7 +407,7 @@ class TwoAttrHpBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrHpBoost(LeaderSkill):
+class LSAttrHpBoost(LeaderSkill):
     skill_type = 48
 
     def __init__(self, ms: MonsterSkill):
@@ -419,7 +419,7 @@ class AttrHpBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrRcvBoost(LeaderSkill):
+class LSAttrRcvBoost(LeaderSkill):
     skill_type = 49
 
     def __init__(self, ms: MonsterSkill):
@@ -431,7 +431,7 @@ class AttrRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class EggDropRateBoost(LeaderSkill):
+class LSEggDropRateBoost(LeaderSkill):
     skill_type = 53
 
     def __init__(self, ms: MonsterSkill):
@@ -442,7 +442,7 @@ class EggDropRateBoost(LeaderSkill):
         return converter.egg_drop_convert(self)
 
 
-class CoinDropBoost(LeaderSkill):
+class LSCoinDropBoost(LeaderSkill):
     skill_type = 54
 
     def __init__(self, ms: MonsterSkill):
@@ -453,7 +453,7 @@ class CoinDropBoost(LeaderSkill):
         return converter.coin_drop_convert(self)
 
 
-class Rainbow(LeaderSkill):
+class LSRainbow(LeaderSkill):
     skill_type = 61
 
     def __init__(self, ms: MonsterSkill):
@@ -479,7 +479,7 @@ class Rainbow(LeaderSkill):
         return converter.attribute_match_convert(self)
 
 
-class TypeHpAtkBoost(LeaderSkill):
+class LSTypeHpAtkBoost(LeaderSkill):
     skill_type = 62
 
     def __init__(self, ms: MonsterSkill):
@@ -492,7 +492,7 @@ class TypeHpAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TypeHpRcvBoost(LeaderSkill):
+class LSTypeHpRcvBoost(LeaderSkill):
     skill_type = 63
 
     def __init__(self, ms: MonsterSkill):
@@ -505,7 +505,7 @@ class TypeHpRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TypeAtkRcvBoost(LeaderSkill):
+class LSTypeAtkRcvBoost(LeaderSkill):
     skill_type = 64
 
     def __init__(self, ms: MonsterSkill):
@@ -518,7 +518,7 @@ class TypeAtkRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TypeAllStatBoost(LeaderSkill):
+class LSTypeAllStatBoost(LeaderSkill):
     skill_type = 65
 
     def __init__(self, ms: MonsterSkill):
@@ -531,7 +531,7 @@ class TypeAllStatBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class ComboFlatMultiplier(LeaderSkill):
+class LSComboFlatMultiplier(LeaderSkill):
     skill_type = 66
 
     def __init__(self, ms: MonsterSkill):
@@ -544,7 +544,7 @@ class ComboFlatMultiplier(LeaderSkill):
         return converter.combo_match_convert(self)
 
 
-class AttrHpRcvBoost(LeaderSkill):
+class LSAttrHpRcvBoost(LeaderSkill):
     skill_type = 67
 
     def __init__(self, ms: MonsterSkill):
@@ -557,7 +557,7 @@ class AttrHpRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrTypeAtkBoost(LeaderSkill):
+class LSAttrTypeAtkBoost(LeaderSkill):
     skill_type = 69
 
     def __init__(self, ms: MonsterSkill):
@@ -571,7 +571,7 @@ class AttrTypeAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrTypeHpAtkBoost(LeaderSkill):
+class LSAttrTypeHpAtkBoost(LeaderSkill):
     skill_type = 73
 
     def __init__(self, ms: MonsterSkill):
@@ -585,7 +585,7 @@ class AttrTypeHpAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrTypeAtkRcvBoost(LeaderSkill):
+class LSAttrTypeAtkRcvBoost(LeaderSkill):
     skill_type = 75
 
     def __init__(self, ms: MonsterSkill):
@@ -599,7 +599,7 @@ class AttrTypeAtkRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrTypeAllStatBoost(LeaderSkill):
+class LSAttrTypeAllStatBoost(LeaderSkill):
     skill_type = 76
 
     def __init__(self, ms: MonsterSkill):
@@ -613,7 +613,7 @@ class AttrTypeAllStatBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TwoTypeHpAtkBoost(LeaderSkill):
+class LSTwoTypeHpAtkBoost(LeaderSkill):
     skill_type = 77
 
     def __init__(self, ms: MonsterSkill):
@@ -626,7 +626,7 @@ class TwoTypeHpAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TwoTypeAtkRcvBoost(LeaderSkill):
+class LSTwoTypeAtkRcvBoost(LeaderSkill):
     skill_type = 79
 
     def __init__(self, ms: MonsterSkill):
@@ -639,7 +639,7 @@ class TwoTypeAtkRcvBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class LowHpConditionalAttrAtkBoost(LeaderSkill):
+class LSLowHpConditionalAttrAtkBoost(LeaderSkill):
     skill_type = 94
 
     def __init__(self, ms: MonsterSkill):
@@ -655,7 +655,7 @@ class LowHpConditionalAttrAtkBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class LowHpConditionalTypeAtkBoost(LeaderSkill):
+class LSLowHpConditionalTypeAtkBoost(LeaderSkill):
     skill_type = 95
 
     def __init__(self, ms: MonsterSkill):
@@ -671,7 +671,7 @@ class LowHpConditionalTypeAtkBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class HighHpConditionalAttrAtkBoost(LeaderSkill):
+class LSHighHpConditionalAttrAtkBoost(LeaderSkill):
     skill_type = 96
 
     def __init__(self, ms: MonsterSkill):
@@ -687,7 +687,7 @@ class HighHpConditionalAttrAtkBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class HighHpConditionalTypeAtkBoost(LeaderSkill):
+class LSHighHpConditionalTypeAtkBoost(LeaderSkill):
     skill_type = 97
 
     def __init__(self, ms: MonsterSkill):
@@ -703,7 +703,7 @@ class HighHpConditionalTypeAtkBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class ComboScaledMultiplier(LeaderSkill):
+class LSComboScaledMultiplier(LeaderSkill):
     skill_type = 98
 
     def __init__(self, ms: MonsterSkill):
@@ -719,7 +719,7 @@ class ComboScaledMultiplier(LeaderSkill):
         return converter.combo_match_convert(self)
 
 
-class SkillActivationAtkRcvBoost(LeaderSkill):
+class LSSkillActivationAtkRcvBoost(LeaderSkill):
     skill_type = 100
 
     def __init__(self, ms: MonsterSkill):
@@ -732,7 +732,7 @@ class SkillActivationAtkRcvBoost(LeaderSkill):
         return converter.skill_used_convert(self)
 
 
-class AtkBoostWithExactCombos(LeaderSkill):
+class LSAtkBoostWithExactCombos(LeaderSkill):
     skill_type = 101
 
     def __init__(self, ms: MonsterSkill):
@@ -744,7 +744,7 @@ class AtkBoostWithExactCombos(LeaderSkill):
         return converter.exact_combo_convert(self)
 
 
-class ComboFlatAtkRcvBoost(LeaderSkill):
+class LSComboFlatAtkRcvBoost(LeaderSkill):
     skill_type = 103
 
     def __init__(self, ms: MonsterSkill):
@@ -758,7 +758,7 @@ class ComboFlatAtkRcvBoost(LeaderSkill):
         return converter.combo_match_convert(self)
 
 
-class ComboFlatMultiplierAttrAtkBoost(LeaderSkill):
+class LSComboFlatMultiplierAttrAtkBoost(LeaderSkill):
     skill_type = 104
 
     def __init__(self, ms: MonsterSkill):
@@ -773,7 +773,7 @@ class ComboFlatMultiplierAttrAtkBoost(LeaderSkill):
         return converter.combo_match_convert(self)
 
 
-class ReducedRcvAtkBoost(LeaderSkill):
+class LSReducedRcvAtkBoost(LeaderSkill):
     skill_type = 105
 
     def __init__(self, ms: MonsterSkill):
@@ -786,7 +786,7 @@ class ReducedRcvAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class ReducedHpAtkBoost(LeaderSkill):
+class LSReducedHpAtkBoost(LeaderSkill):
     skill_type = 106
 
     def __init__(self, ms: MonsterSkill):
@@ -799,7 +799,7 @@ class ReducedHpAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class HpReduction(LeaderSkill):
+class LSHpReduction(LeaderSkill):
     skill_type = 107
 
     def __init__(self, ms: MonsterSkill):
@@ -811,7 +811,7 @@ class HpReduction(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class ReducedHpTypeAtkBoost(LeaderSkill):
+class LSReducedHpTypeAtkBoost(LeaderSkill):
     skill_type = 108
 
     def __init__(self, ms: MonsterSkill):
@@ -825,7 +825,7 @@ class ReducedHpTypeAtkBoost(LeaderSkill):
         return converter.passive_stats_type_atk_all_hp_convert(self)
 
 
-class BlobFlatAtkBoost(LeaderSkill):
+class LSBlobFlatAtkBoost(LeaderSkill):
     skill_type = 109
 
     def __init__(self, ms: MonsterSkill):
@@ -839,7 +839,7 @@ class BlobFlatAtkBoost(LeaderSkill):
         return converter.mass_match_convert(self)
 
 
-class TwoAttrHpAtkBoost(LeaderSkill):
+class LSTwoAttrHpAtkBoost(LeaderSkill):
     skill_type = 111
 
     def __init__(self, ms: MonsterSkill):
@@ -852,7 +852,7 @@ class TwoAttrHpAtkBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class TwoAttrAllStatBoost(LeaderSkill):
+class LSTwoAttrAllStatBoost(LeaderSkill):
     skill_type = 114
 
     def __init__(self, ms: MonsterSkill):
@@ -865,7 +865,7 @@ class TwoAttrAllStatBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class BlobScalingAtkBoost(LeaderSkill):
+class LSBlobScalingAtkBoost(LeaderSkill):
     skill_type = 119
 
     def __init__(self, ms: MonsterSkill):
@@ -882,7 +882,7 @@ class BlobScalingAtkBoost(LeaderSkill):
         return converter.mass_match_convert(self)
 
 
-class AttrOrTypeStatBoost(LeaderSkill):
+class LSAttrOrTypeStatBoost(LeaderSkill):
     skill_type = 121
 
     def __init__(self, ms: MonsterSkill):
@@ -898,7 +898,7 @@ class AttrOrTypeStatBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class LowHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
+class LSLowHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
     skill_type = 122
 
     def __init__(self, ms: MonsterSkill):
@@ -915,7 +915,7 @@ class LowHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class HighHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
+class LSHighHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
     skill_type = 123
 
     def __init__(self, ms: MonsterSkill):
@@ -932,7 +932,7 @@ class HighHpConditionalAttrTypeAtkRcvBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class AttrComboScalingAtkBoost(LeaderSkill):
+class LSAttrComboScalingAtkBoost(LeaderSkill):
     skill_type = 124
 
     def __init__(self, ms: MonsterSkill):
@@ -949,7 +949,7 @@ class AttrComboScalingAtkBoost(LeaderSkill):
         return converter.multi_attribute_match_convert(self)
 
 
-class TeamUnitConditionalStatBoost(LeaderSkill):
+class LSTeamUnitConditionalStatBoost(LeaderSkill):
     skill_type = 125
 
     def __init__(self, ms: MonsterSkill):
@@ -964,7 +964,7 @@ class TeamUnitConditionalStatBoost(LeaderSkill):
         return converter.team_build_bonus_convert(self)
 
 
-class MultiAttrTypeStatBoost(LeaderSkill):
+class LSMultiAttrTypeStatBoost(LeaderSkill):
     skill_type = 129
 
     def __init__(self, ms: MonsterSkill):
@@ -982,7 +982,7 @@ class MultiAttrTypeStatBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class LowHpAttrAtkStatBoost(LeaderSkill):
+class LSLowHpAttrAtkStatBoost(LeaderSkill):
     skill_type = 130
 
     def __init__(self, ms: MonsterSkill):
@@ -1001,7 +1001,7 @@ class LowHpAttrAtkStatBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class HighHpAttrTypeStatBoost(LeaderSkill):
+class LSHighHpAttrTypeStatBoost(LeaderSkill):
     skill_type = 131
 
     def __init__(self, ms: MonsterSkill):
@@ -1020,7 +1020,7 @@ class HighHpAttrTypeStatBoost(LeaderSkill):
         return converter.threshold_stats_convert(self)
 
 
-class SkillUsedAttrTypeAtkRcvBoost(LeaderSkill):
+class LSSkillUsedAttrTypeAtkRcvBoost(LeaderSkill):
     skill_type = 133
 
     def __init__(self, ms: MonsterSkill):
@@ -1035,7 +1035,7 @@ class SkillUsedAttrTypeAtkRcvBoost(LeaderSkill):
         return converter.skill_used_convert(self)
 
 
-class MultiAttrConditionalStatBoost(LeaderSkill):
+class LSMultiAttrConditionalStatBoost(LeaderSkill):
     skill_type = 136
 
     def __init__(self, ms: MonsterSkill):
@@ -1057,7 +1057,7 @@ class MultiAttrConditionalStatBoost(LeaderSkill):
         return converter.dual_passive_stat_convert(self)
 
 
-class MultiTypeConditionalStatBoost(LeaderSkill):
+class LSMultiTypeConditionalStatBoost(LeaderSkill):
     skill_type = 137
 
     def __init__(self, ms: MonsterSkill):
@@ -1079,7 +1079,7 @@ class MultiTypeConditionalStatBoost(LeaderSkill):
         return converter.dual_passive_stat_convert(self)
 
 
-class TwoPartLeaderSkill(LeaderSkill):
+class LSTwoPartLeaderSkill(LeaderSkill):
     skill_type = 138
 
     def __init__(self, ms: MonsterSkill):
@@ -1129,7 +1129,7 @@ class TwoPartLeaderSkill(LeaderSkill):
         return converter.full_text(parts, tags)
 
 
-class HpMultiConditionalAtkBoost(LeaderSkill):
+class LSHpMultiConditionalAtkBoost(LeaderSkill):
     skill_type = 139
 
     def __init__(self, ms: MonsterSkill):
@@ -1152,7 +1152,7 @@ class HpMultiConditionalAtkBoost(LeaderSkill):
         return converter.dual_threshold_stats_convert(self)
 
 
-class RankXpBoost(LeaderSkill):
+class LSRankXpBoost(LeaderSkill):
     skill_type = 148
 
     def __init__(self, ms: MonsterSkill):
@@ -1164,7 +1164,7 @@ class RankXpBoost(LeaderSkill):
         return converter.rank_exp_rate_convert(self)
 
 
-class HealMatchRcvBoost(LeaderSkill):
+class LSHealMatchRcvBoost(LeaderSkill):
     skill_type = 149
 
     def __init__(self, ms: MonsterSkill):
@@ -1176,7 +1176,7 @@ class HealMatchRcvBoost(LeaderSkill):
         return converter.heart_tpa_stats_convert(self)
 
 
-class EnhanceOrbMatch5(LeaderSkill):
+class LSEnhanceOrbMatch5(LeaderSkill):
     skill_type = 150
 
     def __init__(self, ms: MonsterSkill):
@@ -1188,7 +1188,7 @@ class EnhanceOrbMatch5(LeaderSkill):
         return converter.five_orb_one_enhance_convert(self)
 
 
-class HeartCross(LeaderSkill):
+class LSHeartCross(LeaderSkill):
     skill_type = 151
 
     def __init__(self, ms: MonsterSkill):
@@ -1202,7 +1202,7 @@ class HeartCross(LeaderSkill):
         return converter.heart_cross_convert(self)
 
 
-class Multiboost(LeaderSkill):
+class LSMultiboost(LeaderSkill):
     skill_type = 155
 
     def __init__(self, ms: MonsterSkill):
@@ -1224,7 +1224,7 @@ class CrossMultiplier(object):
         self.atk = atk
 
 
-class AttrCross(LeaderSkill):
+class LSAttrCross(LeaderSkill):
     skill_type = 157
 
     def __init__(self, ms: MonsterSkill):
@@ -1249,7 +1249,7 @@ class AttrCross(LeaderSkill):
         return converter.color_cross_convert(self)
 
 
-class MatchXOrMoreOrbs(LeaderSkill):
+class LSMatchXOrMoreOrbs(LeaderSkill):
     skill_type = 158
 
     def __init__(self, ms: MonsterSkill):
@@ -1272,7 +1272,7 @@ class MatchXOrMoreOrbs(LeaderSkill):
         return converter.minimum_orb_convert(self)
 
 
-class AdvancedBlobMatch(LeaderSkill):
+class LSAdvancedBlobMatch(LeaderSkill):
     skill_type = 159
 
     def __init__(self, ms: MonsterSkill):
@@ -1289,7 +1289,7 @@ class AdvancedBlobMatch(LeaderSkill):
         return converter.mass_match_convert(self)
 
 
-class SevenBySix(LeaderSkill):
+class LSSevenBySix(LeaderSkill):
     skill_type = 162
 
     def __init__(self, ms: MonsterSkill):
@@ -1300,7 +1300,7 @@ class SevenBySix(LeaderSkill):
         return converter.tag_only_convert(self)
 
 
-class NoSkyfallBoost(LeaderSkill):
+class LSNoSkyfallBoost(LeaderSkill):
     skill_type = 163
 
     def __init__(self, ms: MonsterSkill):
@@ -1319,7 +1319,7 @@ class NoSkyfallBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class AttrComboConditionalAtkRcvBoost(LeaderSkill):
+class LSAttrComboConditionalAtkRcvBoost(LeaderSkill):
     skill_type = 164
 
     def __init__(self, ms: MonsterSkill):
@@ -1339,7 +1339,7 @@ class AttrComboConditionalAtkRcvBoost(LeaderSkill):
         return converter.multi_attribute_match_convert(self)
 
 
-class RainbowAtkRcv(LeaderSkill):
+class LSRainbowAtkRcv(LeaderSkill):
     skill_type = 165
 
     def __init__(self, ms: MonsterSkill):
@@ -1367,7 +1367,7 @@ class RainbowAtkRcv(LeaderSkill):
         return converter.attribute_match_convert(self)
 
 
-class AtkRcvComboScale(LeaderSkill):
+class LSAtkRcvComboScale(LeaderSkill):
     skill_type = 166
 
     def __init__(self, ms: MonsterSkill):
@@ -1386,7 +1386,7 @@ class AtkRcvComboScale(LeaderSkill):
         return converter.combo_match_convert(self)
 
 
-class BlobAtkRcvBoost(LeaderSkill):
+class LSBlobAtkRcvBoost(LeaderSkill):
     skill_type = 167
 
     def __init__(self, ms: MonsterSkill):
@@ -1406,7 +1406,7 @@ class BlobAtkRcvBoost(LeaderSkill):
         return converter.mass_match_convert(self)
 
 
-class ComboMultPlusShield(LeaderSkill):
+class LSComboMultPlusShield(LeaderSkill):
     skill_type = 169
 
     def __init__(self, ms: MonsterSkill):
@@ -1420,7 +1420,7 @@ class ComboMultPlusShield(LeaderSkill):
         return converter.combo_match_convert(self)
 
 
-class RainbowMultPlusShield(LeaderSkill):
+class LSRainbowMultPlusShield(LeaderSkill):
     skill_type = 170
 
     def __init__(self, ms: MonsterSkill):
@@ -1435,7 +1435,7 @@ class RainbowMultPlusShield(LeaderSkill):
         return converter.attribute_match_convert(self)
 
 
-class MatchAttrPlusShield(LeaderSkill):
+class LSMatchAttrPlusShield(LeaderSkill):
     skill_type = 171
 
     def __init__(self, ms: MonsterSkill):
@@ -1450,7 +1450,7 @@ class MatchAttrPlusShield(LeaderSkill):
         return converter.multi_attribute_match_convert(self)
 
 
-class CollabConditionalBoost(LeaderSkill):
+class LSCollabConditionalBoost(LeaderSkill):
     skill_type = 175
 
     def __init__(self, ms: MonsterSkill):
@@ -1465,7 +1465,7 @@ class CollabConditionalBoost(LeaderSkill):
         return converter.collab_bonus_convert(self)
 
 
-class OrbRemainingMultiplier(LeaderSkill):
+class LSOrbRemainingMultiplier(LeaderSkill):
     skill_type = 177
 
     def __init__(self, ms: MonsterSkill):
@@ -1486,7 +1486,7 @@ class OrbRemainingMultiplier(LeaderSkill):
         return converter.orb_remain_convert(self)
 
 
-class FixedMovementTime(LeaderSkill):
+class LSFixedMovementTime(LeaderSkill):
     skill_type = 178
 
     def __init__(self, ms: MonsterSkill):
@@ -1515,7 +1515,7 @@ class FixedMovementTime(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class RowMatcHPlusDamageReduction(LeaderSkill):
+class LSRowMatcHPlusDamageReduction(LeaderSkill):
     skill_type = 182
 
     def __init__(self, ms: MonsterSkill):
@@ -1530,7 +1530,7 @@ class RowMatcHPlusDamageReduction(LeaderSkill):
         return converter.mass_match_convert(self)
 
 
-class DualThresholdBoost(LeaderSkill):
+class LSDualThresholdBoost(LeaderSkill):
     skill_type = 183
 
     def __init__(self, ms: MonsterSkill):
@@ -1559,7 +1559,7 @@ class DualThresholdBoost(LeaderSkill):
         return converter.dual_threshold_stats_convert(self)
 
 
-class BonusTimeStatBoost(LeaderSkill):
+class LSBonusTimeStatBoost(LeaderSkill):
     skill_type = 185
 
     def __init__(self, ms: MonsterSkill):
@@ -1576,7 +1576,7 @@ class BonusTimeStatBoost(LeaderSkill):
         return converter.bonus_time_convert(self)
 
 
-class SevenBySixStatBoost(LeaderSkill):
+class LSSevenBySixStatBoost(LeaderSkill):
     skill_type = 186
 
     def __init__(self, ms: MonsterSkill):
@@ -1593,7 +1593,7 @@ class SevenBySixStatBoost(LeaderSkill):
         return converter.passive_stats_convert(self)
 
 
-class BlobMatchBonusCombo(LeaderSkill):
+class LSBlobMatchBonusCombo(LeaderSkill):
     skill_type = 192
 
     def __init__(self, ms: MonsterSkill):
@@ -1608,7 +1608,7 @@ class BlobMatchBonusCombo(LeaderSkill):
         return converter.multi_mass_match_convert(self)
 
 
-class LMatchBoost(LeaderSkill):
+class LSLMatchBoost(LeaderSkill):
     skill_type = 193
 
     def __init__(self, ms: MonsterSkill):
@@ -1623,7 +1623,7 @@ class LMatchBoost(LeaderSkill):
         return converter.l_match_convert(self)
 
 
-class AttrMatchBonusCombo(LeaderSkill):
+class LSAttrMatchBonusCombo(LeaderSkill):
     skill_type = 194
 
     def __init__(self, ms: MonsterSkill):
@@ -1638,7 +1638,7 @@ class AttrMatchBonusCombo(LeaderSkill):
         return converter.add_combo_att_convert(self)
 
 
-class DisablePoisonEffects(LeaderSkill):
+class LSDisablePoisonEffects(LeaderSkill):
     skill_type = 197
 
     def __init__(self, ms: MonsterSkill):
@@ -1649,7 +1649,7 @@ class DisablePoisonEffects(LeaderSkill):
         return converter.tag_only_convert(self)
 
 
-class HealMatchBoostUnbind(LeaderSkill):
+class LSHealMatchBoostUnbind(LeaderSkill):
     skill_type = 198
 
     def __init__(self, ms: MonsterSkill):
@@ -1664,7 +1664,7 @@ class HealMatchBoostUnbind(LeaderSkill):
         return converter.orb_heal_convert(self)
 
 
-class RainbowBonusDamage(LeaderSkill):
+class LSRainbowBonusDamage(LeaderSkill):
     skill_type = 199
 
     def __init__(self, ms: MonsterSkill):
@@ -1678,7 +1678,7 @@ class RainbowBonusDamage(LeaderSkill):
         return converter.rainbow_bonus_damage_convert(self)
 
 
-class BlobBonusDamage(LeaderSkill):
+class LSBlobBonusDamage(LeaderSkill):
     skill_type = 200
 
     def __init__(self, ms: MonsterSkill):
@@ -1692,7 +1692,7 @@ class BlobBonusDamage(LeaderSkill):
         return converter.mass_match_bonus_damage_convert(self)
 
 
-class ColorComboBonusDamage(LeaderSkill):
+class LSColorComboBonusDamage(LeaderSkill):
     skill_type = 201
 
     def __init__(self, ms: MonsterSkill):
@@ -1706,7 +1706,7 @@ class ColorComboBonusDamage(LeaderSkill):
         return converter.color_combo_bonus_damage_convert(self)
 
 
-class GroupConditionalBoost(LeaderSkill):
+class LSGroupConditionalBoost(LeaderSkill):
     skill_type = 203
 
     def __init__(self, ms: MonsterSkill):
@@ -1731,9 +1731,9 @@ def convert(skill_list: List[MonsterSkill]):
         except Exception as ex:
             human_fix_logger.warning('Failed to convert {} {}'.format(s.skill_type, ex))
 
-    # Fills in TwoPartLeaderSkills
+    # Fills in LSTwoPartLeaderSkills
     for s in results.values():
-        if not isinstance(s, TwoPartLeaderSkill):
+        if not isinstance(s, LSTwoPartLeaderSkill):
             continue
         for p_id in s.child_ids:
             if p_id not in results:
@@ -1758,109 +1758,109 @@ def convert_skill(s) -> Optional[LeaderSkill]:
 
 ALL_LEADER_SKILLS = [
     LeaderSkill,
-    AttrAtkBoost,
-    BonusAttack,
-    Autoheal,
-    Resolve,
-    MovementTimeIncrease,
-    DamageReduction,
-    AttrDamageReduction,
-    TypeAtkBoost,
-    TypeHpBoost,
-    TypeRcvBoost,
-    StaticAtkBoost,
-    AttrAtkRcvBoost,
-    AllStatBoost,
-    TwoTypeHpBoost,
-    TwoTypeAtkBoost,
-    TaikoDrum,
-    TwoAttrDamageReduction,
-    LowHpShield,
-    LowHpAtkOrRcvBoost,
-    TwoAttrAtkBoost,
-    Counterattack,
-    HighHpShield,
-    HighHpAtkBoost,
-    AttrAtkHpBoost,
-    TwoAttrHpBoost,
-    AttrHpBoost,
-    AttrRcvBoost,
-    EggDropRateBoost,
-    CoinDropBoost,
-    Rainbow,
-    TypeHpAtkBoost,
-    TypeHpRcvBoost,
-    TypeAtkRcvBoost,
-    TypeAllStatBoost,
-    ComboFlatMultiplier,
-    AttrHpRcvBoost,
-    AttrTypeAtkBoost,
-    AttrTypeHpAtkBoost,
-    AttrTypeAtkRcvBoost,
-    AttrTypeAllStatBoost,
-    TwoTypeHpAtkBoost,
-    TwoTypeAtkRcvBoost,
-    LowHpConditionalAttrAtkBoost,
-    LowHpConditionalTypeAtkBoost,
-    HighHpConditionalAttrAtkBoost,
-    HighHpConditionalTypeAtkBoost,
-    ComboScaledMultiplier,
-    SkillActivationAtkRcvBoost,
-    AtkBoostWithExactCombos,
-    ComboFlatAtkRcvBoost,
-    ComboFlatMultiplierAttrAtkBoost,
-    ReducedRcvAtkBoost,
-    ReducedHpAtkBoost,
-    HpReduction,
-    ReducedHpTypeAtkBoost,
-    BlobFlatAtkBoost,
-    TwoAttrHpAtkBoost,
-    TwoAttrAllStatBoost,
-    BlobScalingAtkBoost,
-    AttrOrTypeStatBoost,
-    LowHpConditionalAttrTypeAtkRcvBoost,
-    HighHpConditionalAttrTypeAtkRcvBoost,
-    AttrComboScalingAtkBoost,
-    TeamUnitConditionalStatBoost,
-    MultiAttrTypeStatBoost,
-    LowHpAttrAtkStatBoost,
-    HighHpAttrTypeStatBoost,
-    SkillUsedAttrTypeAtkRcvBoost,
-    MultiAttrConditionalStatBoost,
-    MultiTypeConditionalStatBoost,
-    TwoPartLeaderSkill,
-    HpMultiConditionalAtkBoost,
-    RankXpBoost,
-    HealMatchRcvBoost,
-    EnhanceOrbMatch5,
-    HeartCross,
-    Multiboost,
-    AttrCross,
-    MatchXOrMoreOrbs,
-    AdvancedBlobMatch,
-    SevenBySix,
-    NoSkyfallBoost,
-    GroupConditionalBoost,
-    AttrComboConditionalAtkRcvBoost,
-    RainbowAtkRcv,
-    AtkRcvComboScale,
-    BlobAtkRcvBoost,
-    ComboMultPlusShield,
-    RainbowMultPlusShield,
-    MatchAttrPlusShield,
-    CollabConditionalBoost,
-    OrbRemainingMultiplier,
-    FixedMovementTime,
-    RowMatcHPlusDamageReduction,
-    DualThresholdBoost,
-    BonusTimeStatBoost,
-    SevenBySixStatBoost,
-    BlobMatchBonusCombo,
-    LMatchBoost,
-    AttrMatchBonusCombo,
-    DisablePoisonEffects,
-    HealMatchBoostUnbind,
-    RainbowBonusDamage,
-    BlobBonusDamage,
-    ColorComboBonusDamage,
+    LSAttrAtkBoost,
+    LSBonusAttack,
+    LSAutoheal,
+    LSResolve,
+    LSMovementTimeIncrease,
+    LSDamageReduction,
+    LSAttrDamageReduction,
+    LSTypeAtkBoost,
+    LSTypeHpBoost,
+    LSTypeRcvBoost,
+    LSStaticAtkBoost,
+    LSAttrAtkRcvBoost,
+    LSAllStatBoost,
+    LSTwoTypeHpBoost,
+    LSTwoTypeAtkBoost,
+    LSTaikoDrum,
+    LSTwoAttrDamageReduction,
+    LSLowHpShield,
+    LSLowHpAtkOrRcvBoost,
+    LSTwoAttrAtkBoost,
+    LSCounterattack,
+    LSHighHpShield,
+    LSHighHpAtkBoost,
+    LSAttrAtkHpBoost,
+    LSTwoAttrHpBoost,
+    LSAttrHpBoost,
+    LSAttrRcvBoost,
+    LSEggDropRateBoost,
+    LSCoinDropBoost,
+    LSRainbow,
+    LSTypeHpAtkBoost,
+    LSTypeHpRcvBoost,
+    LSTypeAtkRcvBoost,
+    LSTypeAllStatBoost,
+    LSComboFlatMultiplier,
+    LSAttrHpRcvBoost,
+    LSAttrTypeAtkBoost,
+    LSAttrTypeHpAtkBoost,
+    LSAttrTypeAtkRcvBoost,
+    LSAttrTypeAllStatBoost,
+    LSTwoTypeHpAtkBoost,
+    LSTwoTypeAtkRcvBoost,
+    LSLowHpConditionalAttrAtkBoost,
+    LSLowHpConditionalTypeAtkBoost,
+    LSHighHpConditionalAttrAtkBoost,
+    LSHighHpConditionalTypeAtkBoost,
+    LSComboScaledMultiplier,
+    LSSkillActivationAtkRcvBoost,
+    LSAtkBoostWithExactCombos,
+    LSComboFlatAtkRcvBoost,
+    LSComboFlatMultiplierAttrAtkBoost,
+    LSReducedRcvAtkBoost,
+    LSReducedHpAtkBoost,
+    LSHpReduction,
+    LSReducedHpTypeAtkBoost,
+    LSBlobFlatAtkBoost,
+    LSTwoAttrHpAtkBoost,
+    LSTwoAttrAllStatBoost,
+    LSBlobScalingAtkBoost,
+    LSAttrOrTypeStatBoost,
+    LSLowHpConditionalAttrTypeAtkRcvBoost,
+    LSHighHpConditionalAttrTypeAtkRcvBoost,
+    LSAttrComboScalingAtkBoost,
+    LSTeamUnitConditionalStatBoost,
+    LSMultiAttrTypeStatBoost,
+    LSLowHpAttrAtkStatBoost,
+    LSHighHpAttrTypeStatBoost,
+    LSSkillUsedAttrTypeAtkRcvBoost,
+    LSMultiAttrConditionalStatBoost,
+    LSMultiTypeConditionalStatBoost,
+    LSTwoPartLeaderSkill,
+    LSHpMultiConditionalAtkBoost,
+    LSRankXpBoost,
+    LSHealMatchRcvBoost,
+    LSEnhanceOrbMatch5,
+    LSHeartCross,
+    LSMultiboost,
+    LSAttrCross,
+    LSMatchXOrMoreOrbs,
+    LSAdvancedBlobMatch,
+    LSSevenBySix,
+    LSNoSkyfallBoost,
+    LSGroupConditionalBoost,
+    LSAttrComboConditionalAtkRcvBoost,
+    LSRainbowAtkRcv,
+    LSAtkRcvComboScale,
+    LSBlobAtkRcvBoost,
+    LSComboMultPlusShield,
+    LSRainbowMultPlusShield,
+    LSMatchAttrPlusShield,
+    LSCollabConditionalBoost,
+    LSOrbRemainingMultiplier,
+    LSFixedMovementTime,
+    LSRowMatcHPlusDamageReduction,
+    LSDualThresholdBoost,
+    LSBonusTimeStatBoost,
+    LSSevenBySixStatBoost,
+    LSBlobMatchBonusCombo,
+    LSLMatchBoost,
+    LSAttrMatchBonusCombo,
+    LSDisablePoisonEffects,
+    LSHealMatchBoostUnbind,
+    LSRainbowBonusDamage,
+    LSBlobBonusDamage,
+    LSColorComboBonusDamage,
 ]

@@ -64,7 +64,7 @@ class ActiveSkill(object):
         return self.text(converter) or ''
 
 
-class MultiplierMultiTargetAttrNuke(ActiveSkill):
+class ASMultiplierMultiTargetAttrNuke(ActiveSkill):
     # Do not add this to the ALL_SKILLS list! skill_type=0 can imply 'no skill'
     skill_type = 0
 
@@ -79,7 +79,7 @@ class MultiplierMultiTargetAttrNuke(ActiveSkill):
         return converter.attr_nuke_convert(self)
 
 
-class FixedMultiTargetAttrNuke(ActiveSkill):
+class ASFixedMultiTargetAttrNuke(ActiveSkill):
     skill_type = 1
 
     def __init__(self, ms: MonsterSkill):
@@ -93,7 +93,7 @@ class FixedMultiTargetAttrNuke(ActiveSkill):
         return converter.fixed_attr_nuke_convert(self)
 
 
-class MultiplierSelfAttrSingleTargetNuke(ActiveSkill):
+class ASMultiplierSelfAttrSingleTargetNuke(ActiveSkill):
     skill_type = 2
 
     def __init__(self, ms: MonsterSkill):
@@ -106,7 +106,7 @@ class MultiplierSelfAttrSingleTargetNuke(ActiveSkill):
         return converter.self_att_nuke_convert(self)
 
 
-class DamageReduction(ActiveSkill):
+class ASDamageReduction(ActiveSkill):
     skill_type = 3
 
     def __init__(self, ms: MonsterSkill):
@@ -119,7 +119,7 @@ class DamageReduction(ActiveSkill):
         return converter.shield_convert(self)
 
 
-class PoisonEnemies(ActiveSkill):
+class ASPoisonEnemies(ActiveSkill):
     skill_type = 4
 
     def __init__(self, ms: MonsterSkill):
@@ -131,7 +131,7 @@ class PoisonEnemies(ActiveSkill):
         return converter.poison_convert(self)
 
 
-class FreeOrbMovement(ActiveSkill):
+class ASFreeOrbMovement(ActiveSkill):
     skill_type = 5
 
     def __init__(self, ms: MonsterSkill):
@@ -143,7 +143,7 @@ class FreeOrbMovement(ActiveSkill):
         return converter.ctw_convert(self)
 
 
-class Gravity(ActiveSkill):
+class ASGravity(ActiveSkill):
     skill_type = 6
 
     def __init__(self, ms: MonsterSkill):
@@ -155,7 +155,7 @@ class Gravity(ActiveSkill):
         return converter.gravity_convert(self)
 
 
-class HpRecoverFromRcv(ActiveSkill):
+class ASHpRecoverFromRcv(ActiveSkill):
     skill_type = 7
 
     def __init__(self, ms: MonsterSkill):
@@ -167,7 +167,7 @@ class HpRecoverFromRcv(ActiveSkill):
         return converter.heal_active_convert(self)
 
 
-class HpRecoverStatic(ActiveSkill):
+class ASHpRecoverStatic(ActiveSkill):
     skill_type = 8
 
     def __init__(self, ms: MonsterSkill):
@@ -179,7 +179,7 @@ class HpRecoverStatic(ActiveSkill):
         return converter.heal_active_convert(self)
 
 
-class OneAttrtoOneAttr(ActiveSkill):
+class ASOneAttrtoOneAttr(ActiveSkill):
     skill_type = 9
 
     def __init__(self, ms: MonsterSkill):
@@ -192,14 +192,14 @@ class OneAttrtoOneAttr(ActiveSkill):
         return converter.single_orb_change_convert(self)
 
 
-class OrbRefresh(ActiveSkill):
+class ASOrbRefresh(ActiveSkill):
     skill_type = 10
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.board_refresh(self)
 
 
-class Delay(ActiveSkill):
+class ASDelay(ActiveSkill):
     skill_type = 18
 
     def __init__(self, ms: MonsterSkill):
@@ -211,7 +211,7 @@ class Delay(ActiveSkill):
         return converter.delay_convert(self)
 
 
-class DefenseBreak(ActiveSkill):
+class ASDefenseBreak(ActiveSkill):
     skill_type = 19
 
     def __init__(self, ms: MonsterSkill):
@@ -224,7 +224,7 @@ class DefenseBreak(ActiveSkill):
         return converter.defense_reduction_convert(self)
 
 
-class TwoAttrtoOneTwoAttr(ActiveSkill):
+class ASTwoAttrtoOneTwoAttr(ActiveSkill):
     skill_type = 20
 
     def __init__(self, ms: MonsterSkill):
@@ -239,7 +239,7 @@ class TwoAttrtoOneTwoAttr(ActiveSkill):
         return converter.double_orb_convert(self)
 
 
-class DamageVoid(ActiveSkill):
+class ASDamageVoid(ActiveSkill):
     skill_type = 21
 
     def __init__(self, ms: MonsterSkill):
@@ -253,7 +253,7 @@ class DamageVoid(ActiveSkill):
         return converter.elemental_shield_convert(self)
 
 
-class AtkBasedNuke(ActiveSkill):
+class ASAtkBasedNuke(ActiveSkill):
     skill_type = 35
 
     def __init__(self, ms: MonsterSkill):
@@ -267,7 +267,7 @@ class AtkBasedNuke(ActiveSkill):
         return converter.drain_attack_convert(self)
 
 
-class SingleTargetTeamAttrNuke(ActiveSkill):
+class ASSingleTargetTeamAttrNuke(ActiveSkill):
     skill_type = 37
 
     def __init__(self, ms: MonsterSkill):
@@ -281,7 +281,7 @@ class SingleTargetTeamAttrNuke(ActiveSkill):
         return converter.attr_nuke_convert(self)
 
 
-class AttrOnAttrNuke(ActiveSkill):
+class ASAttrOnAttrNuke(ActiveSkill):
     skill_type = 42
 
     def __init__(self, ms: MonsterSkill):
@@ -295,7 +295,7 @@ class AttrOnAttrNuke(ActiveSkill):
         return converter.damage_to_att_enemy_convert(self)
 
 
-class AttrBurst(ActiveSkill):
+class ASAttrBurst(ActiveSkill):
     skill_type = 50
 
     def __init__(self, ms: MonsterSkill):
@@ -318,7 +318,7 @@ class AttrBurst(ActiveSkill):
             return converter.attribute_attack_boost_convert(self)
 
 
-class MassAttack(ActiveSkill):
+class ASMassAttack(ActiveSkill):
     skill_type = 51
 
     def __init__(self, ms: MonsterSkill):
@@ -330,7 +330,7 @@ class MassAttack(ActiveSkill):
         return converter.mass_attack_convert(self)
 
 
-class OrbEnhance(ActiveSkill):
+class ASOrbEnhance(ActiveSkill):
     skill_type = 52
 
     def __init__(self, ms: MonsterSkill):
@@ -342,7 +342,7 @@ class OrbEnhance(ActiveSkill):
         return converter.enhance_convert(self)
 
 
-class TrueDamageNuke(ActiveSkill):
+class ASTrueDamageNuke(ActiveSkill):
     skill_type = 55
 
     def __init__(self, ms: MonsterSkill):
@@ -355,7 +355,7 @@ class TrueDamageNuke(ActiveSkill):
         return converter.laser_convert(self)
 
 
-class TrueDamageNukeAll(ActiveSkill):
+class ASTrueDamageNukeAll(ActiveSkill):
     skill_type = 56
 
     def __init__(self, ms: MonsterSkill):
@@ -368,7 +368,7 @@ class TrueDamageNukeAll(ActiveSkill):
         return converter.laser_convert(self)
 
 
-class AttrMassAttack(ActiveSkill):
+class ASAttrMassAttack(ActiveSkill):
     skill_type = 58
 
     def __init__(self, ms: MonsterSkill):
@@ -383,7 +383,7 @@ class AttrMassAttack(ActiveSkill):
         return converter.random_nuke_convert(self)
 
 
-class AttrRandomNuke(ActiveSkill):
+class ASAttrRandomNuke(ActiveSkill):
     skill_type = 59
 
     def __init__(self, ms: MonsterSkill):
@@ -398,7 +398,7 @@ class AttrRandomNuke(ActiveSkill):
         return converter.random_nuke_convert(self)
 
 
-class Counterattack(ActiveSkill):
+class ASCounterattack(ActiveSkill):
     skill_type = 60
 
     def __init__(self, ms: MonsterSkill):
@@ -412,7 +412,7 @@ class Counterattack(ActiveSkill):
         return converter.counterattack_convert(self)
 
 
-class BoardChange(ActiveSkill):
+class ASBoardChange(ActiveSkill):
     skill_type = 71
 
     def __init__(self, ms: MonsterSkill):
@@ -424,7 +424,7 @@ class BoardChange(ActiveSkill):
         return converter.board_change_convert(self)
 
 
-class HpConditionalTargetNuke(ActiveSkill):
+class ASHpConditionalTargetNuke(ActiveSkill):
     skill_type = 84
 
     def __init__(self, ms: MonsterSkill):
@@ -440,7 +440,7 @@ class HpConditionalTargetNuke(ActiveSkill):
         return converter.suicide_random_nuke_convert(self)
 
 
-class HpConditionalMassNuke(ActiveSkill):
+class ASHpConditionalMassNuke(ActiveSkill):
     skill_type = 85
 
     def __init__(self, ms: MonsterSkill):
@@ -456,7 +456,7 @@ class HpConditionalMassNuke(ActiveSkill):
         return converter.suicide_random_nuke_convert(self)
 
 
-class TargetNukeWithHpPenalty(ActiveSkill):
+class ASTargetNukeWithHpPenalty(ActiveSkill):
     skill_type = 86
 
     def __init__(self, ms: MonsterSkill):
@@ -471,7 +471,7 @@ class TargetNukeWithHpPenalty(ActiveSkill):
         return converter.suicide_nuke_convert(self)
 
 
-class MassNukeWithHpPenalty(ActiveSkill):
+class ASMassNukeWithHpPenalty(ActiveSkill):
     skill_type = 87
 
     def __init__(self, ms: MonsterSkill):
@@ -486,7 +486,7 @@ class MassNukeWithHpPenalty(ActiveSkill):
         return converter.suicide_nuke_convert(self)
 
 
-class TypeBurst(ActiveSkill):
+class ASTypeBurst(ActiveSkill):
     skill_type = 88
 
     def __init__(self, ms: MonsterSkill):
@@ -500,7 +500,7 @@ class TypeBurst(ActiveSkill):
         return converter.type_attack_boost_convert(self)
 
 
-class AttrBurstMultiPart(ActiveSkill):
+class ASAttrBurstMultiPart(ActiveSkill):
     skill_type = 90
 
     def __init__(self, ms: MonsterSkill):
@@ -522,7 +522,7 @@ class AttrBurstMultiPart(ActiveSkill):
         return converter.attribute_attack_boost_convert(self)
 
 
-class BicolorOrbEnhance(ActiveSkill):
+class ASBicolorOrbEnhance(ActiveSkill):
     skill_type = 91
 
     def __init__(self, ms: MonsterSkill):
@@ -534,7 +534,7 @@ class BicolorOrbEnhance(ActiveSkill):
         return converter.enhance_convert(self)
 
 
-class TypeBurstNew(ActiveSkill):
+class ASTypeBurstNew(ActiveSkill):
     skill_type = 92
 
     def __init__(self, ms: MonsterSkill):
@@ -548,7 +548,7 @@ class TypeBurstNew(ActiveSkill):
         return converter.type_attack_boost_convert(self)
 
 
-class LeaderSwap(ActiveSkill):
+class ASLeaderSwap(ActiveSkill):
     skill_type = 93
 
     def __init__(self, ms: MonsterSkill):
@@ -558,7 +558,7 @@ class LeaderSwap(ActiveSkill):
         return converter.leader_swap(self)
 
 
-class LowHpConditionalAttrDamageBoost(ActiveSkill):
+class ASLowHpConditionalAttrDamageBoost(ActiveSkill):
     skill_type = 110
 
     def __init__(self, ms: MonsterSkill):
@@ -573,7 +573,7 @@ class LowHpConditionalAttrDamageBoost(ActiveSkill):
         return converter.grudge_strike_convert(self)
 
 
-class MiniNukeandHpRecovery(ActiveSkill):
+class ASMiniNukeandHpRecovery(ActiveSkill):
     skill_type = 115
 
     def __init__(self, ms: MonsterSkill):
@@ -598,7 +598,7 @@ class PartWithTextAndCount(object):
         return self.text if self.repeat == 1 else converter.fmt_repeated(self.text, self.repeat)
 
 
-class TwoPartActiveSkill(ActiveSkill):
+class ASTwoPartSkill(ActiveSkill):
     skill_type = 116
 
     def __init__(self, ms: MonsterSkill):
@@ -622,7 +622,7 @@ class TwoPartActiveSkill(ActiveSkill):
         return '; '.join(map(lambda x: x.full_text(converter), text_to_item.values()))
 
 
-class HpRecoveryandBindClear(ActiveSkill):
+class ASHpRecoveryandBindClear(ActiveSkill):
     skill_type = 117
 
     def __init__(self, ms: MonsterSkill):
@@ -638,7 +638,7 @@ class HpRecoveryandBindClear(ActiveSkill):
         return converter.heal_active_convert(self)
 
 
-class RandomSkill(ActiveSkill):
+class ASRandomSkill(ActiveSkill):
     skill_type = 118
 
     def __init__(self, ms: MonsterSkill):
@@ -650,7 +650,7 @@ class RandomSkill(ActiveSkill):
         return converter.random_skill(self)
 
 
-class IncreasedSkyfallChance(ActiveSkill):
+class ASIncreasedSkyfallChance(ActiveSkill):
     skill_type = 126
 
     def __init__(self, ms: MonsterSkill):
@@ -664,7 +664,7 @@ class IncreasedSkyfallChance(ActiveSkill):
         return converter.change_skyfall_convert(self)
 
 
-class ColumnOrbChange(ActiveSkill):
+class ASColumnOrbChange(ActiveSkill):
     skill_type = 127
 
     def __init__(self, ms: MonsterSkill):
@@ -678,7 +678,7 @@ class ColumnOrbChange(ActiveSkill):
         return converter.column_change_convert(self)
 
 
-class RowOrbChange(ActiveSkill):
+class ASRowOrbChange(ActiveSkill):
     skill_type = 128
 
     def __init__(self, ms: MonsterSkill):
@@ -692,7 +692,7 @@ class RowOrbChange(ActiveSkill):
         return converter.row_change_convert(self)
 
 
-class IncreasedOrbMovementTime(ActiveSkill):
+class ASIncreasedOrbMovementTime(ActiveSkill):
     skill_type = 132
 
     def __init__(self, ms: MonsterSkill):
@@ -706,7 +706,7 @@ class IncreasedOrbMovementTime(ActiveSkill):
         return converter.move_time_buff_convert(self)
 
 
-class OrbEnhanceNew(ActiveSkill):
+class ASOrbEnhanceNew(ActiveSkill):
     skill_type = 140
 
     def __init__(self, ms: MonsterSkill):
@@ -718,7 +718,7 @@ class OrbEnhanceNew(ActiveSkill):
         return converter.enhance_convert(self)
 
 
-class RandomLocationOrbSpawn(ActiveSkill):
+class ASRandomLocationOrbSpawn(ActiveSkill):
     skill_type = 141
 
     def __init__(self, ms: MonsterSkill):
@@ -732,7 +732,7 @@ class RandomLocationOrbSpawn(ActiveSkill):
         return converter.spawn_orb_convert(self)
 
 
-class AttributeChange(ActiveSkill):
+class ASAttributeChange(ActiveSkill):
     skill_type = 142
 
     def __init__(self, ms: MonsterSkill):
@@ -745,7 +745,7 @@ class AttributeChange(ActiveSkill):
         return converter.attribute_change_convert(self)
 
 
-class HpMultiplierNuke(ActiveSkill):
+class ASHpMultiplierNuke(ActiveSkill):
     skill_type = 143
 
     def __init__(self, ms: MonsterSkill):
@@ -760,7 +760,7 @@ class HpMultiplierNuke(ActiveSkill):
         return converter.hp_nuke_convert(self)
 
 
-class AttrNukeOfAttrTwoAtk(ActiveSkill):
+class ASAttrNukeOfAttrTwoAtk(ActiveSkill):
     skill_type = 144
 
     def __init__(self, ms: MonsterSkill):
@@ -775,7 +775,7 @@ class AttrNukeOfAttrTwoAtk(ActiveSkill):
         return converter.attack_attr_x_team_atk_convert(self)
 
 
-class HpRecovery(ActiveSkill):
+class ASHpRecovery(ActiveSkill):
     skill_type = 145
 
     def __init__(self, ms: MonsterSkill):
@@ -787,7 +787,7 @@ class HpRecovery(ActiveSkill):
         return converter.heal_active_convert(self)
 
 
-class Haste(ActiveSkill):
+class ASHaste(ActiveSkill):
     skill_type = 146
 
     def __init__(self, ms: MonsterSkill):
@@ -800,7 +800,7 @@ class Haste(ActiveSkill):
         return converter.haste_convert(self)
 
 
-class OrbLock(ActiveSkill):
+class ASOrbLock(ActiveSkill):
     skill_type = 152
 
     def __init__(self, ms: MonsterSkill):
@@ -812,7 +812,7 @@ class OrbLock(ActiveSkill):
         return converter.lock_convert(self)
 
 
-class EnemyAttrChange(ActiveSkill):
+class ASEnemyAttrChange(ActiveSkill):
     skill_type = 153
 
     def __init__(self, ms: MonsterSkill):
@@ -824,7 +824,7 @@ class EnemyAttrChange(ActiveSkill):
         return converter.change_enemies_attribute_convert(self)
 
 
-class ThreeAttrtoOneAttr(ActiveSkill):
+class ASThreeAttrtoOneAttr(ActiveSkill):
     skill_type = 154
 
     def __init__(self, ms: MonsterSkill):
@@ -837,7 +837,7 @@ class ThreeAttrtoOneAttr(ActiveSkill):
         return converter.random_orb_change_convert(self)
 
 
-class AwokenSkillBurst(ActiveSkill):
+class ASAwokenSkillBurst(ActiveSkill):
     skill_type = 156
 
     def __init__(self, ms: MonsterSkill):
@@ -865,7 +865,7 @@ class AwokenSkillBurst(ActiveSkill):
             return ''
 
 
-class AwokenSkillBurst2(ActiveSkill):
+class ASAwokenSkillBurst2(ActiveSkill):
     skill_type = 168
 
     def __init__(self, ms: MonsterSkill):
@@ -894,7 +894,7 @@ class AwokenSkillBurst2(ActiveSkill):
             return ''
 
 
-class AddAdditionalCombos(ActiveSkill):
+class ASAddAdditionalCombos(ActiveSkill):
     skill_type = 160
 
     def __init__(self, ms: MonsterSkill):
@@ -907,7 +907,7 @@ class AddAdditionalCombos(ActiveSkill):
         return converter.extra_combo_convert(self)
 
 
-class TrueGravity(ActiveSkill):
+class ASTrueGravity(ActiveSkill):
     skill_type = 161
 
     def __init__(self, ms: MonsterSkill):
@@ -919,7 +919,7 @@ class TrueGravity(ActiveSkill):
         return converter.true_gravity_convert(self)
 
 
-class OrbLockRemoval(ActiveSkill):
+class ASOrbLockRemoval(ActiveSkill):
     skill_type = 172
 
     def __init__(self, ms: MonsterSkill):
@@ -929,7 +929,7 @@ class OrbLockRemoval(ActiveSkill):
         return converter.unlock_all_orbs(self)
 
 
-class VoidDamageAbsorption(ActiveSkill):
+class ASVoidDamageAbsorption(ActiveSkill):
     skill_type = 173
 
     def __init__(self, ms: MonsterSkill):
@@ -943,7 +943,7 @@ class VoidDamageAbsorption(ActiveSkill):
         return converter.absorb_mechanic_void_convert(self)
 
 
-class FixedPosConvertSomething(ActiveSkill):
+class ASFixedPosConvertSomething(ActiveSkill):
     skill_type = 176
 
     def __init__(self, ms: MonsterSkill):
@@ -960,7 +960,7 @@ class FixedPosConvertSomething(ActiveSkill):
         return converter.fixed_pos_convert(self)
 
 
-class AutoHealConvert(ActiveSkill):
+class ASAutoHealConvert(ActiveSkill):
     skill_type = 179
 
     def __init__(self, ms: MonsterSkill):
@@ -975,7 +975,7 @@ class AutoHealConvert(ActiveSkill):
         return converter.auto_heal_convert(self)
 
 
-class IncreasedEnhanceOrbSkyfall(ActiveSkill):
+class ASIncreasedEnhanceOrbSkyfall(ActiveSkill):
     skill_type = 180
 
     def __init__(self, ms: MonsterSkill):
@@ -988,7 +988,7 @@ class IncreasedEnhanceOrbSkyfall(ActiveSkill):
         return converter.enhance_skyfall_convert(self)
 
 
-class NoSkyfallForXTurns(ActiveSkill):
+class ASNoSkyfallForXTurns(ActiveSkill):
     skill_type = 184
 
     def __init__(self, ms: MonsterSkill):
@@ -1000,7 +1000,7 @@ class NoSkyfallForXTurns(ActiveSkill):
         return converter.no_skyfall_convert(self)
 
 
-class MultiLaserConvert(ActiveSkill):
+class ASMultiLaserConvert(ActiveSkill):
     skill_type = 188
 
     def __init__(self, ms: MonsterSkill):
@@ -1013,7 +1013,7 @@ class MultiLaserConvert(ActiveSkill):
         return converter.multi_hit_laser_convert(self)
 
 
-class ShowComboPath(ActiveSkill):
+class ASShowComboPath(ActiveSkill):
     skill_type = 189
 
     def __init__(self, ms: MonsterSkill):
@@ -1023,7 +1023,7 @@ class ShowComboPath(ActiveSkill):
         return converter.unlock_board_path_toragon(self)
 
 
-class ReduceVoidDamage(ActiveSkill):
+class ASReduceVoidDamage(ActiveSkill):
     skill_type = 191
 
     def __init__(self, ms: MonsterSkill):
@@ -1035,7 +1035,7 @@ class ReduceVoidDamage(ActiveSkill):
         return converter.void_mechanic_convert(self)
 
 
-class Suicide195(ActiveSkill):
+class ASSuicide195(ActiveSkill):
     skill_type = 195
 
     def __init__(self, ms: MonsterSkill):
@@ -1047,7 +1047,7 @@ class Suicide195(ActiveSkill):
         return converter.suicide_convert(self)
 
 
-class ReduceDisableMatch(ActiveSkill):
+class ASReduceDisableMatch(ActiveSkill):
     skill_type = 196
 
     def __init__(self, ms: MonsterSkill):
@@ -1059,7 +1059,7 @@ class ReduceDisableMatch(ActiveSkill):
         return converter.match_disable_convert(self)
 
 
-class ChangeMonster(ActiveSkill):
+class ASChangeMonster(ActiveSkill):
     skill_type = 202
 
     def __init__(self, ms: MonsterSkill):
@@ -1084,16 +1084,16 @@ def convert(skill_list: List[MonsterSkill]):
 
         if s.skill_type == 0 and len(s.data) > 1 and s.data[1] != 0:
             # This is an annoying special case
-            skill_constructor = MultiplierMultiTargetAttrNuke
+            skill_constructor = ASMultiplierMultiTargetAttrNuke
         elif s.skill_type in skill_type_to_constructor:
             skill_constructor = skill_type_to_constructor[s.skill_type]
 
         if skill_constructor is not None:
             results[s.skill_id] = skill_constructor(s)
 
-    # Fills in TwoPartActiveSkills
+    # Fills in ASTwoPartSkills
     for s in results.values():
-        if not isinstance(s, TwoPartActiveSkill):
+        if not isinstance(s, ASTwoPartSkill):
             continue
 
         for p_id in s.child_ids:
@@ -1103,9 +1103,9 @@ def convert(skill_list: List[MonsterSkill]):
             p_skill = results[p_id]
             s.child_skills.append(p_skill)
 
-    # Fills in RandomSkill
+    # Fills in ASRandomSkill
     for s in results.values():
-        if not isinstance(s, RandomSkill):
+        if not isinstance(s, ASRandomSkill):
             continue
 
         for p_id in s.random_skill_ids:
@@ -1119,74 +1119,74 @@ def convert(skill_list: List[MonsterSkill]):
 
 
 ALL_ACTIVE_SKILLS = [
-    FixedMultiTargetAttrNuke,
-    MultiplierSelfAttrSingleTargetNuke,
-    DamageReduction,
-    PoisonEnemies,
-    FreeOrbMovement,
-    Gravity,
-    HpRecoverFromRcv,
-    HpRecoverStatic,
-    OneAttrtoOneAttr,
-    OrbRefresh,
-    Delay,
-    DefenseBreak,
-    TwoAttrtoOneTwoAttr,
-    DamageVoid,
-    AtkBasedNuke,
-    SingleTargetTeamAttrNuke,
-    AttrOnAttrNuke,
-    AttrBurst,
-    MassAttack,
-    OrbEnhance,
-    TrueDamageNuke,
-    TrueDamageNukeAll,
-    AttrMassAttack,
-    AttrRandomNuke,
-    Counterattack,
-    BoardChange,
-    HpConditionalTargetNuke,
-    HpConditionalMassNuke,
-    TargetNukeWithHpPenalty,
-    MassNukeWithHpPenalty,
-    TypeBurst,
-    AttrBurstMultiPart,
-    BicolorOrbEnhance,
-    TypeBurstNew,
-    LeaderSwap,
-    LowHpConditionalAttrDamageBoost,
-    MiniNukeandHpRecovery,
-    TwoPartActiveSkill,
-    HpRecoveryandBindClear,
-    RandomSkill,
-    IncreasedSkyfallChance,
-    ColumnOrbChange,
-    RowOrbChange,
-    IncreasedOrbMovementTime,
-    OrbEnhanceNew,
-    RandomLocationOrbSpawn,
-    AttributeChange,
-    HpMultiplierNuke,
-    AttrNukeOfAttrTwoAtk,
-    HpRecovery,
-    Haste,
-    OrbLock,
-    EnemyAttrChange,
-    ThreeAttrtoOneAttr,
-    AwokenSkillBurst,
-    AwokenSkillBurst2,
-    AddAdditionalCombos,
-    TrueGravity,
-    OrbLockRemoval,
-    VoidDamageAbsorption,
-    FixedPosConvertSomething,
-    IncreasedEnhanceOrbSkyfall,
-    NoSkyfallForXTurns,
-    MultiLaserConvert,
-    ShowComboPath,
-    AutoHealConvert,
-    ReduceVoidDamage,
-    Suicide195,
-    ReduceDisableMatch,
-    ChangeMonster,
+    ASFixedMultiTargetAttrNuke,
+    ASMultiplierSelfAttrSingleTargetNuke,
+    ASDamageReduction,
+    ASPoisonEnemies,
+    ASFreeOrbMovement,
+    ASGravity,
+    ASHpRecoverFromRcv,
+    ASHpRecoverStatic,
+    ASOneAttrtoOneAttr,
+    ASOrbRefresh,
+    ASDelay,
+    ASDefenseBreak,
+    ASTwoAttrtoOneTwoAttr,
+    ASDamageVoid,
+    ASAtkBasedNuke,
+    ASSingleTargetTeamAttrNuke,
+    ASAttrOnAttrNuke,
+    ASAttrBurst,
+    ASMassAttack,
+    ASOrbEnhance,
+    ASTrueDamageNuke,
+    ASTrueDamageNukeAll,
+    ASAttrMassAttack,
+    ASAttrRandomNuke,
+    ASCounterattack,
+    ASBoardChange,
+    ASHpConditionalTargetNuke,
+    ASHpConditionalMassNuke,
+    ASTargetNukeWithHpPenalty,
+    ASMassNukeWithHpPenalty,
+    ASTypeBurst,
+    ASAttrBurstMultiPart,
+    ASBicolorOrbEnhance,
+    ASTypeBurstNew,
+    ASLeaderSwap,
+    ASLowHpConditionalAttrDamageBoost,
+    ASMiniNukeandHpRecovery,
+    ASTwoPartSkill,
+    ASHpRecoveryandBindClear,
+    ASRandomSkill,
+    ASIncreasedSkyfallChance,
+    ASColumnOrbChange,
+    ASRowOrbChange,
+    ASIncreasedOrbMovementTime,
+    ASOrbEnhanceNew,
+    ASRandomLocationOrbSpawn,
+    ASAttributeChange,
+    ASHpMultiplierNuke,
+    ASAttrNukeOfAttrTwoAtk,
+    ASHpRecovery,
+    ASHaste,
+    ASOrbLock,
+    ASEnemyAttrChange,
+    ASThreeAttrtoOneAttr,
+    ASAwokenSkillBurst,
+    ASAwokenSkillBurst2,
+    ASAddAdditionalCombos,
+    ASTrueGravity,
+    ASOrbLockRemoval,
+    ASVoidDamageAbsorption,
+    ASFixedPosConvertSomething,
+    ASIncreasedEnhanceOrbSkyfall,
+    ASNoSkyfallForXTurns,
+    ASMultiLaserConvert,
+    ASShowComboPath,
+    ASAutoHealConvert,
+    ASReduceVoidDamage,
+    ASSuicide195,
+    ASReduceDisableMatch,
+    ASChangeMonster,
 ]
