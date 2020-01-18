@@ -21,8 +21,6 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
         elif attr == [0, 1, 2, 3, 4, 5]:
             return format_string.format(n_attr) + ' colors ({}+heal)'.format(n_attr - 1)
         attr_text = self.attributes_to_str(attr)
-        # TODO: delete the next line, tieout only
-        attr_text = attr_text.replace(', and ', ', ').replace(' and ', ', ')
         if len(attr) > n_attr and is_range:
             return '{} of {}'.format(str(n_attr), attr_text)
         elif len(attr) > n_attr:
