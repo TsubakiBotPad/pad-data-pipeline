@@ -240,8 +240,8 @@ def clean_monster_behavior(o: MonsterBehavior) -> MonsterBehavior:
     r = MonsterBehavior()
     r.monster_id = o.monster_id
     r.approved = o.approved
-    for l in o.levels:
-        r.levels.append(clean_level_behavior(l))
+    for level in o.levels:
+        r.levels.append(clean_level_behavior(level))
     return r
 
 

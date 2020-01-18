@@ -1,7 +1,5 @@
 import re
-import time
-from typing import List
-
+from typing import Set
 from enum import Enum
 
 
@@ -99,8 +97,8 @@ def format_conditions(skill_conditions):
     return ','.join(['({})'.format(x) for x in sorted_cond_values])
 
 
-def parse_as_conditions(skill_text: str) -> List[ASCondition]:
-    """Takes the processor-generated active skill text and produces a list of conditions."""
+def parse_as_conditions(skill_text: str) -> Set[ASCondition]:
+    """Takes the processor-generated active skill text and produces a set of conditions."""
     skill_text = skill_text.lower()
     results = set()
 
@@ -259,8 +257,8 @@ def parse_as_conditions(skill_text: str) -> List[ASCondition]:
     return results
 
 
-def parse_ls_conditions(skill_text: str) -> List[LSCondition]:
-    """Takes the processor-generated leader skill text and produces a list of conditions."""
+def parse_ls_conditions(skill_text: str) -> Set[LSCondition]:
+    """Takes the processor-generated leader skill text and produces a set of conditions."""
     skill_text = skill_text.lower()
     results = set()
 

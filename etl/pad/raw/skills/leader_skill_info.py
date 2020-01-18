@@ -8,6 +8,7 @@ from pad.raw.skills.en.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
 
+
 def mult(x):
     return x / 100
 
@@ -1123,9 +1124,10 @@ class TwoPartLeaderSkill(LeaderSkill):
         return converter.concat_list_semicolons(parts)
 
     def full_text(self, converter: LSTextConverter):
-        tags  = set(reduce(lambda agg,cs:agg+cs.tags, self.parts, []))
+        tags = set(reduce(lambda agg, cs: agg + cs.tags, self.parts, []))
         parts = list(filter(None, [p.text(converter) for p in self.parts if p]))
         return converter.full_text(parts, tags)
+
 
 class HpMultiConditionalAtkBoost(LeaderSkill):
     skill_type = 139
@@ -1260,7 +1262,7 @@ class MatchXOrMoreOrbs(LeaderSkill):
         atk = multi_floor(data[3])
         rcv = multi_floor(data[5])
 
-        if self.min_match not in [4,5]:
+        if self.min_match not in [4, 5]:
             human_fix_logger.warning('Unexpected orb match amount:' + str(self.min_match))
         self.tags.append((Tag.ERASE_P, (self.min_match - 1)))
 
@@ -1498,7 +1500,7 @@ class FixedMovementTime(LeaderSkill):
         if self.time == 0:
             # Ignore this case; bad skill
             pass
-        elif self.time in [3,4,5,6]:
+        elif self.time in [3, 4, 5, 6]:
             self.tags.append((Tag.FIXED_TIME, (self.time)))
         else:
             human_fix_logger.warning('Unexpected fixed time:' + str(self.time))
@@ -1703,13 +1705,14 @@ class ColorComboBonusDamage(LeaderSkill):
     def text(self, converter: LSTextConverter) -> str:
         return converter.color_combo_bonus_damage_convert(self)
 
+
 class GroupConditionalBoost(LeaderSkill):
     skill_type = 203
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 100, 100, 100])
         self.group_id = data[0]
-        hp  = multi_floor(data[1])
+        hp = multi_floor(data[1])
         atk = multi_floor(data[2])
         rcv = multi_floor(data[3])
         super().__init__(203, ms, hp=hp, atk=atk, rcv=rcv)
@@ -1734,7 +1737,7 @@ def convert(skill_list: List[MonsterSkill]):
             continue
         for p_id in s.child_ids:
             if p_id not in results:
-                human_fix_logger.warning('failed to look up skill id:'+str(p_id))
+                human_fix_logger.warning('failed to look up skill id:' + str(p_id))
                 continue
             p_skill = results[p_id]
             s.child_skills.append(p_skill)
@@ -1751,6 +1754,7 @@ def convert_skill(s) -> Optional[LeaderSkill]:
             raise ValueError('Unexpected duplicate skill_type: ' + str(skill.skill_type))
         d[skill.skill_type] = skill
     return d.get(s.skill_type, lambda s: None)(s)
+
 
 ALL_LEADER_SKILLS = [
     LeaderSkill,

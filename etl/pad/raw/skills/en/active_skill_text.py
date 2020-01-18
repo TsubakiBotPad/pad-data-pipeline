@@ -4,6 +4,7 @@ from pad.raw.skills.en.skill_common import *
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
 
+
 ROW_INDEX = {
     0: 'the top row',
     1: 'the 2nd row from the top',
@@ -21,6 +22,7 @@ COLUMN_INDEX = {
     5: 'the far right column',
 }
 
+
 class EnASTextConverter(EnBaseTextConverter):
     def fmt_repeated(self, text, amount):
         return '{} {:s}'.format(text, pluralize2('time', amount))
@@ -29,7 +31,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'all enemies' if mass_attack else 'an enemy'
 
     def fmt_duration(self, duration):
-        return 'For {:s}, '.format(pluralize2('turn',duration))
+        return 'For {:s}, '.format(pluralize2('turn', duration))
 
     def attr_nuke_convert(self, act):
         return 'Deal ' + fmt_mult(act.multiplier) + 'x ATK ' + self.ATTRIBUTES[int(
@@ -90,16 +92,16 @@ class EnASTextConverter(EnBaseTextConverter):
                          ('Recover HP equal to ' + fmt_mult(trcv_mult) + 'x team\'s total RCV' if trcv_mult > 0 else
                           '')))))
 
-        if (unbind or awoken_unbind):
+        if unbind or awoken_unbind:
             if skill_text:
                 skill_text += '; '
             skill_text += ('Remove all binds and awoken skill binds' if (unbind >= 9999 and awoken_unbind) else
-                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind)) if (
+                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind)) if (
                                    unbind and awoken_unbind) else
                             ('Remove all binds' if unbind >= 9999 else
-                             ('Reduce binds by {:s}'.format(pluralize2('turn',unbind)) if unbind else
+                             ('Reduce binds by {:s}'.format(pluralize2('turn', unbind)) if unbind else
                               ('Remove all awoken skill binds' if awoken_unbind >= 9999 else
-                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind))))))))
+                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind))))))))
         return skill_text
 
     def single_orb_change_convert(self, act):
@@ -107,7 +109,7 @@ class EnASTextConverter(EnBaseTextConverter):
                self.ATTRIBUTES[act.from_1] + ' orbs to ' + self.ATTRIBUTES[act.to_1] + ' orbs'
 
     def delay_convert(self, act):
-        return 'Delay enemies\' next attack by {:s}'.format(pluralize2('turn',act.turns))
+        return 'Delay enemies\' next attack by {:s}'.format(pluralize2('turn', act.turns))
 
     def defense_reduction_convert(self, act):
         return self.fmt_duration(act.duration) + \
@@ -121,10 +123,8 @@ class EnASTextConverter(EnBaseTextConverter):
         else:
             skill_text = 'Change {} orbs to {} orbs; Change {} orbs to {} orbs'.format(
                 self.ATTRIBUTES[int(act.from_1)],
-                self.ATTRIBUTES[int(
-                    act.to_1)],
-                self.ATTRIBUTES[int(
-                    act.from_2)],
+                self.ATTRIBUTES[int(act.to_1)],
+                self.ATTRIBUTES[int(act.from_2)],
                 self.ATTRIBUTES[int(act.to_2)])
 
         return skill_text
@@ -185,16 +185,16 @@ class EnASTextConverter(EnBaseTextConverter):
         if act.duration:
             skill_text += self.fmt_duration(act.duration) + 'recover ' + \
                           fmt_mult(act.percentage_max_hp * 100) + '% of max HP'
-        if (unbind or awoken_unbind):
+        if unbind or awoken_unbind:
             if skill_text:
                 skill_text += '; '
             skill_text += ('Remove all binds and awoken skill binds' if (unbind >= 9999 and awoken_unbind) else
-                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind)) if (
+                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind)) if (
                                    unbind and awoken_unbind) else
                             ('Remove all binds' if unbind >= 9999 else
-                             ('Reduce binds by {:s}'.format(pluralize2('turn',unbind)) if unbind else
+                             ('Reduce binds by {:s}'.format(pluralize2('turn', unbind)) if unbind else
                               ('Remove all awoken skill binds' if awoken_unbind >= 9999 else
-                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn',awoken_unbind))))))))
+                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind))))))))
 
         return skill_text
 
@@ -474,14 +474,14 @@ class EnASTextConverter(EnBaseTextConverter):
                 if skill_text:
                     skill_text += '; '
                 skill_text += 'Create {} of {} orbs with its center at {} and {}'.format(indef_article(entry[0]),
-                                                                                     self.ATTRIBUTES[act.attribute],
-                                                                                     ROW_INDEX[entry[1]],
-                                                                                     COLUMN_INDEX[entry[2]])
+                                                                                         self.ATTRIBUTES[act.attribute],
+                                                                                         ROW_INDEX[entry[1]],
+                                                                                         COLUMN_INDEX[entry[2]])
 
         return skill_text
 
     def match_disable_convert(self, act):
-        return 'Reduce unable to match orbs effect by {:s}'.format(pluralize2('turn',act.duration))
+        return 'Reduce unable to match orbs effect by {:s}'.format(pluralize2('turn', act.duration))
 
     def board_refresh(self, act):
         return 'Replace all orbs'
