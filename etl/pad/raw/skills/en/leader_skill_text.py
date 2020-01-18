@@ -90,7 +90,7 @@ class EnLSTextConverter(LSTextConverter, EnBaseTextConverter):
         skill_text = intro
         skill_text += ' when matching {}'.format(min_colors)
         if alt_colors:
-            skill_text += '({})'.format(alt_colors)
+            skill_text += ' (or {})'.format(alt_colors)
         if max_mult:
             skill_text += ' up to {}x when matching {}'.format(max_mult, all_colors)
         return skill_text
