@@ -4,6 +4,7 @@ import datetime
 from pad.db.db_util import DbWrapper
 from pad.storage.awoken_skill import AwokenSkill
 from pad.storage.dungeon import Dungeon, SubDungeon
+from pad.storage.egg_machine import EggMachine
 from pad.storage.encounter import Encounter
 from pad.storage.enemy_skill import EnemySkill, EnemyData
 from pad.storage.monster import Monster, ActiveSkill, LeaderSkill, Awakening, Evolution
@@ -24,6 +25,7 @@ _UPDATE_TABLES = [
     'deleted_rows',
     Dungeon.TABLE,
     Encounter.TABLE,
+    EggMachine.TABLE,
     EnemySkill.TABLE,
     EnemyData.TABLE,
     Evolution.TABLE,
