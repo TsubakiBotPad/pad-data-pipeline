@@ -46,6 +46,15 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
     if not enemy_behavior:
         return None
 
+    # Override the NA increment and max counter from the JP version.
+    # This can rarely be different, typically when a collab comes to NA/JP
+    # in the first run, and then gets updated in JP later.
+    # TODO: Possibly this should occur in the merged card
+    card.enemy_skill_max_counter = max(card.enemy_skill_max_counter,
+                                       csc.jp_card.card.enemy_skill_max_counter)
+    card.enemy_skill_counter_increment = max(card.enemy_skill_counter_increment,
+                                             csc.jp_card.card.enemy_skill_counter_increment)
+
     levels = enemy_skillset_processor.extract_levels(enemy_behavior)
     skill_listings = []  # type: List[LevelBehavior]
     seen_level_behavior = set()  # type: Set[str]
