@@ -74,7 +74,7 @@ class MonsterProcessor(object):
             stored_awakening_count = db.get_single_value(sql, op=int)
             if len(items) < stored_awakening_count:
                 human_fix_logger.error('Incorrect awakening count for %s, got %s wanted %s',
-                                       m.monster_id, len(items), stored_awakening_count)
+                                       m.monster_id, stored_awakening_count, len(items))
 
     def _process_evolutions(self, db):
         logger.info('loading evolutions')
