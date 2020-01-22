@@ -46,8 +46,8 @@ class MonsterProcessor(object):
 
     def _process_monster_images(self, db):
         logger.info('monster images, hq_count=%s, anim_count=%s',
-                       len(self.data.hq_image_monster_ids),
-                       len(self.data.animated_monster_ids))
+                    len(self.data.hq_image_monster_ids),
+                    len(self.data.animated_monster_ids))
         if not self.data.hq_image_monster_ids or not self.data.animated_monster_ids:
             logger.info('skipping image info load')
             return
@@ -69,6 +69,12 @@ class MonsterProcessor(object):
                 except:
                     human_fix_logger.fatal('Failed to insert item (probably new awakening): %s',
                                            pad_util.json_string_dump(item, pretty=True))
+
+            sql = 'SELECT COUNT(*) FROM awakenings WHERE monster_id = {}'.format(m.monster_id)
+            stored_awakening_count = db.get_single_value(sql, op=int)
+            if len(items) < stored_awakening_count:
+                human_fix_logger.error('Incorrect awakening count for %s, got %s wanted %s',
+                                       m.monster_id, len(items), stored_awakening_count)
 
     def _process_evolutions(self, db):
         logger.info('loading evolutions')
