@@ -196,3 +196,39 @@ class AttributeDict(dict):
         return self[key]
 
     __setattr__ = dict.__setitem__
+
+
+@public
+def mult(x):
+    return x / 100
+
+@public
+def multi_floor(x):
+    return x / 100 if x != 0 else 1.0
+
+
+# TODO: clean all these things up
+@public
+def atk_from_slice(x):
+    return x[2] / 100 if 1 in x[:2] else 1.0
+
+@public
+def rcv_from_slice(x):
+    return x[2] / 100 if 2 in x[:2] else 1.0
+
+@public
+def binary_con(x):
+    return [i for i, v in enumerate(str(bin(x))[:1:-1]) if v == '1']
+
+@public
+def list_binary_con(x):
+    return [b for i in x for b in binary_con(i)]
+
+@public
+def list_con_pos(x):
+    return [i for i in x if i > 0]
+
+@public
+def merge_defaults(input, defaults):
+    return list(input) + defaults[len(input):]
+
