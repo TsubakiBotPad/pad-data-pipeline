@@ -87,8 +87,8 @@ class JpBaseTextConverter(BaseTextConverter):
         return '{}属性の敵から受けるダメージを{}%減少'.format(attr_text, shield_text)
 
     @staticmethod
-    def concat_list(list_to_concat):
-        return '、'.join(map(str, list_to_concat))
+    def concat_list(iterable):
+        array = '、'.join([str(i) for i in iterable if i])
 
     @staticmethod
     def concat_list_and(iterable, conj='と'):
@@ -102,8 +102,8 @@ class JpBaseTextConverter(BaseTextConverter):
         return "、".join(arr)
 
     @staticmethod
-    def concat_list_semicolons(list_to_concat):
-        return '。'.join(filter(None, list_to_concat))
+    def concat_list_semicolons(iterable):
+        return '。'.join([str(i) for i in iterable if i])
 
     @staticmethod
     def big_number(n):
@@ -139,17 +139,23 @@ class JpBaseTextConverter(BaseTextConverter):
                                   reduce_join_txt='; ',
                                   skip_attr_all=True,
                                   atk=None,
-                                  rcv=None):
-        types = getattr(ls, 'types', [])
-        attributes = getattr(ls, 'attributes', [])
-        hp_mult = getattr(ls, 'hp', 1)
+                                  rcv=None,
+                                  types=None,
+                                  attributes=None,
+                                  hp=None,
+                                  shield=None,
+                                  reduction_attributes=None):
+        types = types or getattr(ls, 'types', [])
+        attributes = attributes or getattr(ls, 'attributes', [])
+        hp_mult = hp or getattr(ls, 'hp', 1)
         # TODO: maybe we can just move min_atk and min_rcv in here
         # TODO: had to add all these getattr because this is being used in the active
         #       skill parser as well, is this right?
         atk_mult = atk or getattr(ls, 'atk', 1)
         rcv_mult = rcv or getattr(ls, 'rcv', 1)
-        damage_reduct = getattr(ls, 'shield', 0)
-        reduct_att = getattr(ls, 'reduction_attributes', [])
+        damage_reduct = shield or getattr(ls, 'shield', 0)
+        reduct_att = reduction_attributes or getattr(ls, 'reduction_attributes', [])
+
         skill_text = ''
 
         multiplier_text = self.fmt_multiplier_text(hp_mult, atk_mult, rcv_mult)
@@ -202,7 +208,7 @@ class JpBaseTextConverter(BaseTextConverter):
     def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult):
         if hp_mult == atk_mult and atk_mult == rcv_mult:
             if hp_mult == 1:
-                return None
+                return ''
             return self.all_stats(fmt_mult(hp_mult))
 
         mults = [(self.hp(), hp_mult), (self.atk(), atk_mult), (self.rcv(), rcv_mult)]
@@ -230,7 +236,7 @@ class JpBaseTextConverter(BaseTextConverter):
 
     def fmt_reduct_text(self, shield, reduct_att=None):
         if shield == 0:
-            return None
+            return ''
         shield_text = fmt_mult(shield * 100)
         if reduct_att in [None, [], [0, 1, 2, 3, 4]]:
             return self.reduce_all_pct(shield_text)

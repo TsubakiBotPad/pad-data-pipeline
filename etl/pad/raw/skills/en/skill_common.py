@@ -135,8 +135,8 @@ class EnBaseTextConverter(BaseTextConverter):
         return 'reduce damage taken from {} Att. by {}%'.format(attr_text, shield_text)
 
     @staticmethod
-    def concat_list(list_to_concat):
-        return ', '.join(map(str, list_to_concat))
+    def concat_list(iterable):
+        return ', '.join([str(i) for i in iterable if i])
 
     @staticmethod
     def concat_list_and(iterable, conj='and'):
@@ -151,8 +151,8 @@ class EnBaseTextConverter(BaseTextConverter):
         return ", ".join(array)
 
     @staticmethod
-    def concat_list_semicolons(list_to_concat):
-        return '; '.join(filter(None, list_to_concat))
+    def concat_list_semicolons(iterable):
+        return '; '.join([str(i) for i in iterable if i])
 
 
     ################################################
@@ -169,22 +169,25 @@ class EnBaseTextConverter(BaseTextConverter):
                                   reduce_join_txt='; ',
                                   skip_attr_all=True,
                                   atk=None,
-                                  rcv=None):
-        types = getattr(ls, 'types', [])
-        attributes = getattr(ls, 'attributes', [])
-        hp_mult = getattr(ls, 'hp', 1)
+                                  rcv=None,
+                                  types=None,
+                                  attributes=None,
+                                  hp=None,
+                                  shield=None,
+                                  reduction_attributes=None):
+        types = types or getattr(ls, 'types', [])
+        attributes = attributes or getattr(ls, 'attributes', [])
+        hp_mult = hp or getattr(ls, 'hp', 1)
         # TODO: maybe we can just move min_atk and min_rcv in here
         # TODO: had to add all these getattr because this is being used in the active
         #       skill parser as well, is this right?
         atk_mult = atk or getattr(ls, 'atk', 1)
         rcv_mult = rcv or getattr(ls, 'rcv', 1)
-        damage_reduct = getattr(ls, 'shield', 0)
-        reduct_att = getattr(ls, 'reduction_attributes', [])
-        skill_text = ''
+        damage_reduct = shield or getattr(ls, 'shield', 0)
+        reduct_att = reduction_attributes or getattr(ls, 'reduction_attributes', [])
 
-        multiplier_text = self.fmt_multiplier_text(hp_mult, atk_mult, rcv_mult)
-        if multiplier_text:
-            skill_text += multiplier_text
+        skill_text = self.fmt_multiplier_text(hp_mult, atk_mult, rcv_mult)
+        if skill_text:
 
             for_skill_text = ''
             if types:
@@ -204,9 +207,10 @@ class EnBaseTextConverter(BaseTextConverter):
 
         reduct_text = self.fmt_reduct_text(damage_reduct, reduct_att)
         if reduct_text:
-            if multiplier_text:
+            if skill_text:
                 skill_text += reduce_join_txt
             if not skill_text or ';' in reduce_join_txt:
+                #reduct_text = capitalize_first(reduct_text)
                 reduct_text = reduct_text.capitalize()
             skill_text += reduct_text
 
@@ -227,12 +231,12 @@ class EnBaseTextConverter(BaseTextConverter):
         else:
             return '' if conj == 'or' else ' all'
 
-        return prefix + self.concat_list_and(attr_list, conj)
+        return prefix + self.concat_list_and(attr_list, conj).replace(" or ", ", or " if prefix == 'non ' else " or ")
 
     def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult):
         if hp_mult == atk_mult and atk_mult == rcv_mult:
             if hp_mult == 1:
-                return None
+                return ''
             return self.all_stats(fmt_mult(hp_mult))
 
         mults = [(self.hp(), hp_mult), (self.atk(), atk_mult), (self.rcv(), rcv_mult)]
@@ -260,7 +264,7 @@ class EnBaseTextConverter(BaseTextConverter):
 
     def fmt_reduct_text(self, shield, reduct_att=None):
         if shield == 0:
-            return None
+            return ''
         shield_text = fmt_mult(shield * 100)
         if reduct_att in [None, [], [0, 1, 2, 3, 4]]:
             return self.reduce_all_pct(shield_text)
