@@ -925,13 +925,23 @@ def clean_skillset(moveset: Moveset, hp_actions: List[HpActions]):
     status_skills = []
     dispel_skills = []
     for hp_action in hp_actions:
+        dispels_found = 0
+        for t in hp_action.timed:
+            dispels_found += len(extract_and_clear_action(list(t.skills), ESDispel))
+        for r in hp_action.repeating:
+            dispels_found += len(extract_and_clear_action(list(r.skills), ESDispel))
+
         for t in hp_action.timed:
             status_skills.extend(extract_and_clear_action(t.skills, ESAttackUpStatus))
-            dispel_skills.extend(extract_and_clear_action(t.skills, ESDispel))
+            # Check if there are a substantial number of dispels, only then will we clear them.
+            if dispels_found > 5:
+                dispel_skills.extend(extract_and_clear_action(t.skills, ESDispel))
 
         for r in hp_action.repeating:
             status_skills.extend(extract_and_clear_action(r.skills, ESAttackUpStatus))
-            dispel_skills.extend(extract_and_clear_action(r.skills, ESDispel))
+            # Check if there are a substantial number of dispels, only then will we clear them.
+            if dispels_found > 5:
+                dispel_skills.extend(extract_and_clear_action(r.skills, ESDispel))
 
     # If we found anything, set them. These are lists but they should just contain the
     # same item repeatedly, unless a monster has multiple status-enrage/dispels?
