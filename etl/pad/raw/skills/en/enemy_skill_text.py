@@ -168,12 +168,12 @@ class EnESTextConverter(EnBaseTextConverter):
     def debuff(self, d_type, amount, unit, turns):
         amount = amount or 0
         if amount % 1 != 0:
-            human_fix_logger.error("Amount {} will be truncated.  Change debuff".format(amount))
-        d_type = STATUSES[d_type] or ''
+            human_fix_logger.error('Amount {} will be truncated. Change debuff'.format(amount))
         unit = UNITS[unit]
         turns = turns or 0
-        return '{:s} {:+.0f}{:s} for {:s}' \
-            .format(capitalize_first(d_type), amount, unit, pluralize2('turn', turns))
+        type_text = capitalize_first(STATUSES[d_type] or '')
+        turn_text = pluralize2('turn', turns)
+        return '{:s} {:.0f}{:s} for {:s}'.format(type_text, amount, unit, turn_text)
 
     def end_battle(self):
         return 'Reduce self HP to 0'
