@@ -1030,7 +1030,10 @@ class ESRandomSpawn(ESAction):
             self.condition_attributes = condition_attributes
 
     def description(self, converter):
-        return converter.random_orb_spawn(self.count, self.attributes)
+        if self.count == 42 and self.condition_attributes:
+            return converter.orb_change(self.condition_attributes, self.attributes)
+        else:
+            return converter.random_orb_spawn(self.count, self.attributes)
 
     def is_conditional(self):
         return self.condition_attributes
