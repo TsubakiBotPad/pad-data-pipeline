@@ -108,7 +108,7 @@ class ProcessedSkillset(object):
 class Context(object):
     """Represents the game state when running through the simulator."""
 
-    def __init__(self, level: int, max_skill_counter: int, skill_counter_increment: int):
+    def __init__(self, level: int, max_skill_counter: int, skill_counter_increment: int, long_loop: bool):
         self.turn = 1
         # Whether the current turn triggered a preempt flag.
         self.is_preemptive = False
@@ -154,6 +154,9 @@ class Context(object):
 
         # The flag values for one-time skills.
         self.flag_skill_use = 0
+
+        # Determines how many times we should loop looking for repeats
+        self.long_loop = long_loop
 
     def reset(self):
         self.is_preemptive = False
@@ -667,9 +670,8 @@ def extract_turn_behaviors(ctx: Context, behaviors: List[ESInstance], hp_checkpo
     hp_ctx = ctx.clone()
     hp_ctx.hp = hp_checkpoint
     turn_data = []
-    # TODO: evaluate changing this to 40, it seems to fix some monsters.
-    # for idx in range(0, 40):
-    for idx in range(0, 20):
+    loop_search_size = 40 if ctx.long_loop else 20
+    for idx in range(0, loop_search_size):
         started_enraged = hp_ctx.is_enraged()
         turn_data.append(loop_through(hp_ctx, behaviors))
         enraged_this_turn = not started_enraged and hp_ctx.is_enraged()
@@ -808,7 +810,7 @@ def make_repeating_comparable(hp: int, repeating: List[RepeatSkillGroup]):
     return [(y.enemy_skill_id, y.condition.use_chance(hp)) for x in repeating for y in x.skills]
 
 
-def convert(card: Card, enemy_behavior: List[ESInstance], level: int) -> ProcessedSkillset:
+def convert(card: Card, enemy_behavior: List[ESInstance], level: int, long_loop: bool) -> ProcessedSkillset:
     force_one_enemy = int(card.unknown_009) == 5
     enemy_skill_max_counter = card.enemy_skill_max_counter
     enemy_skill_counter_increment = card.enemy_skill_counter_increment
@@ -826,7 +828,7 @@ def convert(card: Card, enemy_behavior: List[ESInstance], level: int) -> Process
 
     # Ensure the HP checkpoints are in descended order
     hp_checkpoints = sorted(hp_checkpoints, reverse=True)
-    ctx = Context(level, enemy_skill_max_counter, enemy_skill_counter_increment)
+    ctx = Context(level, enemy_skill_max_counter, enemy_skill_counter_increment, long_loop)
 
     if force_one_enemy:
         ctx.enemies = 1

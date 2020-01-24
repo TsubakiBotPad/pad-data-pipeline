@@ -40,6 +40,40 @@ def parse_args():
     return parser.parse_args()
 
 
+LONG_LOOP_MONSTERS = [
+    # These monsters just look nicer with long loops.
+    814,  # Izanami
+    1707,  # Chester
+    4833,  # Myne
+    4834,  # Valk Ciel
+    4838,  # Athena Non
+    5087,  # Guile
+    5090,  # Akuma
+    5179,  # Rokks
+    100814,  # Izanami
+    405179,  # Rokks
+
+    # This group of monsters NEED to be long to parse.
+    2094,  # Valen
+    3721,  # Fire Orb Dragon
+    3722,  # Water Orb Dragon
+    3723,  # Wood Orb Dragon
+    3725,  # Dark Orb Dragon
+    3808,  # Pixel Cloud?
+    3809,  # Pixel Sephiroth?
+    4286,  # Satan Void
+    103721,  # Fire Orb Dragon
+    103722,  # Water Orb Dragon
+    103723,  # Wood Orb Dragon
+    103725,  # Dark Orb Dragon
+
+    # These have tons of unknown skills with short loop, but honestly no one
+    # needs to know their 20-turn repeating skillset exactly.
+    # 4389,  # Justine & Caroline
+    # 104389,  # Justine & Caroline
+]
+
+
 def process_card(csc: CrossServerCard) -> MonsterBehavior:
     enemy_behavior = [x.na_skill for x in csc.enemy_behavior]
     card = csc.na_card.card
@@ -56,12 +90,14 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
                                              csc.jp_card.card.enemy_skill_counter_increment)
 
     levels = enemy_skillset_processor.extract_levels(enemy_behavior)
+    long_loop = csc.monster_id in LONG_LOOP_MONSTERS
+
     skill_listings = []  # type: List[LevelBehavior]
     seen_level_behavior = set()  # type: Set[str]
     used_actions = []  # type: List[ESInstance]
     for level in sorted(levels):
         try:
-            skillset = enemy_skillset_processor.convert(card, enemy_behavior, level)
+            skillset = enemy_skillset_processor.convert(card, enemy_behavior, level, long_loop)
             if not skillset.has_actions():
                 continue
             flattened = enemy_skill_proto.flatten_skillset(level, skillset)
