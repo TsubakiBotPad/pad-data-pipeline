@@ -38,11 +38,11 @@ class EnLSTextConverter(EnBaseTextConverter):
         elif attr == [0, 1, 2, 3, 4, 5]:
             skill_text += '{} or more colors ({}+heal)'.format(n_attr, n_attr - 1)
         elif len(attr) > n_attr and is_range:
-            skill_text += '{} of {}'.format(str(n_attr), self.attributes_to_str(attr)).replace(', and ',', ').replace(' and ', ', ')
+            skill_text += '{} of {}'.format(str(n_attr), self.attributes_to_str(attr))
         elif len(attr) > n_attr:
-            skill_text += '{}+ of {} at once'.format(str(n_attr), self.attributes_to_str(attr).replace(', and ',', ').replace(' and ', ', '))
+            skill_text += '{}+ of {} at once'.format(str(n_attr), self.attributes_to_str(attr))
         else:
-            skill_text += '{} at once'.format(self.attributes_to_str(attr).replace(', and ',', ').replace(' and ', ', '))
+            skill_text += '{} at once'.format(self.attributes_to_str(attr))
         return skill_text
 
     def passive_stats_text(self, ls, **kwargs):
@@ -139,12 +139,11 @@ class EnLSTextConverter(EnBaseTextConverter):
             if len(ls.match_attributes) != ls.min_match:
                 skill_text += ', up to {}x at {} {} combos'.format(fmt_mult(ls.max_atk), len(ls.match_attributes), self.ATTRIBUTES[ls.match_attributes[0]])
         else:
-            skill_text += ' when matching {}'.format(self.attributes_to_str(ls.match_attributes[:ls.min_match])).replace(', and ', '+').replace(' and ','+').replace(', ','+')
+            skill_text += ' when matching {}'.format(self.attributes_to_str(ls.match_attributes[:ls.min_match]))
             if len(ls.match_attributes) > ls.min_match:
-                skill_text += '({})'.format(self.attributes_to_str(ls.match_attributes[1:])).replace(', and ', '+').replace(' and ','+').replace(', ','+')
-                #skill_text += ' (or {})'.format(self.attributes_to_str(ls.match_attributes[1:]))
+                skill_text += ' (or {})'.format(self.attributes_to_str(ls.match_attributes[1:]))
             if ls.max_atk > ls.min_atk:
-                skill_text += ' up to {}x when matching {}'.format(fmt_mult(ls.max_atk), self.attributes_to_str(ls.match_attributes)).replace(', and ', '+').replace(' and ','+').replace(', ','+')
+                skill_text += ' up to {}x when matching {}'.format(fmt_mult(ls.max_atk), self.attributes_to_str(ls.match_attributes))
         return skill_text
 
     def combo_match_text(self, ls):
@@ -241,7 +240,7 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def heart_cross_text(self, ls):
         multiplier_text = self.passive_stats_text(ls, reduce_join_txt=' and ')
-        return '{} when matching 5 Heal orbs in a cross formation'.format(multiplier_text).replace('Reduce damage', 'reduce damage')
+        return '{} when matching 5 Heal orbs in a cross formation'.format(multiplier_text).replace('Reduce','reduce')
 
     def multi_play_text(self, ls):
         multiplier_text = self.passive_stats_text(ls)
@@ -249,8 +248,8 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def color_cross_text(self, ls):
         atk = fmt_mult(ls.atk)
-        attrs = self.attributes_to_str(ls.attributes, concat='or')
-        return '{}x ATK for each cross of 5 {} orbs'.format(atk, attrs).replace(', or ',', ').replace(' or ', ', ')
+        attrs = self.attributes_to_str(ls.attributes, concat='or').replace(', or ', ', ').replace(' or ', ', ')
+        return '{}x ATK for each cross of 5 {} orbs'.format(atk, attrs)
 
     def collab_bonus_text(self, ls):
         if ls.collab_id not in self._COLLAB_MAP:
