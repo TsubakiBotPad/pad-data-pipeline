@@ -45,16 +45,12 @@ def copy_media(args):
     animated_portrait_input_dir = os.path.join(base_dir, 'animated')
 
     orb_skins_input_dir = os.path.join(alt_base_dir, 'orb_styles', 'extract', 'jp')
-    jp_voice_input_dir = os.path.join(alt_base_dir, 'voices', 'fixed', 'jp')
-    na_voice_input_dir = os.path.join(alt_base_dir, 'voices', 'fixed', 'na')
 
     icon_output_dir = os.path.join(output_dir, 'icons')
     portrait_output_dir = os.path.join(output_dir, 'portraits')
     hq_portrait_output_dir = os.path.join(output_dir, 'hq_portraits')
     animated_portrait_output_dir = os.path.join(output_dir, 'animated_portraits')
     orb_skins_output_dir = os.path.join(output_dir, 'orb_skins')
-    jp_voice_output_dir = os.path.join(output_dir, 'voices', 'jp')
-    na_voice_output_dir = os.path.join(output_dir, 'voices', 'na')
 
     for jp_id in range(1, 9000):
         monster_id = jp_id
@@ -75,9 +71,6 @@ def copy_media(args):
         do_copy(animated_portrait_input_dir, '{}.gif'.format(monster_id),
                 animated_portrait_output_dir, '{}.gif'.format(monster_id_filled))
 
-        do_copy(jp_voice_input_dir, '{}.wav'.format(monster_id),
-                jp_voice_output_dir, '{}.wav'.format(monster_id_filled))
-
     for na_id in range(1, 9000):
         monster_id = monster_id_mapping.nakr_no_to_monster_id(MonsterNo(na_id))
         monster_id_filled = str(monster_id).zfill(5)
@@ -87,9 +80,6 @@ def copy_media(args):
 
         do_copy(na_portrait_input_dir, '{}.png'.format(na_id),
                 portrait_output_dir, '{}.png'.format(monster_id_filled))
-
-        do_copy(na_voice_input_dir, '{}.wav'.format(na_id),
-                na_voice_output_dir, '{}.wav'.format(monster_id_filled))
 
     for file_name in os.listdir(orb_skins_input_dir):
         clean_file_name = file_name.lower().lstrip('block')
