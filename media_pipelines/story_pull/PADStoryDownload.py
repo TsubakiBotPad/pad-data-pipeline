@@ -1,11 +1,6 @@
 import argparse
-import json
 import os
-import re
-import sys
 import urllib.request
-
-from collections import defaultdict
 
 import padtools
 
@@ -14,10 +9,10 @@ parser = argparse.ArgumentParser(
 
 inputGroup = parser.add_argument_group("Input")
 inputGroup.add_argument("--server", required=True, help="na or jp")
-inputGroup.add_argument("--data_dir", required=True, help="Path to processed pad data files")
 inputGroup.add_argument("--tool_dir", required=True, help="Path to decoder tool")
 
 outputGroup = parser.add_argument_group("Output")
+outputGroup.add_argument("--cache_dir", help="Path to a folder where output should be saved")
 outputGroup.add_argument("--output_dir", help="Path to a folder where output should be saved")
 
 helpGroup = parser.add_argument_group("Help")
@@ -25,6 +20,8 @@ helpGroup.add_argument("-h", "--help", action="help", help="Displays this help m
 args = parser.parse_args()
 
 server = args.server.lower()
+cache_dir = args.cache_dir
+output_dir = args.output_dir
 
 extras = []
 if args.server == 'na':
@@ -32,8 +29,6 @@ if args.server == 'na':
 elif args.server == 'jp':
     extras = padtools.regions.japan.server.extras
 
-
-output_dir = args.output_dir
 
 def download_file(url, file_path):
     response_object = urllib.request.urlopen(url)
@@ -48,6 +43,7 @@ def decode_file(in_file, out_file):
     print('running', cmd)
     os.system(cmd)
 
+
 def decode_image(in_file, out_dir):
     cmd = 'python3 {}/PADTextureTool.py {} --outdir {}'.format(args.tool_dir, in_file, out_dir)
     print('running', cmd)
@@ -56,8 +52,8 @@ def decode_image(in_file, out_dir):
 
 print('Found', len(extras), 'extras total')
 
-raw_dir = os.path.join(output_dir, 'raw')
-fixed_dir = os.path.join(output_dir, 'fixed')
+raw_dir = os.path.join(cache_dir, 'raw')
+fixed_dir = output_dir
 
 raw_dir = os.path.join(raw_dir, server)
 fixed_dir = os.path.join(fixed_dir, server)
@@ -72,7 +68,6 @@ os.makedirs(raw_image_dir, exist_ok=True)
 os.makedirs(raw_text_dir, exist_ok=True)
 os.makedirs(fixed_image_dir, exist_ok=True)
 os.makedirs(fixed_text_dir, exist_ok=True)
-
 
 for extra in extras:
     raw_file_name = extra.file_name
@@ -104,6 +99,5 @@ for extra in extras:
             decode_image(raw_file_path, fixed_file_dir)
     else:
         print('fixed file exists', fixed_file_path)
-    
 
 print('done')
