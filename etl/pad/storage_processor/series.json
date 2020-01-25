@@ -1179,5 +1179,29 @@
     "name_kr": "Yu-Gi-Oh! Duel Monsters Collab",
     "name_na": "Yu-Gi-Oh! Duel Monsters Collab",
     "series_id": 205
+  },
+  {
+    "name_jp": "Uncatagorized",
+    "name_kr": "Uncatagorized",
+    "name_na": "Uncatagorized",
+    "series_id": 206
+  },
+  {
+    "name_jp": "Special PEM",
+    "name_kr": "Special PEM",
+    "name_na": "Special PEM",
+    "series_id": 207
+  },
+  {
+    "name_jp": "Descended Loot",
+    "name_kr": "Descended Loot",
+    "name_na": "Descended Loot",
+    "series_id": 208
+  },
+  {
+    "name_jp": "Redeemable",
+    "name_kr": "Redeemable",
+    "name_na": "Redeemable",
+    "series_id": 209
   }
 ]
