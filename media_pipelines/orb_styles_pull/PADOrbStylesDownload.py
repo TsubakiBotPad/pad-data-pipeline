@@ -79,7 +79,7 @@ for extra in extras:
             python=python_exec,
             tool=tool_path,
             input=raw_file_path,
-            output=output_dir))
+            output=cache_extract_dir))
 
     final_file_name = extract_file_name.replace('BLOCK', '').lower()
     final_file_path = os.path.join(output_dir, final_file_name)
