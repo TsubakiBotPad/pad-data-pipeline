@@ -231,7 +231,7 @@ class EnBaseTextConverter(BaseTextConverter):
         else:
             return '' if conj == 'or' else ' all'
 
-        return prefix + self.concat_list_and(attr_list, conj).replace(" or ", ", or " if prefix == 'non ' else " or ")
+        return prefix + self.concat_list_and(attr_list, conj)
 
     def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult):
         if hp_mult == atk_mult and atk_mult == rcv_mult:
