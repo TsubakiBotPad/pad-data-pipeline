@@ -39,9 +39,6 @@ db_logger = logging.getLogger('database')
 db_logger.setLevel(logging.INFO)
 
 human_fix_logger = logging.getLogger('human_fix')
-if os.name != 'nt':
-    human_fix_logger.addHandler(
-        logging.FileHandler('/tmp/dadguide_pipeline_human_fixes.txt', mode='w'))
 human_fix_logger.setLevel(logging.INFO)
 
 
@@ -185,14 +182,13 @@ def load_data(args):
 
     # Load exchange data
     ExchangeProcessor(cs_database).process(db_wrapper)
-    
+
     # Update timestamps
     TimestampProcessor().process(db_wrapper)
 
     # Purge old schedule items and deleted_rows
     # This is dangerous, so we won't do it yet
     # PurgeDataProcessor().process(db_wrapper)
-    
 
     print('done')
 
@@ -203,5 +199,9 @@ if __name__ == '__main__':
     # Remove this once we're done with most of the ES processing.
     if args.es_dir and args.es_only:
         load_es_quick_and_die(args)
+
+    # This needs to be done after the es_quick check otherwise it will consistently overwrite the fixes file.
+    if os.name != 'nt':
+        human_fix_logger.addHandler(logging.FileHandler('/tmp/dadguide_pipeline_human_fixes.txt', mode='w'))
 
     load_data(args)
