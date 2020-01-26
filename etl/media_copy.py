@@ -14,7 +14,6 @@ def parse_args():
         description="Creates DadGuide image repository.", add_help=False)
     input_group = parser.add_argument_group("Input")
     input_group.add_argument("--base_dir", required=True, help="Miru image base dir")
-    input_group.add_argument("--alt_base_dir", required=True, help="Miru other files base dir")
 
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--output_dir", required=True,
@@ -32,7 +31,6 @@ def do_copy(src_dir, src_file, dest_dir, dest_file):
 
 def copy_media(args):
     base_dir = args.base_dir
-    alt_base_dir = args.alt_base_dir
     output_dir = args.output_dir
 
     jp_icon_input_dir = os.path.join(base_dir, 'jp', 'portrait', 'local')
@@ -44,13 +42,10 @@ def copy_media(args):
     hq_portrait_input_dir = os.path.join(base_dir, 'hq_images')
     animated_portrait_input_dir = os.path.join(base_dir, 'animated')
 
-    orb_skins_input_dir = os.path.join(alt_base_dir, 'orb_styles', 'extract', 'jp')
-
     icon_output_dir = os.path.join(output_dir, 'icons')
     portrait_output_dir = os.path.join(output_dir, 'portraits')
     hq_portrait_output_dir = os.path.join(output_dir, 'hq_portraits')
     animated_portrait_output_dir = os.path.join(output_dir, 'animated_portraits')
-    orb_skins_output_dir = os.path.join(output_dir, 'orb_skins')
 
     for jp_id in range(1, 9000):
         monster_id = jp_id
@@ -80,11 +75,6 @@ def copy_media(args):
 
         do_copy(na_portrait_input_dir, '{}.png'.format(na_id),
                 portrait_output_dir, '{}.png'.format(monster_id_filled))
-
-    for file_name in os.listdir(orb_skins_input_dir):
-        clean_file_name = file_name.lower().lstrip('block')
-        do_copy(orb_skins_input_dir, file_name,
-                orb_skins_output_dir, clean_file_name)
 
 
 if __name__ == '__main__':
