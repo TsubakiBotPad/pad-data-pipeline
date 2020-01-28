@@ -17,6 +17,15 @@ def public(x):
     __all__.append(x.__name__)
     return x
 
+@public 
+def minmax(nmin, nmax, p = False, fmt = False):
+    fmt = fmt_mult if fmt else (lambda x: x)
+    if None in [nmin, nmax] or nmin == nmax:
+        return str(fmt(nmin or nmax))+("％" if p else '')
+    elif p:
+        return "{}％〜{}％".format(fmt(int(nmin)), fmt(int(nmax)))
+    else:
+        return "{}〜{}".format(fmt(int(nmin)), fmt(int(nmax)))
 
 @public
 class JpBaseTextConverter(BaseTextConverter):
@@ -75,16 +84,16 @@ class JpBaseTextConverter(BaseTextConverter):
         return 'HP'
 
     def atk(self):
-        return 'ATK'
+        return '攻撃力'
 
     def rcv(self):
-        return 'RCV'
+        return '回復力'
 
     def reduce_all_pct(self, shield_text):
-        return '受けるダメージを{}%減少'.format(shield_text)
+        return '受けるダメージを{}％減少'.format(shield_text)
 
     def reduce_attr_pct(self, attr_text, shield_text):
-        return '{}属性の敵から受けるダメージを{}%減少'.format(attr_text, shield_text)
+        return '{}属性の敵から受けるダメージを{}％減少'.format(attr_text, shield_text)
 
     @staticmethod
     def concat_list(iterable):
@@ -107,16 +116,29 @@ class JpBaseTextConverter(BaseTextConverter):
 
     @staticmethod
     def big_number(n):
+        if float(n) % 1 != 0: return str(n)
+        else: n = int(n)
+
         if n == 0:
-            return str(int(n // 1e0)) + ''
+            return str(int(n // 1e0))  + ''
+       #elif n % 1e11 == 0:
+       #    return str(int(n // 1e11)) + '千億'
+       #elif n % 1e10 == 0:
+       #    return str(int(n // 1e10)) + '百億'
+       #elif n % 1e9 == 0:
+       #    return str(int(n // 1e9))  + '十億'
         elif n % 1e8 == 0:
-            return str(int(n // 1e8)) + '億'
-        elif n % 1e7 == 0:
-            return str(int(n // 1e7)) + '千万'
+            return str(int(n // 1e8))  + '億'
+       #elif n % 1e7 == 0:
+       #    return str(int(n // 1e7))  + '千万'
+       #elif n % 1e6 == 0:
+       #    return str(int(n // 1e6))  + '百万'
+       #elif n % 1e5 == 0:
+       #    return str(int(n // 1e5))  + '十万'
         elif n % 1e4 == 0:
-            return str(int(n // 1e4)) + '万'
-        elif n % 1e3 == 0:
-            return str(int(n // 1e3)) + '千'
+            return str(int(n // 1e4))  + '万'
+       #elif n % 1e3 == 0:
+       #    return str(int(n // 1e3))  + '千'
 
         elif n < 1e4:
             return str(n)
@@ -128,15 +150,9 @@ class JpBaseTextConverter(BaseTextConverter):
     ################################################
     #               Format Functions               #
     ################################################
-    
-    def attributes_format(self, attributes: List[int], sep: str = ', ') -> str:
-        return sep.join([self.ATTRIBUTES[i] for i in attributes])
-
-    def types_format(self, types: List[int]) -> str:
-        return ', '.join([self.TYPES[i] for i in types])
 
     def fmt_stats_type_attr_bonus(self, ls,
-                                  reduce_join_txt='; ',
+                                  reduce_join_txt='。',
                                   skip_attr_all=True,
                                   atk=None,
                                   rcv=None,
@@ -164,32 +180,28 @@ class JpBaseTextConverter(BaseTextConverter):
 
             for_skill_text = ''
             if types:
-                for_skill_text += ' {} type'.format(self.types_format(types))
+                for_skill_text += '{}タイプ'.format(self.typing_to_str(types))
 
             is_attr_all = len(attributes) in [0, 5]
             should_skip_attr = is_attr_all and skip_attr_all
 
             if attributes and not should_skip_attr:
                 if for_skill_text:
-                    for_skill_text += ' and'
-                color_text = 'all' if len(attributes) == 5 else self.attributes_format(attributes)
-                for_skill_text += ' ' + color_text + ' Att.'
-
-            if for_skill_text:
-                skill_text += ' for' + for_skill_text
+                    for_skill_text += 'と'
+                color_text = '全' if len(attributes) == 5 else self.attributes_to_str(attributes)
+                for_skill_text += color_text + '属性の'
+            skill_text = for_skill_text + skill_text
 
         reduct_text = self.fmt_reduct_text(damage_reduct, reduct_att)
         if reduct_text:
             if multiplier_text:
                 skill_text += reduce_join_txt
-            if not skill_text or ';' in reduce_join_txt:
-                reduct_text = reduct_text.capitalize()
             skill_text += reduct_text
 
         return skill_text
 
-    def fmt_multi_attr(self, attributes, conj='or'):
-        prefix = ''
+    def fmt_multi_attr(self, attributes, conj='または'):
+        suffix = ''
         if 1 <= len(attributes) <= 7:
             attr_list = [self.ATTRIBUTES[i] for i in attributes]
         elif 7 <= len(attributes) < 10:
@@ -199,19 +211,19 @@ class JpBaseTextConverter(BaseTextConverter):
             attrs = list(set(non_attrs) - set(attributes))
             att_sym_diff = sorted(attrs, key=lambda x: self.ATTRIBUTES[x])
             attr_list = [self.ATTRIBUTES[i] for i in att_sym_diff]
-            prefix = 'non '
+            suffix = '以外'
         else:
-            return '' if conj == 'or' else ' all'
+            return '' if conj == 'または' else '全'
 
-        return prefix + self.concat_list_and(attr_list, conj)
+        return self.concat_list_and(attr_list, conj) + suffix
 
     def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult):
-        if hp_mult == atk_mult and atk_mult == rcv_mult:
+        if hp_mult == atk_mult == rcv_mult:
             if hp_mult == 1:
                 return ''
             return self.all_stats(fmt_mult(hp_mult))
 
-        mults = [(self.hp(), hp_mult), (self.atk(), atk_mult), (self.rcv(), rcv_mult)]
+        mults = [('HP', hp_mult), ('攻撃力', atk_mult), ('回復力', rcv_mult)]
         mults = list(filter(lambda x: x[1] != 1, mults))
         mults.sort(key=lambda x: x[1], reverse=True)
 
@@ -220,7 +232,7 @@ class JpBaseTextConverter(BaseTextConverter):
         while x < len(mults):
             can_check_double = x + 1 < len(mults)
             if can_check_double and mults[x][1] == mults[x + 1][1]:
-                chunks.append(('{} & {}'.format(mults[x][0], mults[x + 1][0]), mults[x][1]))
+                chunks.append(('{}と{}'.format(mults[x][0], mults[x + 1][0]), mults[x][1]))
                 x += 2
             else:
                 chunks.append((mults[x][0], mults[x][1]))
@@ -229,8 +241,8 @@ class JpBaseTextConverter(BaseTextConverter):
         output = ''
         for c in chunks:
             if len(output):
-                output += ' and '
-            output += '{}x {}'.format(fmt_mult(c[1]), c[0])
+                output += '、'
+            output += '{}が{}倍'.format(c[0], fmt_mult(c[1]))
 
         return output
 
@@ -241,6 +253,6 @@ class JpBaseTextConverter(BaseTextConverter):
         if reduct_att in [None, [], [0, 1, 2, 3, 4]]:
             return self.reduce_all_pct(shield_text)
         else:
-            color_text = self.attributes_format(reduct_att)
+            color_text = self.attributes_to_str(reduct_att)
             return self.reduce_attr_pct(color_text, shield_text)
 

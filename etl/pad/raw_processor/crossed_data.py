@@ -14,6 +14,15 @@ from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
+from pad.raw.skills.jp.active_skill_text import JpASTextConverter
+
+#from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
+from pad.raw.skills.en.leader_skill_text import EnLSTextConverter as JpLSTextConverter
+#from pad.raw.skills.kr.active_skill_text import KrASTextConverter
+from pad.raw.skills.en.active_skill_text import EnASTextConverter as KrASTextConverter
+#from pad.raw.skills.kr.leader_skill_text import KrLSTextConverter
+from pad.raw.skills.en.leader_skill_text import EnLSTextConverter as KrLSTextConverter
+
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw.skills.skill_text_typing import ASCondition, LSCondition
 from pad.raw_processor.merged_data import MergedCard
@@ -47,12 +56,21 @@ class CrossServerCard(object):
                                                                kr_card.enemy_skills)
 
         # This is mostly just for integration test purposes. Should really be fixed a different way.
+        self.jp_ls_text = None
+        self.jp_as_text = None
         self.en_ls_text = None
         self.en_as_text = None
+        self.kr_ls_text = None
+        self.jp_ls_text = None
 
     def load_text(self):
+        self.jp_ls_text = self.leader_skill.jp_skill.full_text(JpLSTextConverter()) if self.leader_skill else None
+        self.jp_as_text = self.active_skill.jp_skill.full_text(JpASTextConverter()) if self.active_skill else None
         self.en_ls_text = self.leader_skill.jp_skill.full_text(EnLSTextConverter()) if self.leader_skill else None
         self.en_as_text = self.active_skill.jp_skill.full_text(EnASTextConverter()) if self.active_skill else None
+        self.kr_ls_text = self.leader_skill.jp_skill.full_text(KrLSTextConverter()) if self.leader_skill else None
+        self.kr_as_text = self.active_skill.jp_skill.full_text(KrASTextConverter()) if self.active_skill else None
+
 
 
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
@@ -298,7 +316,9 @@ class CrossServerSkill(object):
         self.na_skill = na_skill
         self.kr_skill = kr_skill
 
+        self.jp_text = None
         self.en_text = None
+        self.kr_text = None
         self.skill_type_tags = []  # type: List[Union[LSCondition, ASCondition]]
 
 
@@ -390,9 +410,14 @@ class CrossServerDatabase(object):
                                                        na_database.leader_skills,
                                                        kr_database.leader_skills)
 
-        ls_converter = EnLSTextConverter()
+        jp_ls_converter = JpLSTextConverter()
+        en_ls_converter = EnLSTextConverter()
+        kr_ls_converter = KrLSTextConverter()
+
         for ls in self.leader_skills:
-            ls.en_text = ls.jp_skill.full_text(ls_converter)
+            ls.jp_text = ls.jp_skill.full_text(jp_ls_converter)
+            ls.en_text = ls.jp_skill.full_text(en_ls_converter)
+            ls.kr_text = ls.jp_skill.full_text(kr_ls_converter)
             ls.skill_type_tags = list(skill_text_typing.parse_ls_conditions(ls.en_text))
             ls.skill_type_tags.sort(key=lambda x: x.value)
 
@@ -400,9 +425,13 @@ class CrossServerDatabase(object):
                                                        na_database.active_skills,
                                                        kr_database.active_skills)
 
-        as_converter = EnASTextConverter()
+        jp_as_converter = JpASTextConverter()
+        en_as_converter = EnASTextConverter()
+        kr_as_converter = KrASTextConverter()
         for ask in self.active_skills:
-            ask.en_text = ask.jp_skill.full_text(as_converter)
+            ask.jp_text = ask.jp_skill.full_text(jp_as_converter)
+            ask.en_text = ask.jp_skill.full_text(en_as_converter)
+            ask.kr_text = ask.jp_skill.full_text(kr_as_converter)
             ask.skill_type_tags = list(skill_text_typing.parse_as_conditions(ask.en_text))
             ask.skill_type_tags.sort(key=lambda x: x.value)
 

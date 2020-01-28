@@ -619,7 +619,7 @@ class ASTwoPartSkill(ActiveSkill):
             else:
                 text_to_item[p_text] = PartWithTextAndCount(p, p_text)
 
-        return '; '.join(map(lambda x: x.full_text(converter), text_to_item.values()))
+        return converter.two_part_active(map(lambda x: x.full_text(converter), text_to_item.values()))
 
 
 class ASHpRecoveryandBindClear(ActiveSkill):

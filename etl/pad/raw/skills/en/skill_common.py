@@ -154,16 +154,9 @@ class EnBaseTextConverter(BaseTextConverter):
     def concat_list_semicolons(iterable):
         return '; '.join([str(i) for i in iterable if i])
 
-
     ################################################
     #               Format Functions               #
     ################################################
-    
-    def attributes_format(self, attributes: List[int], sep: str = ', ') -> str:
-        return sep.join([self.ATTRIBUTES[i] for i in attributes])
-
-    def types_format(self, types: List[int]) -> str:
-        return ', '.join([self.TYPES[i] for i in types])
 
     def fmt_stats_type_attr_bonus(self, ls,
                                   reduce_join_txt='; ',
@@ -191,7 +184,7 @@ class EnBaseTextConverter(BaseTextConverter):
 
             for_skill_text = ''
             if types:
-                for_skill_text += ' {} type'.format(self.types_format(types))
+                for_skill_text += ' {} type'.format(self.typing_to_str(types))
 
             is_attr_all = len(attributes) in [0, 5]
             should_skip_attr = is_attr_all and skip_attr_all
@@ -199,7 +192,7 @@ class EnBaseTextConverter(BaseTextConverter):
             if attributes and not should_skip_attr:
                 if for_skill_text:
                     for_skill_text += ' and'
-                color_text = 'all' if len(attributes) == 5 else self.attributes_format(attributes)
+                color_text = 'all' if len(attributes) == 5 else self.attributes_to_str(attributes)
                 for_skill_text += ' ' + color_text + ' Att.'
 
             if for_skill_text:
@@ -210,8 +203,7 @@ class EnBaseTextConverter(BaseTextConverter):
             if skill_text:
                 skill_text += reduce_join_txt
             if not skill_text or ';' in reduce_join_txt:
-                #reduct_text = capitalize_first(reduct_text)
-                reduct_text = reduct_text.capitalize()
+                reduct_text = capitalize_first(reduct_text)
             skill_text += reduct_text
 
         return skill_text
@@ -239,7 +231,7 @@ class EnBaseTextConverter(BaseTextConverter):
                 return ''
             return self.all_stats(fmt_mult(hp_mult))
 
-        mults = [(self.hp(), hp_mult), (self.atk(), atk_mult), (self.rcv(), rcv_mult)]
+        mults = [('HP', hp_mult), ('ATK', atk_mult), ('RCV', rcv_mult)]
         mults = list(filter(lambda x: x[1] != 1, mults))
         mults.sort(key=lambda x: x[1], reverse=True)
 
@@ -269,6 +261,6 @@ class EnBaseTextConverter(BaseTextConverter):
         if reduct_att in [None, [], [0, 1, 2, 3, 4]]:
             return self.reduce_all_pct(shield_text)
         else:
-            color_text = self.attributes_format(reduct_att)
-            return self.reduce_attr_pct(color_text, shield_text)
+            attr_text = self.attributes_to_str(reduct_att)
+            return self.reduce_attr_pct(attr_text, shield_text)
 

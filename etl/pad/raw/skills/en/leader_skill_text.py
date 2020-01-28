@@ -240,7 +240,7 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def heart_cross_text(self, ls):
         multiplier_text = self.passive_stats_text(ls, reduce_join_txt=' and ')
-        return '{} when matching 5 Heal orbs in a cross formation'.format(multiplier_text).replace('Reduce','reduce')
+        return '{} when matching 5 Heal orbs in a cross formation'.format(multiplier_text)
 
     def multi_play_text(self, ls):
         multiplier_text = self.passive_stats_text(ls)
@@ -248,7 +248,7 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def color_cross_text(self, ls):
         atk = fmt_mult(ls.atk)
-        attrs = self.attributes_to_str(ls.attributes, concat='or').replace(', or ', ', ').replace(' or ', ', ')
+        attrs = self.attributes_to_str(ls.attributes, concat='or')
         return '{}x ATK for each cross of 5 {} orbs'.format(atk, attrs)
 
     def collab_bonus_text(self, ls):

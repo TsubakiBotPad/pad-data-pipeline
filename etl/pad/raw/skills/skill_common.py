@@ -50,21 +50,20 @@ class BaseTextConverter(object):
     def ATTRIBUTES(self) -> Dict[int, str]:
         raise I13NotImplemented()
 
-    def attributes_to_str(self, attributes: List[int], concat=None) -> str:
-        concatf = concat or self.concat_list_and
-        if isinstance(concat, str):
-            concatf = lambda x: self.concat_list_and(x, concat)
-        return concatf([self.ATTRIBUTES[i] for i in attributes])
+    @classmethod
+    def attributes_to_str(cls, attributes, concat=None):
+      if concat is not None:
+        return cls.concat_list_and([cls._ATTRS[x] for x in attributes],concat)
+      else:
+        return cls.concat_list_and([cls._ATTRS[x] for x in attributes])
 
     @property
     def TYPES(self) -> Dict[int, str]:
         raise I13NotImplemented()
 
-    def typing_to_str(self, types: List[int], concat=None) -> str:
-        concatf = concat or self.concat_list_and
-        if isinstance(concat, str):
-            concatf = lambda x: self.concat_list_and(x, concat)
-        return concatf([self.TYPES[i] for i in types])
+    @classmethod
+    def typing_to_str(cls, types):
+        return cls.concat_list_and([cls._TYPES[x] for x in types])
 
     @property
     def AWAKENING_MAP(self) -> Dict[int, str]:

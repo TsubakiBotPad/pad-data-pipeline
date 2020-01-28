@@ -513,5 +513,7 @@ class EnASTextConverter(EnBaseTextConverter):
     def change_monster(self, act):
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
 
+    def two_part_active(self, strs):
+        return '; '.join(strs)
 
 __all__ = ['EnASTextConverter']

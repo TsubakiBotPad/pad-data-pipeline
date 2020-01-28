@@ -19,87 +19,43 @@ def public(x):
 
 
 @public
-def capitalize_first(x: str):
-    if not x:
-        return x
-    elif len(x) == 1:
-        return x.upper()
-    else:
-        return x[0].upper() + x[1:]
-
-
-article_irregulars = {
-    'L shape': 'an L shape',
-}
-
-
-@public
-def indef_article(noun):
-    return article_irregulars.get(noun, 'a{} {}'.format('n' if noun[0] in 'aeiou' else '', noun))
-
-
-irregulars = {
-    'status': 'statuses',
-    'both leaders': 'both leaders',
-    'active skills': 'active skills',
-    'awoken skills': 'awoken skills',
-}
-
-
-@public
-def pluralize(noun, number):
-    irregular_plural = irregulars.get(noun)
-    if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'
-    return noun
-
-
-@public
-def pluralize2(noun, number, max_number=None):
-    if max_number is not None:
-        number = minmax(number, max_number)
-    if number is None:
-        return noun
-    irregular_plural = irregulars.get(noun)
-    if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'
-    return "{} {}".format(number, noun)
-
-
-@public
 class KrBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
     _ATTRS = {
-        -9: 'locked Bomb',
-        -1: 'Random',
-        None: 'Fire',
-        0: 'Fire',
-        1: 'Water',
-        2: 'Wood',
-        3: 'Light',
-        4: 'Dark',
-        5: 'Heal',
-        6: 'Jammer',
-        7: 'Poison',
-        8: 'Mortal Poison',
-        9: 'Bomb',
-    }
+       -9: '잠금폭탄',
+       -1: '랜덤',
+     None: '불',
+        0: '불',
+        1: '물',
+        2: '나무',
+        3: '빛',
+        4: '어둠',
+        5: '회복',
+        6: '방해',
+        7: '독',
+        8: '맹독',
+        9: '폭탄'}
+
+    def attributes_to_str(self, attributes, conj='and'):
+      return self.concat_list_and([self.ATTRIBUTES[x] for x in attributes],conj)
 
     _TYPES = {
-        0: 'Evo Material',
-        1: 'Balanced',
-        2: 'Physical',
-        3: 'Healer',
-        4: 'Dragon',
-        5: 'God',
-        6: 'Attacker',
-        7: 'Devil',
-        8: 'Machine',
-        12: 'Awaken Material',
-        14: 'Enhance Material',
-        15: 'Redeemable Material',
-    }
+        0: '진화용',
+        1: '밸런스',
+        2: '체력',
+        3: '회복',
+        4: '드래곤',
+        5: '신',
+        6: '공격',
+        7: '악마',
+        8: '머신',
+       12: '능력각성용',
+       14: '강화합성용',
+       15: '매각용'}
+
+    def typing_to_str(self, types):
+        return self.concat_list_and([self.TYPES[x] for x in types])
 
     _AWAKENING_MAP = {x['pad_awakening_id']: x['name_kr'] for x in AWOSKILLS}
     _AWAKENING_MAP[0] = ''
@@ -117,57 +73,67 @@ class KrBaseTextConverter(BaseTextConverter):
         return self._AWAKENING_MAP
 
     def all_stats(self, multiplier):
-        return '{}x all stats'.format(multiplier)
+        return '{}x 모든 파라미터'.format(multiplier)
 
     def hp(self):
         return 'HP'
 
     def atk(self):
-        return 'ATK'
+        return '공격력'
 
     def rcv(self):
-        return 'RCV'
+        return '회복력'
 
     def reduce_all_pct(self, shield_text):
-        return 'reduce damage taken by {}%'.format(shield_text)
+        return '받는 피해 {}% 감소'.format(shield_text)
 
     def reduce_attr_pct(self, attr_text, shield_text):
-        return 'reduce damage taken from {} Att. by {}%'.format(attr_text, shield_text)
+        return '{}속성 적에게 받는 피해 {}%감소'.format(attr_text, shield_text)
 
     @staticmethod
     def concat_list(iterable):
         return ', '.join([str(i) for i in iterable if i])
 
     @staticmethod
-    def concat_list_and(iterable, conj='and'):
+    def concat_list_and(iterable, conj=''):
         array = [str(i) for i in iterable if i]
+        if not conj:
+          return "、".join(array)
+        conj += " "
         if len(array) == 0:
             return ""
         elif len(array) == 1:
             return array[0]
         elif len(array) == 2:
-            return " {} ".format(conj).join(array)
-        array[-1] = conj + " " + array[-1]
-        return ", ".join(array)
+            return " {}".format(conj).join(array)
+        array[-1] = conj + array[-1]
+        return "、".join(array)
 
     @staticmethod
     def concat_list_semicolons(iterable):
         array = '; '.join([str(i) for i in iterable if i])
 
+    @staticmethod
+    def big_number(n):
+        if n == 0:
+            return str(int(n // 1e0)) + ''
+        elif n % 1e8 == 0:
+            return str(int(n // 1e8)) + '억 '
+        elif n % 1e4 == 0:
+            return str(int(n // 1e4)) + '만 '
 
-
+        elif n < 1e4:
+            return str(n)
+        elif n < 1e8:
+            return str(n)[:-4] + '만 ' + str(n)[-4:]
+        else:
+            return str(n)[:-8] + '억 ' + str(n)[-8:-4] + '만 ' + str(n)[-4:]
 
 
 
     ################################################
     #               Format Functions               #
     ################################################
-    
-    def attributes_format(self, attributes: List[int], sep: str = ', ') -> str:
-        return sep.join([self.ATTRIBUTES[i] for i in attributes])
-
-    def types_format(self, types: List[int]) -> str:
-        return ', '.join([self.TYPES[i] for i in types])
 
     def fmt_stats_type_attr_bonus(self, ls,
                                   reduce_join_txt='; ',
@@ -197,7 +163,7 @@ class KrBaseTextConverter(BaseTextConverter):
 
             for_skill_text = ''
             if types:
-                for_skill_text += ' {} type'.format(self.types_format(types))
+                for_skill_text += ' {} type'.format(self.typing_to_str(types))
 
             is_attr_all = len(attributes) in [0, 5]
             should_skip_attr = is_attr_all and skip_attr_all
@@ -205,7 +171,7 @@ class KrBaseTextConverter(BaseTextConverter):
             if attributes and not should_skip_attr:
                 if for_skill_text:
                     for_skill_text += ' and'
-                color_text = 'all' if len(attributes) == 5 else self.attributes_format(attributes)
+                color_text = 'all' if len(attributes) == 5 else self.attributes_to_str(attributes)
                 for_skill_text += ' ' + color_text + ' Att.'
 
             if for_skill_text:
@@ -274,5 +240,7 @@ class KrBaseTextConverter(BaseTextConverter):
         if reduct_att in [None, [], [0, 1, 2, 3, 4]]:
             return self.reduce_all_pct(shield_text)
         else:
-            color_text = self.attributes_format(reduct_att)
+            color_text = self.attributes_to_str(reduct_att)
             return self.reduce_attr_pct(color_text, shield_text)
+
+

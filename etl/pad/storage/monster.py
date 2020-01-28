@@ -239,7 +239,9 @@ class ActiveSkill(SimpleSqlItem):
         na_skill = css.na_skill
         kr_skill = css.kr_skill
 
+        jp_description = css.jp_text
         na_description = css.en_text
+        kr_description = css.kr_text
         tags = skill_text_typing.format_conditions(css.skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
@@ -251,7 +253,7 @@ class ActiveSkill(SimpleSqlItem):
             name_jp=jp_skill.name,
             name_na=na_skill.name,
             name_kr=kr_name,
-            desc_jp=jp_skill.raw_description,
+            desc_jp=jp_description,
             desc_na=na_description,
             desc_kr=kr_desc,
             turn_max=jp_skill.turn_max,
