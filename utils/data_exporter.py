@@ -7,6 +7,7 @@ import pathlib
 import padtools
 from pad.common import pad_util
 from pad.common.shared_types import Server
+from pad.raw.skills import skill_text_typing
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.jp.active_skill_text import JpASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
@@ -105,40 +106,41 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
             f.write('\n')
 
             if c.active_skill:
-                dump_skill(f, c.active_skill, AS_CONVERTERS)
+                dump_skill(f, c.active_skill, AS_CONVERTERS, skill_text_typing.parse_as_conditions)
 
             if c.leader_skill:
-                dump_skill(f, c.leader_skill, LS_CONVERTERS)
+                dump_skill(f, c.leader_skill, LS_CONVERTERS, skill_text_typing.parse_ls_conditions)
 
     as_file = os.path.join(output_dir, 'active_skills.txt')
     with open(as_file, 'w', encoding='utf-8') as f:
         for css in db.active_skills:
-            dump_skill(f, css, AS_CONVERTERS)
+            dump_skill(f, css, AS_CONVERTERS, skill_text_typing.parse_as_conditions)
 
     ls_file = os.path.join(output_dir, 'leader_skills.txt')
     with open(ls_file, 'w', encoding='utf-8') as f:
         for css in db.leader_skills:
-            dump_skill(f, css, LS_CONVERTERS)
+            dump_skill(f, css, LS_CONVERTERS, skill_text_typing.parse_ls_conditions)
 
     es_file = os.path.join(output_dir, 'enemy_skills.txt')
     with open(es_file, 'w', encoding='utf-8') as f:
         for css in db.enemy_skills:
             dump_enemy_skill(f, css, ES_CONVERTERS)
 
-    # TODO: write dungeons, exchanges, egg machines?
-
 
 # Write active skill id/type, english name, raw english description, then computed descriptions for
 # english, japanese, and korean
-def dump_skill(f, css, converter):
+def dump_skill(f, css, converter, tag_extractor_fn):
     jp_skill = css.jp_skill
     na_skill = css.na_skill
     kr_skill = css.kr_skill
+    en_text = jp_skill.full_text(converter[1])
+    skill_type_tags = tag_extractor_fn(en_text)
+
     f.write('# {}/{} - {}\n'.format(jp_skill.skill_id, jp_skill.skill_type, na_skill.name))
-    f.write('Tags: {}\n'.format(','.join(map(lambda x: x.name, css.skill_type_tags))))
+    f.write('Tags: {}\n'.format(','.join(map(lambda x: x.name, skill_type_tags))))
     f.write('Game: {}\n'.format(na_skill.raw_description))
     f.write('JP: {}\n'.format(jp_skill.full_text(converter[0])))
-    f.write('EN: {}\n'.format(jp_skill.full_text(converter[1])))
+    f.write('EN: {}\n'.format(en_text))
     f.write('KR: {}\n'.format(jp_skill.full_text(converter[2])))
     f.write('\n')
 
