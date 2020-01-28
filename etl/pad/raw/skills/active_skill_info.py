@@ -415,7 +415,8 @@ class ASBoardChange(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [])
-        self.attributes = [v for v in data if v != -1]
+        self.from_attr = list(range(10))
+        self.to_attr = [v for v in data if v != -1]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:

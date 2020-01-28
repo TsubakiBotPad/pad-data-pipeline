@@ -334,7 +334,7 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def board_change_convert(self, act):
         skill_text = 'Change all orbs to '
-        skill_text += self.concat_list_and([self.ATTRIBUTES[a] for a in act.attributes]) + ' orbs'
+        skill_text += self.concat_list_and([self.ATTRIBUTES[a] for a in act.to_attr]) + ' orbs'
         return skill_text
 
     def suicide_random_nuke_convert(self, act):
