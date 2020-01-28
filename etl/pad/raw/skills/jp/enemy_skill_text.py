@@ -1,4 +1,5 @@
 from pad.raw.skills.jp.skill_common import *
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as BaseESTextConverter
 import logging
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -14,7 +15,7 @@ TARGET_NAMES = {
     TargetType.subs: 'ランダムでサブ{}体',
     TargetType.attrs: '属性',
     TargetType.types: 'タイプ',
-    TargetType.card: 'card',
+    TargetType.card: '{}体',
 
     # Specific Players/Enemies (For Recovery)
     TargetType.player: 'プレイヤー',
@@ -56,7 +57,7 @@ SOURCE_FUNCS = {
 }
 
 
-class JpESTextConverter(JpBaseTextConverter):
+class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
     def not_set(self):
         return '詳細はありません'
 
@@ -198,7 +199,7 @@ class JpESTextConverter(JpBaseTextConverter):
         if source_type == Source.attrs:
             source += '属性からの攻撃'
         elif source_type == Source.types:
-            source += 'タープからの攻撃'
+            source += 'タイプからの攻撃'
         elif source_type == Source.all_sources:
             source += 'ダメージ'
         turns = '{}ターンの間、'.format(turns) if turns else ''
@@ -233,7 +234,7 @@ class JpESTextConverter(JpBaseTextConverter):
             return self.board_change(attrs)
         else:
             return '{}ドロップを{}個{}生成' \
-                .format(self.attributes_to_str(attrs), count, 'ずつ' if len(attrs) > 1 else '')
+                .format(self.attributes_to_str(attrs), count, '')
 
     def fixed_orb_spawn(self, attributes):
         return '特定の位置に{}ドロップを生成'.format(self.attributes_to_str(attributes))
@@ -306,13 +307,13 @@ class JpESTextConverter(JpBaseTextConverter):
         if message is None:
             return '死亡効果を表示'
         else:
-            return '{}を表示'.format(message)
+            return '「{}」を表示'.format(message)
 
     def attribute_exists(self, atts):
         return '盤面に{}ドロップをある場合に使用'.format(self.attributes_to_str(atts))
 
     def countdown(self, counter):
-        return '\'{}\'を表示してターンをスキップ'.format(counter)
+        return '「{}」を表示してターンをスキップ'.format(counter)
 
     def gacha_fever(self, attribute, orb_req):
         return 'フィーバーモード: {}ドロップが{}個消す'.format(self.ATTRIBUTES[attribute], orb_req)

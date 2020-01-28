@@ -8,11 +8,12 @@ import padtools
 from pad.common import pad_util
 from pad.common.shared_types import Server
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
+from pad.raw.skills.jp.active_skill_text import JpASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
 from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 
-AS_CONVERTERS = (EnASTextConverter(), EnASTextConverter(), EnASTextConverter())
+AS_CONVERTERS = (JpASTextConverter(), EnASTextConverter(), EnASTextConverter())
 LS_CONVERTERS = (EnLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
 ES_CONVERTERS = (JpESTextConverter(), EnESTextConverter(), EnESTextConverter())
 

@@ -1,62 +1,11 @@
 from pad.raw.skills.kr.skill_common import *
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as BaseESTextConverter
 
 from enum import Enum
 
 import logging
 
 human_fix_logger = logging.getLogger('human_fix')
-
-def concat_list_and(l, conj = 'and'):
-    l = [str(i) for i in l if i]
-    if len(l) == 0:
-        return ""
-    elif len(l) == 1:
-        return l[0]
-    elif len(l) == 2:
-        return " {} ".format(conj).join(l)
-    l[-1] = "{} ".format(conj) + l[-1]
-    return ", ".join(l)
-
-ATTRIBUTE_MAP = {
-    # TODO: tieout
-    -9: 'locked Bomb',
-    -1: 'Random',
-    None: 'Fire',
-    0: 'Fire',
-    1: 'Water',
-    2: 'Wood',
-    3: 'Light',
-    4: 'Dark',
-    5: 'Heal',
-    6: 'Jammer',
-    7: 'Poison',
-    8: 'Mortal Poison',
-    9: 'Bomb',
-}
-
-
-def attributes_to_str(attributes, conj='and'):
-    return concat_list_and([ATTRIBUTE_MAP[x] for x in attributes],conj)
-
-
-TYPING_MAP = {
-    1: 'Balanced',
-    2: 'Physical',
-    3: 'Healer',
-    4: 'Dragon',
-    5: 'God',
-    6: 'Attacker',
-    7: 'Devil',
-    8: 'Machine',
-    12: 'Awaken Material',
-    14: 'Enhance Material',
-    15: 'Redeemable Material'
-}
-
-
-def typing_to_str(types):
-    return concat_list_and([TYPING_MAP[x] for x in types])
-
 
 TARGET_NAMES = {
     TargetType.unset: '<targets unset>',
@@ -67,14 +16,14 @@ TARGET_NAMES = {
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
     TargetType.subs: 'random sub',
-    TargetType.attrs: 'attributes',
-    TargetType.types: 'type',
+    TargetType.attrs: '속성',
+    TargetType.types: '타입',
     TargetType.card: 'card',
 
     #Specific Players/Enemies (For Recovery)
-    TargetType.player: 'player',
-    TargetType.enemy: 'enemy',
-    TargetType.enemy_ally: 'enemy ally',
+    TargetType.player: '플레이어',
+    TargetType.enemy: '적',
+    TargetType.enemy_ally: '적 아군',
 
     #Full Team Aspect
     TargetType.awokens: 'awoken skills',
@@ -86,17 +35,17 @@ TARGET_NAMES = {
 
 def targets_to_str(targets):
     return  targets if isinstance(targets,str)\
-                    else ' and '.join([TARGET_NAMES[x] for x in targets])
+                    else '、'.join([TARGET_NAMES[x] for x in targets])
 
 ORB_SHAPES = {
     OrbShape.l_shape: 'L shape',
     OrbShape.cross: 'cross',
-    OrbShape.column: 'column',
-    OrbShape.row: 'row',
+    OrbShape.column: '열',
+    OrbShape.row: '행',
 }
 
 def orbshape_to_str(shapes):
-    return concat_list_and([ORB_SHAPES[x] for x in shapes])
+    return KrBaseTextConverter.concat_list_and([ORB_SHAPES[x] for x in shapes])
 
 STATUSES = {
     Status.movetime: 'movetime',
@@ -116,55 +65,45 @@ UNITS = {
 
 SOURCE_FUNCS = {
     Source.all_sources: lambda x: 'all sources',
-    Source.types: typing_to_str,
-    Source.attrs: attributes_to_str,
+    Source.types: KrBaseTextConverter.typing_to_str,
+    Source.attrs: KrBaseTextConverter.attributes_to_str,
 }
     
 
-def ordinal(n):
-    return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
 
-
-class KrESTextConverter(KrBaseTextConverter):
-    @staticmethod
-    def not_set():
+class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
+    def not_set(self):
         return 'No description set'
 
-    @staticmethod
-    def default_attack():
+    def default_attack(self):
         return 'Default Attack'
     
-    @staticmethod
-    def condition(chance, hp=None, one_time=False):
-        output = []
-        if 0 < chance < 100 and not one_time:
-            output.append('{:d}% chance'.format(chance))
+    def condition(self, chance, hp=None, one_time=False):
+        output = ['']
         if hp:
-            output.append('when < {:d}% HP'.format(hp))
+            output[0] += 'HP가 {}% 이하일때'.format(hp)
+        if 0 < chance < 100 and not one_time:
+           output[0] += '{}% 확률'.format(chance)
+        if not output[0]:
+            output = []
         if one_time:
-            if len(output) > 0:
-                output.append(', one-time use')
-            else:
-                output.append('one-time use')
-        return capitalize_first(' '.join(output)) if len(output) > 0 else None
+            output.append('반드시 1회 사용')
+        return capitalize_first('、'.join(output)) if len(output) > 0 else None
 
-    @staticmethod
-    def attack(mult, min_hit=1, max_hit=1):
+    def attack(self, mult, min_hit=1, max_hit=1):
         if mult is None:
             return None
-        output = 'Deal {:s}% damage'. \
+        output = '{}%데미지'. \
             format(minmax(int(min_hit) * int(mult), int(max_hit) * int(mult)))
         if min_hit and max_hit != 1:
-            output += ' ({:s}, {:d}% each)'. \
-                format(pluralize2("hit", minmax(min_hit, max_hit)), mult)
+            output += ' ({}회, 각 {}%)'. \
+                format(minmax(min_hit, max_hit), mult)
         return output
 
-    @staticmethod
-    def skip():
-        return 'Do nothing'
+    def skip(self):
+        return '아무것도 하지않는다'
 
-    @staticmethod
-    def bind(min_turns, max_turns, target_count=None, target_types=TargetType.card, source:Source = None):
+    def bind(self, min_turns, max_turns, target_count=None, target_types=TargetType.card, source:Source = None):
         if isinstance(target_types, TargetType): target_types = [target_types]
         elif source is not None: target_types = SOURCE_FUNCS[source]([target_types])+' cards'
         targets = targets_to_str(target_types)
@@ -172,15 +111,14 @@ class KrESTextConverter(KrBaseTextConverter):
         output += 'for ' + pluralize2('turn', minmax(min_turns, max_turns))
         return output
 
-    @staticmethod
-    def orb_change(orb_from, orb_to, random_count=None, exclude_hearts=False):
+    def orb_change(self, orb_from, orb_to, random_count=None, exclude_hearts=False):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
-        orb_from = attributes_to_str(orb_from)
+        orb_from = self.attributes_to_str(orb_from)
 
         if not isinstance(orb_to, list):
             orb_to = [orb_to]
-        orb_to = attributes_to_str(orb_to)
+        orb_to = self.attributes_to_str(orb_to)
 
 
         output = 'Change '
@@ -203,105 +141,85 @@ class KrESTextConverter(KrBaseTextConverter):
             output += '{} {}'.format(orb_to, 'orbs')
         return output
 
-    @staticmethod
-    def blind():
-        return 'Blind all orbs on the board'
+    def blind(self):
+        return '모든 드롭을 암흑으로 가림'
 
-    @staticmethod
-    def blind_sticky_random(turns, min_count, max_count):
+    def blind_sticky_random(self, turns, min_count, max_count):
         if min_count == 42:
-            return 'Blind all orbs for {:s}'.format(pluralize2('turn', turns))
+            return '{}턴동안 모든 드롭을 초암흑으로 가림'.format(turns)
         else:
-            return 'Blind random {:s} orbs for {:s}' \
-                .format(minmax(min_count, max_count), pluralize2('turn', turns))
+            return '{}턴동안 무작위 {}개의 드롭을 초암흑으로 가림' \
+                .format(turns, minmax(min_count, max_count))
 
-    @staticmethod
-    def blind_sticky_fixed(turns):
+    def blind_sticky_fixed(self, turns):
         return 'Blind orbs in specific positions for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def dispel_buffs():
-        return 'Voids player buff effects'
+    def dispel_buffs(self):
+        return '플레이어의 강화 효과를 모두 제거'
 
-    @staticmethod
-    def recover(min_amount, max_amount, target_type):
+    def recover(self, min_amount, max_amount, target_type):
         target = targets_to_str([target_type])
-        return capitalize_first('{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)))
+        return capitalize_first('{:s} HP {}% 회복'.format(target, minmax(min_amount, max_amount, True)))
 
-    @staticmethod
-    def enrage(mult, turns):
-        output = 'Increase damage to {:d}% for the next '.format(mult)
-        output += pluralize2('turn', turns) if turns else 'attack'
-        return output
+    def enrage(self, mult, turns):
+        output = '{}턴동안 공격력 {}%로 상승' if turns else '다음 {}번 공격 {}% 데미지'
+        return output.format(mult)
 
-    @staticmethod
-    def status_shield(turns):
-        return 'Voids status ailments for {:s}'.format(pluralize2('turn', turns))
+    def status_shield(self, turns):
+        return '{}턴 동안 상태이상 무효화 '.format(turns)
 
-    @staticmethod
-    def debuff(d_type, amount, unit, turns):
+    def debuff(self, d_type, amount, unit, turns):
         amount = amount or 0
-        if amount % 1 != 0:
-            human_fix_logger.error("Amount {} will be truncated.  Change debuff".format(amount))
         d_type = STATUSES[d_type] or ''
         unit = UNITS[unit]
         turns = turns or 0
         return '{:s} {:+.0f}{:s} for {:s}' \
             .format(capitalize_first(d_type), amount, unit, pluralize2('turn', turns))
 
-    @staticmethod
-    def end_battle():
+    def end_battle(self):
         return 'Reduce self HP to 0'
 
-    @staticmethod
-    def change_attribute(attributes):
+    def change_attribute(self, attributes):
         if len(attributes) == 1:
-            return 'Change own attribute to {}'.format(ATTRIBUTE_MAP[attributes[0]])
+            return '적의 속성이 {} 속성으로 변환'.format(ATTRIBUTE_MAP[attributes[0]])
         else:
-            return 'Change own attribute to random one of ' + attributes_to_str(attributes,'or')
+            return '무작위로 적의 속성이 {}중 한속성으로 변환'.format(self.attributes_to_str(attributes))
 
-    @staticmethod
-    def gravity(percent):
-        return 'Player -{:d}% HP'.format(percent)
+    def gravity(self, percent):
+        return '플레이어 - {}%HP'.format(percent)
 
-    @staticmethod
-    def absorb(abs_type: Absorb, condition, min_turns, max_turns=None):
+    def absorb(self, abs_type: Absorb, condition, min_turns, max_turns=None):
         if abs_type == Absorb.attr:
-            source = attributes_to_str(condition)
-            return 'Absorb {:s} damage for {:s}' \
-                .format(source, pluralize2("turn", min_turns, max_turns))
+            source = self.attributes_to_str(condition)
+            return '{}턴동안 {} 속성의 공격을 흡수' \
+                .format(minmax(min_turns, max_turns), source)
         elif abs_type == Absorb.combo:
-            source = 'combos <= {:d}'.format(condition)
+            source = ' {}콤보 이하의'.format(condition)
         elif abs_type == Absorb.damage:
-            source = 'damage >= {:,d}'.format(condition)
+            source = ' {} 이상'.format(self.bignumber(condition))
         else:
-            human_fix_logger.warning("unknown absorb type: {}".format(abs_type))
-            
-        return 'Absorb damage when {:s} for {:s}' \
-            .format(source, pluralize2("turn", min_turns, max_turns))
+            source = 'ㅇㅇ'
+        return '{}턴동안 공격을 흡수'.format(minmax(min_turns, max_turns), source)
 
-    @staticmethod
-    def skyfall(attributes, chance, min_turns, max_turns=None, locked=False):
+    def skyfall(self, attributes, chance, min_turns, max_turns=None, locked=False):
         lock = 'Locked ' if locked else ''
-        orbs = attributes_to_str(attributes)
-        # TODO: tieout
-        if lock and orbs == 'Random':
-            orbs = orbs.lower()
-        return '{:s}{:s} skyfall +{:d}% for {:s}' \
-            .format(lock, orbs, chance, pluralize2('turn', min_turns, max_turns))
+        orbs = self.attributes_to_str(attributes)
+        if orbs != 'Random':
+            orbs += '드롭이 '
+        return '{}턴동안 {}%확률로 {}잠금 상태로 출현' \
+            .format(minmax(min_turns, max_turns), chance, orbs)
 
-    @staticmethod
-    def void(threshold, turns):
+    def void(self, threshold, turns):
         return 'Void damage >= {:d} for {:s}'.format(threshold, pluralize2('turn', turns))
 
-    @staticmethod
-    def damage_reduction(source_type: Source, source = None, percent=None, turns=None):
+    def damage_reduction(self, source_type: Source, source = None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)
         if source_type != Source.all_sources:
-            source += ' ' + source_type.name
+            source += TARGET_NAMES[TargetType(source.value)] + '에게 받는'
+        else:
+            source = '모든'
         if percent is None:
-            return 'Immune to damage from {:s} for {:s}' \
-                   .format(source, pluralize2('turn', turns))
+            return source + ' 피해 {}턴동안 무효화'.format(turns)
         else:
             if turns:
                 return 'Reduce damage from {:s} by {:d}% for {:s}' \
@@ -310,70 +228,56 @@ class KrESTextConverter(KrBaseTextConverter):
                 return 'Reduce damage from {:s} by {:d}%' \
                        .format(source, percent)
 
-    @staticmethod
-    def invuln_off():
-        return 'Remove damage immunity effect'
+    def invuln_off(self):
+        return '피해를 입힐 수 있는 상태가 된다'
 
-    @staticmethod
-    def resolve(percent):
-        return 'Survive attacks with 1 HP when HP > {:d}%'.format(percent)
+    def resolve(self, percent):
+        return 'HP {}% 이상일 때 현재 HP 이상의 데미지를 받아도 HP 1이 남고 생존'.format(percent)
 
-    @staticmethod
-    def leadswap(turns):
+    def leadswap(self, turns):
         return 'Leader changes to random sub for {:s}'.format(pluralize2('turn', turns))
 
-    @staticmethod
-    def row_col_spawn(position_type, positions, attributes):
-        return 'Change the {:s} {:s} to {:s} orbs'.format(
-            concat_list_and([ordinal(x) for x in positions]),
-            pluralize(ORB_SHAPES[position_type], len(positions)),
-            attributes_to_str(attributes))
+    def row_col_spawn(self, position_type, positions, attributes):
+        return '{}을 {}드롭으로 변환'.format(
+            self.concat_list_and(map(lambda x: x+ORB_SHAPES[position_type])),
+            self.attributes_to_str(attributes))
+ 
+    def row_col_multi(self, desc_arr):
+        return self.concat_list_semicolons(desc_arr)
 
-    @staticmethod
-    def row_col_multi(desc_arr):
-        return 'Change ' + concat_list_and(map(lambda x: x[7:], desc_arr))
+    def board_change(self, attributes):
+        return '모든 드롭을 {}드롭으로 변환'.format(self.attributes_to_str(attributes))
 
-    @staticmethod
-    def board_change(attributes):
-        return 'Change all orbs to {:s}'.format(attributes_to_str(attributes))
-
-    @staticmethod
-    def random_orb_spawn(count, attributes):
+    def random_orb_spawn(self, count, attributes):
         if count == 42:
-            return EnESTextConverter.board_change(attributes)
+            return KrESTextConverter.board_change(attributes)
         else:
-            return 'Spawn {:d} random {:s} {:s}' \
-                .format(count, attributes_to_str(attributes, 'or'), pluralize('orb', count))
+            return '무작위 {}개 드롭을 {}드롭으로 변환' \
+                .format(count, self.attributes_to_str(attributes))
 
-    @staticmethod
-    def fixed_orb_spawn(attributes):
-        return 'Spawn {:s} orbs in the specified positions'.format(attributes_to_str(attributes))
+    def fixed_orb_spawn(self, attributes):
+        return '특정 위치에 {}드롭 생성'.format(self.attributes_to_str(attributes))
 
-    @staticmethod
-    def skill_delay(min_turns, max_turns):
-        return 'Delay active skills by {:s}' \
-            .format(pluralize2('turn', minmax(min_turns, max_turns)))
+    def skill_delay(self, min_turns, max_turns):
+        return '아군의 액티브 스킬 대기 턴 {}턴 증가'.format(minmax(min_turns, max_turns))
 
-    @staticmethod
-    def orb_lock(count, attributes):
+    def orb_lock(self, count, attributes):
         if count == 42 and attributes == EnESTextConverter.ATTRS_EXCEPT_BOMBS:
-            return 'Lock all orbs'
+            return '모든 드롭을 잠금'
         elif count == 42:
-            return 'Lock all {:s} orbs'.format(attributes_to_str(attributes))
+            return '모든 {}속성 드롭을 잠금'.format(self.attributes_to_str(attributes))
         elif attributes == EnESTextConverter.ATTRS_EXCEPT_BOMBS:
-            return 'Lock {:d} random {:s}'.format(count, pluralize('orb',count))
+            return '무작위로 {}개의 드롭을 잠금'.format(count)
         else:
-            return 'Lock {:d} random {:s} {:s}'.format(count, attributes_to_str(attributes), pluralize('orb', count))
+            return '무작위로 {}개의 {}속성 드롭을 잠금'.format(count, self.attributes_to_str(attributes))
 
-    @staticmethod
-    def orb_seal(turns, position_type, positions):
-        return 'Seal the {:s} {:s} for {:s}' \
-            .format(concat_list_and([ordinal(x) for x in positions]),
-                    pluralize(ORB_SHAPES[position_type], len(positions)),
-                    pluralize2('turn', turns))
+    def orb_seal(self, turns, position_type, positions):
+        return '{}턴동안 {}{}의 드롭을 움직일 수 없음' \
+            .format(turns,
+                    self.concat_list_and([ordinal(x) for x in positions]),
+                    ORB_SHAPES[position_type])
 
-    @staticmethod
-    def cloud(turns, width, height, x, y):
+    def cloud(self, turns, width, height, x, y):
         if width == 6 and height == 1:
             shape = 'row'
         elif width == 1 and height == 5:
@@ -391,79 +295,63 @@ class KrESTextConverter(KrBaseTextConverter):
         return 'A {:s} of clouds appears for {:s} at {:s}' \
             .format(shape, pluralize2('turn', turns), ', '.join(pos))
 
-    @staticmethod
-    def fixed_start():
-        return 'Fix orb movement starting point to random position on the board'
+    def fixed_start(self):
+        return '무작위로 조작할 드롭을 강제로 지정'
 
-    @staticmethod
-    def turn_change(turn_counter, threshold=None):
+    def turn_change(self, turn_counter, threshold=None):
         if threshold:
-            return 'Enemy turn counter change to {:d} when HP <= {:d}%'.format(turn_counter, threshold)
+            return '적 HP {}% 이하일때 행동 턴 {}턴으로 변경'.format(threshold, turn_counter)
         else:
-            return 'Enemy turn counter change to {:d}'.format(turn_counter)
+            return '적 행동 턴 {}턴으로 변경'.format(turn_counter)
 
-    @staticmethod
-    def attribute_block(turns, attributes):
-        return 'Unable to match {:s} orbs for {:s}' \
-            .format(attributes_to_str(attributes), pluralize2('turn', turns))
+    def attribute_block(self, turns, attributes):
+        return '{}턴 동안 {attrs}드롭을 연결해도 지울 수 없음'.format(turns, self.attributes_to_str(attributes))
 
-    @staticmethod
-    def spinners(turns, speed, random_num=None):
+    def spinners(self, turns, speed, random_num=None):
         if random_num is None:
             return 'Specific orbs change every {:.1f}s for {:s}' \
                 .format(speed / 100, pluralize2('turn', turns))
         else:
-            return 'Random {:d} orbs change every {:.1f}s for {:s}' \
-                .format(random_num, speed / 100, pluralize2('turn', turns))
+            return '{}턴동안 무작위 드롭 {}개를 {:.1f}초마다 변환' \
+                .format(turns, random_num, speed / 100)
 
-    @staticmethod
-    def max_hp_change(turns, max_hp, percent):
+    def max_hp_change(self, turns, max_hp, percent):
         if percent:
-            return 'Change player HP to {:d}% for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return '{}턴 동안 플레이어의 HP를 {}%로 변경'.format(turns, max_hp)
         else:
-            return 'Change player HP to {:d} for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return '{}턴 동안 플레이어의 최대 HP를 {}로 고정'.format(turns, max_hp)
 
-    @staticmethod
-    def fixed_target(turns):
-        return 'Forces attacks to hit this enemy for {:s}'.format(pluralize2('turn', turns))
+    def fixed_target(self, turns):
+        return '{}턴동안 공격을 이 적에게 고정'.format(turns)
 
-    @staticmethod
-    def death_cry(message):
+    def death_cry(self, message):
         if message is None:
             return 'Show death effect'
         else:
-            return 'Show message: {:s}'.format(message)
+            return '메시지를 출력: 「{}」'.format(message)
 
-    @staticmethod
-    def attribute_exists(atts):
-        return 'when {:s} orbs are on the board'.format(attributes_to_str(atts,'or'))
+    def attribute_exists(self, atts):
+        return 'when {:s} orbs are on the board'.format(self.attributes_to_str(atts,'or'))
 
-    @staticmethod
-    def countdown(counter):
-        return 'Display \'{:d}\' and skip turn'.format(counter)
+    def countdown(self, counter):
+        return '「{}」를 출력하고 턴을 건너뛴다'.format(counter)
 
-    @staticmethod
-    def gacha_fever(attribute, orb_req):
-        return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, ATTRIBUTE_MAP[attribute], pluralize('orb', orb_req))
+    def gacha_fever(self, attribute, orb_req):
+        return '피버 모드: {}드롭 {}개를 지우면 클리어'.format(ATTRIBUTE_MAP[attribute], orb_req)
 
-    @staticmethod
-    def lead_alter(turns, target):
-        return 'Change leader to [{:d}] for {:s}'.format(target, pluralize2('turn', turns))
+    def lead_alter(self, turns, target):
+        return '{}턴 동안 리더를 [{}]로 변경'.format(target, turns)
 
-    @staticmethod
-    def force_7x6(turns):
-        return 'Change board size to 7x6 for {:s}'.format(pluralize2('turn', turns))
+    def force_7x6(self, turns):
+        return '{}턴 동안 드롭판을 7x6으로 변경'.format(turns)
 
-    @staticmethod
-    def no_skyfall(turns):
-        return 'No skyfall for {:s}'.format(pluralize2('turn', turns))
+    def no_skyfall(self, turns):
+        return '{}턴 동안 낙차 콤보 없음'.format(turns)
 
-    @staticmethod
-    def branch(condition, compare, value, rnd):
+    def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
 
-    @staticmethod
-    def join_skill_descs(descs):
+    def join_skill_descs(self, descs):
         return ' + '.join(descs)
 
 
