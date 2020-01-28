@@ -116,7 +116,3 @@ etl/db_config.json
 # Ignore secret pad files
 etl/pad/api/keygen.py
 etl/pad/api/dungeon_encoding.py
-
-tests/parser_integration_test_idle.py
-
-etl/data_processor_idle.py

@@ -1,4 +1,7 @@
 from pad.raw.skills.en.skill_common import *
+import logging
+
+human_fix_logger = logging.getLogger('human_fix')
 
 ROW_INDEX = {
     0: 'the top row',
@@ -393,19 +396,29 @@ class EnASTextConverter(EnBaseTextConverter):
                                                                              self.fmt_mass_atk(act.mass_attack))
 
     def fixed_pos_convert(self, act):
-        board = [[], [], [], [], []]
-        board[0] = list(act.row_pos_1)
-        board[1] = list(act.row_pos_2)
-        board[2] = list(act.row_pos_3)
-        board[3] = list(act.row_pos_4)
-        board[4] = list(act.row_pos_5)
+        board = [
+            list(act.row_pos_1),
+            list(act.row_pos_2),
+            list(act.row_pos_3),
+            list(act.row_pos_4),
+            list(act.row_pos_5),
+        ]
+
         orb_count = 0
 
         output = []
         for row_num in board:
             orb_count += len(row_num)
 
+        board_repr = []
+        for row in board:
+            board_repr.append(''.join(['0' if n in row else 'X' 
+                                       for n in range(6)]))
+        board_repr = '\n'.join(board_repr)
+         
         skill_text = ''
+        if orb_count == 0 or set(sum(board,[])) - {0,1,2,3,4,5}:
+            return ''
         if orb_count == 4:
             if len(board[0]) == len(board[4]) == 2:
                 skill_text += 'Create 4 {} orbs at the corners of the board'.format(
@@ -449,6 +462,14 @@ class EnASTextConverter(EnBaseTextConverter):
                     result = (shape, row_pos, col_pos)
                     output.append(result)
                     del board[row_num][1]
+
+        if orb_count == 7:  # TODO: Find a way to cover special cases
+            if board == [[3, 4, 5], [3, 5], [5], [5], []]:
+                return 'Create a 7-shape of {} orbs in the upper right corner'.format(self.ATTRIBUTES[act.attribute])
+        if orb_count == 6:
+            if board == [[0, 1, 2], [0, 1, 2], [], [], []]:
+                return 'Create a 3x2 rectangle of {} orbs in the upper left corner'.format(self.ATTRIBUTES[act.attribute])
+
         if orb_count == 18:
             if len(board[0]) == len(board[4]) == len(board[1]) + len(board[2]) + len(board[3]) == 6:
                 skill_text += 'Change the outermost orbs of the board to {} orbs'.format(
@@ -462,6 +483,9 @@ class EnASTextConverter(EnBaseTextConverter):
                                                                                          self.ATTRIBUTES[act.attribute],
                                                                                          ROW_INDEX[entry[1]],
                                                                                          COLUMN_INDEX[entry[2]])
+
+        if not skill_text:
+            human_fix_logger.error('Unknown board shape in {} ({}):\n{} \n{}'.format(act.name, act.skill_id, act.raw_description, board_repr))
 
         return skill_text
 
