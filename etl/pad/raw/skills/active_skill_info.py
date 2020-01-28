@@ -184,12 +184,12 @@ class ASOneAttrtoOneAttr(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0])
-        self.from_1 = data[0]
-        self.to_1 = data[1]
+        self.from_attr = [data[0]]
+        self.to_attr = [data[1]]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
-        return converter.single_orb_change_convert(self)
+        return converter.random_orb_change_convert(self)
 
 
 class ASOrbRefresh(ActiveSkill):
@@ -229,10 +229,8 @@ class ASTwoAttrtoOneTwoAttr(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0])
-        self.from_1 = data[0]
-        self.to_1 = data[1]
-        self.from_2 = data[2]
-        self.to_2 = data[3]
+        self.from_attr = [data[0], data[2]]
+        self.to_attr = [data[1], data[3]] if data[1] != data[3] else [data[1]]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
@@ -598,7 +596,7 @@ class PartWithTextAndCount(object):
         return self.text if self.repeat == 1 else converter.fmt_repeated(self.text, self.repeat)
 
 
-class ASTwoPartSkill(ActiveSkill):
+class ASMultiPartSkill(ActiveSkill):
     skill_type = 116
 
     def __init__(self, ms: MonsterSkill):
@@ -646,6 +644,11 @@ class ASRandomSkill(ActiveSkill):
         self.random_skills = []
         super().__init__(ms)
 
+    @property
+    def parts(self):
+        return sum([s.parts if isinstance(s, TwoPartActiveSkill) else [s] 
+                   for s in self.random_skills], [])
+    
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_skill(self)
 
@@ -967,8 +970,8 @@ class ASAutoHealConvert(ActiveSkill):
         data = merge_defaults(ms.data, [0, None, 0, 0, 0])
         self.duration = data[0]
         self.percentage_max_hp = multi(data[2])
-        self.unbind = data[3]
-        self.awoken_unbind = data[4]
+        self.card_bind = data[3]
+        self.awoken_bind = data[4]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1091,9 +1094,9 @@ def convert(skill_list: List[MonsterSkill]):
         if skill_constructor is not None:
             results[s.skill_id] = skill_constructor(s)
 
-    # Fills in ASTwoPartSkills
+    # Fills in ASMultiPartSkills
     for s in results.values():
-        if not isinstance(s, ASTwoPartSkill):
+        if not isinstance(s, ASMultiPartSkill):
             continue
 
         for p_id in s.child_ids:
@@ -1114,7 +1117,6 @@ def convert(skill_list: List[MonsterSkill]):
                 continue
             p_skill = results[p_id]
             s.random_skills.append(p_skill)
-
     return list(results.values())
 
 
@@ -1156,7 +1158,7 @@ ALL_ACTIVE_SKILLS = [
     ASLeaderSwap,
     ASLowHpConditionalAttrDamageBoost,
     ASMiniNukeandHpRecovery,
-    ASTwoPartSkill,
+    ASMultiPartSkill,
     ASHpRecoveryandBindClear,
     ASRandomSkill,
     ASIncreasedSkyfallChance,

@@ -96,7 +96,7 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
                        ('HPを全回復' if php == 1 else
                         ('最大HP{}％分回復'.format(fmt_mult(php * 100)) if php > 0 else
                          ('チームの総回復力ｘ{}倍のHPを回復'.format(fmt_mult(trcv_mult)) if trcv_mult > 0 else
-                          '')))))
+                          (''))))))
 
         if unbind or awoken_unbind:
             if skill_text:
@@ -121,16 +121,16 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         .format(act.duration, fmt_mult(act.shield * 100))
 
     def double_orb_convert(self, act):
-        if act.to_1 == act.to_2:
-            skill_text = '{}と{}ドロップを{}ドロップに変化'.format(self.ATTRIBUTES[int(act.from_1)],
-                                                            self.ATTRIBUTES[int(act.from_2)],
-                                                            self.ATTRIBUTES[int(act.to_1)])
+        if len(act.to_attr) == 1:
+            skill_text = '{}と{}ドロップを{}ドロップに変化'.format(self.ATTRIBUTES[int(act.from_attr[0])],
+                                                            self.ATTRIBUTES[int(act.from_attr[1])],
+                                                            self.ATTRIBUTES[int(act.to_attr[0])])
         else:
             skill_text = '{}ドロップを{}ドロップに、{}ドロップを{}ドロップに変化'.format(
-                                                self.ATTRIBUTES[int(act.from_1)],
-                                                self.ATTRIBUTES[int(act.to_1)],
-                                                self.ATTRIBUTES[int(act.from_2)],
-                                                self.ATTRIBUTES[int(act.to_2)])
+                self.ATTRIBUTES[int(act.from_attr[0])],
+                self.ATTRIBUTES[int(act.to_attr[0])],
+                self.ATTRIBUTES[int(act.from_attr[1])],
+                self.ATTRIBUTES[int(act.to_attr[1])])
 
         return skill_text
 
@@ -182,8 +182,8 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
 
     def auto_heal_convert(self, act):
         skill_text = ''
-        unbind = act.unbind
-        awoken_unbind = act.awoken_unbind
+        unbind = act.card_bind
+        awoken_unbind = act.awoken_bind
         if act.duration:
             skill_text += '{}ターンの間、最大HPの{}％分回復'.format(act.duration,
                                                      fmt_mult(act.percentage_max_hp * 100))
