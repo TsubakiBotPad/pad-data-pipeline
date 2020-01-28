@@ -1,6 +1,6 @@
 import re
-from typing import Set
 from enum import Enum
+from typing import List
 
 
 # Values here are used to compose the skill_data_list -> type_data field, which
@@ -97,7 +97,7 @@ def format_conditions(skill_conditions):
     return ','.join(['({})'.format(x) for x in sorted_cond_values])
 
 
-def parse_as_conditions(skill_text: str) -> Set[ASCondition]:
+def parse_as_conditions(skill_text: str) -> List[ASCondition]:
     """Takes the processor-generated active skill text and produces a set of conditions."""
     skill_text = skill_text.lower()
     results = set()
@@ -256,10 +256,10 @@ def parse_as_conditions(skill_text: str) -> Set[ASCondition]:
     if 'reduce unable to match' in skill_text:
         results.add(ASCondition.REDUCE_MATCH_RESTRICTION)
 
-    return results
+    return list(sorted(results, key=lambda x: x.value))
 
 
-def parse_ls_conditions(skill_text: str) -> Set[LSCondition]:
+def parse_ls_conditions(skill_text: str) -> List[LSCondition]:
     """Takes the processor-generated leader skill text and produces a set of conditions."""
     skill_text = skill_text.lower()
     results = set()
@@ -347,4 +347,4 @@ def parse_ls_conditions(skill_text: str) -> Set[LSCondition]:
     if any([x in skill_text for x in etc_text]):
         results.add(LSCondition.ETC)
 
-    return results
+    return list(sorted(results, key=lambda x: x.value))

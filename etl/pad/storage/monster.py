@@ -5,6 +5,9 @@ from pad.common.shared_types import Server, MonsterId, MonsterNo, EvolutionType
 from pad.db import sql_item
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw.skills import skill_text_typing
+from pad.raw.skills.en.active_skill_text import EnASTextConverter
+from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
+from pad.raw.skills.jp.active_skill_text import JpASTextConverter
 from pad.raw_processor.crossed_data import CrossServerCard, CrossServerSkill
 from pad.storage.series import Series
 
@@ -239,10 +242,14 @@ class ActiveSkill(SimpleSqlItem):
         na_skill = css.na_skill
         kr_skill = css.kr_skill
 
-        jp_description = css.jp_text
-        na_description = css.en_text
-        kr_description = css.kr_text
-        tags = skill_text_typing.format_conditions(css.skill_type_tags)
+        jp_as_converter = JpASTextConverter()
+        jp_description = jp_skill.full_text(jp_as_converter)
+
+        en_as_converter = EnASTextConverter()
+        na_description = jp_skill.full_text(en_as_converter)
+
+        skill_type_tags = skill_text_typing.parse_as_conditions(na_description)
+        tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
         kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
@@ -299,8 +306,10 @@ class LeaderSkill(SimpleSqlItem):
         na_skill = css.na_skill
         kr_skill = css.kr_skill
 
-        na_description = css.en_text
-        tags = skill_text_typing.format_conditions(css.skill_type_tags)
+        en_ls_converter = EnLSTextConverter()
+        na_description = jp_skill.full_text(en_ls_converter)
+        skill_type_tags = skill_text_typing.parse_ls_conditions(na_description)
+        tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
         kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
