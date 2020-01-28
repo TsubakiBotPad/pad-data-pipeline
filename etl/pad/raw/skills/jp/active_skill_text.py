@@ -334,7 +334,7 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
                                                      self.ATTRIBUTES[act.attribute])
 
     def board_change_convert(self, act):
-        return '全ドロップを{}ドロップに変化'.format(self.attributes_to_str(act.attributes)) 
+        return '全ドロップを{}ドロップに変化'.format(self.attributes_to_str(act.to_attr)) 
 
     def suicide_random_nuke_convert(self, act):
         return self.suicide_convert(act) + '。' + self.random_nuke_convert(act)
