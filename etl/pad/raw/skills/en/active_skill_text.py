@@ -102,10 +102,6 @@ class EnASTextConverter(EnBaseTextConverter):
                                ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind))))))))
         return skill_text
 
-    def single_orb_change_convert(self, act):
-        return 'Change ' + \
-               self.ATTRIBUTES[act.from_1] + ' orbs to ' + self.ATTRIBUTES[act.to_1] + ' orbs'
-
     def delay_convert(self, act):
         return 'Delay enemies\' next attack by {:s}'.format(pluralize2('turn', act.turns))
 
@@ -114,16 +110,16 @@ class EnASTextConverter(EnBaseTextConverter):
                'reduce enemies\' defense by ' + fmt_mult(act.shield * 100) + '%'
 
     def double_orb_convert(self, act):
-        if act.to_1 == act.to_2:
-            skill_text = 'Change {} and {} orbs to {} orbs'.format(self.ATTRIBUTES[int(act.from_1)],
-                                                                   self.ATTRIBUTES[int(act.from_2)],
-                                                                   self.ATTRIBUTES[int(act.to_1)])
+        if len(act.to_attr) == 1:
+            skill_text = 'Change {} and {} orbs to {} orbs'.format(self.ATTRIBUTES[int(act.from_attr[0])],
+                                                                   self.ATTRIBUTES[int(act.from_attr[1])],
+                                                                   self.ATTRIBUTES[int(act.to_attr[0])])
         else:
             skill_text = 'Change {} orbs to {} orbs; Change {} orbs to {} orbs'.format(
-                self.ATTRIBUTES[int(act.from_1)],
-                self.ATTRIBUTES[int(act.to_1)],
-                self.ATTRIBUTES[int(act.from_2)],
-                self.ATTRIBUTES[int(act.to_2)])
+                self.ATTRIBUTES[int(act.from_attr[0])],
+                self.ATTRIBUTES[int(act.to_attr[0])],
+                self.ATTRIBUTES[int(act.from_attr[1])],
+                self.ATTRIBUTES[int(act.to_attr[1])])
 
         return skill_text
 
@@ -178,8 +174,8 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def auto_heal_convert(self, act):
         skill_text = ''
-        unbind = act.unbind
-        awoken_unbind = act.awoken_unbind
+        unbind = act.card_bind
+        awoken_unbind = act.awoken_bind
         if act.duration:
             skill_text += self.fmt_duration(act.duration) + 'recover ' + \
                           fmt_mult(act.percentage_max_hp * 100) + '% of max HP'

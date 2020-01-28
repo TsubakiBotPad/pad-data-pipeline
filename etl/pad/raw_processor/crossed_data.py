@@ -383,8 +383,7 @@ class CrossServerDatabase(object):
 
         en_as_converter = EnASTextConverter()
         for ask in self.active_skills:
-            en_text = ask.jp_skill.full_text(en_as_converter)
-            ask.skill_type_tags = list(skill_text_typing.parse_as_conditions(en_text))
+            ask.skill_type_tags = list(skill_text_typing.parse_as_conditions(ask))
             ask.skill_type_tags.sort(key=lambda x: x.value)
 
         self.dungeons = build_cross_server_dungeons(jp_database,

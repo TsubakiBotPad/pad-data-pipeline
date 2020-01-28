@@ -1059,7 +1059,7 @@ class LSMultiTypeConditionalStatBoost(LeaderSkill):
         return converter.dual_passive_stat_text(self)
 
 
-class LSTwoPartLeaderSkill(LeaderSkill):
+class LSMultiPartSkill(LeaderSkill):
     skill_type = 138
 
     def __init__(self, ms: MonsterSkill):
@@ -1706,9 +1706,9 @@ def convert(skill_list: List[MonsterSkill]):
         #except Exception as ex:
             #human_fix_logger.warning('Failed to convert {} {}'.format(s.skill_type, ex))
 
-    # Fills in LSTwoPartLeaderSkills
+    # Fills in LSMultiPartSkills
     for s in results.values():
-        if not isinstance(s, LSTwoPartLeaderSkill):
+        if not isinstance(s, LSMultiPartSkill):
             continue
         for p_id in s.child_ids:
             if p_id not in results:
@@ -1716,7 +1716,6 @@ def convert(skill_list: List[MonsterSkill]):
                 continue
             p_skill = results[p_id]
             s.child_skills.append(p_skill)
-
     return list(results.values())
 
 
@@ -1803,7 +1802,7 @@ ALL_LEADER_SKILLS = [
     LSSkillUsedAttrTypeAtkRcvBoost,
     LSMultiAttrConditionalStatBoost,
     LSMultiTypeConditionalStatBoost,
-    LSTwoPartLeaderSkill,
+    LSMultiPartSkill,
     LSHpMultiConditionalAtkBoost,
     LSRankXpBoost,
     LSHealMatchRcvBoost,

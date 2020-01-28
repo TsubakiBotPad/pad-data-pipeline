@@ -248,7 +248,7 @@ class ActiveSkill(SimpleSqlItem):
         en_as_converter = EnASTextConverter()
         na_description = jp_skill.full_text(en_as_converter)
 
-        skill_type_tags = skill_text_typing.parse_as_conditions(na_description)
+        skill_type_tags = skill_text_typing.parse_as_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
