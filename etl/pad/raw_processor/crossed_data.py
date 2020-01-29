@@ -43,7 +43,7 @@ class CrossServerCard(object):
         self.enemy_behavior = make_cross_server_enemy_behavior(jp_card.enemy_skills,
                                                                na_card.enemy_skills,
                                                                kr_card.enemy_skills)
-
+        self.gem = None
 
 def build_cross_server_cards(jp_database, na_database, kr_database) -> List[CrossServerCard]:
     all_monster_ids = set(jp_database.monster_id_to_card.keys())
@@ -63,6 +63,27 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
             combined_cards.append(csc)
         elif err_msg:
             fail_logger.debug('Skipping card, %s', err_msg)
+
+    # Post-Processing
+    jp_gems = {}
+    na_gems = {}
+    for card in combined_cards[4468:]:
+        if card.jp_card.card.name.endswith('の希石') or\
+           card.na_card.card.name.endswith("'s Gem"):
+            jp_gems[card.jp_card.card.name[:-3]] = card
+            na_gems[card.na_card.card.name[:-6]] = card
+
+    for card in combined_cards:
+        card.gem = jp_gems.get(card.jp_card.card.name) or\
+                   na_gems.get(card.na_card.card.name)
+        if card.gem:
+            jp_gems.pop(card.jp_card.card.name, None)
+            na_gems.pop(card.na_card.card.name, None)
+
+    jp_gems.update(na_gems)
+    aggreg = jp_gems.keys()
+    if aggreg:
+        human_fix_logger.warning("Unassigned Gem(s): "+', '.join(aggreg))
 
     return combined_cards
 
