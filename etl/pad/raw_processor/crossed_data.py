@@ -77,9 +77,15 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
         card.gem = jp_gems.get(card.jp_card.card.name) or\
                    na_gems.get(card.na_card.card.name)
         if card.gem:
-            jp_gems.pop(card.jp_card.card.name, None)
-            na_gems.pop(card.na_card.card.name, None)
-
+            for jc in jp_gems:
+                if jp_gems[jc] == card.gem:
+                    jp_gems.pop(jc)
+                    break
+            for nc in na_gems:
+                if na_gems[nc] == card.gem:
+                    na_gems.pop(nc)
+                    break 
+                    
     jp_gems.update(na_gems)
     aggreg = jp_gems.keys()
     if aggreg:
