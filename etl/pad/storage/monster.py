@@ -307,6 +307,7 @@ class LeaderSkill(SimpleSqlItem):
         kr_skill = css.kr_skill
 
         en_ls_converter = EnLSTextConverter()
+        na_description = jp_skill.full_text(en_ls_converter)
         skill_type_tags = skill_text_typing.parse_ls_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
