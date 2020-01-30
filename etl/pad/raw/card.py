@@ -152,7 +152,7 @@ class Card(pad_util.Printable):
         # Deus Ex Machina has 2, Kanna has 7.
         self.enemy_skill_counter_increment = int(raw[54])
 
-        # Boolean, unlikely to be anything useful, only populated for 495 and 111.
+        # Boolean, unlikely to be anything useful, only populated for 495 (1) and 111 (1000).
         self.unknown_055 = raw[55]
 
         # Unused
@@ -177,7 +177,12 @@ class Card(pad_util.Printable):
         # Bitmap with some random flag values, not sure what they all do.
         self.random_flags = int(raw[66])
         self.inheritable = bool(self.random_flags & 1)
+        self.unknown_flagx2 = bool(self.random_flags & 2)
         self.is_collab = bool(self.random_flags & 4)
+        self.is_stackable = not bool(self.random_flags & 8) and self.type_1_id in [0, 12, 14]
+        self.assist_only = bool(self.random_flags & 16)
+        self.usable = not self.assist_only and self.monster_no < 100000
+        self.latent_slot_unlock = bool(self.random_flags & 32)
 
         self.furigana = str(raw[67])  # JP data only?
         self.limit_mult = int(raw[68])
