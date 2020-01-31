@@ -13,6 +13,7 @@ from pad.raw.skills.jp.active_skill_text import JpASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
 from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+from pad.raw.skills.leader_skill_info import LeaderSkill
 
 AS_CONVERTERS = (JpASTextConverter(), EnASTextConverter(), EnASTextConverter())
 LS_CONVERTERS = (EnLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
@@ -138,6 +139,9 @@ def dump_skill(f, css, converter, tag_extractor_fn):
 
     f.write('# {}/{} - {}\n'.format(jp_skill.skill_id, jp_skill.skill_type, na_skill.name))
     f.write('Tags: {}\n'.format(','.join(map(lambda x: x.name, skill_type_tags))))
+    if isinstance(jp_skill, LeaderSkill):
+        f.write('Stats: [{}, {}, {}, {}]\n'.format(jp_skill.hp, jp_skill.atk, jp_skill.rcv, jp_skill.shield))
+
     f.write('Game: {}\n'.format(na_skill.raw_description))
     f.write('JP: {}\n'.format(jp_skill.full_text(converter[0])))
     f.write('EN: {}\n'.format(en_text))
