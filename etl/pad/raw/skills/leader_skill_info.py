@@ -7,6 +7,7 @@ from pad.raw.skills.en.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
 
+
 class LeaderSkill(object):
     skill_type = -1
 
@@ -1201,16 +1202,40 @@ class LSMultiboost(LeaderSkill):
     def text(self, converter) -> str:
         return converter.multi_play_text(self)
 
+
+class CrossMultiplier(object):
+    def __init__(self, attribute: str, atk: float):
+        self.attribute = attribute
+        self.atk = atk
+
+
 class LSAttrCross(LeaderSkill):
     skill_type = 157
 
     def __init__(self, ms: MonsterSkill):
-        atk = mult(ms.data[1])
+        self.crosses = [CrossMultiplier(a, mult(d)) for a, d in zip(ms.data[::2], ms.data[1::2])]
+        if len(set([x.atk for x in self.crosses])) > 1:
+            human_fix_logger.error('Bad assumption; cross LS has multiple attack values: %s', ms.skill_id)
+
+        self.multiplier = mult(ms.data[1])
         self.attributes = ms.data[::2]
-        super().__init__(157, ms, atk=atk)
+        super().__init__(157, ms)
 
     def text(self, converter) -> str:
         return converter.color_cross_text(self)
+
+    @property
+    def atk(self):
+        atks = sorted([x.atk for x in self.crosses])
+        if len(atks) > 2:
+            atks = atks[:2]
+
+        v = atks[0]
+        v = v * atks[0]
+        if len(atks) > 1:
+            v = v * atks[1]
+
+        return round(v, 2)
 
 
 class LSMatchXOrMoreOrbs(LeaderSkill):
@@ -1699,12 +1724,12 @@ class LSGroupConditionalBoost(LeaderSkill):
 def convert(skill_list: List[MonsterSkill]):
     results = {}
     for s in skill_list:
-        #try:
-            ns = convert_skill(s)
-            if ns:
-                results[ns.skill_id] = ns
-        #except Exception as ex:
-            #human_fix_logger.warning('Failed to convert {} {}'.format(s.skill_type, ex))
+        # try:
+        ns = convert_skill(s)
+        if ns:
+            results[ns.skill_id] = ns
+    # except Exception as ex:
+    # human_fix_logger.warning('Failed to convert {} {}'.format(s.skill_type, ex))
 
     # Fills in LSMultiPartSkills
     for s in results.values():

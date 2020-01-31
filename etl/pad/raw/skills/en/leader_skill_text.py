@@ -68,7 +68,8 @@ class EnLSTextConverter(EnBaseTextConverter):
         return 'Turn orb sound effects into Taiko noises'
 
     def threshold_stats_text(self, ls):
-        return '{}{}'.format(self.passive_stats_text(ls, reduce_join_txt=' and '), self.threshold_hp(ls.threshold, ls.above))
+        return '{}{}'.format(self.passive_stats_text(ls, reduce_join_txt=' and '),
+                             self.threshold_hp(ls.threshold, ls.above))
 
     def counter_attack_text(self, ls):
         attribute = self.ATTRIBUTES[ls.attributes[0]]
@@ -78,8 +79,8 @@ class EnLSTextConverter(EnBaseTextConverter):
         return '{}% chance to counterattack with {}x {} damage'.format(fmt_mult(ls.chance * 100), mult, attribute)
 
     def random_shield_threshold_text(self, ls):
-        threshold_text = self.passive_stats_text(ls, skip_attr_all=True) 
-        threshold_text +=self.threshold_hp(ls.threshold, ls.above)
+        threshold_text = self.passive_stats_text(ls, skip_attr_all=True)
+        threshold_text += self.threshold_hp(ls.threshold, ls.above)
         if ls.chance == 1:
             return threshold_text
         else:
@@ -99,13 +100,13 @@ class EnLSTextConverter(EnBaseTextConverter):
         return '{} on the turn a skill is used'.format(self.fmt_stats_type_attr_bonus(ls, skip_attr_all=True))
 
     def exact_combo_text(self, ls):
-                return '{}x ATK when exactly {} combos'.format(fmt_mult(ls.atk), ls.combos)
-    
+        return '{}x ATK when exactly {} combos'.format(fmt_mult(ls.atk), ls.combos)
+
     def attribute_match_text(self, ls):
         skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
                                                     atk=ls.min_atk, rcv=ls.min_rcv)
-        skill_text += self.matching_n_or_more_attr(ls.match_attributes, ls.min_attr, is_range = ls.max_attr > ls.min_attr)
-        
+        skill_text += self.matching_n_or_more_attr(ls.match_attributes, ls.min_attr, is_range=ls.max_attr > ls.min_attr)
+
         if ls.max_atk > ls.min_atk:
             if ls.match_attributes == [0, 1, 2, 3, 4, 5]:
                 skill_text += ' up to {}x at 5 colors+heal'.format(fmt_mult(ls.max_atk))
@@ -118,7 +119,8 @@ class EnLSTextConverter(EnBaseTextConverter):
                 elif ls.match_attributes == [0, 1, 2, 3, 4, 5]:
                     skill_text += '{} colors ({}+heal)'.format(ls.max_attr, ls.max_attr - 1)
                 elif len(ls.match_attributes) > ls.max_attr:
-                    skill_text += '{}+ of {} at once'.format(str(ls.max_attr), self.attributes_to_str(ls.match_attributes))
+                    skill_text += '{}+ of {} at once'.format(str(ls.max_attr),
+                                                             self.attributes_to_str(ls.match_attributes))
                 else:
                     skill_text += '{} at once'.format(self.attributes_to_str(ls.match_attributes))
         return skill_text
@@ -130,20 +132,22 @@ class EnLSTextConverter(EnBaseTextConverter):
         skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
                                                     atk=ls.min_atk,
                                                     rcv=ls.min_rcv)
-  
+
         if len(set(ls.match_attributes)) == 1:
             skill_text += ' when matching {}'.format(ls.min_match)
             if not len(ls.match_attributes) != ls.min_match:
                 skill_text += '+'
             skill_text += ' {} combos'.format(self.ATTRIBUTES[ls.match_attributes[0]])
             if len(ls.match_attributes) != ls.min_match:
-                skill_text += ', up to {}x at {} {} combos'.format(fmt_mult(ls.max_atk), len(ls.match_attributes), self.ATTRIBUTES[ls.match_attributes[0]])
+                skill_text += ', up to {}x at {} {} combos'.format(fmt_mult(ls.max_atk), len(ls.match_attributes),
+                                                                   self.ATTRIBUTES[ls.match_attributes[0]])
         else:
             skill_text += ' when matching {}'.format(self.attributes_to_str(ls.match_attributes[:ls.min_match]))
             if len(ls.match_attributes) > ls.min_match:
                 skill_text += ' (or {})'.format(self.attributes_to_str(ls.match_attributes[1:]))
             if ls.max_atk > ls.min_atk:
-                skill_text += ' up to {}x when matching {}'.format(fmt_mult(ls.max_atk), self.attributes_to_str(ls.match_attributes))
+                skill_text += ' up to {}x when matching {}'.format(fmt_mult(ls.max_atk),
+                                                                   self.attributes_to_str(ls.match_attributes))
         return skill_text
 
     def combo_match_text(self, ls):
@@ -180,19 +184,19 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def dual_passive_stat_text(self, ls):
         skill_text = []
-        skill_text.append(self.fmt_stats_type_attr_bonus(None, 
-                                                         attributes = ls.attributes_1,
-                                                         types = ls.types_1,
-                                                         hp = ls.hp_1,
-                                                         atk = ls.atk_1,
-                                                         rcv = ls.rcv_1))
+        skill_text.append(self.fmt_stats_type_attr_bonus(None,
+                                                         attributes=ls.attributes_1,
+                                                         types=ls.types_1,
+                                                         hp=ls.hp_1,
+                                                         atk=ls.atk_1,
+                                                         rcv=ls.rcv_1))
 
-        skill_text.append(self.fmt_stats_type_attr_bonus(None, 
-                                                         attributes = ls.attributes_2,
-                                                         types = ls.types_2,
-                                                         hp = ls.hp_2,
-                                                         atk = ls.atk_2,
-                                                         rcv = ls.rcv_2))
+        skill_text.append(self.fmt_stats_type_attr_bonus(None,
+                                                         attributes=ls.attributes_2,
+                                                         types=ls.types_2,
+                                                         hp=ls.hp_2,
+                                                         atk=ls.atk_2,
+                                                         rcv=ls.rcv_2))
 
         if ls.atk_1 != 1 and ls.atk_2 != 1 and ls.types_1 == ls.types_2 == []:
             skill_text.append('{}x ATK for allies with both Att.'.format(fmt_mult(ls.atk)))
@@ -203,12 +207,12 @@ class EnLSTextConverter(EnBaseTextConverter):
         skill_parts = []
         if str(ls.atk_1) != '1' or ls.rcv_1 != 1 or ls.shield_1 != 0:
             skill_text = self.fmt_stats_type_attr_bonus(None, reduce_join_txt=' and ', skip_attr_all=True,
-                                                        atk = ls.atk_1,
-                                                        rcv = ls.rcv_1,
-                                                        types = ls.types,
-                                                        attributes = ls.attributes,
-                                                        hp = ls.hp,
-                                                        shield = ls.shield_1)
+                                                        atk=ls.atk_1,
+                                                        rcv=ls.rcv_1,
+                                                        types=ls.types,
+                                                        attributes=ls.attributes,
+                                                        hp=ls.hp,
+                                                        shield=ls.shield_1)
             if ls.threshold_1 == 1:
                 skill_text += ' when HP {} full'.format('is' if ls.above_1 else 'is not')
             else:
@@ -218,12 +222,12 @@ class EnLSTextConverter(EnBaseTextConverter):
 
         if ls.threshold_2 != 0:
             skill_text = self.fmt_stats_type_attr_bonus(None, reduce_join_txt=' and ', skip_attr_all=True,
-                                                        atk = ls.atk_2,
-                                                        rcv = ls.rcv_2,
-                                                        types = ls.types,
-                                                        attributes = ls.attributes,
-                                                        hp = ls.hp,
-                                                        shield = ls.shield_2)
+                                                        atk=ls.atk_2,
+                                                        rcv=ls.rcv_2,
+                                                        types=ls.types,
+                                                        attributes=ls.attributes,
+                                                        hp=ls.hp,
+                                                        shield=ls.shield_2)
             if ls.threshold_2 == 1:
                 skill_text += ' when HP {} full'.format('is' if ls.above_2 else 'is not')
             else:
@@ -247,7 +251,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         return '{} when in multiplayer mode'.format(multiplier_text)
 
     def color_cross_text(self, ls):
-        atk = fmt_mult(ls.atk)
+        atk = fmt_mult(ls.multiplier)
         attrs = self.attributes_to_str(ls.attributes, concat='or')
         return '{}x ATK for each cross of 5 {} orbs'.format(atk, attrs)
 
@@ -284,7 +288,8 @@ class EnLSTextConverter(EnBaseTextConverter):
         return skill_text
 
     def l_match_text(self, ls):
-        skill_text = self.concat_list_and([self.fmt_multiplier_text(1, ls.atk, ls.rcv), self.fmt_reduct_text(ls.shield)])
+        skill_text = self.concat_list_and(
+            [self.fmt_multiplier_text(1, ls.atk, ls.rcv), self.fmt_reduct_text(ls.shield)])
         if not skill_text:
             skill_text = '???'
         if self.fmt_multi_attr(ls.attributes):
@@ -297,7 +302,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         attr_condition_text = self.matching_n_or_more_attr(ls.attributes, ls.min_attr)
         skill_text = ''
         if ls.atk not in [0, 1]:
-            skill_text += self.fmt_multiplier_text(1, ls.atk, 1) +' and '
+            skill_text += self.fmt_multiplier_text(1, ls.atk, 1) + ' and '
         skill_text += 'increase combo by {}{}'.format(ls.bonus_combo, attr_condition_text)
         return skill_text
 
@@ -344,5 +349,6 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def tag_only_text(self, ls):
         return ''
+
 
 __all__ = ['EnLSTextConverter']
