@@ -444,14 +444,18 @@ class ESOrbChange(ESAction):
         self.orb_from = orb_from
         self.orb_to = orb_to
         self.random_count = None
+        self.random_type_count = None
         self.exclude_hearts = None
 
     def is_conditional(self):
         return self.orb_from != -1
 
     def description(self, converter):
-        return converter.orb_change(self.orb_from, self.orb_to,
-                                    random_count=self.random_count, exclude_hearts=self.exclude_hearts)
+        return converter.orb_change(self.orb_from,
+                                    self.orb_to,
+                                    random_count=self.random_count,
+                                    random_type_count=self.random_type_count,
+                                    exclude_hearts=self.exclude_hearts)
 
 
 # Prototype
@@ -502,7 +506,7 @@ class ESJammerChangeRandom(ESOrbChange):
         from_attr = -1
         to_attr = 6
         super().__init__(skill, from_attr, to_attr)
-        self.random_count = int(skill.params[1])
+        self.random_type_count = int(skill.params[1])
 
 
 class ESPoisonChangeSingle(ESOrbChangeConditional):

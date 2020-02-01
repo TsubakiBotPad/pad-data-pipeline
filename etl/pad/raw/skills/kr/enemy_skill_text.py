@@ -9,8 +9,8 @@ human_fix_logger = logging.getLogger('human_fix')
 
 TARGET_NAMES = {
     TargetType.unset: '<targets unset>',
-    
-    #Specific Subs
+
+    # Specific Subs
     TargetType.random: 'random card',
     TargetType.self_leader: 'player leader',
     TargetType.both_leader: 'both leaders',
@@ -20,22 +20,22 @@ TARGET_NAMES = {
     TargetType.types: '타입',
     TargetType.card: 'card',
 
-    #Specific Players/Enemies (For Recovery)
+    # Specific Players/Enemies (For Recovery)
     TargetType.player: '플레이어',
     TargetType.enemy: '적',
     TargetType.enemy_ally: '적 아군',
 
-    #Full Team Aspect
+    # Full Team Aspect
     TargetType.awokens: 'awoken skills',
     TargetType.actives: 'active skills',
-
 
 }
 
 
 def targets_to_str(targets):
-    return  targets if isinstance(targets,str)\
-                    else '、'.join([TARGET_NAMES[x] for x in targets])
+    return targets if isinstance(targets, str) \
+        else '、'.join([TARGET_NAMES[x] for x in targets])
+
 
 ORB_SHAPES = {
     OrbShape.l_shape: 'L shape',
@@ -44,8 +44,10 @@ ORB_SHAPES = {
     OrbShape.row: '행',
 }
 
+
 def orbshape_to_str(shapes):
     return KrBaseTextConverter.concat_list_and([ORB_SHAPES[x] for x in shapes])
+
 
 STATUSES = {
     Status.movetime: 'movetime',
@@ -54,7 +56,6 @@ STATUSES = {
     Status.rcv: 'RCV',
 }
 
-
 UNITS = {
     Unit.unknown: '?',
     Unit.seconds: 's',
@@ -62,13 +63,11 @@ UNITS = {
     Unit.none: '',
 }
 
-
 SOURCE_FUNCS = {
     Source.all_sources: lambda x: 'all sources',
     Source.types: KrBaseTextConverter.typing_to_str,
     Source.attrs: KrBaseTextConverter.attributes_to_str,
 }
-    
 
 
 class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
@@ -77,13 +76,13 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
 
     def default_attack(self):
         return 'Default Attack'
-    
+
     def condition(self, chance, hp=None, one_time=False):
         output = ['']
         if hp:
             output[0] += 'HP가 {}% 이하일때'.format(hp)
         if 0 < chance < 100 and not one_time:
-           output[0] += '{}% 확률'.format(chance)
+            output[0] += '{}% 확률'.format(chance)
         if not output[0]:
             output = []
         if one_time:
@@ -103,15 +102,17 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
     def skip(self):
         return '아무것도 하지않는다'
 
-    def bind(self, min_turns, max_turns, target_count=None, target_types=TargetType.card, source:Source = None):
-        if isinstance(target_types, TargetType): target_types = [target_types]
-        elif source is not None: target_types = SOURCE_FUNCS[source]([target_types])+' cards'
+    def bind(self, min_turns, max_turns, target_count=None, target_types=TargetType.card, source: Source = None):
+        if isinstance(target_types, TargetType):
+            target_types = [target_types]
+        elif source is not None:
+            target_types = SOURCE_FUNCS[source]([target_types]) + ' cards'
         targets = targets_to_str(target_types)
         output = 'Bind {:s} '.format(pluralize2(targets, target_count))
         output += 'for ' + pluralize2('turn', minmax(min_turns, max_turns))
         return output
 
-    def orb_change(self, orb_from, orb_to, random_count=None, exclude_hearts=False):
+    def orb_change(self, orb_from, orb_to, random_count=None, random_type_count=None, exclude_hearts=False):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
         orb_from = self.attributes_to_str(orb_from)
@@ -120,13 +121,12 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
             orb_to = [orb_to]
         orb_to = self.attributes_to_str(orb_to)
 
-
         output = 'Change '
         if random_count is not None:
             if orb_from == 'Random':
-                output += '{} random {:s}'.format(random_count,pluralize('orb',random_count))
+                output += '{} random {:s}'.format(random_count, pluralize('orb', random_count))
             else:
-                output += '{} random {} {}'.format(random_count,orbs_from,pluralize('orb',random_count))
+                output += '{} random {} {}'.format(random_count, orbs_from, pluralize('orb', random_count))
             if exclude_hearts:
                 output += ' (excluding hearts)'
         else:
@@ -212,7 +212,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
     def void(self, threshold, turns):
         return 'Void damage >= {:d} for {:s}'.format(threshold, pluralize2('turn', turns))
 
-    def damage_reduction(self, source_type: Source, source = None, percent=None, turns=None):
+    def damage_reduction(self, source_type: Source, source=None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)
         if source_type != Source.all_sources:
             source += TARGET_NAMES[TargetType(source.value)] + '에게 받는'
@@ -226,7 +226,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
                     .format(source, percent, pluralize2('turn', turns))
             else:
                 return 'Reduce damage from {:s} by {:d}%' \
-                       .format(source, percent)
+                    .format(source, percent)
 
     def invuln_off(self):
         return '피해를 입힐 수 있는 상태가 된다'
@@ -239,9 +239,9 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
 
     def row_col_spawn(self, position_type, positions, attributes):
         return '{}을 {}드롭으로 변환'.format(
-            self.concat_list_and(map(lambda x: x+ORB_SHAPES[position_type])),
+            self.concat_list_and(map(lambda x: x + ORB_SHAPES[position_type])),
             self.attributes_to_str(attributes))
- 
+
     def row_col_multi(self, desc_arr):
         return self.concat_list_semicolons(desc_arr)
 
@@ -331,7 +331,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
             return '메시지를 출력: 「{}」'.format(message)
 
     def attribute_exists(self, atts):
-        return 'when {:s} orbs are on the board'.format(self.attributes_to_str(atts,'or'))
+        return 'when {:s} orbs are on the board'.format(self.attributes_to_str(atts, 'or'))
 
     def countdown(self, counter):
         return '「{}」를 출력하고 턴을 건너뛴다'.format(counter)
