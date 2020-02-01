@@ -108,7 +108,7 @@ class EnESTextConverter(EnBaseTextConverter):
         output += 'for ' + pluralize2('turn', minmax(min_turns, max_turns))
         return output
 
-    def orb_change(self, orb_from, orb_to, random_count=None, exclude_hearts=False):
+    def orb_change(self, orb_from, orb_to, random_count=None, random_type_count=None, exclude_hearts=False):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
         orb_from = self.attributes_to_str(orb_from)
@@ -119,12 +119,16 @@ class EnESTextConverter(EnBaseTextConverter):
 
         output = 'Change '
         if random_count is not None:
+            orbs_text = pluralize('orb', random_count)
             if orb_from == 'Random':
-                output += '{} random {:s}'.format(random_count, pluralize('orb', random_count))
+                output += '{} random {:s}'.format(random_count, orbs_text)
             else:
-                output += '{} random {} {}'.format(random_count, orb_from, pluralize('orb', random_count))
+                output += '{} random {} {}'.format(random_count, orb_from, orbs_text)
             if exclude_hearts:
                 output += ' (excluding hearts)'
+        elif random_type_count is not None:
+            types_text = pluralize('type', random_type_count)
+            output += '{} random orb {}'.format(random_type_count, types_text)
         else:
             if 'Random' in orb_from:
                 output += 'a random attribute'

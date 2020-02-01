@@ -99,7 +99,7 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
             return '{}ターンの間、スキル使用不可'.format(minmax(min_turns, max_turns), targets)
         return '{}ターンの間、{}がバインド'.format(minmax(min_turns, max_turns), targets)
 
-    def orb_change(self, orb_from, orb_to, random_count=None, exclude_hearts=False):
+    def orb_change(self, orb_from, orb_to, random_count=None, exclude_hearts=False, random_type_count=None):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
         orb_from = self.attributes_to_str(orb_from)
@@ -110,6 +110,10 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
 
         if exclude_hearts:
             output += '回復ドロップ以外'
+
+        if random_type_count:
+            random_count = random_type_count
+            human_fix_logger.warning('JP ES needs updating to account for random_type_count')
 
         if random_count is not None:
             if orb_from == 'ランダム属性の':
