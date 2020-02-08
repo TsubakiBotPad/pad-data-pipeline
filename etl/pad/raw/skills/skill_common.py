@@ -51,11 +51,13 @@ class BaseTextConverter(object):
         raise I13NotImplemented()
 
     @classmethod
-    def attributes_to_str(cls, attributes, concat=None):
+    def attributes_to_str(cls, attributes, concat=None, cf = None):
+      if cf == None:
+        cf = cls.concat_list_and
       if concat is not None:
-        return cls.concat_list_and([cls._ATTRS[x] for x in attributes],concat)
+        return cf([cls._ATTRS[x] for x in attributes], concat)
       else:
-        return cls.concat_list_and([cls._ATTRS[x] for x in attributes])
+        return cf([cls._ATTRS[x] for x in attributes])
 
     @property
     def TYPES(self) -> Dict[int, str]:

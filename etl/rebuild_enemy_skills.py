@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Regenerates the flattened enemy skill list for all monsters.
 """

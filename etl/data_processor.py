@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Loads the raw data files for NA/JP into intermediate structures, saves them,
 then updates the database with the new data.
