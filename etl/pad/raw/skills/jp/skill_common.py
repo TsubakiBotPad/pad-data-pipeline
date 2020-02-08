@@ -93,11 +93,11 @@ class JpBaseTextConverter(BaseTextConverter):
         return '受けるダメージを{}％減少'.format(shield_text)
 
     def reduce_attr_pct(self, attr_text, shield_text):
-        return '{}属性の敵から受けるダメージを{}％減少'.format(attr_text, shield_text)
+        return '{}属性の敵からのダメージを{}％減少'.format(attr_text, shield_text)
 
     @staticmethod
-    def concat_list(iterable):
-        array = '、'.join([str(i) for i in iterable if i])
+    def concat_list(iterable, sep='、'):
+        return sep.join([str(i) for i in iterable if i])
 
     @staticmethod
     def concat_list_and(iterable, conj='と'):
@@ -189,7 +189,9 @@ class JpBaseTextConverter(BaseTextConverter):
                 if for_skill_text:
                     for_skill_text += 'と'
                 color_text = '全' if len(attributes) == 5 else self.attributes_to_str(attributes)
-                for_skill_text += color_text + '属性の'
+                for_skill_text += color_text + '属性'
+            if for_skill_text:
+                for_skill_text += 'の'
             skill_text = for_skill_text + skill_text
 
         reduct_text = self.fmt_reduct_text(damage_reduct, reduct_att)
@@ -200,7 +202,7 @@ class JpBaseTextConverter(BaseTextConverter):
 
         return skill_text
 
-    def fmt_multi_attr(self, attributes, conj='または'):
+    def fmt_multi_attr(self, attributes, conj='か'):
         suffix = ''
         if 1 <= len(attributes) <= 7:
             attr_list = [self.ATTRIBUTES[i] for i in attributes]
@@ -213,7 +215,7 @@ class JpBaseTextConverter(BaseTextConverter):
             attr_list = [self.ATTRIBUTES[i] for i in att_sym_diff]
             suffix = '以外'
         else:
-            return '' if conj == 'または' else '全'
+            return '' if conj == 'か' else '全'
 
         return self.concat_list_and(attr_list, conj) + suffix
 

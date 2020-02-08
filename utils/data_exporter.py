@@ -11,12 +11,13 @@ from pad.raw.skills import skill_text_typing
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.jp.active_skill_text import JpASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
+from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
 from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
 
 AS_CONVERTERS = (JpASTextConverter(), EnASTextConverter(), EnASTextConverter())
-LS_CONVERTERS = (EnLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
+LS_CONVERTERS = (JpLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
 ES_CONVERTERS = (JpESTextConverter(), EnESTextConverter(), EnESTextConverter())
 
 from pad.raw_processor import merged_database

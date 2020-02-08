@@ -8,6 +8,7 @@ from pad.raw.skills import skill_text_typing
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
 from pad.raw.skills.jp.active_skill_text import JpASTextConverter
+from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
 from pad.raw_processor.crossed_data import CrossServerCard, CrossServerSkill
 from pad.storage.series import Series
 
@@ -307,7 +308,9 @@ class LeaderSkill(SimpleSqlItem):
         kr_skill = css.kr_skill
 
         en_ls_converter = EnLSTextConverter()
+        jp_ls_converter = JpLSTextConverter()
         na_description = jp_skill.full_text(en_ls_converter)
+        jp_description = jp_skill.full_text(jp_ls_converter)
         skill_type_tags = skill_text_typing.parse_ls_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
@@ -320,7 +323,7 @@ class LeaderSkill(SimpleSqlItem):
             name_jp=jp_skill.name,
             name_na=na_skill.name,
             name_kr=kr_name,
-            desc_jp=jp_skill.raw_description,
+            desc_jp=jp_description,
             desc_na=na_description,
             desc_kr=kr_desc,
             max_hp=jp_skill.hp,
