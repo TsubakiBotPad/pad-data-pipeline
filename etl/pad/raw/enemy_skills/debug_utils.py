@@ -8,6 +8,7 @@ from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 
 ESTextConverter = EnESTextConverter()
 
+
 def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehavior):
     output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)
     card = csc.jp_card.card
@@ -114,8 +115,10 @@ def _cond_hp_timed_text(always_trigger_above: int, turn_text: str) -> str:
     return text
 
 
-def format_behavior(indent_str, behavior: Behavior, library):
+def format_behavior(indent_str, behavior: Behavior, library) -> str:
     skill = library.get(behavior.enemy_skill_id)
+    if skill is None:
+        return 'unknown ES'
     skill_name = skill.name
     if not skill_name:
         if behavior.child_ids:
@@ -176,7 +179,8 @@ def format_behavior_plain(o: ESInstance):
         return msg
     else:
         msg = fmt_action_name(o.behavior)
-        if o.condition and (o.condition.description(ESTextConverter) or o.condition.one_time or o.condition.forced_one_time):
+        if o.condition and (
+                o.condition.description(ESTextConverter) or o.condition.one_time or o.condition.forced_one_time):
             msg += '\n{}'.format(fmt_cond(o.condition))
 
         msg += '\n{}'.format(o.behavior.full_description(ESTextConverter))
