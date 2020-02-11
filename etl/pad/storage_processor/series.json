@@ -301,7 +301,7 @@
     "series_id": 55
   },
   {
-    "name_jp": "Monster Exchange",
+    "name_jp": "モンスター交換所",
     "name_kr": "Monster Exchange",
     "name_na": "Monster Exchange",
     "series_id": 57
@@ -796,7 +796,7 @@
     "series_id": 142
   },
   {
-    "name_jp": "Legendary Hero",
+    "name_jp": "英雄神",
     "name_kr": "Legendary Hero",
     "name_na": "Legendary Hero",
     "series_id": 143
@@ -1022,20 +1022,20 @@
     "series_id": 180
   },
   {
-    "name_jp": "Magic: The Gathering Collab",
+    "name_jp": "マジック：ザ・ギャザリング",
     "name_kr": "Magic: The Gathering Collab",
     "name_na": "Magic: The Gathering Collab",
     "series_id": 181
   },
   {
-    "name_jp": "Power Pros Collab",
+    "name_jp": "実況パワフルプロ野球",
     "name_kr": "Power Pros Collab",
     "name_na": "Power Pros Collab",
     "series_id": 182,
     "collab_id": 74
   },
   {
-    "name_jp": "Gungho Collab 2",
+    "name_jp": "ガンホーコラボ２",
     "name_kr": "Gungho Collab 2",
     "name_na": "Gungho Collab 2",
     "series_id": 183
@@ -1074,25 +1074,25 @@
     "collab_id": 78
   },
   {
-    "name_jp": "",
+    "name_jp": "伴神龍",
     "name_kr": "",
     "name_na": "Companion Dragon",
     "series_id": 189
   },
   {
-    "name_jp": "Fate/stay night Heaven's Feel",
+    "name_jp": "Fate/stay night",
     "name_kr": "Fate/stay night Heaven's Feel",
     "name_na": "Fate/stay night Heaven's Feel",
     "series_id": 190
   },
   {
-    "name_jp": "Street Fighter V: Arcade Edition",
+    "name_jp": "ストリートファイター ",
     "name_kr": "Street Fighter V: Arcade Edition",
     "name_na": "Street Fighter V: Arcade Edition",
     "series_id": 191
   },
   {
-    "name_jp": "Shaman King Collab",
+    "name_jp": "シャーマンキング",
     "name_kr": "Shaman King Collab",
     "name_na": "Shaman King Collab",
     "series_id": 192,
@@ -1120,32 +1120,32 @@
     "collab_id": 88
   },
   {
-    "name_jp": "Story Mode",
+    "name_jp": "ストーリーダンジョン",
     "name_kr": "Story Mode",
     "name_na": "Story Mode",
     "series_id": 196
   },
   {
-    "name_jp": "Super GodFest Exclusive",
+    "name_jp": "ゴッドフェス限定",
     "name_kr": "Super GodFest Exclusive",
     "name_na": "Super GodFest Exclusive",
     "series_id": 197
   },
   {
-    "name_jp": "Samurai Shodown",
+    "name_jp": "サムライスピリッツ",
     "name_kr": "Samurai Shodown",
     "name_na": "Samurai Shodown",
     "series_id": 198,
     "collab_id": 85
   },
   {
-    "name_jp": "Draconic Orchestra",
+    "name_jp": "龍楽士",
     "name_kr": "Draconic Orchestra",
     "name_na": "Draconic Orchestra",
     "series_id": 199
   },
   {
-    "name_jp": "McDonalds Collab",
+    "name_jp": "マクドナルド",
     "name_kr": "McDonalds Collab",
     "name_na": "McDonalds Collab",
     "series_id": 200
@@ -1157,49 +1157,49 @@
     "series_id": 201
   },
   {
-    "name_jp": "Pepper Collab",
+    "name_jp": "ペッパー",
     "name_kr": "Pepper Collab",
     "name_na": "Pepper Collab",
     "series_id": 202
   },
   {
-    "name_jp": "Gemstone Princess",
+    "name_jp": "宝石姫",
     "name_kr": "Gemstone Princess",
     "name_na": "Gemstone Princess",
     "series_id": 203
   },
   {
-    "name_jp": "Special Descended",
+    "name_jp": "壊滅降臨",
     "name_kr": "Special Descended",
     "name_na": "Special Descended",
     "series_id": 204
   },
   {
-    "name_jp": "Yu-Gi-Oh! Duel Monsters Collab",
+    "name_jp": "遊戯王",
     "name_kr": "Yu-Gi-Oh! Duel Monsters Collab",
     "name_na": "Yu-Gi-Oh! Duel Monsters Collab",
     "series_id": 205
   },
   {
-    "name_jp": "Uncatagorized",
-    "name_kr": "Uncatagorized",
-    "name_na": "Uncatagorized",
+    "name_jp": "その他",
+    "name_kr": "Miscellaneous",
+    "name_na": "Miscellaneous",
     "series_id": 206
   },
   {
-    "name_jp": "Special PEM",
+    "name_jp": "その他",
     "name_kr": "Special PEM",
     "name_na": "Special PEM",
     "series_id": 207
   },
   {
-    "name_jp": "Descended Loot",
+    "name_jp": "常設ダンジョンドロップ",
     "name_kr": "Descended Loot",
     "name_na": "Descended Loot",
     "series_id": 208
   },
   {
-    "name_jp": "Redeemable",
+    "name_jp": "売却用",
     "name_kr": "Redeemable",
     "name_na": "Redeemable",
     "series_id": 209
