@@ -24,8 +24,8 @@ if [[ -z "${env_up}" ]]; then
 fi
 
 echo "Fetching credentials"
-user=$(grep user docker_db_config.json | sed -r 's/.*: "(.*)",/\1/')
-pword=$(grep password docker_db_config.json | sed -r 's/.*: "(.*)",/\1/')
+user=$(grep user docker_db_config.json | sed -E 's/.*: "(.*)",/\1/')
+pword=$(grep password docker_db_config.json | sed -E 's/.*: "(.*)",/\1/')
 echo "using credentials: ${user} ${pword}"
 
 docker exec -i ${container_name} mysql -u ${user} -p${pword} dadguide < ${local_db_file}

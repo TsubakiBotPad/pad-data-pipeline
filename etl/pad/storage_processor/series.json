@@ -261,7 +261,7 @@
   {
     "name_jp": "戦国龍",
     "name_kr": "무사룡",
-    "name_na": "War Dragon",
+    "name_na": "Samurai Dragon",
     "series_id": 47
   },
   {
@@ -945,7 +945,7 @@
   {
     "name_jp": "戦武龍",
     "name_kr": "전무룡",
-    "name_na": "War Dragon",
+    "name_na": "Warchief Dragon",
     "series_id": 168
   },
   {
@@ -1203,5 +1203,11 @@
     "name_kr": "Redeemable",
     "name_na": "Redeemable",
     "series_id": 209
+  },
+  {
+    "name_jp": "デザインコンテストモンスター",
+    "name_kr": "Design Contest Monsters",
+    "name_na": "Design Contest Monsters",
+    "series_id": 210
   }
 ]
