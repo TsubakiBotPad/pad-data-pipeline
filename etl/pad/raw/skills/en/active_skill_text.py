@@ -291,7 +291,7 @@ class EnASTextConverter(EnBaseTextConverter):
     def _line_change_convert(self, lines, index):
         skill_text = []
         # TODO: simplify this
-        lines = [(index[int(line['index'])], self.ATTRIBUTES[int(line['orbs'][0])]) for line in lines]
+        lines = [(index[line.index], self.attributes_to_str(line.attrs)) for line in lines]
         skip = 0
         for c, line in enumerate(lines):
             if skip:
@@ -408,10 +408,10 @@ class EnASTextConverter(EnBaseTextConverter):
 
         board_repr = []
         for row in board:
-            board_repr.append(''.join(['0' if n in row else 'X' 
+            board_repr.append(''.join(['0' if n in row else 'X'
                                        for n in range(6)]))
         board_repr = '\n'.join(board_repr)
-         
+
         skill_text = ''
         if orb_count == 0 or set(sum(board,[])) - {0,1,2,3,4,5}:
             return ''
@@ -508,6 +508,9 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def change_monster(self, act):
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
+
+    def skyfall_lock(self, act):
+        return self.fmt_duration(act.duration) + self.attributes_to_str(act.orbs) + " orbs appear locked"
 
     def two_part_active(self, strs):
         return '; '.join(strs)
