@@ -13,7 +13,7 @@ SERIES = json.load(open(os.path.join(__location__, "../../../storage_processor/s
 
 class EnLSTextConverter(EnBaseTextConverter):
     _COLLAB_MAP = {x['collab_id']: x['name_na'] for x in SERIES if 'collab_id' in x}
-    _GROUP_MAP = {0: 'Pixel Evolutions', 2:'Reincarnated and Super Reincarnated Evolutions'}
+    _GROUP_MAP = {0: 'Pixel Evolutions', 2:'Reincarnated or Super Reincarnated Evolutions'}
     TAGS = {
         Tag.NO_SKYFALL: '[No skyfall]',
         Tag.DISABLE_POISON: '[Disable Poison & Mortal Poison orb effects]',
