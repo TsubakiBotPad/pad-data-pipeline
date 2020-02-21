@@ -47,7 +47,8 @@ class JpLSTextConverter(JpBaseTextConverter):
         return skill_text
 
     def passive_stats_text(self, ls, **kwargs):
-        return self.fmt_stats_type_attr_bonus(ls, **kwargs)+'。'
+        o = self.fmt_stats_type_attr_bonus(ls, **kwargs)
+        return o+'。' if o else ''
 
     def after_attack_text(self, ls):
         return 'ドロップ消した時、攻撃力ｘ{}倍の追い打ち。'.format(fmt_mult(ls.multiplier))
@@ -271,10 +272,11 @@ class JpLSTextConverter(JpBaseTextConverter):
         stat_text = self.fmt_multiplier_text(1, ls.atk, 1)
         if ls.atk in [0, 1]:
             stat_text = ''
-        skill_text = '{}を{}{}個以上つなげて消しと{}、{}コンボ加算。'.format(self.fmt_multi_attr(ls.attributes, conj='と'),
+        skill_text = '{}を{}個以上{}つなげて消しと{}、{}コンボ加算。'.format(self.fmt_multi_attr(ls.attributes, conj='と'),
                                                                 ls.min_match,
                                                                 '同時に' if len(ls.attributes)>1 else '',
-                                                                stat_text, ls.bonus_combo)
+                                                                stat_text,
+                                                                ls.bonus_combo)
         return skill_text
 
     def l_match_text(self, ls):
