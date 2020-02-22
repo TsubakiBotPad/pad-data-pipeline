@@ -174,15 +174,20 @@ class Card(pad_util.Printable):
         self.latent_on_feed = int(raw[64])
         self.collab_id = int(raw[65])
 
-        # Bitmap with some random flag values, not sure what they all do.
+        # Bitmap with some random flag values
         self.random_flags = int(raw[66])
-        self.inheritable = bool(self.random_flags & 1)
-        self.unknown_flagx2 = bool(self.random_flags & 2)
-        self.is_collab = bool(self.random_flags & 4)
-        self.is_stackable = not bool(self.random_flags & 8) and self.type_1_id in [0, 12, 14]
-        self.assist_only = bool(self.random_flags & 16)
-        self.usable = not self.assist_only and self.monster_no < 100000
-        self.latent_slot_unlock = bool(self.random_flags & 32)
+        self.inheritable_flag = bool(self.random_flags & 1)
+        self.take_assists_flag = bool(self.random_flags & 2)
+        self.is_collab_flag = bool(self.random_flags & 4)
+        self.unstackable_flag = bool(self.random_flags & 8)
+        self.assist_only_flag = bool(self.random_flags & 16)
+        self.latent_slot_unlock_flag = bool(self.random_flags & 32)
+
+        # Composed with flags and other monster attributes
+        self.inheritable = self.inheritable_flag and self.active_skill_id
+        self.take_assists = self.take_assists_flag and self.active_skill_id
+        self.is_stackable = not self.unstackable_flag and self.type_1_id in [0, 12, 14]
+        self.usable = not self.assist_only_flag and self.monster_no < 100000
 
         self.furigana = str(raw[67])  # JP data only?
         self.limit_mult = int(raw[68])
