@@ -156,10 +156,10 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def lock_convert(self, act):
         for_attr = act.orbs
-
-        color_text = 'all' if len(for_attr) == 10 else self.concat_list_and(
-            [self.ATTRIBUTES[i] for i in for_attr])
-        return 'Lock ' + color_text + ' orbs'
+        amount_text = 'all' if act.count >= 42 else str(act.count)
+        color_text = '' if len(for_attr) == 10 else self.attributes_to_str(for_attr)
+        result = 'Lock {} {} orbs'.format(amount_text, color_text)
+        return ' '.join(result.split())
 
     def laser_convert(self, act):
         return 'Deal ' + str(act.damage) + \
@@ -413,7 +413,7 @@ class EnASTextConverter(EnBaseTextConverter):
         board_repr = '\n'.join(board_repr)
 
         skill_text = ''
-        if orb_count == 0 or set(sum(board,[])) - {0,1,2,3,4,5}:
+        if orb_count == 0 or set(sum(board, [])) - {0, 1, 2, 3, 4, 5}:
             return ''
         if orb_count == 4:
             if len(board[0]) == len(board[4]) == 2:
@@ -464,7 +464,8 @@ class EnASTextConverter(EnBaseTextConverter):
                 return 'Create a 7-shape of {} orbs in the upper right corner'.format(self.ATTRIBUTES[act.attribute])
         if orb_count == 6:
             if board == [[0, 1, 2], [0, 1, 2], [], [], []]:
-                return 'Create a 3x2 rectangle of {} orbs in the upper left corner'.format(self.ATTRIBUTES[act.attribute])
+                return 'Create a 3x2 rectangle of {} orbs in the upper left corner'.format(
+                    self.ATTRIBUTES[act.attribute])
 
         if orb_count == 18:
             if len(board[0]) == len(board[4]) == len(board[1]) + len(board[2]) + len(board[3]) == 6:
@@ -481,7 +482,9 @@ class EnASTextConverter(EnBaseTextConverter):
                                                                                          COLUMN_INDEX[entry[2]])
 
         if not skill_text:
-            human_fix_logger.error('Unknown board shape in {} ({}):\n{} \n{}'.format(act.name, act.skill_id, act.raw_description, board_repr))
+            human_fix_logger.error(
+                'Unknown board shape in {} ({}):\n{} \n{}'.format(
+                    act.name, act.skill_id, act.raw_description, board_repr))
 
         return skill_text
 
@@ -514,5 +517,6 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def two_part_active(self, strs):
         return '; '.join(strs)
+
 
 __all__ = ['EnASTextConverter']

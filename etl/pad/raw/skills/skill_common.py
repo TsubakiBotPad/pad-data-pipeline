@@ -28,16 +28,18 @@ def multi_getattr(o, *args):
             return v
     raise Exception('Attributs not found:' + str(args))
 
-@public 
-def minmax(nmin, nmax, p = False, fmt = False):
+
+@public
+def minmax(nmin, nmax, p=False, fmt=False):
     fmt = fmt_mult if fmt else (lambda x: x)
     if None in [nmin, nmax] or nmin == nmax:
-        return str(fmt(nmin or nmax))+("%" if p else '')
+        return str(fmt(nmin or nmax)) + ("%" if p else '')
     elif p:
         return "{}%~{}%".format(fmt(int(nmin)), fmt(int(nmax)))
     else:
         return "{}~{}".format(fmt(int(nmin)), fmt(int(nmax)))
-    
+
+
 @public
 class BaseTextConverter(object):
     """Contains code shared across AS and LS converters."""
@@ -51,13 +53,13 @@ class BaseTextConverter(object):
         raise I13NotImplemented()
 
     @classmethod
-    def attributes_to_str(cls, attributes, concat=None, cf = None):
-      if cf == None:
-        cf = cls.concat_list_and
-      if concat is not None:
-        return cf([cls._ATTRS[x] for x in attributes], concat)
-      else:
-        return cf([cls._ATTRS[x] for x in attributes])
+    def attributes_to_str(cls, attributes, concat=None, cf=None):
+        if cf is None:
+            cf = cls.concat_list_and
+        if concat is not None:
+            return cf([cls._ATTRS[x] for x in attributes], concat)
+        else:
+            return cf([cls._ATTRS[x] for x in attributes])
 
     @property
     def TYPES(self) -> Dict[int, str]:
@@ -203,6 +205,7 @@ class AttributeDict(dict):
 def mult(x):
     return x / 100
 
+
 @public
 def multi_floor(x):
     return x / 100 if x != 0 else 1.0
@@ -213,23 +216,27 @@ def multi_floor(x):
 def atk_from_slice(x):
     return x[2] / 100 if 1 in x[:2] else 1.0
 
+
 @public
 def rcv_from_slice(x):
     return x[2] / 100 if 2 in x[:2] else 1.0
+
 
 @public
 def binary_con(x):
     return [i for i, v in enumerate(str(bin(x))[:1:-1]) if v == '1']
 
+
 @public
 def list_binary_con(x):
     return [b for i in x for b in binary_con(i)]
+
 
 @public
 def list_con_pos(x):
     return [i for i in x if i > 0]
 
+
 @public
 def merge_defaults(input, defaults):
     return list(input) + defaults[len(input):]
-

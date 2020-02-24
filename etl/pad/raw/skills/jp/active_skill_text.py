@@ -28,8 +28,9 @@ def half_to_full(n):
     o = ''
     c = '０１２３４５６７８９'
     for num in str(n):
-        o+=c[int(num)]
+        o += c[int(num)]
     return o
+
 
 class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
     def fmt_repeated(self, text, amount):
@@ -42,30 +43,27 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return '{}ターンの間、'.format(duration)
 
     def attr_nuke_convert(self, act):
-        return '{}に攻撃力ｘ{}倍の{}属性攻撃'.format(self.fmt_mass_atk(act.mass_attack),
-                                                           fmt_mult(act.multiplier),
-                                                           self.ATTRIBUTES[int(act.attribute)])
+        return '{}に攻撃力ｘ{}倍の{}属性攻撃'.format(
+            self.fmt_mass_atk(act.mass_attack), fmt_mult(act.multiplier), self.ATTRIBUTES[int(act.attribute)])
 
     def fixed_attr_nuke_convert(self, act):
-        return '{}に{}の{}属性攻撃'.format(self.fmt_mass_atk(act.mass_attack),
-                                        self.big_number(act.damage),
-                                        self.ATTRIBUTES[int(act.attribute)])
+        return '{}に{}の{}属性攻撃'.format(
+            self.fmt_mass_atk(act.mass_attack), self.big_number(act.damage), self.ATTRIBUTES[int(act.attribute)])
 
     def self_att_nuke_convert(self, act):
-        return '{}に攻撃力ｘ{}倍攻撃' \
-        .format(self.fmt_mass_atk(act.mass_attack), fmt_mult(act.multiplier))
+        return '{}に攻撃力ｘ{}倍攻撃'.format(self.fmt_mass_atk(act.mass_attack), fmt_mult(act.multiplier))
 
     def shield_convert(self, act):
         return self.fmt_duration(act.duration) + self.fmt_reduct_text(act.shield)
 
     def elemental_shield_convert(self, act):
         if act.shield == 1:
-            return '{}ターンの間、{}属性の攻撃を無効化'.format(act.duration,
-                                                          self.attributes_to_str([int(act.attribute)]))
+            return '{}ターンの間、{}属性の攻撃を無効化'.format(
+                act.duration, self.attributes_to_str([int(act.attribute)]))
         else:
-            return '{}ターンの間、{}属性のダメージを{}％減少'.format(act.duration,
-                                                        self.attributes_to_str([int(act.attribute)]),
-                                                        fmt_mult(act.shield * 100))
+            return '{}ターンの間、{}属性のダメージを{}％減少'.format(
+                act.duration, self.attributes_to_str([int(act.attribute)]), fmt_mult(act.shield * 100))
+
     def drain_attack_convert(self, act):
         skill_text = '{}に攻撃力ｘ{}倍で攻撃し、ダメージ'.format(self.fmt_mass_atk(act.mass_attack), fmt_mult(act.atk_multiplier))
         if act.recover_multiplier == 1:
@@ -111,20 +109,20 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
 
     def single_orb_change_convert(self, act):
         return '{}ドロップを{}ドロップに変化'.format(self.ATTRIBUTES[act.from_1],
-                                           self.ATTRIBUTES[act.to_1])
+                                         self.ATTRIBUTES[act.to_1])
 
     def delay_convert(self, act):
         return '敵の行動を{}ターン遅らせる'.format(act.turns)
 
     def defense_reduction_convert(self, act):
-        return '{}ターンの間、敵の防御力が{}％下がる' \
-        .format(act.duration, fmt_mult(act.shield * 100))
+        return '{}ターンの間、敵の防御力が{}％下がる'.format(act.duration, fmt_mult(act.shield * 100))
 
     def double_orb_convert(self, act):
         if len(act.to_attr) == 1:
-            skill_text = '{}と{}ドロップを{}ドロップに変化'.format(self.ATTRIBUTES[int(act.from_attr[0])],
-                                                            self.ATTRIBUTES[int(act.from_attr[1])],
-                                                            self.ATTRIBUTES[int(act.to_attr[0])])
+            skill_text = '{}と{}ドロップを{}ドロップに変化'.format(
+                self.ATTRIBUTES[int(act.from_attr[0])],
+                self.ATTRIBUTES[int(act.from_attr[1])],
+                self.ATTRIBUTES[int(act.to_attr[0])])
         else:
             skill_text = '{}ドロップを{}ドロップに、{}ドロップを{}ドロップに変化'.format(
                 self.ATTRIBUTES[int(act.from_attr[0])],
@@ -135,9 +133,10 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return skill_text
 
     def damage_to_att_enemy_convert(self, act):
-        return '{}属性の敵に{}属性の{}ダメージ'.format(self.ATTRIBUTES[int(act.enemy_attribute)],
-                                                self.ATTRIBUTES[int(act.attack_attribute)],
-                                                act.damage)
+        return '{}属性の敵に{}属性の{}ダメージ'.format(
+            self.ATTRIBUTES[int(act.enemy_attribute)],
+            self.ATTRIBUTES[int(act.attack_attribute)],
+            act.damage)
 
     def rcv_boost_convert(self, act):
         return '{}ターンの間、回復力が{}倍'.format(act.duration, fmt_mult(act.multiplier))
@@ -145,7 +144,7 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
     def attribute_attack_boost_convert(self, act):
         skill_text = ''
         if act.rcv_boost:
-            skill_text += self.rcv_boost_convert(act)+'。'
+            skill_text += self.rcv_boost_convert(act) + '。'
         skill_text += self.fmt_duration(act.duration) + self.fmt_stats_type_attr_bonus(act, atk=act.multiplier)
         return skill_text
 
@@ -165,28 +164,28 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
 
     def lock_convert(self, act):
         for_attr = act.orbs
-
-        color_text = '全' if len(for_attr) == 10 else self.attributes_to_str(for_attr)
-        return '{}ドロップをロック'.format(color_text)
+        amount_text = '全' if act.count >= 42 else 'ランダムで{}個'.format(act.count)
+        color_text = '' if len(for_attr) == 10 else self.attributes_to_str(for_attr)
+        return '{}{}ドロップをロック'.format(amount_text, color_text)
 
     def laser_convert(self, act):
-        return '{}に{}の固定ダメージ'.format(self.fmt_mass_atk(act.mass_attack),
-                                        self.big_number(act.damage))
+        return '{}に{}の固定ダメージ'.format(
+            self.fmt_mass_atk(act.mass_attack), self.big_number(act.damage))
 
     def no_skyfall_convert(self, act):
         return '{}ターンの間、落ちコンしなくなる'.format(act.duration)
 
     def enhance_skyfall_convert(self, act):
-        return '{}ターンの間、強化ドロップを{}％の確率で落ちてくる'.format(act.duration,
-                                                     fmt_mult(act.percentage_increase * 100))
+        return '{}ターンの間、強化ドロップを{}％の確率で落ちてくる'.format(
+            act.duration, fmt_mult(act.percentage_increase * 100))
 
     def auto_heal_convert(self, act):
         skill_text = ''
         unbind = act.card_bind
         awoken_unbind = act.awoken_bind
         if act.duration:
-            skill_text += '{}ターンの間、最大HPの{}％分回復'.format(act.duration,
-                                                     fmt_mult(act.percentage_max_hp * 100))
+            skill_text += '{}ターンの間、最大HPの{}％分回復'.format(
+                act.duration, fmt_mult(act.percentage_max_hp * 100))
         if unbind or awoken_unbind:
             if skill_text:
                 skill_text += '。'
@@ -255,21 +254,26 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return skill_text
 
     def attack_attr_x_team_atk_convert(self, act):
-        return '{}にチームの{}属性の総攻撃力ｘ{}倍の{}属性攻撃'.format(self.fmt_mass_atk(act.mass_attack),
-                                                           self.attributes_to_str(act.team_attributes),
-                                                           fmt_mult(act.multiplier),
-                                                           self.ATTRIBUTES[act.attack_attribute])
+        return '{}にチームの{}属性の総攻撃力ｘ{}倍の{}属性攻撃'.format(
+            self.fmt_mass_atk(act.mass_attack),
+            self.attributes_to_str(act.team_attributes),
+            fmt_mult(act.multiplier),
+            self.ATTRIBUTES[act.attack_attribute])
 
     def spawn_orb_convert(self, act):
         to_orbs = self.attributes_to_str(act.orbs)
         excl_orbs = self.attributes_to_str(set(act.excluding_orbs) - set(act.orbs))
         if act.orbs != act.excluding_orbs and act.excluding_orbs != []:
-            if len(act.orbs) > 1: s_text = '{}以外ランダムで{}を{}個ずつ生成'
-            else: s_text = '{}以外{}ドロップを{}個生成'
+            if len(act.orbs) > 1:
+                s_text = '{}以外ランダムで{}を{}個ずつ生成'
+            else:
+                s_text = '{}以外{}ドロップを{}個生成'
             return s_text.format(excl_orbs, to_orbs, act.amount)
         else:
-            if len(act.orbs) > 1: s_text = 'ランダムで{}を{}個ずつ生成'
-            else: s_text = '{}ドロップを{}個生成'
+            if len(act.orbs) > 1:
+                s_text = 'ランダムで{}を{}個ずつ生成'
+            else:
+                s_text = '{}ドロップを{}個生成'
             return s_text.format(to_orbs, act.amount)
 
     def move_time_buff_convert(self, act):
@@ -305,7 +309,7 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
                 skip -= 1
         output = '、'.join(skill_text)
         if output:
-            output = output[:-1]+'ドロップに変化'
+            output = output[:-1] + 'ドロップに変化'
         return output
 
     def change_skyfall_convert(self, act):
@@ -316,22 +320,20 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
             skill_text += '{}ドロップのみ落ちてくる'.format(self.attributes_to_str(act.orbs))
         else:
             if all(map(lambda x: x in list(range(6)), act.orbs)):
-                skill_text += '{}ドロップが{}％落ちやすくなる' \
-                                .format(self.attributes_to_str(act.orbs), rate)
+                skill_text += '{}ドロップが{}％落ちやすくなる'.format(self.attributes_to_str(act.orbs), rate)
             else:
-                skill_text += '{}が{}％の確率で落ちてくる' \
-                                .format(self.attributes_to_str(act.orbs), rate)
+                skill_text += '{}が{}％の確率で落ちてくる'.format(self.attributes_to_str(act.orbs), rate)
         return skill_text
 
     def random_nuke_convert(self, act):
-        return '{}に攻撃力ｘ{}倍の{}属性攻撃'.format(self.fmt_mass_atk(act.mass_attack),
-                                               minmax(fmt_mult(act.minimum_multiplier), fmt_mult(act.maximum_multiplier)),
-                                               self.ATTRIBUTES[act.attribute])
+        return '{}に攻撃力ｘ{}倍の{}属性攻撃'.format(
+            self.fmt_mass_atk(act.mass_attack),
+            minmax(fmt_mult(act.minimum_multiplier), fmt_mult(act.maximum_multiplier)),
+            self.ATTRIBUTES[act.attribute])
 
     def counterattack_convert(self, act):
-        return '{}ターンの間、受けたダメージｘ{}倍の{}属性反撃'.format(act.duration,
-                                                     fmt_mult(act.multiplier),
-                                                     self.ATTRIBUTES[act.attribute])
+        return '{}ターンの間、受けたダメージｘ{}倍の{}属性反撃'.format(
+            act.duration, fmt_mult(act.multiplier), self.ATTRIBUTES[act.attribute])
 
     def board_change_convert(self, act):
         return '全ドロップを{}ドロップに変化'.format(self.attributes_to_str(act.to_attr))
@@ -341,9 +343,8 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
 
     def suicide_nuke_convert(self, act):
         skill_text = self.suicide_convert(act) + '。'
-        skill_text += '{}に{}属性の{}ダメージ'.format(self.fmt_mass_atk(act.mass_attack),
-                                                 self.ATTRIBUTES[act.attribute],
-                                                 self.big_number(act.damage))
+        skill_text += '{}に{}属性の{}ダメージ'.format(
+            self.fmt_mass_atk(act.mass_attack), self.ATTRIBUTES[act.attribute], self.big_number(act.damage))
         return skill_text
 
     def suicide_convert(self, act):
@@ -353,22 +354,19 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
             return 'HPが{}％減少'.format(fmt_mult((1 - act.hp_remaining) * 100))
 
     def type_attack_boost_convert(self, act):
-        return '{}ターンの間、{}タイプの攻撃力が{}倍'.format(act.duration,
-                                                         self.typing_to_str(act.types),
-                                                         fmt_mult(act.multiplier))
+        return '{}ターンの間、{}タイプの攻撃力が{}倍'.format(
+            act.duration, self.typing_to_str(act.types), fmt_mult(act.multiplier))
 
     def grudge_strike_convert(self, act):
-        return '残りHPが応じ{}に{}属性ダメージを与え（HP1のとき攻撃力ｘ{}倍、満タン{}倍）' \
-                    .format(self.fmt_mass_atk(act.mass_attack),
-                            self.ATTRIBUTES[act.attribute],
-                            fmt_mult(act.low_multiplier),
-                            fmt_mult(act.high_multiplier)
-                            )
+        return '残りHPが応じ{}に{}属性ダメージを与え（HP1のとき攻撃力ｘ{}倍、満タン{}倍）'.format(
+            self.fmt_mass_atk(act.mass_attack),
+            self.ATTRIBUTES[act.attribute],
+            fmt_mult(act.low_multiplier),
+            fmt_mult(act.high_multiplier))
 
     def drain_attr_attack_convert(self, act):
-        skill_text = '{}に攻撃力ｘ{}倍の{}属性攻撃し、ダメージ'.format(self.fmt_mass_atk(act.mass_attack),
-                                                     fmt_mult(act.atk_multiplier),
-                                                     self.ATTRIBUTES[int(act.attribute)])
+        skill_text = '{}に攻撃力ｘ{}倍の{}属性攻撃し、ダメージ'.format(
+            self.fmt_mass_atk(act.mass_attack), fmt_mult(act.atk_multiplier), self.ATTRIBUTES[int(act.attribute)])
 
         if act.recover_multiplier == 1:
             skill_text += '分のHP回復'
@@ -377,18 +375,17 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return skill_text
 
     def attribute_change_convert(self, act):
-        return '{}ターンの間、自分の属性が{}属性に変化'.format(act.duration,
-                                                     self.ATTRIBUTES[act.attribute])
+        return '{}ターンの間、自分の属性が{}属性に変化'.format(
+            act.duration, self.ATTRIBUTES[act.attribute])
 
     def multi_hit_laser_convert(self, act):
-        return '{}に{}ダメージ'.format(self.fmt_mass_atk(act.mass_attack),
-                                                      act.damage)
-
+        return '{}に{}ダメージ'.format(self.fmt_mass_atk(act.mass_attack), act.damage)
 
     def hp_nuke_convert(self, act):
-        return "{}にチームの総HPｘ{}倍の{}属性攻撃".format(self.fmt_mass_atk(act.mass_attack),
-                                                    fmt_mult(act.multiplier),
-                                                    self.ATTRIBUTES[act.attribute])
+        return "{}にチームの総HPｘ{}倍の{}属性攻撃".format(
+            self.fmt_mass_atk(act.mass_attack),
+            fmt_mult(act.multiplier),
+            self.ATTRIBUTES[act.attribute])
 
     def fixed_pos_convert(self, act):
         board = [[], [], [], [], []]
@@ -453,10 +450,11 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
             for entry in output:
                 if skill_text:
                     skill_text += '。'
-                skill_text += '{}と{}の中心に{}の{}ドロップを1つ生成'.format(ROW_INDEX[entry[1]],
-                                                                     COLUMN_INDEX[entry[2]],
-                                                                     shape,
-                                                                     self.ATTRIBUTES[act.attribute])
+                skill_text += '{}と{}の中心に{}の{}ドロップを1つ生成'.format(
+                    ROW_INDEX[entry[1]],
+                    COLUMN_INDEX[entry[2]],
+                    shape,
+                    self.ATTRIBUTES[act.attribute])
 
         return skill_text
 
@@ -485,11 +483,10 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return "[{}]に変身する".format(act.change_to)
 
     def skyfall_lock(self, act):
-        return "{}ターンの間、{}ドロップがロック状態で落ちてくる" \
-                        .format(act.duration, self.attributes_to_str(act.orbs))
-
+        return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, self.attributes_to_str(act.orbs))
 
     def two_part_active(self, strs):
         return '。'.join(strs)
+
 
 __all__ = ['JpASTextConverter']
