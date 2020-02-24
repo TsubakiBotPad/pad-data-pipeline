@@ -650,7 +650,7 @@ class ASRandomSkill(ActiveSkill):
 
     @property
     def parts(self):
-        return sum([s.parts if isinstance(s, TwoPartActiveSkill) else [s]
+        return sum([s.parts if isinstance(s, ASMultiPartSkill) else [s]
                     for s in self.random_skills], [])
 
     def text(self, converter: ASTextConverter) -> str:
