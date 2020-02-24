@@ -28,8 +28,11 @@ class EnASTextConverter(EnBaseTextConverter):
     def fmt_mass_atk(self, mass_attack):
         return 'all enemies' if mass_attack else 'an enemy'
 
-    def fmt_duration(self, duration):
-        return 'For {:s}, '.format(pluralize2('turn', duration))
+    def fmt_duration(self, duration, max_duration=None):
+        if max_duration and duration != max_duration:
+            return 'For {}~{:s}, '.format(duration, pluralize2('turn', max_duration))
+        else:
+            return 'For {:s}, '.format(pluralize2('turn', duration))
 
     def attr_nuke_convert(self, act):
         return 'Deal ' + fmt_mult(act.multiplier) + 'x ATK ' + self.ATTRIBUTES[int(
@@ -308,7 +311,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return capitalize_first(' and '.join(skill_text))
 
     def change_skyfall_convert(self, act):
-        skill_text = self.fmt_duration(act.duration)
+        skill_text = self.fmt_duration(act.duration, act.max_duration)
         rate = fmt_mult(act.percentage * 100)
 
         if rate == '100':
