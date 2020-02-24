@@ -7,6 +7,7 @@ from pad.raw.skills.en.active_skill_text import EnASTextConverter as ASTextConve
 
 human_fix_logger = logging.getLogger('human_fix')
 
+
 def cc(x): return x
 
 
@@ -650,7 +651,7 @@ class ASRandomSkill(ActiveSkill):
     @property
     def parts(self):
         return sum([s.parts if isinstance(s, TwoPartActiveSkill) else [s]
-                   for s in self.random_skills], [])
+                    for s in self.random_skills], [])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_skill(self)
@@ -669,7 +670,9 @@ class ASIncreasedSkyfallChance(ActiveSkill):
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_skyfall_convert(self)
 
+
 OrbLine = namedtuple("OrbLine", ["index", "attrs"])
+
 
 class ASColumnOrbChange(ActiveSkill):
     skill_type = 127
@@ -811,8 +814,9 @@ class ASOrbLock(ActiveSkill):
     skill_type = 152
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0])
+        data = merge_defaults(ms.data, [0, 0])
         self.orbs = binary_con(data[0])
+        self.count = data[1]  # This can be 42/99 (both mean 'all') or a fixed number
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1077,11 +1081,12 @@ class ASChangeMonster(ActiveSkill):
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_monster(self)
 
+
 class ASSkyfallLock(ActiveSkill):
     skill_type = 205
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [1,1])
+        data = merge_defaults(ms.data, [1, 1])
         self.orbs = binary_con(data[0])
         self.duration = data[1]
         super().__init__(ms)
