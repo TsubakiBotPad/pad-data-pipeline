@@ -39,8 +39,11 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
     def fmt_mass_atk(self, mass_attack):
         return '敵全体' if mass_attack else '敵1体'
 
-    def fmt_duration(self, duration):
-        return '{}ターンの間、'.format(duration)
+    def fmt_duration(self, duration, max_duration=None):
+        if max_duration and duration != max_duration:
+            return '{}~{}ターンの間、'.format(duration, max_duration)
+        else:
+            return '{}ターンの間、'.format(duration)
 
     def attr_nuke_convert(self, act):
         return '{}に攻撃力ｘ{}倍の{}属性攻撃'.format(
@@ -313,7 +316,7 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return output
 
     def change_skyfall_convert(self, act):
-        skill_text = self.fmt_duration(act.duration)
+        skill_text = self.fmt_duration(act.duration, act.max_duration)
         rate = fmt_mult(act.percentage * 100)
 
         if rate == '100':

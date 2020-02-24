@@ -661,9 +661,10 @@ class ASIncreasedSkyfallChance(ActiveSkill):
     skill_type = 126
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, 0, None, 0])
+        data = merge_defaults(ms.data, [0, 0, 0, 0])
         self.orbs = binary_con(data[0])
         self.duration = data[1]
+        self.max_duration = data[2]
         self.percentage = multi(data[3])
         super().__init__(ms)
 
