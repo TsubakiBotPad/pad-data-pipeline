@@ -7,6 +7,7 @@ import argparse
 import json
 import logging
 import os
+import time
 
 from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
@@ -18,7 +19,7 @@ from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.enemy_skill_processor import EnemySkillProcessor
 from pad.storage_processor.exchange_processor import ExchangeProcessor
 from pad.storage_processor.egg_machine_processor import EggMachineProcessor
-from pad.storage_processor.exchange_processor import ExchangeProcessor
+from pad.storage_processor.purchase_processor import PurchaseProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
 from pad.storage_processor.schedule_processor import ScheduleProcessor
@@ -170,7 +171,6 @@ def load_data(args):
     # Load dungeon data
     dungeon_processor = DungeonProcessor(cs_database)
     dungeon_processor.process(db_wrapper)
-
     if not args.skip_long:
         # Load dungeon data derived from wave info
         DungeonContentProcessor(cs_database).process(db_wrapper)
@@ -183,6 +183,9 @@ def load_data(args):
 
     # Load exchange data
     ExchangeProcessor(cs_database).process(db_wrapper)
+
+    # Load purchase data
+    PurchaseProcessor(cs_database).process(db_wrapper)
 
     # Update timestamps
     TimestampProcessor().process(db_wrapper)

@@ -174,14 +174,14 @@ class Card(pad_util.Printable):
         self.latent_on_feed = int(raw[64])
         self.collab_id = int(raw[65])
 
-        # Bitmap with some random flag values
-        self.random_flags = int(raw[66])
-        self.inheritable_flag = bool(self.random_flags & 1)
-        self.take_assists_flag = bool(self.random_flags & 2)
-        self.is_collab_flag = bool(self.random_flags & 4)
-        self.unstackable_flag = bool(self.random_flags & 8)
-        self.assist_only_flag = bool(self.random_flags & 16)
-        self.latent_slot_unlock_flag = bool(self.random_flags & 32)
+        # Bitmap with some non-random flag values
+        self.flags = int(raw[66])
+        self.inheritable_flag = bool(self.flags & 1)
+        self.take_assists_flag = bool(self.flags & 2)
+        self.is_collab_flag = bool(self.flags & 4)
+        self.unstackable_flag = bool(self.flags & 8)
+        self.assist_only_flag = bool(self.flags & 16)
+        self.latent_slot_unlock_flag = bool(self.flags & 32)
 
         # Composed with flags and other monster attributes
         self.inheritable = bool(self.inheritable_flag and self.active_skill_id)
