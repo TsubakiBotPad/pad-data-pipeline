@@ -1215,5 +1215,12 @@
     "name_kr": "Tales of Artifact Dragons",
     "name_na": "Tales of Artifact Dragons",
     "series_id": 211
+  },
+  {
+    "name_jp": "ミッキー＆フレンズ",
+    "name_kr": "Mickey Mouse & Friends",
+    "name_na": "Mickey Mouse & Friends",
+    "series_id": 212,
+    "collab_id": 90
   }
 ]

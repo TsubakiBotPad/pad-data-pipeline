@@ -13,7 +13,11 @@ SERIES = json.load(open(os.path.join(__location__, "../../../storage_processor/s
 
 class JpLSTextConverter(JpBaseTextConverter):
     _COLLAB_MAP = {x['collab_id']: x['name_jp'] for x in SERIES if 'collab_id' in x}
-    _GROUP_MAP = {0: 'ドット進化', 2: '転生と超転生進化のみ'}
+    _GROUP_MAP = {
+        0: 'ドット進化',
+        1: '超転生進化のみ',
+        2: '転生と超転生進化のみ',
+    }
 
     TAGS = {
         Tag.NO_SKYFALL: '【落ちコンなし】',

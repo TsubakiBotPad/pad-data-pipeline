@@ -6,7 +6,7 @@ from pad.common import pad_util
 from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange
-from pad.raw import bonus, card, dungeon, skill, exchange, enemy_skill, extra_egg_machine
+from pad.raw import bonus, card, dungeon, skill, exchange, purchase, enemy_skill, extra_egg_machine
 from pad.raw.skills.enemy_skill_info import ESInstance, ESBehavior
 from pad.raw.enemy_skills.enemy_skill_parser import BehaviorParser
 from pad.raw.skills.active_skill_info import ActiveSkill
@@ -97,6 +97,7 @@ class Database(object):
         self.skills = []  # type: List[MonsterSkill]
         self.raw_enemy_skills = []  # type: List[EnemySkill]
         self.exchange = []  # type: List[Exchange]
+        self.purchase = [] # type: List[Purchase]
         self.egg_machines = []
 
         # Computed from other entries
@@ -145,6 +146,7 @@ class Database(object):
 
         if not skip_extra:
             self.exchange = exchange.load_data(data_dir=base_dir, server=self.server)
+            self.purchase = purchase.load_data(data_dir=base_dir, server=self.server)
             self.egg_machines = extra_egg_machine.load_data(data_dir=base_dir, server=self.server)
 
         self.bonuses = _clean_bonuses(self.server, self.bonus_sets, self.dungeons)
@@ -174,6 +176,7 @@ class Database(object):
         self.save(output_dir, 'bonuses', self.bonuses, pretty)
         self.save(output_dir, 'cards', self.cards, pretty)
         self.save(output_dir, 'exchange', self.exchange, pretty)
+        self.save(output_dir, 'purchase', self.purchase, pretty)
         self.save(output_dir, 'enemies', self.enemies, pretty)
 
     def leader_skill_by_id(self, skill_id: SkillId) -> LeaderSkill:

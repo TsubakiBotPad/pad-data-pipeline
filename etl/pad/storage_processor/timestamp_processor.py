@@ -13,6 +13,7 @@ from pad.storage.schedule import ScheduleEvent
 from pad.storage.series import Series
 from pad.storage.skill_tag import ActiveSkillTag, LeaderSkillTag
 from pad.storage.exchange import Exchange
+from pad.storage.purchase import Purchase
 
 logger = logging.getLogger('processor')
 
@@ -30,6 +31,7 @@ _UPDATE_TABLES = [
     EnemyData.TABLE,
     Evolution.TABLE,
     Exchange.TABLE,
+    Purchase.TABLE,
     LeaderSkill.TABLE,
     LeaderSkillTag.TABLE,
     Monster.TABLE,

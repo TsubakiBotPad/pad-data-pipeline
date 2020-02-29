@@ -433,6 +433,30 @@ CREATE TABLE `exchanges` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `purchases`
+--
+
+DROP TABLE IF EXISTS `purchases`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `purchases` (
+  `server_id` int(11) NOT NULL,
+  `target_monster_id` int(11) NOT NULL,
+  `mp_cost` tinyint(1) NOT NULL,
+  `start_timestamp` int(11) NOT NULL,
+  `end_timestamp` int(11) NOT NULL,
+  `permanent` tinyint(1) NOT NULL DEFAULT '0',
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`purchase_id`),
+  KEY `tstamp` (`tstamp`),
+  KEY `purchases_fk_server_id` (`server_id`),
+  KEY `purchases_fk_target_monster_id` (`target_monster_id`),
+  CONSTRAINT `purchases_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `purchases_fk_target_monster_id` FOREIGN KEY (`target_monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=754 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `leader_skill_tags`
 --
 

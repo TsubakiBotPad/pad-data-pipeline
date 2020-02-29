@@ -5,7 +5,7 @@ data structures.
 It should only depend on items from the common package.
 """
 
-from . import bonus, card, dungeon, enemy_skill, exchange, skill
+from . import bonus, card, dungeon, enemy_skill, exchange, purchase, skill
 
 Bonus = bonus.Bonus
 Card = card.Card
@@ -16,4 +16,5 @@ Dungeon = dungeon.Dungeon
 SubDungeon = dungeon.SubDungeon
 MonsterSkill = skill.MonsterSkill
 Exchange = exchange.Exchange
+Purchase = purchase.Purchase
 EnemySkill = enemy_skill.EnemySkill

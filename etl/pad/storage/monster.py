@@ -231,6 +231,21 @@ class MonsterWithExtraImageInfo(SimpleSqlItem):
     def __str__(self):
         return 'MonsterImage({}): animated={} hq={}'.format(self.key_value(), self.has_animation, self.has_hqimage)
 
+class MonsterWithMPValue(SimpleSqlItem):
+    """Monster helper for inserting MP purchase."""
+    TABLE = 'monsters'
+    KEY_COL = 'monster_id'
+
+    def __init__(self,
+                 monster_id: int = None,
+                 buy_mp: int = None,
+                 tstamp: int = None):
+        self.monster_id = monster_id
+        self.buy_mp = buy_mp
+        self.tstamp = tstamp
+
+    def __str__(self):
+        return 'MonsterMP({}): {}'.format(self.key_value(), self.buy_mp)
 
 class ActiveSkill(SimpleSqlItem):
     """Monster active skill."""

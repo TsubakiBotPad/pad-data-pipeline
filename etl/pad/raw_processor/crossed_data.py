@@ -84,8 +84,8 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
             for nc in na_gems:
                 if na_gems[nc] == card.gem:
                     na_gems.pop(nc)
-                    break 
-                    
+                    break
+
     jp_gems.update(na_gems)
     aggreg = jp_gems.keys()
     if aggreg:
@@ -433,9 +433,9 @@ class CrossServerDatabase(object):
         self.na_egg_machines = na_database.egg_machines
         self.kr_egg_machines = kr_database.egg_machines
 
-        self.jp_exchange = jp_database.exchange
-        self.na_exchange = na_database.exchange
-        self.kr_exchange = kr_database.exchange
+        self.jp_purchase = jp_database.purchase
+        self.na_purchase = na_database.purchase
+        self.kr_purchase = kr_database.purchase
 
         self.monster_id_to_card = {c.monster_id: c for c in self.all_cards}
         self.leader_id_to_leader = {s.skill_id: s for s in self.leader_skills}
