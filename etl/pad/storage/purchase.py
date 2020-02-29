@@ -4,6 +4,7 @@ from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.common.monster_id_mapping import jp_no_to_monster_id, nakr_no_to_monster_id
 from pad.common.shared_types import Server
 
+
 class Purchase(SimpleSqlItem):
     """MP Purchases."""
     TABLE = 'purchases'
@@ -16,7 +17,7 @@ class Purchase(SimpleSqlItem):
         else:
             id_mapper = nakr_no_to_monster_id
         target_monster_id = id_mapper(o.monster_id)
-        permanent = int(timedelta(seconds=(o.end_timestamp-o.start_timestamp)) > timedelta(days=60))
+        permanent = int(timedelta(seconds=(o.end_timestamp - o.start_timestamp)) > timedelta(days=60))
         return Purchase(server_id=o.server.value,
                         target_monster_id=target_monster_id,
                         mp_cost=o.cost,
@@ -55,7 +56,7 @@ class Purchase(SimpleSqlItem):
         return [self._key()]
 
     def _lookup_columns(self):
-        return ['server_id', 'target_monster_id']
+        return ['server_id', 'target_monster_id', 'start_timestamp', 'end_timestamp']
 
     def __str__(self):
         return 'Purchase ({}): {} - {:,d}MP'.format(self.server_id, self.target_monster_id, self.mp_cost)

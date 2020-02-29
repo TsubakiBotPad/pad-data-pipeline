@@ -5,7 +5,7 @@ from typing import List, Dict
 from pad.common import pad_util
 from pad.common.monster_id_mapping import nakr_no_to_monster_id
 from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
-from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange
+from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, Purchase
 from pad.raw import bonus, card, dungeon, skill, exchange, purchase, enemy_skill, extra_egg_machine
 from pad.raw.skills.enemy_skill_info import ESInstance, ESBehavior
 from pad.raw.enemy_skills.enemy_skill_parser import BehaviorParser
@@ -97,7 +97,7 @@ class Database(object):
         self.skills = []  # type: List[MonsterSkill]
         self.raw_enemy_skills = []  # type: List[EnemySkill]
         self.exchange = []  # type: List[Exchange]
-        self.purchase = [] # type: List[Purchase]
+        self.purchase = []  # type: List[Purchase]
         self.egg_machines = []
 
         # Computed from other entries
