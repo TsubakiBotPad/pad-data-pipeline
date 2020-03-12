@@ -1659,7 +1659,7 @@ class ESCountdownMessage(ESBehavior):
         return converter.countdown(self.current_counter)
 
 
-class ESUnknown(ESAttack):  # Pretend to work so we can extract data
+class ESUnknown(ESAction):  # Pretend to work so we can extract data
     """Unknown ES (Unknown skill type)"""
 
 
