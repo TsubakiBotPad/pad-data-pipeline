@@ -1393,6 +1393,15 @@ class ESResolve(ESPassive):
     def description(self, converter):
         return converter.resolve(self.hp_threshold)
 
+class ESSuperResolve(ESPassive):
+    skill_types = [129]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.hp_threshold = self.params[1]
+
+    def description(self, converter):
+        return converter.superresolve(self.hp_threshold)
 
 class ESTurnChangeRemainingEnemies(ESPassive):
     skill_types = [122]
@@ -1650,9 +1659,8 @@ class ESCountdownMessage(ESBehavior):
         return converter.countdown(self.current_counter)
 
 
-class ESUnknown(ESBehavior):
-    def __init__(self, skill: EnemySkill):
-        super().__init__(skill)
+class ESUnknown(ESAttack):  # Pretend to work so we can extract data
+    """Unknown ES (Unknown skill type)"""
 
 
 class ESInstance(Printable):
@@ -1832,5 +1840,5 @@ ENEMY_SKILLS = [
 BEHAVIOR_MAP = {t: s for s in ENEMY_SKILLS for t in s.skill_types}
 BEHAVIOR_MAP[0] = ESNone
 BEHAVIOR_MAP[9] = ESUnknown
-BEHAVIOR_MAP[93] = ESNone  # FF Animation
 BEHAVIOR_MAP[21] = ESUnknown
+BEHAVIOR_MAP[93] = ESNone  # FF Animation
