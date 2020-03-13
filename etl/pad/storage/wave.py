@@ -1,4 +1,6 @@
 from pad.common import monster_id_mapping
+from pad.common.monster_id_mapping import server_monster_id_fn
+from pad.common.shared_types import Server
 from pad.db.sql_item import SqlItem
 from pad.raw import wave as wave_data
 
@@ -47,7 +49,7 @@ class WaveItem(SqlItem):
         if monster:
             self.spawn_type = monster.spawn_type
             # Need to correct the drop/spawn IDs for NA vs JP
-            mapping_fn = monster_id_mapping.jp_no_to_monster_id if self.server.lower() == 'jp' else monster_id_mapping.nakr_no_to_monster_id
+            mapping_fn = server_monster_id_fn(Server.from_str(self.server))
             self.monster_id = mapping_fn(monster.monster_id)
             self.monster_level = monster.monster_level
             self.drop_monster_id = mapping_fn(monster.drop_monster_id)

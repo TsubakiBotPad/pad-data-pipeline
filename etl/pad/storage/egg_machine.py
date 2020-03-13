@@ -1,6 +1,6 @@
 import json
 
-from pad.common.monster_id_mapping import nakr_no_to_monster_id, jp_no_to_monster_id
+from pad.common.monster_id_mapping import server_monster_id_fn
 from pad.common.shared_types import Server
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw.extra_egg_machine import ExtraEggMachine
@@ -20,7 +20,7 @@ class EggMachine(SimpleSqlItem):
         else:  # Special (collab or other)
             egg_machine_type_id = 0
 
-        id_mapper = jp_no_to_monster_id if server == Server.jp else nakr_no_to_monster_id
+        id_mapper = server_monster_id_fn(server)
         content_map = {'({})'.format(id_mapper(k)): v for k, v in eem.contents.items()}
         contents = json.dumps(content_map, sort_keys=True)
 

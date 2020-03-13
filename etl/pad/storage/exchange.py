@@ -1,8 +1,8 @@
 from datetime import timedelta
 
+from pad.common.monster_id_mapping import server_monster_id_fn
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
-from pad.common.monster_id_mapping import jp_no_to_monster_id, nakr_no_to_monster_id
-from pad.common.shared_types import Server
+
 
 class Exchange(SimpleSqlItem):
     """Monster exchanges."""
@@ -11,13 +11,10 @@ class Exchange(SimpleSqlItem):
 
     @staticmethod
     def from_raw_exchange(o):
-        if o.server == Server.jp:
-            id_mapper = jp_no_to_monster_id
-        else:
-            id_mapper = nakr_no_to_monster_id
+        id_mapper = server_monster_id_fn(o.server)
         target_monster_id = id_mapper(o.monster_id)
         req_monster_csv_str = ','.join(['({})'.format(id_mapper(idx)) for idx in o.required_monsters])
-        permanent = int(timedelta(seconds=(o.end_timestamp-o.start_timestamp)) > timedelta(days=60))
+        permanent = int(timedelta(seconds=(o.end_timestamp - o.start_timestamp)) > timedelta(days=60))
         return Exchange(trade_id=o.trade_id,
                         server_id=o.server.value,
                         target_monster_id=target_monster_id,
@@ -71,4 +68,5 @@ class Exchange(SimpleSqlItem):
         return ['trade_id', 'server_id']
 
     def __str__(self):
-        return 'Exchange ({}-{}): {} [{}]'.format(self.trade_id, self.server_id, self.target_monster_id, self.required_count)
+        return 'Exchange ({}-{}): {} [{}]'.format(self.trade_id, self.server_id, self.target_monster_id,
+                                                  self.required_count)
