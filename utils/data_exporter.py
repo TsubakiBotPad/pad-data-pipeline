@@ -154,6 +154,9 @@ def dump_enemy_skill(f, css, converter):
     na_skill = css.na_skill
     kr_skill = css.kr_skill
     f.write('# {}/{} - {}\n'.format(jp_skill.enemy_skill_id, jp_skill.type, na_skill.name))
+    if jp_skill.type not in BEHAVIOR_MAP:
+        f.write('Error: Skill Type not in JP Skill Map\n')
+        return
     skill = BEHAVIOR_MAP[jp_skill.type](jp_skill)
     f.write('JP: {}\n'.format(skill.description(converter[0])))
     f.write('EN: {}\n'.format(skill.description(converter[1])))

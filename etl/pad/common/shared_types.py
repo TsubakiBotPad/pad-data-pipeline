@@ -51,6 +51,11 @@ class Server(Enum):
     na = 1
     kr = 2
 
+    @staticmethod
+    def from_str(name: str):
+        name = str(name).lower()
+        return Server[name]
+
 
 class StarterGroup(Enum):
     red = 'red'

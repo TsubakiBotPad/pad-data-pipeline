@@ -1,8 +1,7 @@
 from datetime import timedelta
 
+from pad.common.monster_id_mapping import server_monster_id_fn
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
-from pad.common.monster_id_mapping import jp_no_to_monster_id, nakr_no_to_monster_id
-from pad.common.shared_types import Server
 
 
 class Purchase(SimpleSqlItem):
@@ -12,10 +11,7 @@ class Purchase(SimpleSqlItem):
 
     @staticmethod
     def from_raw_purchase(o: "Purchase"):
-        if o.server == Server.jp:
-            id_mapper = jp_no_to_monster_id
-        else:
-            id_mapper = nakr_no_to_monster_id
+        id_mapper = server_monster_id_fn(o.server)
         target_monster_id = id_mapper(o.monster_id)
         permanent = int(timedelta(seconds=(o.end_timestamp - o.start_timestamp)) > timedelta(days=60))
         return Purchase(server_id=o.server.value,

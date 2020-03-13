@@ -67,7 +67,7 @@ def copy_media(args):
                 animated_portrait_output_dir, '{}.gif'.format(monster_id_filled))
 
     for na_id in range(1, 9000):
-        monster_id = monster_id_mapping.nakr_no_to_monster_id(MonsterNo(na_id))
+        monster_id = monster_id_mapping.na_no_to_monster_id(MonsterNo(na_id))
         monster_id_filled = str(monster_id).zfill(5)
 
         do_copy(na_icon_input_dir, '{}.png'.format(na_id),
