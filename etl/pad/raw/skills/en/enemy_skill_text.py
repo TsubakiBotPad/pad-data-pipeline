@@ -154,6 +154,13 @@ class EnESTextConverter(EnBaseTextConverter):
     def blind_sticky_fixed(self, turns):
         return 'Blind orbs in specific positions for {:s}'.format(pluralize2('turn', turns))
 
+    def blind_sticky_skyfall(self, turns, chance, b_turns):
+        return 'For {:s}, {}% chance for skyfall orbs to be blinded for {:s}'.format(
+                                                        pluralize2('turn', turns),
+                                                        chance,
+                                                        pluralize2('turn', b_turns)
+                                                    )
+
     def dispel_buffs(self):
         return 'Voids player buff effects'
 

@@ -614,6 +614,17 @@ class ESBlindStickyFixed(ESAction):
     def description(self, converter):
         return converter.blind_sticky_fixed(self.turns)
 
+class ESBlindStickySkyfall(ESAction):
+    skill_types = [128]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.turns = self.params[1]
+        self.chance = self.params[2]
+        self.b_turns = self.params[13] # For some reason?? (why?)
+
+    def description(self, converter):
+        return converter.blind_sticky_skyfall(self.turns, self.chance, self.b_turns)
 
 class ESDispel(ESAction):
     skill_types = [6]
@@ -1848,6 +1859,7 @@ ENEMY_SKILLS = [
     ESTypeResist,
     ESDebuffATK,
     ESSuperResolve,
+    ESBlindStickySkyfall,
 ]
 
 BEHAVIOR_MAP = {t: s for s in ENEMY_SKILLS for t in s.skill_types}
