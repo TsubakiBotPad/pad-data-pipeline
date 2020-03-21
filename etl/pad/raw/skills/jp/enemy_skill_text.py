@@ -136,6 +136,13 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
     def blind_sticky_fixed(self, turns):
         return '{}ターンの間、特定のドロップが超暗闇にする'.format(turns)
 
+    def blind_sticky_skyfall(self, turns, chance, b_turns):
+        return '{}ターンの間、{}%の確率を超暗闇ドロップ{}ターンが発生'.format(
+                                                        turns,
+                                                        chance,
+                                                        b_turns
+                                                    )
+
     def dispel_buffs(self):
         return 'こちらにかかっている状態変化を解除'
 
@@ -215,6 +222,9 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
 
     def resolve(self, percent):
         return 'HP{}%以上のとき、大ダメージを受けてもHP1で耐える'.format(percent)
+
+    def superresolve(self, percent, remaining):
+        return 'HP{}%以上のとき、大ダメージを受けてもHP{}%で耐える'.format(percent, remaining)
 
     def leadswap(self, turns):
         return '{}ターンの間、リーダーを交代'.format(turns)
@@ -328,6 +338,9 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
 
     def no_skyfall(self, turns):
         return '{}ターンの間、落ちコンしなくなる'.format(turns)
+
+    def debuff_atk(self, turns, amount):
+        return '{}ターンの間、攻撃力が{}%減少'.format(turns, amount)
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
