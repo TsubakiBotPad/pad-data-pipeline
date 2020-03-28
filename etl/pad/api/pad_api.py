@@ -30,6 +30,7 @@ RESPONSE_CODES = {
     40: 'Cannot open dungeon due to corrupted data',
     44: 'No score to rank',
     48: 'room not found?',
+    53: 'wrong version (update needed)',
     99: 'Maintenance',
     101: 'No connection',
     104: "Can't connect to server?",
@@ -39,14 +40,17 @@ RESPONSE_CODES = {
 
 
 class ServerEndpointInfo(object):
-    def __init__(self, server: Server, keygen_fn: Callable[[str, int], str]):
+    def __init__(self, server: Server, keygen_fn: Callable[[str, int], str], force_v=None):
         self.server = server
         self.keygen_fn = keygen_fn
+
+        # Gungho messed up the version in the JSON so allowing an override.
+        self.force_v = force_v
 
 
 class ServerEndpoint(Enum):
     NA = ServerEndpointInfo(
-        Server('http://patch-na-pad.gungho.jp/base-na-adr.json'), keygen.generate_key_na)
+        Server('http://patch-na-pad.gungho.jp/base-na-adr.json'), keygen.generate_key_na, force_v='18.20')
     JA = ServerEndpointInfo(
         Server('http://dl.padsv.gungho.jp/base_adr.json'), keygen.generate_key_jp)
     KR = ServerEndpointInfo(
@@ -172,7 +176,7 @@ class PadApiClient(object):
         self.server = endpoint.value.server
 
         # Current version string
-        self.server_v = self.server.version
+        self.server_v = endpoint.value.force_v or self.server.version
 
         # Stripped version string
         self.server_r = self.server_v.replace('.', '')
