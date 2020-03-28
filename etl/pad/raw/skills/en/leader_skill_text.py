@@ -338,11 +338,14 @@ class EnLSTextConverter(EnBaseTextConverter):
         return skill_text
 
     def color_combo_bonus_damage_text(self, ls):
-        skill_text = '{} additional damage when attacking with {} or more'.format(ls.bonus_damage, ls.min_combo)
-        if ls.attributes:
-            skill_text += ' {} combos'.format(self.fmt_multi_attr(list(set(ls.attributes))))
+        if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
+            skill_text = '{} additional damage when matching {}'.format(ls.bonus_damage, self.fmt_multi_attr(list(set(ls.attributes)), conj='and'))
         else:
-            skill_text += ' combos'
+            skill_text = '{} additional damage when matching {} or more'.format(ls.bonus_damage, ls.min_combo)
+            if ls.attributes:
+                skill_text += ' {} combos'.format(self.fmt_multi_attr(list(set(ls.attributes))))
+            else:
+                skill_text += ' combos'
         return skill_text
 
     def full_text(self, text, tags=None):
