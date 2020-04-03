@@ -156,10 +156,7 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def blind_sticky_skyfall(self, turns, chance, b_turns):
         return 'For {:s}, {}% chance for skyfall orbs to be blinded for {:s}'.format(
-                                                        pluralize2('turn', turns),
-                                                        chance,
-                                                        pluralize2('turn', b_turns)
-                                                    )
+            pluralize2('turn', turns), chance, pluralize2('turn', b_turns))
 
     def dispel_buffs(self):
         return 'Voids player buff effects'
@@ -268,8 +265,8 @@ class EnESTextConverter(EnBaseTextConverter):
         if count == 42:
             return self.board_change(attributes)
         else:
-            return 'Spawn {:d} random {:s} {:s}' \
-                .format(count, self.attributes_to_str(attributes, 'or'), pluralize('orb', count))
+            return 'Spawn {:d} random {:s} {:s}'.format(
+                count, self.attributes_to_str(attributes, 'and'), pluralize('orb', count))
 
     def fixed_orb_spawn(self, attributes):
         return 'Spawn {:s} orbs in the specified positions'.format(self.attributes_to_str(attributes))
