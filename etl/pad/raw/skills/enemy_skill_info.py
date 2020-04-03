@@ -614,6 +614,7 @@ class ESBlindStickyFixed(ESAction):
     def description(self, converter):
         return converter.blind_sticky_fixed(self.turns)
 
+
 class ESBlindStickySkyfall(ESAction):
     skill_types = [128]
 
@@ -621,10 +622,11 @@ class ESBlindStickySkyfall(ESAction):
         super().__init__(skill)
         self.turns = self.params[1]
         self.chance = self.params[2]
-        self.b_turns = self.params[13] # For some reason?? (why?)
+        self.b_turns = self.params[13]  # For some reason?? (why?)
 
     def description(self, converter):
         return converter.blind_sticky_skyfall(self.turns, self.chance, self.b_turns)
+
 
 class ESDispel(ESAction):
     skill_types = [6]
@@ -790,16 +792,18 @@ class ESDebuffRCV(ESDebuff):
     def description(self, converter):
         return converter.debuff(self.debuff_type, self.amount, self.unit, self.turns)
 
+
 class ESDebuffATK(ESAction):
     skill_types = [130]
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.turns  = self.params[1]
+        self.turns = self.params[1]
         self.amount = self.params[2]
 
     def description(self, converter):
         return converter.debuff_atk(self.turns, self.amount)
+
 
 class ESEndBattle(ESAction):
     skill_types = [40]
@@ -1414,6 +1418,7 @@ class ESResolve(ESPassive):
     def description(self, converter):
         return converter.resolve(self.hp_threshold)
 
+
 class ESSuperResolve(ESPassive):
     skill_types = [129]
 
@@ -1424,6 +1429,7 @@ class ESSuperResolve(ESPassive):
 
     def description(self, converter):
         return converter.superresolve(self.hp_threshold, self.hp_remaining)
+
 
 class ESTurnChangeRemainingEnemies(ESPassive):
     skill_types = [122]
