@@ -486,7 +486,8 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return "[{}]に変身する".format(act.change_to)
 
     def skyfall_lock(self, act):
-        return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, self.attributes_to_str(act.orbs))
+        attrs = self.attributes_to_str(act.orbs) if act.orbs else ''
+        return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, attrs)
 
     def two_part_active(self, strs):
         return '。'.join(strs)
