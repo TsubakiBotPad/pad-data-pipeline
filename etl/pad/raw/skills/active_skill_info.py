@@ -29,7 +29,7 @@ def list_con(x): return list(x)
 def list_con_pos(x): return [i for i in x if i > 0]
 
 
-def binary_con(x): return [i for i, v in enumerate(str(bin(x))[:1:-1]) if v == '1']
+def binary_con(x): return [] if x == -1 else [i for i, v in enumerate(str(bin(x))[:1:-1]) if v == '1']
 
 
 def list_binary_con(x): return [b for i in x for b in binary_con(i)]
@@ -1087,6 +1087,7 @@ class ASSkyfallLock(ActiveSkill):
     skill_type = 205
 
     def __init__(self, ms: MonsterSkill):
+        # The '1' in slot 0 is suspicious but it seems set for everything so it changes nothing.
         data = merge_defaults(ms.data, [1, 1])
         self.orbs = binary_con(data[0])
         self.duration = data[1]

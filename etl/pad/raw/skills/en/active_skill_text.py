@@ -516,7 +516,8 @@ class EnASTextConverter(EnBaseTextConverter):
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
 
     def skyfall_lock(self, act):
-        return self.fmt_duration(act.duration) + self.attributes_to_str(act.orbs) + " orbs appear locked"
+        attrs = self.attributes_to_str(act.orbs) if act.orbs else 'all'
+        return self.fmt_duration(act.duration) + attrs + " orbs appear locked"
 
     def two_part_active(self, strs):
         return '; '.join(strs)
