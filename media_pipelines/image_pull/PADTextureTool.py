@@ -443,7 +443,7 @@ def getSettingsFromCommandLine():
                                action=call(settings.setTrimmingEnabled, False))
     featuresGroup.add_argument("-nb", "--noblacken", nargs=0, help="By default, this script will \"blacken\" (i.e. set the red, green and blue channels to zero) any fully-transparent pixels of an image before exporting it. This reduces file size in a way that does not affect the quality of the image. Use this flag to disable automatic blackening.", action=call(settings.setBlackeningEnabled, False))
     featuresGroup.add_argument("--subtextures", nargs=0, help="Enables extracting monsters with multiple textures",
-                               action=call(settings.setSubtexturesEnabled, False))
+                               action=call(settings.setSubtexturesEnabled, True))
 
     helpGroup = parser.add_argument_group("Help")
     helpGroup.add_argument("-h", "--help", action="help",
