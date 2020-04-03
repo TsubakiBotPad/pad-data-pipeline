@@ -13,6 +13,8 @@
 #
 ################################################################################
 
+# @formatter:off
+
 from __future__ import (absolute_import, division, print_function)
 
 import argparse
@@ -505,14 +507,12 @@ def main():
         if not settings.subtexturesEnabled:
             if len(textures) > 1 or '000.PNG' in textures[0].name:
                 print("Skipping; subtextures not enabled")
-                inputFileWithoutExtension, _ = os.path.splitext(inputFilePath)
-                # Create a tag file that marks this as being animated. This is used elsewhere
-                # to determine if we need to extract a video.
-                Path(inputFileWithoutExtension + '.isanimated').touch()
                 exit()
 
         for texture in textures:
             outputFileName = getOutputFileName(texture.name)
+            if len(textures) > 1:
+                outputFileName = os.path.basename(inputFilePath) + '_' + outputFileName
 
             print("  Writing {} ({} x {})...".format(outputFileName, texture.width, texture.height))
             if texture.encoding in [PVRTC2BPP, PVRTC4BPP]:
