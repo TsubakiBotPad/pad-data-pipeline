@@ -1203,7 +1203,9 @@ class LSMultiboost(LeaderSkill):
     def text(self, converter) -> str:
         return converter.multi_play_text(self)
 
+
 CrossMultiplier = namedtuple("CrossMultiplier", ['attribute', 'atk'])
+
 
 class LSAttrCross(LeaderSkill):
     skill_type = 157
@@ -1216,9 +1218,9 @@ class LSAttrCross(LeaderSkill):
         self.multiplier = mult(ms.data[1])
         self.attributes = ms.data[::2]
 
-        self.crossmults = [CrossMultiplier(ms.data[i], ms.data[i+1]) for i in range(0,len(ms.data),2)]
+        self.crossmults = [CrossMultiplier(ms.data[i], ms.data[i + 1]) for i in range(0, len(ms.data), 2)]
 
-        atk = self.multiplier ** (2 if len(self.attributes)==1 else 3)
+        atk = self.multiplier ** (2 if len(self.attributes) == 1 else 3)
         super().__init__(157, ms, atk=round(atk, 2))
 
     def text(self, converter) -> str:
@@ -1461,10 +1463,11 @@ class LSOrbRemainingMultiplier(LeaderSkill):
         self.min_atk = multi_floor(data[3])
         self.base_atk = mult(data[6])
         self.bonus_atk = mult(data[7])
+        self.max_bonus_atk = self.base_atk + (self.bonus_atk * self.orb_count)
         self.tags = [(Tag.NO_SKYFALL, ())]
         hp = multi_floor(data[2])
         rcv = multi_floor(data[4])
-        atk = self.min_atk * (self.base_atk + (self.bonus_atk * self.orb_count))
+        atk = self.min_atk * self.max_bonus_atk
         super().__init__(177, ms, hp=hp, atk=atk, rcv=rcv)
 
     def text(self, converter) -> str:

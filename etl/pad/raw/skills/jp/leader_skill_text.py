@@ -267,7 +267,7 @@ class JpLSTextConverter(JpBaseTextConverter):
             skill_text += '。'
         skill_text += 'パズル後の残りドロップ数が{}個'.format(ls.orb_count)
         if ls.bonus_atk != 0:
-            skill_text += 'で攻撃力{}倍、0個のところまで{}倍'.format(fmt_mult(ls.base_atk), fmt_mult(ls.atk))
+            skill_text += 'で攻撃力{}倍、0個のところまで{}倍'.format(fmt_mult(ls.base_atk), fmt_mult(ls.max_bonus_atk))
         else:
             skill_text += '以下で攻撃力が{}倍'.format(fmt_mult(ls.base_atk))
         return skill_text + '。'
