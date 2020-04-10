@@ -68,9 +68,9 @@ class Card(pad_util.Printable):
         self.unknown_009 = int(raw[9])
 
         self.max_level = int(raw[10])
-        self.feed_xp_per_level = int(raw[11]) // 4
+        self.feed_xp_per_level = int(raw[11]) / 4
         self.released_status = raw[12] == 100
-        self.sell_gold_per_level = int(raw[13]) // 10
+        self.sell_gold_per_level = int(raw[13]) / 10
 
         self.min_hp = int(raw[14])
         self.max_hp = int(raw[15])
@@ -107,8 +107,8 @@ class Card(pad_util.Printable):
         self.enemy_def_scale = float(raw[36])
 
         self.enemy_max_level = int(raw[37])
-        self.enemy_coins_per_level = int(raw[38]) // 2
-        self.enemy_xp_per_level = int(raw[39]) // 2
+        self.enemy_coins_per_level = int(raw[38]) / 2
+        self.enemy_xp_per_level = int(raw[39]) / 2
 
         self.ancestor_id = MonsterNo(int(raw[40]))
 

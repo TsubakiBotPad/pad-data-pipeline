@@ -43,7 +43,7 @@ class Curve(Printable):
 
     def value_at(self, level: int):
         f = 1 if self.max_level == 1 else ((level - 1) / (self.max_level - 1))
-        return self.min_value + (self.max_value - self.min_value) * math.pow(f, self.scale)
+        return int(round(self.min_value + (self.max_value - self.min_value) * math.pow(f, self.scale)))
 
 
 class Server(Enum):
