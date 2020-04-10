@@ -19,7 +19,6 @@ class EnLSTextConverter(EnBaseTextConverter):
         2: 'Reincarnated or Super Reincarnated Evolutions',
     }
 
-
     TAGS = {
         Tag.NO_SKYFALL: '[No skyfall]',
         Tag.DISABLE_POISON: '[Disable Poison & Mortal Poison orb effects]',
@@ -281,7 +280,7 @@ class EnLSTextConverter(EnBaseTextConverter):
             skill_text += '; '
         skill_text += '{}x ATK when there are {} or fewer orbs remaining'.format(fmt_mult(ls.base_atk), ls.orb_count)
         if ls.bonus_atk != 0:
-            skill_text += ' up to {}x ATK when 0 orbs left'.format(fmt_mult(ls.atk))
+            skill_text += ' up to {}x ATK when 0 orbs left'.format(fmt_mult(ls.max_bonus_atk))
         return skill_text
 
     def multi_mass_match_text(self, ls):
@@ -339,7 +338,9 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def color_combo_bonus_damage_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            skill_text = '{} additional damage when matching {}'.format(ls.bonus_damage, self.fmt_multi_attr(list(set(ls.attributes)), conj='and'))
+            skill_text = '{} additional damage when matching {}'.format(ls.bonus_damage,
+                                                                        self.fmt_multi_attr(list(set(ls.attributes)),
+                                                                                            conj='and'))
         else:
             skill_text = '{} additional damage when matching {} or more'.format(ls.bonus_damage, ls.min_combo)
             if ls.attributes:
