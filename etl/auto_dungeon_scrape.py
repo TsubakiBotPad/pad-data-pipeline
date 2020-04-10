@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import subprocess
 import time
 
@@ -8,6 +9,9 @@ from pad.common.shared_types import Server
 from pad.db import db_util
 from pad.raw.bonus import BonusType
 from pad.raw_processor import merged_database
+
+fail_logger = logging.getLogger('human_fix')
+fail_logger.disabled = True
 
 
 def parse_args():
@@ -101,8 +105,11 @@ def identify_dungeons(database, group):
             # Only check bonuses with dungeons
             continue
 
-        if bonus.bonus.bonus_info.bonus_type != BonusType.dungeon:
-            # Filter farther to just the actual dungeon entry
+        bonus_type = bonus.bonus.bonus_info.bonus_type
+        if bonus_type not in [
+            BonusType.dungeon,  # This is the actual dungeon for an active bonus
+            BonusType.tournament_active,  # This is an active ranking dungeon
+        ]:
             continue
 
         selected_dungeons.append(bonus.dungeon)
@@ -111,14 +118,7 @@ def identify_dungeons(database, group):
 
 
 def load_data(args):
-    if args.server == 'jp':
-        server = Server.jp
-    elif args.server == 'na':
-        server = Server.na
-    elif args.server == 'kr':
-        server = Server.kr
-    else:
-        raise ValueError('unexpected argument: ' + args.server)
+    server = Server.from_str(args.server)
 
     pad_db = merged_database.Database(server, args.input_dir)
     pad_db.load_database(skip_skills=True, skip_extra=True)
