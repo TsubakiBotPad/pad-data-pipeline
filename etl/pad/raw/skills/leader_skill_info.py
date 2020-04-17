@@ -13,7 +13,7 @@ class LeaderSkill(object):
     skill_type = -1
 
     def __init__(self, skill_type: int, ms: MonsterSkill,
-                 hp: float = 1, atk: float = 1, rcv: float = 1, shield: float = 0):
+                 hp: float = 1, atk: float = 1, rcv: float = 1, shield: float = 0, extra_combos: int = 0):
         if skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(skill_type, ms.skill_type))
         self.skill_id = ms.skill_id
@@ -25,6 +25,7 @@ class LeaderSkill(object):
         self._atk = round(atk, 2)
         self._rcv = round(rcv, 2)
         self._shield = round(shield, 2)
+        self._extra_combos = extra_combos
 
     @property
     def hp(self):
@@ -41,6 +42,10 @@ class LeaderSkill(object):
     @property
     def shield(self):
         return self._shield
+
+    @property
+    def extra_combos(self):
+        return self._extra_combos
 
     @property
     def parts(self):
@@ -1098,6 +1103,10 @@ class LSMultiPartSkill(LeaderSkill):
         return round(v, 2)
 
     @property
+    def extra_combos(self):
+        return sum([x.extra_combos for x in self.child_skills])
+
+    @property
     def parts(self):
         return self.child_skills
 
@@ -1619,7 +1628,7 @@ class LSAttrMatchBonusCombo(LeaderSkill):
         self.min_attr = data[1]
         self.bonus_combo = data[3]
         atk = multi_floor(data[2])
-        super().__init__(194, ms, atk=atk)
+        super().__init__(194, ms, atk=atk, extra_combos=self.bonus_combo)
 
     def text(self, converter) -> str:
         return converter.add_combo_att_text(self)
