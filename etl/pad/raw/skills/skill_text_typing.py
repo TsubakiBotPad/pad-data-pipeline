@@ -1,8 +1,3 @@
-import re
-import time
-from typing import List
-
-from enum import Enum
 from pad.raw.skills.active_skill_info import *
 from pad.raw.skills.leader_skill_info import *
 
@@ -56,7 +51,6 @@ class ASCondition(Enum):
     EXTENDS_TIME = 80
     CHANGE_ATTRIBUTE = 100
     REDUCE_SKILL_TURN = 110
-    LOCK = 120  # Deprecated!
     ORB_REFRESH = 130
     CHANGE_ENEMIES_ATTRIBUTE = 140
     ADD_COMBO = 160
@@ -83,7 +77,6 @@ class LSCondition(Enum):
     ENHANCED_ATK_RCV = 30
     ENHANCED_HP_ATK_RCV = 31
     REDUCE_DAMAGE = 32
-    DUAL_DAMAGE_REDUCTION = 33  # deprecate this
     ADDITIONAL_ATTACK = 34
     COUNTERATTACK = 35
     RESOLVE = 36
@@ -93,7 +86,7 @@ class LSCondition(Enum):
     EXP = 170
     BOARD_CHANGE_7X6 = 200
     NO_SKYFALL_COMBOS = 210
-    ETC = 999
+    ORB_SOUNDS = 999
 
 
 def format_conditions(skill_conditions):
@@ -347,7 +340,7 @@ def parse_ls_conditions(skill, child=False) -> List[LSCondition]:
         results.add(LSCondition.NO_SKYFALL_COMBOS)
 
     if isinstance(skill, LSTaikoDrum):
-        results.add(LSCondition.ETC)
+        results.add(LSCondition.ORB_SOUNDS)
 
     if child:
         return results

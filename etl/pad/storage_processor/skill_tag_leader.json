@@ -63,13 +63,6 @@
     "order_idx": 11
   },
   {
-    "leader_tag_id": 33,
-    "name_jp": "デュアルダメージ減少",
-    "name_kr": "듀얼 대미지 경감",
-    "name_na": "Dual Damage Reduction",
-    "order_idx": 12
-  },
-  {
     "leader_tag_id": 34,
     "name_jp": "追加攻撃",
     "name_kr": "추가 공격",
@@ -136,7 +129,7 @@
     "leader_tag_id": 999,
     "name_jp": "その他",
     "name_kr": "기타",
-    "name_na": "Etc",
+    "name_na": "Orb Sounds",
     "order_idx": 999
   }
 ]
