@@ -6,6 +6,7 @@ from enum import Enum
 from pad.raw.skills.active_skill_info import *
 from pad.raw.skills.leader_skill_info import *
 
+
 # Values here are used to compose the skill_data_list -> type_data field, which
 # is a field formatted via the values in the condition enums, csv, encased
 # in parens as such: (38),(41),(215)
@@ -71,6 +72,7 @@ class ASCondition(Enum):
     COMBO_ROOT = 280
     REDUCE_MATCH_RESTRICTION = 281
 
+
 class LSCondition(Enum):
     AUTO_HEAL = 1
     ENHANCED_HP = 25
@@ -93,15 +95,13 @@ class LSCondition(Enum):
     NO_SKYFALL_COMBOS = 210
     ETC = 999
 
-ASCondition.__cmp__ = lambda s, o: cmp(s.value, o.value)
-LSCondition.__cmp__ = lambda s, o: cmp(s.value, o.value)
 
 def format_conditions(skill_conditions):
     sorted_cond_values = sorted([x.value for x in skill_conditions])
     return ','.join(['({})'.format(x) for x in sorted_cond_values])
 
 
-def parse_as_conditions(skill, child = False) -> List[ASCondition]:
+def parse_as_conditions(skill, child=False) -> List[ASCondition]:
     """Takes the processor-generated active skill text and produces a list of conditions."""
     if not child:
         skill = skill.jp_skill
@@ -111,10 +111,9 @@ def parse_as_conditions(skill, child = False) -> List[ASCondition]:
         for s in skill.parts:
             results |= parse_as_conditions(s, True)
         if len([s for s in skill.parts if isinstance(s, (ASOneAttrtoOneAttr,
-                                                         ASTwoAttrtoOneTwoAttr, 
+                                                         ASTwoAttrtoOneTwoAttr,
                                                          ASThreeAttrtoOneAttr))]) >= 2:
             results.add(ASCondition.DOUBLE_ORBS_CONVERT)
-
 
     if isinstance(skill, ASRandomSkill):
         results.add(ASCondition.ETC)
@@ -139,7 +138,7 @@ def parse_as_conditions(skill, child = False) -> List[ASCondition]:
     if isinstance(skill, ASGravity):
         results.add(ASCondition.GRAVITY)
 
-    if isinstance(skill, (ASOneAttrtoOneAttr, ASTwoAttrtoOneTwoAttr,  ASThreeAttrtoOneAttr)):
+    if isinstance(skill, (ASOneAttrtoOneAttr, ASTwoAttrtoOneTwoAttr, ASThreeAttrtoOneAttr)):
         results.add(ASCondition.ORB_CONVERT)
         if 5 in skill.from_attr:
             results.add(ASCondition.ATTACK_STANCE)
@@ -161,7 +160,7 @@ def parse_as_conditions(skill, child = False) -> List[ASCondition]:
     if isinstance(skill, (ASAwokenSkillBurst, ASAwokenSkillBurst2)):
         if skill.toggle == 1:
             results.add(ASCondition.ENHANCED_HEAL)
-        elif skill.toggle in [0,2]:
+        elif skill.toggle in [0, 2]:
             results.add(ASCondition.ENHANCED_ATTACK)
         elif skill.toggle == 3:
             results.add(ASCondition.REDUCE_DAMAGE)
@@ -191,16 +190,16 @@ def parse_as_conditions(skill, child = False) -> List[ASCondition]:
         if skill.from_attr == list(range(10)):
             results.add(ASCondition.ALL_ORBS_CONVERT)
 
-    if isinstance(skill, (ASHpConditionalTargetNuke, ASHpConditionalMassNuke, 
-                          ASTargetNukeWithHpPenalty, ASMassNukeWithHpPenalty, 
+    if isinstance(skill, (ASHpConditionalTargetNuke, ASHpConditionalMassNuke,
+                          ASTargetNukeWithHpPenalty, ASMassNukeWithHpPenalty,
                           ASSuicide195)):
         results.add(ASCondition.SUICIDE)
 
     if isinstance(skill, (ASHpRecovery, ASHpRecoverFromRcv, ASHpRecoverStatic, ASHpRecoveryandBindClear)):
-        if any([getattr(skill,'hp',0),
-                getattr(skill,'rcv_multiplier_as_hp',0),
-                getattr(skill,'percentage_max_hp',0),
-                getattr(skill,'team_rcv_multiplier_as_hp',0)]):
+        if any([getattr(skill, 'hp', 0),
+                getattr(skill, 'rcv_multiplier_as_hp', 0),
+                getattr(skill, 'percentage_max_hp', 0),
+                getattr(skill, 'team_rcv_multiplier_as_hp', 0)]):
             results.add(ASCondition.HEAL)
     if isinstance(skill, ASAutoHealConvert):
         if skill.duration:
@@ -230,7 +229,7 @@ def parse_as_conditions(skill, child = False) -> List[ASCondition]:
             results.add(ASCondition.MASSIVE_ATTACK)
         else:
             results.add(ASCondition.SINGLE_TARGET_ATTACK)
-    
+
     if isinstance(skill, ASAttrOnAttrNuke):
         results.add(ASCondition.ATTRIBUTE_ATTACK)
 
@@ -278,13 +277,13 @@ def parse_as_conditions(skill, child = False) -> List[ASCondition]:
 
     if isinstance(skill, ASReduceDisableMatch):
         results.add(ASCondition.REDUCE_MATCH_RESTRICTION)
-        
+
     if child:
         return results
-    return sorted(results, key=lambda x:x.value)
+    return sorted(results, key=lambda x: x.value)
 
 
-def parse_ls_conditions(skill, child = False) -> List[LSCondition]:
+def parse_ls_conditions(skill, child=False) -> List[LSCondition]:
     """Takes the processor-generated leader skill text and produces a list of conditions."""
     if not child:
         skill = skill.jp_skill
@@ -352,4 +351,4 @@ def parse_ls_conditions(skill, child = False) -> List[LSCondition]:
 
     if child:
         return results
-    return sorted(results, key=lambda x:x.value)
+    return sorted(results, key=lambda x: x.value)
