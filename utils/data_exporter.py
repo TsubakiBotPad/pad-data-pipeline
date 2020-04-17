@@ -140,7 +140,11 @@ def dump_skill(f, css, converter, tag_extractor_fn):
     f.write('# {}/{} - {}\n'.format(jp_skill.skill_id, jp_skill.skill_type, na_skill.name))
     f.write('Tags: {}\n'.format(','.join(map(lambda x: x.name, skill_type_tags))))
     if isinstance(jp_skill, LeaderSkill):
-        f.write('Stats: [{}, {}, {}, {}]\n'.format(jp_skill.hp, jp_skill.atk, jp_skill.rcv, jp_skill.shield))
+        if jp_skill.extra_combos:
+            f.write('Stats: [{}, {}, {}, {}, +{}]\n'.format(
+                jp_skill.hp, jp_skill.atk, jp_skill.rcv, jp_skill.shield, jp_skill.extra_combos))
+        else:
+            f.write('Stats: [{}, {}, {}, {}]\n'.format(jp_skill.hp, jp_skill.atk, jp_skill.rcv, jp_skill.shield))
 
     f.write('Game: {}\n'.format(na_skill.raw_description))
     f.write('JP: {}\n'.format(jp_skill.full_text(converter[0]) or jp_skill.raw_description))
