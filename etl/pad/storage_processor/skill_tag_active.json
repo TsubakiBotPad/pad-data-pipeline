@@ -224,13 +224,6 @@
     "order_idx": 110
   },
   {
-    "active_tag_id": 120,
-    "name_jp": "ロック",
-    "name_kr": "잠금",
-    "name_na": "Lock",
-    "order_idx": 120
-  },
-  {
     "active_tag_id": 130,
     "name_jp": "ドロップリフレッシュ",
     "name_kr": "드롭 리프레쉬",
