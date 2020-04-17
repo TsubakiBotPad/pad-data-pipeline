@@ -126,6 +126,13 @@
     "order_idx": 210
   },
   {
+    "leader_tag_id": 211,
+    "name_jp": "Extra Combos",
+    "name_kr": "Extra Combos",
+    "name_na": "Extra Combos",
+    "order_idx": 210
+  },
+  {
     "leader_tag_id": 999,
     "name_jp": "ドロップ操作音",
     "name_kr": "기타",

@@ -86,6 +86,7 @@ class LSCondition(Enum):
     EXP = 170
     BOARD_CHANGE_7X6 = 200
     NO_SKYFALL_COMBOS = 210
+    EXTRA_COMBOS = 211
     ORB_SOUNDS = 999
 
 
@@ -341,6 +342,9 @@ def parse_ls_conditions(skill, child=False) -> List[LSCondition]:
 
     if isinstance(skill, LSTaikoDrum):
         results.add(LSCondition.ORB_SOUNDS)
+
+    if skill.extra_combos:
+        results.add(LSCondition.EXTRA_COMBOS)
 
     if child:
         return results
