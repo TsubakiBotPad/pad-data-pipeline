@@ -114,7 +114,6 @@ def load_dungeons(args, db_wrapper, current_dungeons):
             should_enter = newer_count < args.minimum_wave_count
             print('entries for {} : old={} new={} entering={}'.format(floor_id, older_count, newer_count, should_enter))
             if should_enter:
-                print('skipping entry for now')
                 do_dungeon_load(args, dungeon_id, floor_id)
 
             wave_info = db_wrapper.get_single_or_no_row(
