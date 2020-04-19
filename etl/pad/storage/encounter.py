@@ -50,7 +50,8 @@ class Encounter(SimpleSqlItem):
         return ExistsStrategy.BY_KEY_IF_SET
 
     def __str__(self):
-        return 'Encounter({}): {} -> {}'.format(self.key_value(), self.sub_dungeon_id, self.enemy_id)
+        return 'Encounter({}): {} -> {} [{}, {}, {}]'.format(self.key_value(), self.sub_dungeon_id, self.enemy_id,
+                                                             self.stage, self.monster_id, self.level)
 
 
 class Drop(SimpleSqlItem):
