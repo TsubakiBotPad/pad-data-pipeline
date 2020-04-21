@@ -13,6 +13,18 @@ from pad.raw_processor import merged_database
 fail_logger = logging.getLogger('human_fix')
 fail_logger.disabled = True
 
+# Dungeons in this list should have twice the minimum wave count.
+# They just have too much variability to get by on a normal scrape size.
+EXTRA_RUN_DUNGEONS = [
+    110,  # Endless Corridors
+    1625,  # Ultimate Descended Rush
+    2660,  # Alt Ultimate Arena
+    4247,  # All Days (gems)
+    4267,  # Multiplayer UDR
+    4268,  # Multiplayer Endless Coridors
+    4269,  # Multiplayer Evo Rush (gems)
+]
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Automatically scrape dungeons.", add_help=False)
@@ -103,6 +115,11 @@ def load_dungeons(args, db_wrapper, current_dungeons):
         dungeon_id = dungeon.dungeon_id
         print('processing', dungeon.clean_name, dungeon_id)
 
+        minimum_wave_count = args.minimum_wave_count
+        if dungeon_id in EXTRA_RUN_DUNGEONS:
+            print('variable dungeon, doubling the wave count')
+            minimum_wave_count *= 2
+
         for sub_dungeon in dungeon.sub_dungeons:
             floor_id = sub_dungeon.simple_sub_dungeon_id
 
@@ -111,7 +128,7 @@ def load_dungeons(args, db_wrapper, current_dungeons):
             older_count = int(wave_info["older"] or 0)
             newer_count = int(wave_info["newer"] or 0)
 
-            should_enter = newer_count < args.minimum_wave_count
+            should_enter = newer_count < minimum_wave_count
             print('entries for {} : old={} new={} entering={}'.format(floor_id, older_count, newer_count, should_enter))
             if should_enter:
                 do_dungeon_load(args, dungeon_id, floor_id)
@@ -121,7 +138,7 @@ def load_dungeons(args, db_wrapper, current_dungeons):
             older_count = int(wave_info["older"] or 0)
             newer_count = int(wave_info["newer"] or 0)
 
-            should_purge = older_count > 0 and newer_count >= args.minimum_wave_count
+            should_purge = older_count > 0 and newer_count >= minimum_wave_count
             print('entries for {} : old={} new={} purging={}'.format(floor_id, older_count, newer_count, should_purge))
 
             # This section cleans up 'old' data. We consider data to be out of date if approximately 3 months have
