@@ -22,5 +22,17 @@
     "min_hits": 1,
     "max_hits": 1,
     "atk_mult": 100
+  },
+  {
+    "enemy_skill_id": -3,
+    "name_jp": "Supplementary Info",
+    "name_na": "Supplementary Info",
+    "name_kr": "Supplementary Info",
+    "desc_jp": "Each time this action is reached the next skill in the list is used",
+    "desc_na": "Each time this action is reached the next skill in the list is used",
+    "desc_kr": "Each time this action is reached the next skill in the list is used",
+    "min_hits": 0,
+    "max_hits": 0,
+    "atk_mult": 0
   }
 ]
