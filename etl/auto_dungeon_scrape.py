@@ -39,7 +39,7 @@ def parse_args():
     input_group.add_argument("--user_uuid", required=True, help="Account UUID")
     input_group.add_argument("--user_intid", required=True, help="Account code")
 
-    input_group.add_argument("--minimum_wave_count", default=100, type=int,
+    input_group.add_argument("--minimum_wave_count", default=60, type=int,
                              help="Minimum stored wave count to skip loading wave data")
     input_group.add_argument("--maximum_wave_age", default=90, type=int,
                              help="Number of days before wave data becomes obsolete and needs to be reloaded")
