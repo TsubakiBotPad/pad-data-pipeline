@@ -7,6 +7,6 @@
 
   $email = $_REQUEST["email"];
 
-  $cmd = "python3 ${script} --db_config=${db_config} --email=${table}";
+  $cmd = "python3 ${script} --db_config=${db_config} --email=${email}";
   passthru($cmd, $err);
 ?>
