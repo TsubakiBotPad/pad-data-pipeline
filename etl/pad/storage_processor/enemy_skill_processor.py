@@ -37,7 +37,17 @@ class EnemySkillProcessor(object):
                 if cseb.enemy_skill_id <= 0 or isinstance(cseb.jp_skill.behavior, ESLogic):
                     continue
 
-                used_skills[cseb.enemy_skill_id] = cseb
+                if cseb.enemy_skill_id in used_skills:
+                    if cseb.unique_count() > used_skills[cseb.enemy_skill_id].unique_count():
+                        # This takes care of a rare issue where multiple monsters can use the
+                        # same skill, but en/kr lag behind jp and we take the cseb that has
+                        # jp values overwritten into the na/kr ones.
+                        #
+                        # Probably we should just stop this from being an issue by
+                        # loading all skills instead of just used skills.
+                        used_skills[cseb.enemy_skill_id] = cseb
+                else:
+                    used_skills[cseb.enemy_skill_id] = cseb
 
         logger.info('loading %d enemy skills', len(used_skills))
         for cseb in used_skills.values():

@@ -167,6 +167,9 @@ class CrossServerESInstance(object):
         self.na_skill = na_skill
         self.kr_skill = kr_skill
 
+    def unique_count(self):
+        return len({map(id, [self.jp_skill, self.na_skill, self.kr_skill])})
+
 
 def make_cross_server_enemy_behavior(jp_skills: List[ESInstance],
                                      na_skills: List[ESInstance],
