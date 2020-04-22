@@ -137,18 +137,37 @@ class DungeonContentProcessor(object):
                     AND enemy_id not in ({})
                     '''.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id, stage.stage_idx,
                                ','.join(map(str, seen_enemies)))
-                bad_stored_encounters = db.fetch_data(sql)
-                if bad_stored_encounters:
-                    encounter_list_str = ','.join([str(x['encounter_id']) for x in bad_stored_encounters])
-                    delete_drops_sql = 'DELETE FROM drops WHERE encounter_id IN ({});'.format(encounter_list_str)
-                    delete_encounters_sql = 'DELETE FROM encounters WHERE encounter_id IN ({});'.format(
-                        encounter_list_str)
-                    human_fix_logger.warning('Found bad stored encounters for %s: [%s] - %s\n%s\n%s',
-                                             dungeon.na_dungeon.clean_name,
-                                             sub_dungeon.na_sub_dungeon.clean_name,
-                                             encounter_list_str,
-                                             delete_drops_sql,
-                                             delete_encounters_sql)
+                self._print_bad_enemies('in-stage', dungeon, sub_dungeon, db, sql)
+
+        # In case there are missing stages (e.g. no more invades/commons)
+        seen_stage_indexes = [stage.stage_idx for stage in result_floor.stages]
+        sql = '''
+            SELECT encounter_id, enemy_id
+            FROM encounters
+            WHERE dungeon_id={}
+            AND sub_dungeon_id={}
+            AND stage not in ({})
+            '''.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id, ','.join(map(str, seen_stage_indexes)))
+        self._print_bad_enemies('out-stage', dungeon, sub_dungeon, db, sql)
+
+    def _print_bad_enemies(self, desc: str, dungeon, sub_dungeon, db: DbWrapper, sql: str):
+        bad_stored_encounters = db.fetch_data(sql)
+        if not bad_stored_encounters:
+            return
+
+        encounter_list_str = ','.join([str(x['encounter_id']) for x in bad_stored_encounters])
+        encounter_info_list_str = ','.join(
+            ['{}/{}'.format(x['encounter_id'], x['enemy_id']) for x in bad_stored_encounters])
+        delete_drops_sql = 'DELETE FROM drops WHERE encounter_id IN ({});'.format(encounter_list_str)
+        delete_encounters_sql = 'DELETE FROM encounters WHERE encounter_id IN ({});'.format(
+            encounter_list_str)
+        human_fix_logger.warning('Found bad %s stored encounters for %s: [%s] - %s\n%s\n%s',
+                                 desc,
+                                 dungeon.na_dungeon.clean_name,
+                                 sub_dungeon.na_sub_dungeon.clean_name,
+                                 encounter_info_list_str,
+                                 delete_drops_sql,
+                                 delete_encounters_sql)
 
     def _process_dungeon_rewards(self, db):
         def is_floor_bonus(x):
