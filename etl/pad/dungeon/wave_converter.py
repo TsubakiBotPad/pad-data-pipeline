@@ -120,8 +120,8 @@ class ResultFloor(object):
                         slot.order = slot.visible_monster_id()
                         slot.always_spawns = False
                         monster_id_to_adjusted_slot[slot.monster_id] = slot
-                    else:
-                        monster_id_to_adjusted_slot[slot.monster_id].drops.update(slot.drops)
+                    # Always update drops
+                    monster_id_to_adjusted_slot[slot.monster_id].drops.update(slot.drops)
 
                 common_result_stage = ResultStage(ProcessedStage(ProcessedStage.COMMON_IDX))
                 common_result_stage.slots = list(monster_id_to_adjusted_slot.values())
