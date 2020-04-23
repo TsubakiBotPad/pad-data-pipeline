@@ -294,6 +294,13 @@
     "order_idx": 250
   },
   {
+    "active_tag_id": 282,
+    "name_jp": "Pierce Damage Void",
+    "name_kr": "Pierce Damage Void",
+    "name_na": "Pierce Damage Void",
+    "order_idx": 255
+  },
+  {
     "active_tag_id": 260,
     "name_jp": "落ちコン無効化",
     "name_kr": "낙차 콤보 무효화",
