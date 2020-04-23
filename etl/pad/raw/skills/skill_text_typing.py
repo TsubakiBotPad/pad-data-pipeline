@@ -65,6 +65,7 @@ class ASCondition(Enum):
     ORB_LOCK = 270
     COMBO_ROOT = 280
     REDUCE_MATCH_RESTRICTION = 281
+    PIERCE_DAMAGE_VOID = 282
 
 
 class LSCondition(Enum):
@@ -259,6 +260,9 @@ def parse_as_conditions(skill, child=False) -> List[ASCondition]:
             results.add(ASCondition.VOID_DAMAGE_ABSORBS)
         if skill.attribute_absorb:
             results.add(ASCondition.VOID_ATT_ABSORBS)
+
+    if isinstance(skill, ASReduceVoidDamage):
+        results.add(ASCondition.PIERCE_DAMAGE_VOID)
 
     if isinstance(skill, ASNoSkyfallForXTurns):
         results.add(ASCondition.VOID_SKYFALLS)
