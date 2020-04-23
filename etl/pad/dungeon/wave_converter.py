@@ -1,6 +1,6 @@
 from collections import defaultdict
 from statistics import mean
-from typing import List, Set, Optional
+from typing import List, Set, Optional, Dict
 
 from pad.common.shared_types import MonsterId
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerCard
@@ -64,9 +64,11 @@ class ProcessedStage(object):
         # TODO: drop rates
 
         self.spawn_to_drop = defaultdict(set)
-        self.spawn_to_level = {}
-        self.spawn_to_slot = defaultdict(set)
-        self.spawn_to_count_list = defaultdict(list)
+        # Typically monsters spawn at a fixed level, but in rare cases (some newer superhard descends)
+        # floors spawn the same monster with multiple levels to proc different movesets.
+        self.spawn_to_level = defaultdict(set)  # type: Dict[MonsterId, Set[int]]
+        self.spawn_to_slot = defaultdict(set)  # type: Dict[MonsterId, Set[int]]
+        self.spawn_to_count_list = defaultdict(list)  # type: Dict[MonsterId, List[WaveItem]]
         self.spawns_per_wave = []
 
     def add_wave_group(self, entry_waves: List[WaveCard]):
@@ -82,7 +84,7 @@ class ProcessedStage(object):
             if drop:
                 self.spawn_to_drop[monster_id].add(drop)
 
-            self.spawn_to_level[monster_id] = wave_item.monster_level
+            self.spawn_to_level[monster_id].add(wave_item.monster_level)
             self.spawn_to_slot[monster_id].add(wave_item.slot)
             count_map[monster_id] += 1
 
@@ -168,12 +170,13 @@ class ResultStage(object):
 
         # Fixed spawns can be more than one too.
         for spawn in fixed_spawns:
-            level = processed_stage.spawn_to_level[spawn]
-            drops = processed_stage.spawn_to_drop[spawn]
-            order = min(processed_stage.spawn_to_slot[spawn])
-            count = processed_stage.spawn_to_count_list[spawn][0]
-            self.slots.append(ResultSlot(spawn, level, order, drops,
-                                         True, count, count))
+            for level in processed_stage.spawn_to_level[spawn]:
+                # Typically this loop only executes once
+                drops = processed_stage.spawn_to_drop[spawn]
+                order = min(processed_stage.spawn_to_slot[spawn])
+                count = processed_stage.spawn_to_count_list[spawn][0]
+                self.slots.append(ResultSlot(spawn, level, order, drops,
+                                             True, count, count))
 
         # Random spawns guess the amount based on the min/max wave size diff'ed
         # against the fixed spawn count.
@@ -183,11 +186,12 @@ class ResultStage(object):
             min_random_spawns = min(wave_sizes) - fixed_spawn_count
             max_random_spawns = max(wave_sizes) - fixed_spawn_count
             for spawn in random_spawns:
-                level = processed_stage.spawn_to_level[spawn]
-                drops = processed_stage.spawn_to_drop[spawn]
-                order = min(processed_stage.spawn_to_slot[spawn])
-                self.slots.append(ResultSlot(spawn, level, order, drops,
-                                             False, min_random_spawns, max_random_spawns))
+                for level in processed_stage.spawn_to_level[spawn]:
+                    # Typically this loop only executes once
+                    drops = processed_stage.spawn_to_drop[spawn]
+                    order = min(processed_stage.spawn_to_slot[spawn])
+                    self.slots.append(ResultSlot(spawn, level, order, drops,
+                                                 False, min_random_spawns, max_random_spawns))
 
 
 class ResultSlot(object):
