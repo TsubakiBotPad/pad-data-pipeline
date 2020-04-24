@@ -67,6 +67,7 @@ LONG_LOOP_MONSTERS = [
     103722,  # Water Orb Dragon
     103723,  # Wood Orb Dragon
     103725,  # Dark Orb Dragon
+    6087,  # Lady of the Holy Lake, Nimue
 
     # These have tons of unknown skills with short loop, but honestly no one
     # needs to know their 20-turn repeating skillset exactly.
@@ -94,7 +95,7 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
     long_loop = csc.monster_id in LONG_LOOP_MONSTERS
 
     skill_listings = []  # type: List[LevelBehavior]
-    seen_level_behavior = set()  # type: Set[str]
+    previous_level_behavior = ""
     used_actions = []  # type: List[ESInstance]
     for level in sorted(levels):
         try:
@@ -106,14 +107,17 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
             # Check if we've already seen this level behavior; zero out the level and stick it
             # in a set containing all the levels we've seen. We want the behavior set at the
             # lowest possible level.
+            #
+            # However, some monsters have a weird alternating ES behavior (1/3/5 are the same,
+            # 2/4/6 are the same) so to deal with that we only compare against the last seen.
             zerod_flattened = LevelBehavior()
             zerod_flattened.CopyFrom(flattened)
             zerod_flattened.level = 0
             zerod_value = zerod_flattened.SerializeToString()
-            if zerod_value in seen_level_behavior:
+            if zerod_value == previous_level_behavior:
                 continue
             else:
-                seen_level_behavior.add(zerod_value)
+                previous_level_behavior = zerod_value
 
             used_actions.extend(debug_utils.extract_used_skills(skillset))
             skill_listings.append(flattened)
