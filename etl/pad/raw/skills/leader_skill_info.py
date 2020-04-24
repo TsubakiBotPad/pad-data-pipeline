@@ -1598,7 +1598,7 @@ class LSBlobMatchBonusCombo(LeaderSkill):
         self.min_match = data[1]
         self.bonus_combo = data[3]
         atk = multi_floor(data[2])
-        super().__init__(192, ms, atk=atk)
+        super().__init__(192, ms, atk=atk, extra_combos=self.bonus_combo)
 
     def text(self, converter) -> str:
         return converter.multi_mass_match_text(self)
@@ -1725,7 +1725,7 @@ class LSColorComboBonusCombo(LeaderSkill):
         self.attributes = list_binary_con(data[:4])
         self.min_combo = data[5]
         self.bonus_combos = data[6]
-        super().__init__(206, ms)
+        super().__init__(206, ms, extra_combos=self.bonus_combos)
 
     def text(self, converter) -> str:
         return converter.color_combo_bonus_combo_text(self)
