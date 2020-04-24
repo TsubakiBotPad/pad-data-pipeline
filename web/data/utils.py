@@ -1,4 +1,5 @@
 import binascii
+import re
 from datetime import datetime
 from decimal import Decimal
 
@@ -44,6 +45,10 @@ def load_from_db(db_config, table, tstamp):
                                  cursorclass=pymysql.cursors.DictCursor)
 
     table = table.lower()
+    # Whitelist alphanum + _ for table names
+    if re.findall(r'[^\w]', table):
+        raise ValueError('Bad table name: ' + table)
+
     sql = 'SELECT * FROM `{}`'.format(table)
 
     if table == 'timestamps':
