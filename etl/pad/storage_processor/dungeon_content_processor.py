@@ -171,7 +171,7 @@ class DungeonContentProcessor(object):
 
         deleted_drops = db.update_item(delete_drops_sql)
         deleted_encounters = db.update_item(delete_encounters_sql)
-        human_fix_logger.warning('Auto deleted {} drops and {} encounters'.format(deleted_drops, delete_encounters_sql))
+        human_fix_logger.warning('Auto deleted {} drops and {} encounters'.format(deleted_drops, deleted_encounters))
 
     def _process_dungeon_rewards(self, db):
         def is_floor_bonus(x):
