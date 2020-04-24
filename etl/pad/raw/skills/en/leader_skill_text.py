@@ -349,6 +349,19 @@ class EnLSTextConverter(EnBaseTextConverter):
                 skill_text += ' combos'
         return skill_text
 
+    def color_combo_bonus_combo_text(self, ls):
+        if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
+            skill_text = 'Increase combo by {} when matching {}'.format(ls.bonus_combos,
+                                                                        self.fmt_multi_attr(list(set(ls.attributes)),
+                                                                                            conj='and'))
+        else:
+            skill_text = 'Increase combo by {} when matching {} or more'.format(ls.bonus_combos, ls.min_combo)
+            if ls.attributes:
+                skill_text += ' {} combos'.format(self.fmt_multi_attr(list(set(ls.attributes))))
+            else:
+                skill_text += ' combos'
+        return skill_text
+
     def full_text(self, text, tags=None):
         tags = tags or []
         if isinstance(text, (str, type(None))):

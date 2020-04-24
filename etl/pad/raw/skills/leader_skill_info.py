@@ -1,7 +1,7 @@
 import logging
-from typing import List, Optional
-from functools import reduce
 from collections import namedtuple
+from functools import reduce
+from typing import Optional
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.en.skill_common import *
@@ -1717,6 +1717,20 @@ class LSGroupConditionalBoost(LeaderSkill):
         return converter.group_bonus_text(self)
 
 
+class LSColorComboBonusCombo(LeaderSkill):
+    skill_type = 206
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0, 0])
+        self.attributes = list_binary_con(data[:4])
+        self.min_combo = data[5]
+        self.bonus_combos = data[6]
+        super().__init__(206, ms)
+
+    def text(self, converter) -> str:
+        return converter.color_combo_bonus_combo_text(self)
+
+
 def convert(skill_list: List[MonsterSkill]):
     results = {}
     for s in skill_list:
@@ -1858,4 +1872,5 @@ ALL_LEADER_SKILLS = [
     LSRainbowBonusDamage,
     LSBlobBonusDamage,
     LSColorComboBonusDamage,
+    LSColorComboBonusCombo,
 ]
