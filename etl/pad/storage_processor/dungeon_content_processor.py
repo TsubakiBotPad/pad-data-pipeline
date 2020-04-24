@@ -115,7 +115,9 @@ class DungeonContentProcessor(object):
                     AND sub_dungeon_id={}
                     AND stage={}
                     AND enemy_id={}
-                '''.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id, stage.stage_idx, slot.monster_id)
+                    AND level={}
+                '''.format(dungeon.dungeon_id, sub_dungeon.sub_dungeon_id, stage.stage_idx,
+                           slot.monster_id, slot.monster_level)
                 stored_encounter_id = db.get_single_value(sql, int, fail_on_empty=False)
 
                 if stored_encounter_id:
