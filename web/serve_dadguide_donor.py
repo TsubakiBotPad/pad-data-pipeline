@@ -25,10 +25,10 @@ def main(args):
                                  charset=db_config['charset'],
                                  cursorclass=pymysql.cursors.DictCursor)
 
-    sql = 'SELECT * FROM `donors` WHERE email = "{}"'.format(args.email)
+    sql = 'SELECT * FROM `donors` WHERE email = %s'
 
     with connection.cursor() as cursor:
-        cursor.execute(sql)
+        cursor.execute(sql, (args.email))
         results = list(cursor.fetchall())
 
     connection.close()
