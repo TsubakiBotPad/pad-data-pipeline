@@ -335,6 +335,11 @@ class JpLSTextConverter(JpBaseTextConverter):
 
         return skill_text + '。'
 
+    def color_combo_bonus_combo_text(self, ls):
+        human_fix_logger.warning('color_combo_bonus_combo_text not implemented in japanese')
+        from ..en.leader_skill_text import EnLSTextConverter
+        return EnLSTextConverter().color_combo_bonus_combo_text(ls)
+
     def full_text(self, text, tags=None):
         tags = tags or []
         if isinstance(text, (str, type(None))):
