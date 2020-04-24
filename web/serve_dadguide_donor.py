@@ -25,7 +25,7 @@ def main(args):
                                  charset=db_config['charset'],
                                  cursorclass=pymysql.cursors.DictCursor)
 
-    sql = 'SELECT * FROM `donors` WHERE email = %s'
+    sql = 'SELECT * FROM `donors` WHERE lower(email) = lower(%s)'
 
     with connection.cursor() as cursor:
         cursor.execute(sql, (args.email))
