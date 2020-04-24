@@ -169,6 +169,10 @@ class DungeonContentProcessor(object):
                                  delete_drops_sql,
                                  delete_encounters_sql)
 
+        deleted_drops = db.update_item(delete_drops_sql)
+        deleted_encounters = db.update_item(delete_encounters_sql)
+        human_fix_logger.warning('Auto deleted {} drops and {} encounters'.format(deleted_drops, delete_encounters_sql))
+
     def _process_dungeon_rewards(self, db):
         def is_floor_bonus(x):
             return x.dungeon and x.bonus.bonus_info.bonus_type == BonusType.dungeon_floor_text
