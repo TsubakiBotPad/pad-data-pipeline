@@ -339,9 +339,9 @@ class JpLSTextConverter(JpBaseTextConverter):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
             cond = '{}の同時攻擊'.format(self.fmt_multi_attr(list(set(ls.attributes))))
         elif not ls.attributes:
-            cond += '{}の{}コンボ以上'.format(self.fmt_multi_attr(list(set(ls.attributes))), ls.min_combo)
+            cond = '{}の{}コンボ以上'.format(self.fmt_multi_attr(list(set(ls.attributes))), ls.min_combo)
         else:
-            cond += '{}コンボ以上'.format(ls.min_combo)
+            cond = '{}コンボ以上'.format(ls.min_combo)
         return cond + "で{}コンボ加算".format(ls.bonus_combos)
 
     def full_text(self, text, tags=None):
