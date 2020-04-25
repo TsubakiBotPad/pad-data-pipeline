@@ -100,6 +100,13 @@ def internal_id_to_display_id(i_id: int) -> str:
     return ''.join(i_id[x - 1] for x in [1, 5, 9, 6, 3, 8, 2, 4, 7])
 
 
+def display_id_to_internal_id(d_id: int) -> str:
+    """Permutes internal PAD ID to the displayed form."""
+    i_id = str(d_id).zfill(9)  # ########1  2  3  4  5  6  7  8  9
+    # return ''.join(i_id[x - 1] for x in [1, 5, 9, 6, 3, 8, 2, 4, 7])
+    return ''.join(i_id[x - 1] for x in [1, 7, 5, 8, 2, 4, 9, 6, 3])
+
+
 def display_id_to_group(d_id: str) -> str:
     """Converts the display ID into the group name (a,b,c,d,e)."""
     return chr(ord('a') + (int(d_id[2]) % 5))
