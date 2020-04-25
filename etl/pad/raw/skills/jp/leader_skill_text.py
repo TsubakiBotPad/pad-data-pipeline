@@ -336,11 +336,6 @@ class JpLSTextConverter(JpBaseTextConverter):
         return skill_text + '。'
 
     def color_combo_bonus_combo_text(self, ls):
-        human_fix_logger.warning('color_combo_bonus_combo_text not implemented in japanese')
-        from ..en.leader_skill_text import EnLSTextConverter
-        return EnLSTextConverter().color_combo_bonus_combo_text(ls)
-
-    def color_combo_bonus_combo_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
             cond = '{}の同時攻擊'.format(self.fmt_multi_attr(list(set(ls.attributes))))
         elif not ls.attributes:
