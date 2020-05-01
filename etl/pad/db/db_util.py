@@ -1,7 +1,6 @@
-import json
 import logging
 import random
-from typing import Callable
+from typing import Callable, List
 
 import pymysql
 from pymysql import InterfaceError
@@ -29,10 +28,14 @@ class DbWrapper(object):
                                           autocommit=True)
         logger.info('DB Connected')
 
-    def execute(self, cursor, sql):
-        logger.debug('Executing: %s', sql)
+    def execute(self, cursor, sql, bindings: List[str] = None):
+        if bindings:
+            logger.debug('Executing: %s with bindings %s', sql, bindings)
+        else:
+            bindings = []
+            logger.debug('Executing: %s', sql)
         try:
-            return cursor.execute(sql)
+            return cursor.execute(sql, args=bindings)
         except InterfaceError:
             self.connection.ping()
             return cursor.execute(sql)
@@ -101,18 +104,18 @@ class DbWrapper(object):
         data = self.fetch_data(sql)
         return [obj_type(**_process_col_mappings(obj_type, d)) for d in data]
 
-    def custom_load_multiple_objects(self, obj_type, lookup_sql):
+    def custom_load_multiple_objects(self, obj_type, lookup_sql: str):
         data = self.fetch_data(lookup_sql)
         return [obj_type(**_process_col_mappings(obj_type, d)) for d in data]
 
-    def check_existing(self, sql):
+    def check_existing(self, sql: str):
         with self.connection.cursor() as cursor:
             num_rows = self.execute(cursor, sql)
             if num_rows > 1:
                 raise ValueError('got too many results:', num_rows, sql)
             return bool(num_rows)
 
-    def check_existing_value(self, sql):
+    def check_existing_value(self, sql: str):
         with self.connection.cursor() as cursor:
             num_rows = self.execute(cursor, sql)
             if num_rows > 1:
@@ -126,22 +129,22 @@ class DbWrapper(object):
                 else:
                     return row_values[0]
 
-    def insert_item(self, sql):
+    def insert_item(self, sql: str, bindings: List[str] = None):
         with self.connection.cursor() as cursor:
             if self.dry_run:
-                logger.warn('not inserting item due to dry run')
+                logger.warning('not inserting item due to dry run')
                 return random.randrange(-99999, -1)
-            self.execute(cursor, sql)
+            self.execute(cursor, sql, bindings)
             data = list(cursor.fetchall())
             num_rows = len(data)
             if num_rows > 0:
                 raise ValueError('got too many results for insert:', num_rows, sql)
             return cursor.lastrowid
 
-    def update_item(self, sql):
+    def update_item(self, sql: str):
         with self.connection.cursor() as cursor:
             if self.dry_run:
-                logger.warn('not running update due to dry run')
+                logger.warning('not running update due to dry run')
                 return 0
             self.execute(cursor, sql)
             data = list(cursor.fetchall())
@@ -149,8 +152,8 @@ class DbWrapper(object):
             if num_rows > 0:
                 raise ValueError('got too many results for update:', num_rows, sql)
             return cursor.rowcount
-    
-    def insert_or_update(self, item: SqlItem, force_insert=False):
+
+    def insert_or_update(self, item: SqlItem, force_insert: bool = False):
         try:
             return self._insert_or_update(item, force_insert=force_insert)
         except Exception as ex:
