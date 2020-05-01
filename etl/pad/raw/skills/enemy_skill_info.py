@@ -211,6 +211,10 @@ class ESBehavior(Printable):
         self.type = skill.type
         self.params = skill.params
 
+        # The default value for this skill conditional. This value can be
+        # overridden or the is_conditional function can be adjusted.
+        self.conditional = False
+
     @property
     def name(self):
         return self._name
@@ -218,14 +222,14 @@ class ESBehavior(Printable):
     def ends_battle(self):
         return False
 
-    def is_conditional(self):
-        return False
-
     def description(self, converter):
         return converter.not_set()
 
     def full_description(self, converter):
         return self.description(converter)
+
+    def is_conditional(self):
+        return self.conditional
 
     def __str__(self):
         return '{}({} - {}: {})'.format(self.__class__.__name__,
@@ -388,8 +392,7 @@ class ESBindAttribute(ESBind):
         self.target_attribute = self.params[1]
         self.targets = [TargetType.attrs]
 
-    def is_conditional(self):
-        return True
+        self.conditional = True
 
     def description(self, converter):
         return converter.bind(self.min_turns, self.max_turns,
@@ -404,8 +407,7 @@ class ESBindTyping(ESBind):
         self.target_typing = self.params[1]
         self.targets = [TargetType.types]
 
-    def is_conditional(self):
-        return True
+        self.conditional = True
 
     def description(self, converter):
         return converter.bind(self.min_turns, self.max_turns,
@@ -431,8 +433,7 @@ class ESBindAwoken(ESAction):
         super().__init__(skill)
         self.turns = self.params[1]
 
-    def is_conditional(self):
-        return self.turns > 1
+        self.conditional = self.turns > 1
 
     def description(self, converter):
         return converter.bind(self.turns, None, None, target_types=TargetType.awokens)
@@ -447,8 +448,7 @@ class ESOrbChange(ESAction):
         self.random_type_count = None
         self.exclude_hearts = None
 
-    def is_conditional(self):
-        return self.orb_from != -1
+        self.conditional = self.orb_from != -1
 
     def description(self, converter):
         return converter.orb_change(self.orb_from,
@@ -462,9 +462,7 @@ class ESOrbChange(ESAction):
 class ESOrbChangeConditional(ABC, ESOrbChange):
     def __init__(self, skill: EnemySkill, orb_from, orb_to):
         super().__init__(skill, orb_from, orb_to)
-
-    def is_conditional(self):
-        return True
+        self.conditional = True
 
 
 class ESOrbChangeSingle(ESOrbChangeConditional):
@@ -494,9 +492,6 @@ class ESJammerChangeSingle(ESOrbChangeConditional):
         from_attr = skill.params[1]
         to_attr = 6
         super().__init__(skill, from_attr, to_attr)
-
-    def is_conditional(self):
-        return True
 
 
 class ESJammerChangeRandom(ESOrbChange):
@@ -567,9 +562,7 @@ class ESPoisonChangeRandomAttack(ESOrbChangeAttack):
         to_attr = 7
         super().__init__(skill, orb_from=from_attr, orb_to=to_attr)
         self.random_count = int(skill.params[2])
-
-    def is_conditional(self):
-        return False
+        self.conditional = False
 
 
 class ESBlind(ESAction):
@@ -1057,15 +1050,13 @@ class ESRandomSpawn(ESAction):
         condition_attributes = attribute_bitmap(self.params[3], inverse=True)
         if len(condition_attributes) < 6:
             self.condition_attributes = condition_attributes
+        self.conditional = bool(self.condition_attributes)
 
     def description(self, converter):
         if self.count == 42 and self.condition_attributes:
             return converter.orb_change(self.condition_attributes, self.attributes)
         else:
             return converter.random_orb_spawn(self.count, self.attributes)
-
-    def is_conditional(self):
-        return self.condition_attributes
 
 
 class ESBombRandomSpawn(ESAction):
@@ -1210,11 +1201,10 @@ class ESOrbLock(ESAction):
         self.attributes = attribute_bitmap(self.params[1])
         self.count = self.params[2]
 
+        self.conditional = self.attributes != [-1] and len(self.attributes) != 9
+
     def description(self, converter):
         return converter.orb_lock(self.count, self.attributes)
-
-    def is_conditional(self):
-        return self.attributes != [-1] and len(self.attributes) != 9
 
 
 class ESOrbSeal(ABC, ESAction):
@@ -1370,6 +1360,7 @@ class ES7x6Change(ESAction):
         super().__init__(skill)
         self.turns = self.params[1]
         self.unknown = self.params[2]  # So far, only a single example with 1, converts to 7x6
+        # self.conditional = True
 
     def description(self, converter):
         return converter.force_7x6(self.turns)
