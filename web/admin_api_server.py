@@ -3,22 +3,21 @@ import binascii
 import json as base_json
 import os
 import string
+from typing import Optional
 
 import pymysql
 from sanic import Sanic
-from sanic.exceptions import ServerError
 from sanic.response import json, text
 from sanic_compress import Compress
 from sanic_cors import CORS
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehaviorWithOverrides
-from data.utils import load_from_db
 from pad.db.db_util import DbWrapper
 from pad.raw.enemy_skills import enemy_skill_proto
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="DadGuide backend server", add_help=False)
+    parser = argparse.ArgumentParser(description="DadGuide admin backend server", add_help=False)
     input_group = parser.add_argument_group("Input")
     input_group.add_argument("--db_config", help="JSON database info")
     input_group.add_argument("--es_dir", help="ES dir base")
@@ -32,47 +31,8 @@ CORS(app)
 
 db_config = None
 connection = None
-db_wrapper = None  # type: DbWrapper
-es_dir = None  # type: str
-
-VALID_TABLES = [
-    'active_skills',
-    'awakenings',
-    'awoken_skills',
-    'd_attributes',
-    'd_event_types',
-    'drops',
-    'dungeons',
-    'dungeon_type',
-    'encounters',
-    'evolutions',
-    'leader_skills',
-    'monsters',
-    'news',
-    'rank_rewards',
-    'schedule',
-    'series',
-    'skill_condition',
-    'sub_dungeons',
-    'timestamps'
-]
-
-
-@app.route('/dadguide/api/serve')
-async def serve_table(request):
-    table = request.args.get('table')
-    if table is None:
-        raise ServerError('table required')
-    if table not in VALID_TABLES:
-        raise ServerError('unexpected table')
-    tstamp = request.args.get('tstamp')
-    if tstamp is None and table != 'timestamps':
-        raise ServerError('tstamp required')
-    if tstamp is not None and not tstamp.isnumeric():
-        raise ServerError('tstamp must be a number')
-
-    data = load_from_db(db_config, table, tstamp)
-    return json(data)
+db_wrapper = None  # type: Optional[DbWrapper]
+es_dir = None  # type: Optional[str]
 
 
 @app.route('/dadguide/admin/state')
