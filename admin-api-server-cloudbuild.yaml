@@ -1,0 +1,19 @@
+steps:
+  - name: 'ubuntu'
+    id: 'setup'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        mkdir -p output
+        cp -r etl/pad output/
+        cp -r web/data output/
+        cp web/admin_api_server.py output/server.py
+        cp web/requirements.txt output/
+        cp web/Dockerfile output/
+
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: 'output'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/admin-api-server', '.']
+
+images: ['gcr.io/$PROJECT_ID/admin-api-server']
