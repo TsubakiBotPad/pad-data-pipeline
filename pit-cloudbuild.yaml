@@ -1,5 +1,5 @@
 steps:
-  - name: python:3.6-slim-buster
+  - name: python:3.6
     id: INSTALL
     entrypoint: python3
     args: ['-m', 'pip', 'install', '-t', '.', '-r', 'requirements.txt']
