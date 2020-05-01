@@ -1360,7 +1360,7 @@ class ES7x6Change(ESAction):
         super().__init__(skill)
         self.turns = self.params[1]
         self.unknown = self.params[2]  # So far, only a single example with 1, converts to 7x6
-        # self.conditional = True
+        self.conditional = True
 
     def description(self, converter):
         return converter.force_7x6(self.turns)
