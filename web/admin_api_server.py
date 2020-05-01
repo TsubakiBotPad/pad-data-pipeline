@@ -22,6 +22,7 @@ def parse_args():
     input_group.add_argument("--db_config", help="JSON database info")
     input_group.add_argument("--es_dir", help="ES dir base")
     input_group.add_argument("--web_dir", help="Admin app web directory")
+    input_group.add_argument("--port", default='8000', help="TCP port to listen on")
     return parser.parse_args()
 
 
@@ -301,7 +302,7 @@ def main(args):
         app.static('/', os.path.join(args.web_dir, 'index.html'))
         app.static('', args.web_dir)
 
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=int(args.port))
 
 
 if __name__ == '__main__':

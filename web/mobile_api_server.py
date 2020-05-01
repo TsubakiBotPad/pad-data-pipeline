@@ -18,6 +18,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="DadGuide mobile backend server", add_help=False)
     input_group = parser.add_argument_group("Input")
     input_group.add_argument("--db_config", help="JSON database info")
+    input_group.add_argument("--port", default='8000', help="TCP port to listen on")
     return parser.parse_args()
 
 
@@ -97,7 +98,7 @@ def main(args):
     db_wrapper = DbWrapper(False)
     db_wrapper.connect(db_config)
 
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=int(args.port))
 
 
 if __name__ == '__main__':
