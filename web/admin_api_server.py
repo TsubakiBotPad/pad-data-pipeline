@@ -5,13 +5,13 @@ import os
 import string
 from typing import Optional
 
-import pymysql
 from sanic import Sanic
 from sanic.response import json, text
 from sanic_compress import Compress
 from sanic_cors import CORS
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehaviorWithOverrides
+from data import utils
 from pad.db.db_util import DbWrapper
 from pad.raw.enemy_skills import enemy_skill_proto
 
@@ -288,12 +288,7 @@ def main(args):
         db_config = base_json.load(f)
 
     global connection
-    connection = pymysql.connect(host=db_config['host'],
-                                 user=db_config['user'],
-                                 password=db_config['password'],
-                                 db=db_config['db'],
-                                 charset=db_config['charset'],
-                                 cursorclass=pymysql.cursors.DictCursor)
+    connection = utils.connect(db_config)
 
     global db_wrapper
     db_wrapper = DbWrapper(False)
