@@ -4,25 +4,26 @@ Dumps all the pad data for na/kr/jp plus the combined data.
 import argparse
 import os
 import pathlib
+
 import padtools
+
 from pad.common import pad_util
 from pad.common.shared_types import Server
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
-from pad.raw.skills.jp.active_skill_text import JpASTextConverter
-from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
-from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
-from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
+from pad.raw.skills.enemy_skill_info import BEHAVIOR_MAP
+from pad.raw.skills.jp.active_skill_text import JpASTextConverter
+from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
+from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
+from pad.raw_processor import merged_database
+from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerEnemySkill
 
 AS_CONVERTERS = (JpASTextConverter(), EnASTextConverter(), EnASTextConverter())
 LS_CONVERTERS = (JpLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
 ES_CONVERTERS = (JpESTextConverter(), EnESTextConverter(), EnESTextConverter())
-
-from pad.raw_processor import merged_database
-from pad.raw_processor.crossed_data import CrossServerDatabase
-from pad.raw.skills.enemy_skill_info import BEHAVIOR_MAP
 
 
 def parse_args():
@@ -153,7 +154,7 @@ def dump_skill(f, css, converter, tag_extractor_fn):
     f.write('\n')
 
 
-def dump_enemy_skill(f, css, converter):
+def dump_enemy_skill(f, css: CrossServerEnemySkill, converter):
     jp_skill = css.jp_skill
     na_skill = css.na_skill
     kr_skill = css.kr_skill
