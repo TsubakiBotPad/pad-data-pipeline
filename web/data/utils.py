@@ -36,13 +36,17 @@ def dump_table(cursor):
     return result_json
 
 
+def connect(db_config):
+    return pymysql.connect(host=db_config['host'],
+                           user=db_config['user'],
+                           password=db_config['password'],
+                           db=db_config['db'],
+                           charset=db_config['charset'],
+                           cursorclass=pymysql.cursors.DictCursor)
+
+
 def load_from_db(db_config, table, tstamp):
-    connection = pymysql.connect(host=db_config['host'],
-                                 user=db_config['user'],
-                                 password=db_config['password'],
-                                 db=db_config['db'],
-                                 charset=db_config['charset'],
-                                 cursorclass=pymysql.cursors.DictCursor)
+    connection = connect(db_config)
 
     table = table.lower()
     # Whitelist alphanum + _ for table names

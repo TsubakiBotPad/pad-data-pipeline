@@ -2,7 +2,6 @@ import argparse
 import json as base_json
 from typing import Optional
 
-import pymysql
 from sanic import Sanic
 from sanic import request
 from sanic.exceptions import ServerError
@@ -10,6 +9,7 @@ from sanic.response import json
 from sanic_compress import Compress
 from sanic_cors import CORS
 
+from data import utils
 from data.utils import load_from_db
 from pad.db.db_util import DbWrapper
 
@@ -91,12 +91,7 @@ def main(args):
         db_config = base_json.load(f)
 
     global connection
-    connection = pymysql.connect(host=db_config['host'],
-                                 user=db_config['user'],
-                                 password=db_config['password'],
-                                 db=db_config['db'],
-                                 charset=db_config['charset'],
-                                 cursorclass=pymysql.cursors.DictCursor)
+    connection = utils.connect(db_config)
 
     global db_wrapper
     db_wrapper = DbWrapper(False)
