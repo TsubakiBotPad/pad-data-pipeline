@@ -86,12 +86,12 @@ cloud-build-local --dryrun=false  --config=admin-api-server-cloudbuild.yaml  .
 Watchtower is set up to continuously deploy new builds:
 
 ```bash
-docker run -d --name watchtower --restart always  -v /var/run/docker.sock:/var/run/docker.sock v2tec/watchtower -i 30
+docker run -d --name watchtower --restart always -v /home/tactical0retreat/.docker/config.json:/config.json -v /var/run/docker.sock:/var/run/docker.sock v2tec/watchtower -i 30
 ```
 
 Watchtower needs to have authorization to GCR. To set up auth:
 
-Get a json key file and save it into `~/.docker/`:
+Create a service account, and ensure it has Storage Viewer access. Get a json key file and save it into `~/.docker/`:
 https://cloud.google.com/container-registry/docs/advanced-authentication#json-key
 
 Run:
