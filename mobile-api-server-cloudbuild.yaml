@@ -9,7 +9,7 @@ steps:
         cp -r etl/dadguide_proto output/
         cp -r etl/pad output/
         cp -r web/data output/
-        cp web/mobile_api_server.py output/server.py
+        cp web/mobile_api_server.py output/
         cp web/requirements.txt output/
         cp web/Dockerfile output/
 
@@ -23,6 +23,7 @@ steps:
     args: [
       'build',
       '--build-arg', 'SCRIPT_NAME=mobile_api_server.py',
+      '--build-arg', 'PORT=8001',
       '-t', 'gcr.io/$PROJECT_ID/mobile-api-server',
       '.'
     ]

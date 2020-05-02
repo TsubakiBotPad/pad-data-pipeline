@@ -64,7 +64,8 @@ steps:
     args: [
       'build',
       '--build-arg', 'SCRIPT_NAME=admin_api_server.py',
-      '--build-arg', 'EXTRA_ARG=--web_dir=/server/web',
+      '--build-arg', 'PORT=8000',
+      '--build-arg', 'EXTRA_ARG=--web_dir=/server/web --es_dir=/server/es',
       '-t', 'gcr.io/$PROJECT_ID/admin-api-server',
       '.'
     ]
