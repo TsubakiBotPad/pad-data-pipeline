@@ -6,7 +6,8 @@ steps:
       - '-c'
       - |
         mkdir -p output
-        mkdir -p output/web
+        mkdir -p dadguide-admin
+        mkdir -p dadguide-flutter
         cp -r etl/dadguide_proto output/
         cp -r etl/pad output/
         cp -r web/data output/
@@ -14,10 +15,49 @@ steps:
         cp web/requirements.txt output/
         cp web/Dockerfile output/
 
+  - name: 'gcr.io/cloud-builders/git'
+    dir: 'dadguide-flutter'
+    args: ['clone', 'https://github.com/nachoapps/dadguide-flutter', '.']
+
+  - name: 'gcr.io/${PROJECT_ID}/flutter:beta'
+    id: 'setup-dadguide-flutter'
+    dir: 'dadguide-flutter'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        flutter pub get
+        flutter packages pub run build_runner build
+
+  - name: 'gcr.io/cloud-builders/git'
+    dir: 'dadguide-admin'
+    args: ['clone', 'https://github.com/nachoapps/dadguide-admin', '.']
+
+  - name: 'gcr.io/${PROJECT_ID}/flutter:beta'
+    id: 'setup-dadguide-admin'
+    dir: 'dadguide-admin'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        flutter config --enable-web
+        flutter pub get
+        flutter packages pub run build_runner build
+
+  - name: 'gcr.io/${PROJECT_ID}/flutter:beta'
+    id: 'compile-flutter-web'
+    dir: 'dadguide-admin'
+    args: ['build', 'web']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'move-web-folder'
+    entrypoint: 'bash'
+    args: ['-c', 'mv dadguide-admin/build/web output/']
+
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'download-db-config'
     entrypoint: 'bash'
-    args: [ '-c', 'gcloud secrets versions access latest --secret=prod_db_config > output/db_config.json' ]
+    args: ['-c', 'gcloud secrets versions access latest --secret=prod_db_config > output/db_config.json']
 
   - name: 'gcr.io/cloud-builders/docker'
     dir: 'output'
