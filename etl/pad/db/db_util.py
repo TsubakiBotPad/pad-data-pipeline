@@ -32,7 +32,7 @@ class DbWrapper(object):
         if bindings:
             logger.debug('Executing: %s with bindings %s', sql, bindings)
         else:
-            bindings = []
+            bindings = None  # Don't allow empty array as an input
             logger.debug('Executing: %s', sql)
         try:
             return cursor.execute(sql, args=bindings)
