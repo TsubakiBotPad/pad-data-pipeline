@@ -2,7 +2,6 @@ requests
 git+https://github.com/nachoapps/padtools.git
 pytz
 bs4
-pyyaml
 protobuf
 pymysql
 sanic
