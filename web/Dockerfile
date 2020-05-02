@@ -12,4 +12,4 @@ ADD . /server/
 RUN python3 -m pip install -r /server/requirements.txt
 
 EXPOSE 8000
-ENTRYPOINT python3 /server/${SCRIPT_NAME} --db_config=/server/db_config.json ${EXTRA_ARG}
+ENTRYPOINT ["sh", "-c", "python3 /server/${SCRIPT_NAME} --db_config=/server/db_config.json ${EXTRA_ARG}"]
