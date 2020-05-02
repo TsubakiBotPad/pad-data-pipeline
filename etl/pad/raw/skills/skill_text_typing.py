@@ -63,7 +63,7 @@ class ASCondition(Enum):
     VOID_ATT_ABSORBS = 250
     VOID_SKYFALLS = 260
     ORB_LOCK = 270
-    COMBO_ROOT = 280
+    COMBO_ROUTE = 280
     REDUCE_MATCH_RESTRICTION = 281
     PIERCE_DAMAGE_VOID = 282
 
@@ -271,7 +271,7 @@ def parse_as_conditions(skill, child=False) -> List[ASCondition]:
         results.add(ASCondition.ORB_LOCK)
 
     if isinstance(skill, ASShowComboPath):
-        results.add(ASCondition.COMBO_ROOT)
+        results.add(ASCondition.COMBO_ROUTE)
 
     if isinstance(skill, ASReduceDisableMatch):
         results.add(ASCondition.REDUCE_MATCH_RESTRICTION)
