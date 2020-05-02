@@ -32,6 +32,12 @@ one (like the script does). I'm not sure how stable this is.
 3) I have no monitoring set up for the new stuff. None for the old stuff either
 actually but empirically it seems to work. 
 
+To run the server on the DG host:
+
+```bash
+docker run -d --name mobile-api-server --network=host --restart=on-failure gcr.io/rpad-discord/mobile-api-server:latest
+```
+
 ## Admin server
 
 This serves the Monster Admin ES webapp, including the front end stuff and the
@@ -45,3 +51,50 @@ cloudbuild script, you also need to have compiled the Flutter Builder:
 https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/flutter
 
 This should be updated periodically.
+
+To run the server on the DG host:
+
+```bash
+docker run -d --name admin-api-server --network=host --restart=on-failure -v /home/tactical0retreat/dadguide/pad-game-data:/server/es gcr.io/rpad-discord/admin-api-server:latest
+```
+
+I had trouble getting the build args and runtime args to play nicely with the
+entrypoint, so the ES dir is hardcoded. The bind mount to `/server/es` is a
+hard requirement. 
+
+## Building the containers
+
+Run these commands from the root of the project.
+
+### On Cloud Build
+
+```bash
+gcloud builds submit . --config=admin-api-server-cloudbuild.yaml 
+```
+
+## Local compilation
+
+After following the instructions here:
+https://cloud.google.com/cloud-build/docs/build-debug-locally
+
+```bash
+cloud-build-local --dryrun=false  --config=admin-api-server-cloudbuild.yaml  .
+```
+
+## Continuous deployment
+
+Watchtower is set up to continuously deploy new builds:
+
+```bash
+docker run -d --name watchtower --restart always  -v /var/run/docker.sock:/var/run/docker.sock v2tec/watchtower -i 30
+```
+
+Watchtower needs to have authorization to GCR. To set up auth:
+
+Get a json key file and save it into `~/.docker/`:
+https://cloud.google.com/container-registry/docs/advanced-authentication#json-key
+
+Run:
+```bash
+docker login -u _json_key --password-stdin https://gcr.io < ~/.docker/gcloudauth.json
+```
