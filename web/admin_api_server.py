@@ -92,6 +92,7 @@ MONSTERS_SQL = '''
 '''
 
 RANDOM_MONSTERS_SQL = MONSTERS_SQL.format('order by rand()')
+RANDOM_REAPPROVAL_MONSTERS_SQL = MONSTERS_SQL.format('order by rand()').replace('ed.status = 0', 'ed.status = 2')
 EASY_MONSTERS_SQL = MONSTERS_SQL.format('order by length(ed.behavior), rand()')
 
 
@@ -101,32 +102,48 @@ async def serve_random_monsters(request):
     return json({'monsters': data})
 
 
+@app.route('/dadguide/admin/randomReapprovalMonsters')
+async def serve_random_monsters(request):
+    data = db_wrapper.fetch_data(RANDOM_REAPPROVAL_MONSTERS_SQL)
+    return json({'monsters': data})
+
+
 @app.route('/dadguide/admin/easyMonsters')
 async def serve_easy_monsters(request):
     data = db_wrapper.fetch_data(EASY_MONSTERS_SQL)
     return json({'monsters': data})
 
 
+NEXT_MONSTER_SQL = '''
+select e.enemy_id as enemy_id
+from enemy_data ed
+inner join encounters e using (enemy_id)
+inner join dungeons d using (dungeon_id)
+inner join sub_dungeons sd using (sub_dungeon_id)
+where ed.status = 0
+    and d.dungeon_type != 0
+    and e.enemy_id > {}
+    and sd.technical = true
+group by 1
+order by e.enemy_id asc
+limit 1
+'''
+
+NEXT_REAPPROVAL_MONSTER_SQL = NEXT_MONSTER_SQL.replace('ed.status = 0', 'ed.status = 2')
+
+
 @app.route('/dadguide/admin/nextMonster')
 async def serve_next_monster(request):
     enemy_id = int(request.args.get('id'))
-    sql = '''
-        select e.enemy_id as enemy_id
-        from enemy_data ed
-        inner join encounters e
-        using (enemy_id)
-        inner join dungeons d
-        using (dungeon_id)
-        inner join sub_dungeons sd
-        using (sub_dungeon_id)
-        where ed.status = 0
-        and d.dungeon_type != 0
-        and e.enemy_id > {}
-        and sd.technical = true
-        group by 1
-        order by e.enemy_id asc
-        limit 1
-    '''.format(enemy_id)
+    sql = NEXT_MONSTER_SQL.format(enemy_id)
+    data = db_wrapper.get_single_value(sql, int)
+    return text(data)
+
+
+@app.route('/dadguide/admin/nextReapprovalMonster')
+async def serve_next_reapproval_monster(request):
+    enemy_id = int(request.args.get('id'))
+    sql = NEXT_REAPPROVAL_MONSTER_SQL.format(enemy_id)
     data = db_wrapper.get_single_value(sql, int)
     return text(data)
 
