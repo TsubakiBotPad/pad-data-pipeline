@@ -1,6 +1,7 @@
 import logging
 
 from pad.common import pad_util
+from pad.common.utils import remove_diacritics
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
 from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution, MonsterWithExtraImageInfo
@@ -17,6 +18,7 @@ class MonsterProcessor(object):
         logger.info('loading monster data')
         self._process_skills(db)
         self._process_monsters(db)
+        self._process_auto_override(db)
         self._process_monster_images(db)
         self._process_awakenings(db)
         self._process_evolutions(db)
@@ -43,6 +45,20 @@ class MonsterProcessor(object):
         for m in self.data.ownable_cards:
             item = Monster.from_csm(m)
             db.insert_or_update(item)
+
+    def _process_auto_override(self, db: DbWrapper):
+        logger.info('checking for auto name overrides')
+        for m in self.data.ownable_cards:
+            name = m.na_card.card.name
+            name_clean = remove_diacritics(name)
+            if name != name_clean:
+                existing_name = db.get_single_value(
+                    'select name_na_override from monsters where monster_id = {}'.format(m.monster_id),
+                    fail_on_empty=False)
+                if not existing_name:
+                    logger.info('applying name override (%s): %s -> %s', m.monster_id, name, name_clean)
+                    db.update_item('update monsters set name_na_override = "{}" where monster_id = {}'.format(
+                        name_clean, m.monster_id))
 
     def _process_monster_images(self, db):
         logger.info('monster images, hq_count=%s, anim_count=%s',
