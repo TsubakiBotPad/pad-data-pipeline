@@ -10,7 +10,7 @@ from sanic_compress import Compress
 from sanic_cors import CORS
 
 from data import utils
-from data.utils import load_from_db
+from data.utils import load_from_db_connection
 from pad.db.db_util import DbWrapper
 
 
@@ -66,7 +66,7 @@ async def serve_table(request):
     if tstamp is not None and not tstamp.isnumeric():
         raise ServerError('tstamp must be a number')
 
-    data = load_from_db(db_config, table, tstamp)
+    data = load_from_db_connection(connection, table, tstamp)
     return json(data)
 
 
