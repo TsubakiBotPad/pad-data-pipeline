@@ -4,11 +4,19 @@ import os
 
 from PIL import Image
 
+from pad.raw_processor import merged_database
+from pad.common.shared_types import Server
+
+import logging
+fail_logger = logging.getLogger('human_fix')
+fail_logger.disabled = True
+
+
 parser = argparse.ArgumentParser(description="Generates P&D portraits.", add_help=False)
 
 inputGroup = parser.add_argument_group("Input")
 inputGroup.add_argument("--input_dir", help="Path to a folder where CARD files are")
-inputGroup.add_argument("--data_dir", required=True, help="Path to processed pad data files")
+inputGroup.add_argument("--data_dir", required=True, help="Path to raw pad data files")
 inputGroup.add_argument("--server", help="Either na or jp")
 inputGroup.add_argument("--card_templates_file", help="Path to card templates png")
 
@@ -19,9 +27,6 @@ helpGroup = parser.add_argument_group("Help")
 helpGroup.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
 args = parser.parse_args()
 
-input_dir = args.input_dir
-server = args.server
-cards_file = os.path.join(args.data_dir, '{}_cards.json'.format(server))
 card_templates_file = args.card_templates_file
 output_dir = args.output_dir
 
@@ -45,8 +50,6 @@ for idx, t in enumerate(['r', 'b', 'g', 'l', 'd']):
     sattr_imgs[t] = templates_img.crop(box=(xstart, ystart, xend, yend))
 
 card_types = []
-with open(cards_file) as f:
-    card_data = json.load(f)
 
 attr_map = {
     -1: '',
@@ -57,10 +60,14 @@ attr_map = {
     4: 'd',
 }
 
-for merged_card in card_data:
-    card = merged_card['card']
-    card_id = card['monster_no']
-    released = card['released_status']
+server = Server.from_str(args.server)
+pad_db = merged_database.Database(server, args.data_dir)
+pad_db.load_database(skip_skills=True, skip_extra=True)
+
+for merged_card in pad_db.cards:
+    card = merged_card.card
+    card_id = card.monster_no
+    released = card.released_status
 
     # Prevent loading junk entries (fake enemies) and also limit to data which has
     # been officially released.
@@ -69,8 +76,8 @@ for merged_card in card_data:
 
     card_types.append([
         card_id,
-        attr_map[card['attr_id']],
-        attr_map[card['sub_attr_id']]
+        attr_map[card.attr_id],
+        attr_map[card.sub_attr_id]
     ])
 
 
@@ -92,7 +99,7 @@ card_imgs = {}
 
 def get_portraits_img(file_name):
     if file_name not in card_imgs:
-        file_path = os.path.join(input_dir, file_name)
+        file_path = os.path.join(args.input_dir, file_name)
         if not os.path.exists(file_path):
             return None
         card_imgs[file_name] = Image.open(file_path)
