@@ -13,6 +13,7 @@ from pad.storage.enemy_skill import EnemySkill, EnemyData
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 logger = logging.getLogger('processor')
+human_fix_logger = logging.getLogger('human_fix')
 
 
 class EnemySkillProcessor(object):
@@ -65,6 +66,7 @@ class EnemySkillProcessor(object):
 
         logger.info('loading enemy data for %d cards', len(card_files))
         count_not_approved = 0
+        count_needs_reapproval = 0
         count_approved = 0
         for card_file in card_files:
             mbwo = enemy_skill_proto.load_from_file(card_file)
@@ -77,9 +79,14 @@ class EnemySkillProcessor(object):
             else:
                 mb.levels.extend(mbwo.level_overrides)
                 mb.approved = True
-                count_approved += 1
+                if mbwo.status == enemy_skills_pb2.MonsterBehaviorWithOverrides.NEEDS_REAPPROVAL:
+                    count_needs_reapproval += 1
+                else:
+                    count_approved += 1
 
             item = EnemyData.from_mb(mb, mbwo.status)
             self.db.insert_or_update(item)
 
         logger.info('done, %d approved %d not approved', count_approved, count_not_approved)
+        if count_needs_reapproval > 0:
+            human_fix_logger.warning('%d monsters need re-approval', count_needs_reapproval)
