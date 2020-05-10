@@ -122,6 +122,10 @@ def is_entirely_transparent(img):
 
 
 for card_id, card_attr, card_sattr in card_types:
+    output_file = os.path.join(output_dir, '{}.png'.format(card_id))
+    if os.path.exists(output_file):
+        continue
+
     card_file, row, col = idx_for_id(card_id)
     portraits = get_portraits_img(card_file)
     if portraits is None:
