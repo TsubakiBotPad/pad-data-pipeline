@@ -1,25 +1,33 @@
 import logging
-import os
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 
 from pad.db.db_util import DbWrapper
-from pad.common.shared_types import Server
-from pad.raw_processor import crossed_data
 
 logger = logging.getLogger('processor')
 
+
 def date2tstamp(date):
     return int(date.timestamp())
+
 
 class PurgeDataProcessor(object):
     def __init__(self):
         pass
 
     def process(self, db: DbWrapper):
-        db.fetch_data("DELETE FROM `schedule` WHERE end_timestamp < {}" \
-                      .format(date2tstamp(datetime.now()-timedelta(weeks=4))))
-        schedule = db.fetch_data("SELECT ROW_COUNT()")[0]['ROW_COUNT()']
-        db.fetch_data("DELETE FROM `deleted_rows` WHERE tstamp < {}" \
-                      .format(date2tstamp(datetime.now()-timedelta(weeks=4))))
-        del_rows = db.fetch_data("SELECT ROW_COUNT()")[0]['ROW_COUNT()']
-        logger.info("purged {} old schedules and {} old deleted_rows".format(schedule, del_rows))
+        print('Starting deletion of old records')
+        print('schedule size:', db.get_single_value('select count(*) from schedule'))
+        print('deleted_rows size', db.get_single_value('select count(*) from deleted_rows'))
+
+        # This is a hint to mysql that we shouldn't insert into deleted_rows
+        # while purging. The client should handle deleting old events in bulk.
+        db.fetch_data('set @TRIGGER_DISABLED=true')
+
+        delete_timestamp = date2tstamp(datetime.now() - timedelta(weeks=4))
+        print('deleting before', delete_timestamp)
+        schedule_deletes = db.update_item(
+            "DELETE FROM `schedule` WHERE end_timestamp < {}".format(delete_timestamp))
+        deleted_row_deletes = db.update_item(
+            "DELETE FROM `deleted_rows` WHERE tstamp < {}".format(delete_timestamp))
+
+        logger.info("purged {} old schedules and {} old deleted_rows".format(schedule_deletes, deleted_row_deletes))

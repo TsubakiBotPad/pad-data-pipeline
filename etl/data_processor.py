@@ -190,9 +190,7 @@ def load_data(args):
     # Update timestamps
     TimestampProcessor().process(db_wrapper)
 
-    # Purge old schedule items and deleted_rows
-    # This is dangerous, so we won't do it yet
-    # PurgeDataProcessor().process(db_wrapper)
+    PurgeDataProcessor().process(db_wrapper)
 
     print('done')
 
