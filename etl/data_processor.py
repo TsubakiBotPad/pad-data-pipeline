@@ -125,9 +125,10 @@ def load_data(args):
 
     if not args.skipintermediate:
         logger.info('Storing intermediate data')
-        jp_database.save_all(args.output_dir, args.pretty)
+        # jp_database.save_all(args.output_dir, args.pretty)
+        # This is supported for PadSpike, until we can support it better in the dg db
         na_database.save_all(args.output_dir, args.pretty)
-        kr_database.save_all(args.output_dir, args.pretty)
+        # kr_database.save_all(args.output_dir, args.pretty)
 
     logger.info('Connecting to database')
     with open(args.db_config) as f:
