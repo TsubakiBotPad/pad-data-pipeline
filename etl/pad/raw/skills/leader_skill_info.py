@@ -1359,7 +1359,7 @@ class LSAtkRcvComboScale(LeaderSkill):
     skill_type = 166
 
     def __init__(self, ms: MonsterSkill):
-        data = ms.data
+        data = merge_defaults(ms.data, [1, 100, 100, 0, 0, 0])
         self.min_combos = data[0]
         self.min_atk = mult(data[1])
         self.min_rcv = mult(data[2])
