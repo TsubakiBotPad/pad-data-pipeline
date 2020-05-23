@@ -1,9 +1,9 @@
 ## Regenerating the schema dump
 
+This is generally very out of date. It's not actually used for anything.
+
 ```bash
 mysqldump -u root dadguide -p --no-data > mysql.sql
-
-# TODO: need to reset autoinsert on dump?
 ```
 
 ## Dumping a built database to sqlite
