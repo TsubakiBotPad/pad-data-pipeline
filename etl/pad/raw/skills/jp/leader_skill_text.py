@@ -160,7 +160,7 @@ class JpLSTextConverter(JpBaseTextConverter):
         skill_text = '{}コンボ以上で'.format(ls.min_combos)
         skill_text += self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True, atk=ls.min_atk,
                                                      rcv=ls.min_rcv)
-        if ls.min_combos != ls.max_combos:
+        if ls.min_combos != ls.max_combos and ls.max_combos:
             skill_text += '、最大{}コンボで{}倍'.format(ls.max_combos, fmt_mult(ls.atk))
         return skill_text + '。'
 

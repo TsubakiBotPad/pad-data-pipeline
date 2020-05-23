@@ -161,7 +161,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True, atk=ls.min_atk,
                                                     rcv=ls.min_rcv)
         skill_text += ' when {} or more combos'.format(ls.min_combos)
-        if ls.min_combos != ls.max_combos:
+        if ls.min_combos != ls.max_combos and ls.max_combos:
             skill_text += ' up to {}x at {} combos'.format(fmt_mult(ls.atk), ls.max_combos)
         return skill_text
 
