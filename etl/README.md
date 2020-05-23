@@ -20,8 +20,14 @@ The scripts here do all the data updating, and also some misc utility stuff.
 | Script                      | Purpose                                               |
 | ---                         | ---                                                   |
 | pad_data_pull.py            | Downloads PAD data from server via API                |
-| data_processor.py          | Updates PadGuide database, writes processed files     |
+| data_processor.py           | Updates PadGuide database, writes processed files     |
 | default_db_config.json      | Dummy file for DG database connection                 |
+
+You don't need to run `pad_data_pull.py`; all the results of calling the API are
+published, see the `utils` directory for information on how to access them.
+
+`data_processor.py` is only neccessary if you want to maintain your own copy of the
+DadGuide database. The database is published after each update, see the `utils` directory.
 
 ### Secondary data pull stuff
 
@@ -53,14 +59,3 @@ a lot of stuff in here.
 
 Contains the Python bindings for the DadGuide protocol buffers. Currently only
 used for enemy skills. 
-
-## Less important subdirectories
-
-### utils
-
-Random scripts and code. 
-
-Most importantly, `refresh_data.sh` will simplify pulling the latest
-published data files for development purposes, such as running the integration
-tests or generating enemy skill/dungeon data.
-

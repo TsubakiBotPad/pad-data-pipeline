@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.28, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.30, for Linux (x86_64)
 --
 -- Host: localhost    Database: dadguide
 -- ------------------------------------------------------
--- Server version	5.7.28-0ubuntu0.18.04.4
+-- Server version	5.7.30-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -33,6 +33,26 @@ CREATE TABLE `active_skill_tags` (
   KEY `tstamp_idx` (`tstamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER active_skill_tags_deleted
+AFTER DELETE ON active_skill_tags
+FOR EACH ROW
+BEGIN
+  INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('active_skill_tags', OLD.active_skill_tag_id, UNIX_TIMESTAMP());
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `active_skills`
@@ -78,8 +98,28 @@ CREATE TABLE `awakenings` (
   KEY `awoken_skill_id_idx` (`awoken_skill_id`),
   CONSTRAINT `awakenings_fk_awoken_skill_id` FOREIGN KEY (`awoken_skill_id`) REFERENCES `awoken_skills` (`awoken_skill_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `awakenings_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=99314 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=103759 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER awakenings_deleted
+AFTER DELETE ON awakenings
+FOR EACH ROW
+BEGIN
+  INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('awakenings', OLD.awakening_id, UNIX_TIMESTAMP());
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `awoken_skills`
@@ -189,7 +229,7 @@ CREATE TABLE `deleted_rows` (
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`deleted_row_id`),
   KEY `tstamp` (`tstamp`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,8 +250,28 @@ CREATE TABLE `drops` (
   KEY `monster_id` (`monster_id`),
   CONSTRAINT `drops_fk_encounter_id` FOREIGN KEY (`encounter_id`) REFERENCES `encounters` (`encounter_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `drops_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=34891 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=44545 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER drops_deleted
+AFTER DELETE ON drops
+FOR EACH ROW
+BEGIN
+  INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('drops', OLD.drop_id, UNIX_TIMESTAMP());
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `dungeon_type`
@@ -285,7 +345,7 @@ CREATE TABLE `egg_machines` (
   KEY `egg_machine_type_id` (`egg_machine_type_id`),
   CONSTRAINT `egg_machine_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `egg_machines_ibfk_1` FOREIGN KEY (`egg_machine_type_id`) REFERENCES `d_egg_machine_types` (`egg_machine_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=131 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,8 +381,26 @@ CREATE TABLE `encounters` (
   CONSTRAINT `encounters_fk_dungeon_id` FOREIGN KEY (`dungeon_id`) REFERENCES `dungeons` (`dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `encounters_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `encounters_fk_sub_dungeon_id` FOREIGN KEY (`sub_dungeon_id`) REFERENCES `sub_dungeons` (`sub_dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=75048 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=85248 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `encounters_deleted` AFTER DELETE ON `encounters`
+ FOR EACH ROW BEGIN
+  INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('encounters', OLD.encounter_id, UNIX_TIMESTAMP());
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `enemy_data`
@@ -333,6 +411,7 @@ DROP TABLE IF EXISTS `enemy_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enemy_data` (
   `enemy_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
   `behavior` blob NOT NULL,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`enemy_id`),
@@ -398,7 +477,7 @@ CREATE TABLE `evolutions` (
   CONSTRAINT `evolutions_fk_mat_4_id` FOREIGN KEY (`mat_4_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_mat_5_id` FOREIGN KEY (`mat_5_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_to_id` FOREIGN KEY (`to_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=30555 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=30791 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -429,31 +508,7 @@ CREATE TABLE `exchanges` (
   KEY `exchanges_fk_target_monster_id` (`target_monster_id`),
   CONSTRAINT `exchanges_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `exchanges_fk_target_monster_id` FOREIGN KEY (`target_monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=754 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `purchases`
---
-
-DROP TABLE IF EXISTS `purchases`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `purchases` (
-  `server_id` int(11) NOT NULL,
-  `target_monster_id` int(11) NOT NULL,
-  `mp_cost` tinyint(1) NOT NULL,
-  `start_timestamp` int(11) NOT NULL,
-  `end_timestamp` int(11) NOT NULL,
-  `permanent` tinyint(1) NOT NULL DEFAULT '0',
-  `tstamp` int(11) NOT NULL,
-  PRIMARY KEY (`purchase_id`),
-  KEY `tstamp` (`tstamp`),
-  KEY `purchases_fk_server_id` (`server_id`),
-  KEY `purchases_fk_target_monster_id` (`target_monster_id`),
-  CONSTRAINT `purchases_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `purchases_fk_target_monster_id` FOREIGN KEY (`target_monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=754 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1949 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -474,6 +529,26 @@ CREATE TABLE `leader_skill_tags` (
   KEY `tstamp_idx` (`tstamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER leader_skill_tags_deleted
+AFTER DELETE ON leader_skill_tags
+FOR EACH ROW
+BEGIN
+  INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('leader_skill_tags', OLD.leader_skill_tag_id, UNIX_TIMESTAMP());
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `leader_skills`
@@ -555,6 +630,7 @@ CREATE TABLE `monsters` (
   `orb_skin_id` int(11) DEFAULT NULL,
   `voice_id_jp` int(11) DEFAULT NULL,
   `voice_id_na` int(11) DEFAULT NULL,
+  `linked_monster_id` int(11) DEFAULT NULL,
   `name_na_override` text,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`monster_id`),
@@ -589,6 +665,33 @@ CREATE TABLE `news` (
   PRIMARY KEY (`news_id`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `purchases`
+--
+
+DROP TABLE IF EXISTS `purchases`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `purchases` (
+  `purchase_id` int(11) NOT NULL AUTO_INCREMENT,
+  `server_id` int(11) NOT NULL,
+  `target_monster_id` int(11) NOT NULL,
+  `mp_cost` int(11) NOT NULL,
+  `amount` int(11) NOT NULL,
+  `start_timestamp` int(11) NOT NULL,
+  `end_timestamp` int(11) NOT NULL,
+  `permanent` tinyint(1) NOT NULL DEFAULT '0',
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`purchase_id`),
+  UNIQUE KEY `pid` (`purchase_id`,`server_id`),
+  KEY `tstamp` (`tstamp`),
+  KEY `purchases_fk_server_id` (`server_id`),
+  KEY `purchases_fk_target_monster_id` (`target_monster_id`),
+  CONSTRAINT `purchases_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `purchases_fk_target_monster_id` FOREIGN KEY (`target_monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3610 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -642,8 +745,30 @@ CREATE TABLE `schedule` (
   CONSTRAINT `schedule_fk_dungeon_id` FOREIGN KEY (`dungeon_id`) REFERENCES `dungeons` (`dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `schedule_fk_event_type_id` FOREIGN KEY (`event_type_id`) REFERENCES `d_event_types` (`event_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `schedule_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=13046 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26480 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER schedule_deleted
+AFTER DELETE ON schedule
+FOR EACH ROW
+BEGIN
+	IF @TRIGGER_DISABLED IS NULL THEN
+         INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('schedule', OLD.event_id, UNIX_TIMESTAMP());
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `series`
@@ -662,6 +787,26 @@ CREATE TABLE `series` (
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER series_deleted
+AFTER DELETE ON series
+FOR EACH ROW
+BEGIN
+  INSERT INTO deleted_rows (table_name, table_row_id, tstamp) VALUES ('series', OLD.series_id, UNIX_TIMESTAMP());
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `skill_condition`
@@ -710,11 +855,12 @@ CREATE TABLE `sub_dungeons` (
   `icon_id` int(11) DEFAULT NULL,
   `floors` int(11) NOT NULL,
   `stamina` int(11) NOT NULL,
-  `hp_mult` decimal(8,4) NOT NULL,
-  `atk_mult` decimal(8,4) NOT NULL,
-  `def_mult` decimal(8,4) NOT NULL,
+  `hp_mult` decimal(10,4) NOT NULL,
+  `atk_mult` decimal(10,4) NOT NULL,
+  `def_mult` decimal(10,4) NOT NULL,
   `s_rank` int(11) DEFAULT NULL,
   `rewards` text,
+  `technical` tinyint(4) NOT NULL DEFAULT '1',
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`sub_dungeon_id`),
   KEY `tstamp_idx` (`tstamp`),
@@ -765,7 +911,7 @@ CREATE TABLE `wave_data` (
   `friend_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `dungeon_id` (`dungeon_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1446304 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2895950 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -777,4 +923,4 @@ CREATE TABLE `wave_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-01 23:32:06
+-- Dump completed on 2020-05-23 13:54:49

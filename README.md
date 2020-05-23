@@ -1,60 +1,44 @@
 # dadguide-data
 
+## Looking for exported data?
+
+Skip the rest of this and look in the `utils` directory for scripts that will
+let you access the exports, including the raw data and processed database.
+
+## What's in here
+
+`docker` : Easier development setup in docker.
+
+`etl` : Contains the most important stuff, downloading, parsing, and processing the PAD game data.
+
+`images` : Image files used by DadGuide, latents, awakenings, etc. No monster icons/portraits.
+
+`media_pipelines` : Code for extracting and processing PAD media, including icons, portraits, voice lines, animations, etc.
+
+`proto` : Protocol buffer definitions used by the pipeline and DadGuide (mostly for enemy skills).
+
+`schema` : Stuff to do with mysql specifically. 
+
+`utils` : Some random scripts for development purposes. If you want to access data exports, look here.
+
+`web` : The 'admin api' and 'mobile api' sanic servers, plus some stuff that serves the DadGuide API in prod.
+
+In the root directory are some Google Cloud Build files for building the mobile/api servers, and the requirements
+file that you should install if you want to use the ETL pipeline.
+
 ## Database setup
+
+MySql is used as a backend on the server, and SQLite on the mobile app.
+You can install the server yourself:
 
 ```bash
 sudo apt install mysql-workbench
 sudo apt install mysql-server
-
 ```
 
-You can use `utils/download_db_from_prod.sh` and `utils/restore_db_from_prod` to download the
-exported database and install it into your local copy.
+The `utils` folder has some scripts to download the exports and populate the databse.
 
-
-## Local testing
-
-In prod we're using a Apache webserver with PHP that executes a python script. Kind of gross.
-
-In dev we're using a sanic webserver (requires python 3.6 and sanic\_compress). It would be nice
-to start using this in prod using mod\_proxy? 
-
-## Integration tests
-
-In `tests/parser_integration_test.py` we've got a test that loads all the raw data and saves the
-'cross server' parsed outputs, then compares against a golden copy. Get the raw data using
-`utils/refresh_data` first.
-
-If you're making a change, you should run this once, then make your change, then run it again.
-You can use the diff to confirm your changes.
-
-### Google Cloud Build pull-tests
-
-Whenever a PR is opened, a trigger should execute the integration test using GCB. This compares
-against golden files saved to GCS.
-
-You can test locally or on GCB using the following commands:
-
-```bash
-PYTHONPATH=etl python3 tests/parser_integration_test.py --input_dir=pad_data/raw --output_dir=pad_data/integration
-cloud-build-local --config=pit-cloudbuild.yaml --dryrun=false .
-gcloud builds --config=pit-cloudbuild.yaml  .
-```
-
-The GCB-based tests run against a snapshot of the raw and golden data. If you're happy with any
-local changes, after running the integration tests use the following commands to update the
-golden set:
-
-```bash
-gsutil -m cp -r -c pad_data/integration/new gs://dadguide-integration/parser/golden
-gsutil -m cp -r -c pad_data/raw gs://dadguide-integration/parser/raw
-```
-
-### Future tests
-
-It would be really great to have a version that either did the mysql data load, or a sqlite one, or
-maybe just dumps the computed SQL to a file. The latter is probably not sufficient, since some steps
-require index lookups and we would have to fake those.
+Alternatively you can use a docker script to start it up (see below).
 
 ### Docker based development
 
@@ -65,6 +49,40 @@ backup from production, start a mysql container, and restore the backup with a s
 docker/start_env.sh
 ```
 
-TODO: start the sanic webserver as well for ease of dadguide-flutter dev work
+## Pipeline testing
 
-TODO: docker script to launch the pipeline against the docker env
+The utils directory contains a script called `data_exporter.py`. This script is run to generate the
+repository: https://github.com/nachoapps/pad-game-data-slim
+
+The server has a cron job which runs this periodically, commits, and pushes.
+
+If you're making changes, you should check out a copy of `pad-game-data-slim` at head and run the
+data exporter locally to confirm your changes had the effect you expected.
+
+## API testing
+
+Production uses an Apache webserver with PHP that executes a python script.
+
+Development uses a sanic webserver (requires python 3.6 and sanic\_compress).
+Eventually production should probably `mod_proxy` through to this. 
+
+The files used for both are in the `web` directory.
+ 
+
+In `tests/parser_integration_test.py` we've got a test that loads all the raw data and saves the
+'cross server' parsed outputs, then compares against a golden copy. Get the raw data using
+`utils/refresh_data` first.
+
+If you're making a change, you should run this once, then make your change, then run it again.
+You can use the diff to confirm your changes.
+
+### Google Cloud Build pull-tests
+
+This didn't work well and is currently disabled. Should be re-enabled with just
+writing the `data_exporter.py` results and making sure it does not crash, probably.
+
+### Future tests
+
+It would be really great to have a version that either did the mysql data load, or a sqlite one, or
+maybe just dumps the computed SQL to a file. The latter is probably not sufficient, since some steps
+require index lookups and we would have to fake those.
