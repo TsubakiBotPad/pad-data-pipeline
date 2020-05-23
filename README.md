@@ -67,14 +67,6 @@ Development uses a sanic webserver (requires python 3.6 and sanic\_compress).
 Eventually production should probably `mod_proxy` through to this. 
 
 The files used for both are in the `web` directory.
- 
-
-In `tests/parser_integration_test.py` we've got a test that loads all the raw data and saves the
-'cross server' parsed outputs, then compares against a golden copy. Get the raw data using
-`utils/refresh_data` first.
-
-If you're making a change, you should run this once, then make your change, then run it again.
-You can use the diff to confirm your changes.
 
 ### Google Cloud Build pull-tests
 
