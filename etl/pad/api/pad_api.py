@@ -83,6 +83,7 @@ class EndpointAction(Enum):
     DOWNLOAD_MONSTER_EXCHANGE = EndpointActionInfo('mdatadl', None, None, dtp=0)
     SHOP_ITEM = EndpointActionInfo('shop_item', None, None)
     SAVE_DECKS = EndpointActionInfo('save_decks', None, None, curdeck=0)
+    ACHIEVEMENTS = EndpointActionInfo('dl_al', None, None)
 
 
 def get_headers(host):
