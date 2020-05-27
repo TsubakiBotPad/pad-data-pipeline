@@ -276,6 +276,10 @@ class LSLowHpShield(LeaderSkill):
         data = merge_defaults(ms.data, [0, 0, 0])
         self.threshold = mult(data[0])
         self.above = False
+        if self.threshold == 1:
+            # This really only triggers for one specific odin, which seems to
+            # have this behavior hard-coded somehow.
+            self.above = True
         shield = mult(data[2])
         super().__init__(38, ms, shield=shield)
 
