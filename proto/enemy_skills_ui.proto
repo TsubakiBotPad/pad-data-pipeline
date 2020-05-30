@@ -1,3 +1,0 @@
-syntax = "proto3";
-
-import "enemy_skills_ui.proto";

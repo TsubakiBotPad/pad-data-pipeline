@@ -168,4 +168,8 @@ message Condition {
     //
     // Can only be manually set by an operator.
     int32 always_after = 15;
+
+    // If set on a group, this indicates that the group represents a skillset.
+    // If set on a behavior, this indicates that the behavior triggers a skillset.
+    int32 skill_set = 16;
 }
