@@ -50,7 +50,7 @@ class ServerEndpointInfo(object):
 
 class ServerEndpoint(Enum):
     NA = ServerEndpointInfo(
-        Server('http://patch-na-pad.gungho.jp/base-na-adr.json'), keygen.generate_key_na, force_v='18.20')
+        Server('http://patch-na-pad.gungho.jp/base-na-adr.json'), keygen.generate_key_na)
     JA = ServerEndpointInfo(
         Server('http://dl.padsv.gungho.jp/base_adr.json'), keygen.generate_key_jp)
     KR = ServerEndpointInfo(
