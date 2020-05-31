@@ -161,9 +161,14 @@ class EnESTextConverter(EnBaseTextConverter):
     def dispel_buffs(self):
         return 'Voids player buff effects'
 
-    def recover(self, min_amount, max_amount, target_type):
+    def recover(self, min_amount, max_amount, target_type, player_threshold=None):
         target = targets_to_str([target_type])
-        return capitalize_first('{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)))
+        if player_threshold and player_threshold != 100:
+            return capitalize_first(
+                '{:s} recover {:s} HP when below {}% HP'.format(
+                    target, minmax(min_amount, max_amount, True), player_threshold))
+        else:
+            return capitalize_first('{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)))
 
     def enrage(self, mult, turns):
         output = 'Increase damage to {:d}% for the next '.format(mult)
