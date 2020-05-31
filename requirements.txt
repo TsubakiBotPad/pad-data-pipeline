@@ -4,3 +4,4 @@ pytz
 bs4
 protobuf
 pymysql
+pillow
