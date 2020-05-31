@@ -645,8 +645,6 @@ class ESStatusShield(ESAction):
 class ESRecover(ESAction):
     def __init__(self, skill, target):
         super().__init__(skill)
-        self.min_amount = self.params[1]
-        self.max_amount = self.params[2]
         self.target = target
 
     def description(self, converter):
@@ -656,6 +654,8 @@ class ESRecover(ESAction):
 class ESRecoverEnemy(ESRecover):
     def __init__(self, skill):
         super().__init__(skill, target=TargetType.enemy)
+        self.min_amount = self.params[1]
+        self.max_amount = self.params[2]
 
 
 class ESRecoverEnemy7(ESRecoverEnemy):
@@ -672,6 +672,8 @@ class ESRecoverEnemyAlly(ESRecover):
     def __init__(self, skill):
         super().__init__(skill, target=TargetType.enemy_ally)
         self.enemy_count = 1
+        self.min_amount = self.params[1]
+        self.max_amount = self.params[1]
 
 
 class ESRecoverPlayer(ESRecover):
@@ -679,6 +681,12 @@ class ESRecoverPlayer(ESRecover):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, target=TargetType.player)
+        self.min_amount = self.params[1]
+        self.max_amount = self.params[1]
+        self.hp_threshold = self.params[2]
+
+    def description(self, converter):
+        return converter.recover(self.min_amount, self.max_amount, self.target, player_threshold=self.hp_threshold)
 
 
 class ESEnrage(ESAction):

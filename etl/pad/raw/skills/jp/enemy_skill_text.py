@@ -137,18 +137,17 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
         return '{}ターンの間、特定のドロップが超暗闇にする'.format(turns)
 
     def blind_sticky_skyfall(self, turns, chance, b_turns):
-        return '{}ターンの間、{}%の確率を超暗闇ドロップ{}ターンが発生'.format(
-                                                        turns,
-                                                        chance,
-                                                        b_turns
-                                                    )
+        return '{}ターンの間、{}%の確率を超暗闇ドロップ{}ターンが発生'.format(turns, chance, b_turns)
 
     def dispel_buffs(self):
         return 'こちらにかかっている状態変化を解除'
 
-    def recover(self, min_amount, max_amount, target_type):
+    def recover(self, min_amount, max_amount, target_type, player_threshold=None):
         target = targets_to_str([target_type])
-        return '{}のHPが{}回復'.format(target, minmax(min_amount, max_amount, True))
+        if player_threshold and player_threshold != 100:
+            return '{}%HP以下で{}のHPが{}回復'.format(player_threshold, target, minmax(min_amount, max_amount, True))
+        else:
+            return '{}のHPが{}回復'.format(target, minmax(min_amount, max_amount, True))
 
     def enrage(self, mult, turns):
         output = '攻撃力が{}%に上昇'.format(mult)
