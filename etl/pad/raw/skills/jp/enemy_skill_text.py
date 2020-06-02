@@ -162,7 +162,7 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
         unit = UNITS[unit]
         turns = turns or 0
         if d_type == Status.movetime:
-            return '{}ターンの間、操作時間{:+.0f}{}'.format(turns, amount, unit)
+            return '{}ターンの間、操作時間{:.0f}{}'.format(turns, amount, unit)
         elif d_type == Status.rcv:
             return '{}ターンの間、回復力を{:.0f}{}になる'.format(turns, amount, unit)
         else:
