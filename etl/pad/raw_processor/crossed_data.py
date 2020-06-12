@@ -14,6 +14,7 @@ from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.enemy_skill_info import ESInstance, ESUnknown
 from pad.raw.skills.leader_skill_info import LeaderSkill
+from pad.raw_processor.jp_replacements import jp_en_replacements
 from pad.raw_processor.merged_data import MergedCard
 from pad.raw_processor.merged_database import Database
 
@@ -227,7 +228,14 @@ class CrossServerDungeon(object):
         self.na_dungeon = na_dungeon
         self.kr_dungeon = kr_dungeon
 
+        # Replacements for JP dungeon attributes to English
+        self.na_dungeon.clean_name = jp_en_replacements(self.na_dungeon.clean_name)
+
         self.sub_dungeons = make_cross_server_sub_dungeons(jp_dungeon, na_dungeon, kr_dungeon)
+
+        # Replacements for JP subdungeon attributes to English
+        for csd in self.sub_dungeons:
+            csd.na_sub_dungeon.clean_name = jp_en_replacements(csd.na_sub_dungeon.clean_name)
 
 
 class CrossServerSubDungeon(object):
