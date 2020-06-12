@@ -36,7 +36,7 @@ class BehaviorParser(object):
                     if sub_es_id in self.behaviors_by_id:
                         es.skills.append(self.behaviors_by_id[sub_es_id])
                     else:
-                        print('failed to look up enemy skill:', sub_es_id)
+                        human_fix_logger.error('failed to look up enemy skill: %d', sub_es_id)
 
         if len(self.enemy_behaviors) != len(self.behaviors_by_id):
             human_fix_logger.error('Error, enemy behavior size does not match: %d - %d',
