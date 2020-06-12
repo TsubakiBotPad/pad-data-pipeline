@@ -97,22 +97,7 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
     for c in db.ownable_cards:
         card_file = os.path.join(raw_card_dir, '{}.txt'.format(c.monster_id))
         with open(card_file, 'w', encoding='utf-8') as f:
-            # Write top level info for the monster
-            f.write('#{} {}\n'.format(c.monster_id, c.na_card.card.name))
-            card_info = c.jp_card.card
-            f.write('HP: {} ATK: {} RCV: {} LB: {}\n'.format(card_info.max_hp,
-                                                             card_info.max_atk,
-                                                             card_info.max_rcv,
-                                                             card_info.limit_mult))
-            f.write('AWK: {}\n'.format(','.join(map(str, card_info.awakenings))))
-            f.write('SAWK: {}\n'.format(','.join(map(str, card_info.super_awakenings))))
-            f.write('\n')
-
-            if c.active_skill:
-                dump_skill(f, c.active_skill, AS_CONVERTERS, skill_text_typing.parse_as_conditions)
-
-            if c.leader_skill:
-                dump_skill(f, c.leader_skill, LS_CONVERTERS, skill_text_typing.parse_ls_conditions)
+            dump_monster(f, c)
 
     as_file = os.path.join(output_dir, 'active_skills.txt')
     with open(as_file, 'w', encoding='utf-8') as f:
@@ -133,6 +118,25 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
     with open(dungeon_file, 'w', encoding='utf-8') as f:
         for csd in db.dungeons:
             dump_dungeon(f, csd)
+
+
+# Write top level info for the monster
+def dump_monster(f, c):
+    f.write('#{} {}\n'.format(c.monster_id, c.na_card.card.name))
+    card_info = c.jp_card.card
+    f.write('HP: {} ATK: {} RCV: {} LB: {}\n'.format(card_info.max_hp,
+                                                     card_info.max_atk,
+                                                     card_info.max_rcv,
+                                                     card_info.limit_mult))
+    f.write('AWK: {}\n'.format(','.join(map(str, card_info.awakenings))))
+    f.write('SAWK: {}\n'.format(','.join(map(str, card_info.super_awakenings))))
+    f.write('\n')
+
+    if c.active_skill:
+        dump_skill(f, c.active_skill, AS_CONVERTERS, skill_text_typing.parse_as_conditions)
+
+    if c.leader_skill:
+        dump_skill(f, c.leader_skill, LS_CONVERTERS, skill_text_typing.parse_ls_conditions)
 
 
 # Write active skill id/type, english name, raw english description, then computed descriptions for
