@@ -19,7 +19,7 @@ from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
 from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw_processor import merged_database
-from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerEnemySkill
+from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerEnemySkill, CrossServerDungeon
 
 AS_CONVERTERS = (JpASTextConverter(), EnASTextConverter(), EnASTextConverter())
 LS_CONVERTERS = (JpLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
@@ -129,6 +129,11 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
         for css in db.enemy_skills:
             dump_enemy_skill(f, css, ES_CONVERTERS)
 
+    dungeon_file = os.path.join(output_dir, 'dungeons.txt')
+    with open(dungeon_file, 'w', encoding='utf-8') as f:
+        for csd in db.dungeons:
+            dump_dungeon(f, csd)
+
 
 # Write active skill id/type, english name, raw english description, then computed descriptions for
 # english, japanese, and korean
@@ -166,6 +171,18 @@ def dump_enemy_skill(f, css: CrossServerEnemySkill, converter):
     f.write('JP: {}\n'.format(skill.description(converter[0])))
     f.write('EN: {}\n'.format(skill.description(converter[1])))
     f.write('KR: {}\n'.format(skill.description(converter[2])))
+    f.write('\n')
+
+
+def dump_dungeon(f, csd: CrossServerDungeon):
+    na_dungeon = csd.na_dungeon
+
+    f.write('# {} {} {}\n'.format(csd.dungeon_id, na_dungeon.clean_name))
+    for sd in csd.sub_dungeons:
+        sd_na = sd.na_sub_dungeon
+        f.write('#{} {} -> {}:{} {},{},{}\n'.format(sd_na.sub_dungeon_id, sd_na.clean_name,
+                                                    sd_na.floors, sd_na.stamina,
+                                                    sd_na.hp_mult, sd_na.atk_mult, sd_na.def_mult))
     f.write('\n')
 
 
