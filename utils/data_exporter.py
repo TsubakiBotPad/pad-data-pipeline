@@ -177,7 +177,7 @@ def dump_enemy_skill(f, css: CrossServerEnemySkill, converter):
 def dump_dungeon(f, csd: CrossServerDungeon):
     na_dungeon = csd.na_dungeon
 
-    f.write('# {} {} {}\n'.format(csd.dungeon_id, na_dungeon.clean_name))
+    f.write('# {} {}\n'.format(csd.dungeon_id, na_dungeon.clean_name))
     for sd in csd.sub_dungeons:
         sd_na = sd.na_sub_dungeon
         f.write('#{} {} -> {}:{} {},{},{}\n'.format(sd_na.sub_dungeon_id, sd_na.clean_name,
