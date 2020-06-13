@@ -489,6 +489,10 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else ''
         return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, attrs)
 
+    def spawn_spinner(self, turns: int, speed: float, count: int):
+        return '{}ターンの間、ランダムで{}箇所のマスがが{}秒毎に変化する' \
+            .format(turns, count, speed)
+
     def two_part_active(self, strs):
         return '。'.join(strs)
 

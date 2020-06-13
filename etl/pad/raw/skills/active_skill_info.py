@@ -1097,6 +1097,21 @@ class ASSkyfallLock(ActiveSkill):
         return converter.skyfall_lock(self)
 
 
+class ASSpawnSpinner(ActiveSkill):
+    skill_type = 207
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [1, 100, 0, 0, 0, 0, 0, 1])
+        # Only one example of this so far, so these are all just guesses
+        self.turns = data[0]
+        self.speed = multi(data[1])
+        self.count = data[7]
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.spawn_spinner(self.turns, self.speed, self.count)
+
+
 def convert(skill_list: List[MonsterSkill]):
     skill_type_to_constructor = {}
     for skill in ALL_ACTIVE_SKILLS:
@@ -1215,4 +1230,5 @@ ALL_ACTIVE_SKILLS = [
     ASReduceDisableMatch,
     ASChangeMonster,
     ASSkyfallLock,
+    ASSpawnSpinner,
 ]

@@ -519,6 +519,10 @@ class EnASTextConverter(EnBaseTextConverter):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else 'all'
         return self.fmt_duration(act.duration) + attrs + " orbs appear locked"
 
+    def spawn_spinner(self, turns: int, speed: float, count: int):
+        return 'Random {:d} orbs change every {:.1f}s for {:s}' \
+            .format(count, speed, pluralize2('turn', turns))
+    
     def two_part_active(self, strs):
         return '; '.join(strs)
 
