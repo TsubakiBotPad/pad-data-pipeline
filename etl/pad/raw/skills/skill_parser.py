@@ -1,9 +1,12 @@
+import logging
 from typing import List, Dict
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills import active_skill_info, leader_skill_info
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.leader_skill_info import LeaderSkill
+
+human_fix_logger = logging.getLogger('human_fix')
 
 
 class SkillParser(object):
@@ -22,8 +25,13 @@ class SkillParser(object):
     def parse(self, skill_list: List[MonsterSkill]):
         self.active_skills = active_skill_info.convert(skill_list)
         self.leader_skills = leader_skill_info.convert(skill_list)
+        self.as_by_id = {x.skill_id: x for x in self.active_skills}
+        self.ls_by_id = {x.skill_id: x for x in self.leader_skills}
 
         for skill in skill_list:
             skill_id = skill.skill_id
-            if self.active(skill_id) is None and self.leader(skill_id):
-                print('Skill not parsed into active/leader:', skill.skill_id, skill.skill_type, skill.data)
+            if skill.skill_type in [0, 89]:  # 0 is None, 89 is placeholder
+                continue
+            if self.active(skill_id) is None and self.leader(skill_id) is None:
+                human_fix_logger.error('Skill not parsed into active/leader: %d %d %s',
+                                       skill.skill_id, skill.skill_type, skill.data)
