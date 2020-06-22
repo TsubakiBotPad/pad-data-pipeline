@@ -1,4 +1,5 @@
 import unicodedata
+from typing import List
 
 
 def remove_diacritics(input: str) -> str:
@@ -17,3 +18,7 @@ def remove_diacritics(input: str) -> str:
         except:
             output += c
     return output
+
+
+def format_int_list(values: List[int]) -> str:
+    return ','.join(['({})'.format(x) for x in values])
