@@ -2,6 +2,7 @@ from datetime import date
 from typing import List, Optional
 
 from pad.common.shared_types import Server, MonsterId, MonsterNo, EvolutionType
+from pad.common.utils import format_int_list
 from pad.db import sql_item
 from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 from pad.raw.skills import skill_text_typing
@@ -30,6 +31,7 @@ class Monster(SimpleSqlItem):
         else:
             exp = round(jp_card.xp_curve().value_at(max_level))
 
+        awakenings = format_int_list(jp_card.awakenings)
         orb_skin_id = jp_card.orb_skin_id or None
         voice_id_jp = jp_card.voice_id or None if o.jp_card.server == Server.jp else None
         voice_id_na = na_card.voice_id or None if o.na_card.server == Server.na else None
@@ -37,6 +39,12 @@ class Monster(SimpleSqlItem):
 
         def none_or(value: int):
             return value if value > -1 else None
+
+        # TODO: start supporting these
+        diff_stats = False
+        diff_awakenings = False
+        diff_leader_skill = False
+        diff_active_skill = False
 
         return Monster(
             monster_id=o.monster_id,
@@ -68,6 +76,7 @@ class Monster(SimpleSqlItem):
             type_1_id=jp_card.type_1_id,
             type_2_id=none_or(jp_card.type_2_id),
             type_3_id=none_or(jp_card.type_3_id),
+            awakenings=awakenings,
             inheritable=jp_card.inheritable,
             fodder_exp=int(jp_card.feed_xp_curve().value_at(max_level)),
             sell_gold=int(jp_card.sell_gold_curve().value_at(max_level)),
@@ -77,6 +86,10 @@ class Monster(SimpleSqlItem):
             on_jp=o.jp_card.server == Server.jp and jp_card.released_status,
             on_na=o.na_card.server == Server.na and na_card.released_status,
             on_kr=o.kr_card.server == Server.kr and kr_card.released_status,
+            diff_stats=diff_stats,
+            diff_awakenings=diff_awakenings,
+            diff_leader_skill=diff_leader_skill,
+            diff_active_skill=diff_active_skill,
             pal_egg=False,
             rem_egg=False,
             series_id=Series.UNSORTED_SERIES_ID,
@@ -115,6 +128,7 @@ class Monster(SimpleSqlItem):
                  type_1_id: int = None,
                  type_2_id: int = None,
                  type_3_id: int = None,
+                 awakenings: str = None,
                  inheritable: bool = None,
                  fodder_exp: int = None,
                  sell_gold: int = None,
@@ -124,6 +138,10 @@ class Monster(SimpleSqlItem):
                  on_jp: bool = None,
                  on_na: bool = None,
                  on_kr: bool = None,
+                 diff_stats: bool = None,
+                 diff_awakenings: bool = None,
+                 diff_leader_skill: bool = None,
+                 diff_active_skill: bool = None,
                  pal_egg: bool = None,
                  rem_egg: bool = None,
                  series_id: int = None,
@@ -161,6 +179,7 @@ class Monster(SimpleSqlItem):
         self.type_1_id = type_1_id
         self.type_2_id = type_2_id
         self.type_3_id = type_3_id
+        self.awakenings = awakenings
         self.inheritable = inheritable
         self.fodder_exp = fodder_exp
         self.sell_gold = sell_gold
@@ -170,6 +189,10 @@ class Monster(SimpleSqlItem):
         self.on_jp = on_jp
         self.on_na = on_na
         self.on_kr = on_kr
+        self.diff_stats = diff_stats
+        self.diff_awakenings = diff_awakenings
+        self.diff_leader_skill = diff_leader_skill
+        self.diff_active_skill = diff_active_skill
         self.pal_egg = pal_egg
         self.rem_egg = rem_egg
         self.series_id = series_id
@@ -231,6 +254,7 @@ class MonsterWithExtraImageInfo(SimpleSqlItem):
     def __str__(self):
         return 'MonsterImage({}): animated={} hq={}'.format(self.key_value(), self.has_animation, self.has_hqimage)
 
+
 class MonsterWithMPValue(SimpleSqlItem):
     """Monster helper for inserting MP purchase."""
     TABLE = 'monsters'
@@ -246,6 +270,7 @@ class MonsterWithMPValue(SimpleSqlItem):
 
     def __str__(self):
         return 'MonsterMP({}): {}'.format(self.key_value(), self.buy_mp)
+
 
 class ActiveSkill(SimpleSqlItem):
     """Monster active skill."""

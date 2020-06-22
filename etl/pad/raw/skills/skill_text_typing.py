@@ -1,3 +1,4 @@
+from pad.common.utils import format_int_list
 from pad.raw.skills.active_skill_info import *
 from pad.raw.skills.leader_skill_info import *
 
@@ -93,7 +94,7 @@ class LSCondition(Enum):
 
 def format_conditions(skill_conditions):
     sorted_cond_values = sorted([x.value for x in skill_conditions])
-    return ','.join(['({})'.format(x) for x in sorted_cond_values])
+    return format_int_list(sorted_cond_values)
 
 
 def parse_as_conditions(skill, child=False) -> List[ASCondition]:
