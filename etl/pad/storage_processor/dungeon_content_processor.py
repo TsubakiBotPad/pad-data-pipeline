@@ -89,6 +89,7 @@ class DungeonContentProcessor(object):
                 hp = int(round(sd.hp_mult * enemy.hp.value_at(slot.monster_level)))
                 atk = int(round(sd.atk_mult * enemy.atk.value_at(slot.monster_level)))
                 defence = int(round(sd.def_mult * enemy.defense.value_at(slot.monster_level)))
+                exp = int(round(enemy.xp.value_at(slot.monster_level)))
 
                 # TODO: add comments based on slot data
                 encounter = Encounter(
@@ -106,7 +107,8 @@ class DungeonContentProcessor(object):
                     level=slot.monster_level,
                     hp=hp,
                     atk=atk,
-                    defence=defence)
+                    defence=defence,
+                    exp=0)  # TODO: populate exp
 
                 sql = '''
                     SELECT encounter_id 
@@ -124,6 +126,10 @@ class DungeonContentProcessor(object):
                     encounter.encounter_id = stored_encounter_id
 
                 db.insert_or_update(encounter)
+
+                # TODO: This is temporary, remove me after one run
+                db.update_item(
+                    'UPDATE encounters SET exp = {} WHERE encounter_id = {}'.format(exp, encounter.encounter_id))
 
                 drops = Drop.from_slot(slot, encounter)
                 for drop in drops:
