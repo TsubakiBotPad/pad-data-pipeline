@@ -21,6 +21,7 @@ class LeaderSkill(object):
         if not hasattr(self, 'tags'): self.tags = []
         self.name = ms.name
         self.raw_description = ms.clean_description
+        self.raw_data = ms.data
         self._hp = round(hp, 2)
         self._atk = round(atk, 2)
         self._rcv = round(rcv, 2)

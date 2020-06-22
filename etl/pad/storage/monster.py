@@ -32,6 +32,7 @@ class Monster(SimpleSqlItem):
             exp = round(jp_card.xp_curve().value_at(max_level))
 
         awakenings = format_int_list(jp_card.awakenings)
+        super_awakenings = format_int_list(jp_card.super_awakenings)
         orb_skin_id = jp_card.orb_skin_id or None
         voice_id_jp = jp_card.voice_id or None if o.jp_card.server == Server.jp else None
         voice_id_na = na_card.voice_id or None if o.na_card.server == Server.na else None
@@ -40,11 +41,28 @@ class Monster(SimpleSqlItem):
         def none_or(value: int):
             return value if value > -1 else None
 
-        # TODO: start supporting these
-        diff_stats = False
-        diff_awakenings = False
-        diff_leader_skill = False
-        diff_active_skill = False
+        on_jp = o.jp_card.server == Server.jp and jp_card.released_status
+        on_na = o.na_card.server == Server.na and na_card.released_status
+        on_kr = o.kr_card.server == Server.kr and kr_card.released_status
+
+        diff_possible = on_jp and on_na
+
+        def extract_skill_data(s):
+            if s is None:
+                return s
+            return s.raw_data
+
+        diff_stats = diff_possible and (jp_card.max_hp != na_card.max_hp or
+                                        jp_card.max_atk != na_card.max_atk or
+                                        jp_card.max_rcv != na_card.max_rcv or
+                                        jp_card.max_level != na_card.max_level or
+                                        jp_card.limit_mult != na_card.limit_mult)
+        diff_awakenings = diff_possible and (jp_card.awakenings != na_card.awakenings or
+                                             jp_card.super_awakenings != na_card.super_awakenings)
+        diff_leader_skill = diff_possible and (extract_skill_data(o.jp_card.leader_skill) !=
+                                               extract_skill_data(o.na_card.leader_skill))
+        diff_active_skill = diff_possible and (extract_skill_data(o.jp_card.active_skill) !=
+                                               extract_skill_data(o.na_card.active_skill))
 
         return Monster(
             monster_id=o.monster_id,
@@ -77,15 +95,16 @@ class Monster(SimpleSqlItem):
             type_2_id=none_or(jp_card.type_2_id),
             type_3_id=none_or(jp_card.type_3_id),
             awakenings=awakenings,
+            super_awakenings=super_awakenings,
             inheritable=jp_card.inheritable,
             fodder_exp=int(jp_card.feed_xp_curve().value_at(max_level)),
             sell_gold=int(jp_card.sell_gold_curve().value_at(max_level)),
             sell_mp=jp_card.sell_mp,
             buy_mp=None,
             reg_date=date.today().isoformat(),
-            on_jp=o.jp_card.server == Server.jp and jp_card.released_status,
-            on_na=o.na_card.server == Server.na and na_card.released_status,
-            on_kr=o.kr_card.server == Server.kr and kr_card.released_status,
+            on_jp=on_jp,
+            on_na=on_na,
+            on_kr=on_kr,
             diff_stats=diff_stats,
             diff_awakenings=diff_awakenings,
             diff_leader_skill=diff_leader_skill,
@@ -129,6 +148,7 @@ class Monster(SimpleSqlItem):
                  type_2_id: int = None,
                  type_3_id: int = None,
                  awakenings: str = None,
+                 super_awakenings: str = None,
                  inheritable: bool = None,
                  fodder_exp: int = None,
                  sell_gold: int = None,
@@ -180,6 +200,7 @@ class Monster(SimpleSqlItem):
         self.type_2_id = type_2_id
         self.type_3_id = type_3_id
         self.awakenings = awakenings
+        self.super_awakenings = super_awakenings
         self.inheritable = inheritable
         self.fodder_exp = fodder_exp
         self.sell_gold = sell_gold

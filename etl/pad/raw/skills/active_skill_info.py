@@ -55,6 +55,7 @@ class ActiveSkill(object):
 
         self.name = ms.name
         self.raw_description = ms.clean_description
+        self.raw_data = ms.data
         self.skill_type = ms.skill_type
         self.levels = ms.levels
         self.turn_max = ms.turn_max
