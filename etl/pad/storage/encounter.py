@@ -27,6 +27,7 @@ class Encounter(SimpleSqlItem):
                  hp: int = None,
                  atk: int = None,
                  defence: int = None,
+                 exp: int = None,
                  tstamp: int = None):
         self.encounter_id = encounter_id
         self.dungeon_id = dungeon_id
@@ -44,6 +45,7 @@ class Encounter(SimpleSqlItem):
         self.hp = hp
         self.atk = atk
         self.defence = defence
+        self.exp = exp
         self.tstamp = tstamp
 
     def exists_strategy(self):
