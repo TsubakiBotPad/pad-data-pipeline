@@ -370,6 +370,7 @@ class LeaderSkill(SimpleSqlItem):
             max_atk=jp_skill.atk,
             max_rcv=jp_skill.rcv,
             max_shield=jp_skill.shield,
+            max_combos=jp_skill.extra_combos,
             tags=tags)
 
     def __init__(self,
@@ -384,6 +385,7 @@ class LeaderSkill(SimpleSqlItem):
                  max_atk: float = None,
                  max_rcv: float = None,
                  max_shield: float = None,
+                 max_combos: int = None,
                  tags: str = None,
                  tstamp: int = None):
         self.leader_skill_id = leader_skill_id
@@ -397,6 +399,7 @@ class LeaderSkill(SimpleSqlItem):
         self.max_atk = max_atk
         self.max_rcv = max_rcv
         self.max_shield = max_shield
+        self.max_combos = max_combos
         self.tags = tags
         self.tstamp = tstamp
 
