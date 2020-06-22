@@ -108,7 +108,7 @@ class DungeonContentProcessor(object):
                     hp=hp,
                     atk=atk,
                     defence=defence,
-                    exp=0)  # TODO: populate exp
+                    exp=exp)
 
                 sql = '''
                     SELECT encounter_id 
@@ -126,10 +126,6 @@ class DungeonContentProcessor(object):
                     encounter.encounter_id = stored_encounter_id
 
                 db.insert_or_update(encounter)
-
-                # TODO: This is temporary, remove me after one run
-                db.update_item(
-                    'UPDATE encounters SET exp = {} WHERE encounter_id = {}'.format(exp, encounter.encounter_id))
 
                 drops = Drop.from_slot(slot, encounter)
                 for drop in drops:
