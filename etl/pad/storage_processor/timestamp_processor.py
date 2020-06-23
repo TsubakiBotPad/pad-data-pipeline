@@ -5,7 +5,7 @@ from pad.db.db_util import DbWrapper
 from pad.storage.awoken_skill import AwokenSkill
 from pad.storage.dungeon import Dungeon, SubDungeon
 from pad.storage.egg_machine import EggMachine
-from pad.storage.encounter import Encounter
+from pad.storage.encounter import Encounter, Drop
 from pad.storage.enemy_skill import EnemySkill, EnemyData
 from pad.storage.monster import Monster, ActiveSkill, LeaderSkill, Awakening, Evolution
 from pad.storage.rank_reward import RankReward
@@ -24,6 +24,7 @@ _UPDATE_TABLES = [
     AwokenSkill.TABLE,
     # This is a special table that gets populated when items are deleted from other tables.
     'deleted_rows',
+    Drop.TABLE,
     Dungeon.TABLE,
     Encounter.TABLE,
     EggMachine.TABLE,
