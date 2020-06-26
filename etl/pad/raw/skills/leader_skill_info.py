@@ -1393,6 +1393,15 @@ class LSBlobAtkRcvBoost(LeaderSkill):
         self.max_count = data[6]
         self.max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
         self.max_rcv = self.min_rcv + self.rcv_step * (self.max_count - self.min_count)
+
+        # Overrides for optional atk/rcv
+        if self.min_atk == 0 and self.max_atk == 0:
+            self.min_atk = 1.0
+            self.max_atk = 1.0
+        if self.min_rcv == 0 and self.max_rcv == 0:
+            self.min_rcv = 1.0
+            self.max_rcv = 1.0
+
         super().__init__(167, ms, atk=self.max_atk, rcv=self.max_rcv)
 
     def text(self, converter) -> str:
