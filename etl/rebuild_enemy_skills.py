@@ -118,10 +118,13 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
     # This can rarely be different, typically when a collab comes to NA/JP
     # in the first run, and then gets updated in JP later.
     # TODO: Possibly this should occur in the merged card
-    card.enemy_skill_max_counter = max(card.enemy_skill_max_counter,
-                                       csc.jp_card.card.enemy_skill_max_counter)
-    card.enemy_skill_counter_increment = max(card.enemy_skill_counter_increment,
-                                             csc.jp_card.card.enemy_skill_counter_increment)
+    # card.enemy_skill_max_counter = max(card.enemy_skill_max_counter,
+    #                                    csc.jp_card.card.enemy_skill_max_counter)
+    # card.enemy_skill_counter_increment = max(card.enemy_skill_counter_increment,
+    #                                          csc.jp_card.card.enemy_skill_counter_increment)
+    # TODO: That wasn't always correct; probably needs to use the value from whichever ES tree is selected
+    card.enemy_skill_max_counter = csc.jp_card.card.enemy_skill_max_counter
+    card.enemy_skill_counter_increment = csc.jp_card.card.enemy_skill_counter_increment
 
     levels = enemy_skillset_processor.extract_levels(enemy_behavior)
     long_loop = csc.monster_id in LONG_LOOP_MONSTERS
