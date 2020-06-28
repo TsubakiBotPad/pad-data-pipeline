@@ -336,6 +336,9 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
     def countdown(self, counter):
         return '「{}」를 출력하고 턴을 건너뛴다'.format(counter)
 
+    def use_skillset(self, skill_set_id):
+        return 'Use skill set #{}'.format(skill_set_id)
+
     def gacha_fever(self, attribute, orb_req):
         return '피버 모드: {}드롭 {}개를 지우면 클리어'.format(ATTRIBUTE_MAP[attribute], orb_req)
 

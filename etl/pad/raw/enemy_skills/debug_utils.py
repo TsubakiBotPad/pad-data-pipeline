@@ -2,7 +2,7 @@ from typing import List
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Condition, Behavior
 from pad.raw.skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack
-from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset
+from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset, ESUseSkillset
 from pad.raw_processor.crossed_data import CrossServerCard
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 
@@ -20,6 +20,9 @@ def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehav
     library = {x.enemy_skill_id: x.na_skill.behavior for x in csc.enemy_behavior}
     library[-1] = ESCountdownMessage()
     library[-2] = ESDefaultAttack()
+    for i in range(0, 10):
+        skill = ESUseSkillset(i + 1)
+        library[skill.enemy_skill_id] = skill
     output += '\n' + format_monster_behavior(mb, library)
 
     with open(file_path, 'w', encoding='utf-8') as f:
@@ -60,6 +63,8 @@ def format_behavior_group(indent_str, group: BehaviorGroup, library):
 
 def format_condition(cond: Condition):
     parts = []
+    if cond.skill_set:
+        parts.append('SkillSet {}'.format(cond.skill_set))
     if cond.use_chance not in [0, 100]:
         parts.append('{}% chance'.format(cond.use_chance))
     if cond.global_one_time:

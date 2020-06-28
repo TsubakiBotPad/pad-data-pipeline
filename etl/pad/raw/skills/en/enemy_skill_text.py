@@ -357,6 +357,9 @@ class EnESTextConverter(EnBaseTextConverter):
     def countdown(self, counter):
         return 'Display \'{:d}\' and skip turn'.format(counter)
 
+    def use_skillset(self, skill_set_id):
+        return 'Use skill set #{}'.format(skill_set_id)
+
     def gacha_fever(self, attribute, orb_req):
         return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, self.ATTRIBUTES[attribute], pluralize('orb', orb_req))
 
