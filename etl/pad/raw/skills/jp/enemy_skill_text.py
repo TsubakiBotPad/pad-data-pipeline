@@ -326,6 +326,9 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
     def countdown(self, counter):
         return '「{}」を表示してターンをスキップ'.format(counter)
 
+    def use_skillset(self, skill_set_id):
+        return 'Use skill set #{}'.format(skill_set_id)
+
     def gacha_fever(self, attribute, orb_req):
         return 'フィーバーモード: {}ドロップが{}個消す'.format(self.ATTRIBUTES[attribute], orb_req)
 

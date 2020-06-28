@@ -1686,6 +1686,20 @@ class ESCountdownMessage(ESBehavior):
         return converter.countdown(self.current_counter)
 
 
+class ESUseSkillset(ESBehavior):
+    """Dummy action class to represent using a skillset"""
+
+    def __init__(self, skillset_id=0):
+        es_id = -10 - skillset_id
+        raw = [str(es_id), 'Use Skill Set', '-3', '0']
+        dummy_skill = EnemySkill(raw)
+        super().__init__(dummy_skill)
+        self.skillset_id = skillset_id
+
+    def description(self, converter):
+        return converter.use_skillset(self.skillset_id)
+
+
 class ESUnknown(ESAction):  # Pretend to work so we can extract data
     """Unknown ES (Unknown skill type)"""
 
