@@ -85,6 +85,7 @@ CONDITIONAL_OVERRIDES = {
         9850,  # Bigfoot, Forceful Throw
         11873,  # Sarasavati, Disappearing Mist
         17350,  # Jargo, Harmful Prank
+        18080,  # Xiang Mei
         18081,  # You Yu
         18082,  # Xiu Min
         18083,  # Xin Hua
