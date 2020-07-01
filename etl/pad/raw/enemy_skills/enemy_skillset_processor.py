@@ -252,7 +252,7 @@ class Context(object):
                 return False
         elif isinstance(b, ESDebuffMovetime):
             if self.time_debuff == 0:
-                self.time_debuff = b.turns
+                self.time_debuff = b.turns + 1  # This ticks down after enemy movement, so add 1
                 return True
             else:
                 return False
