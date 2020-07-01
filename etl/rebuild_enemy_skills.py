@@ -97,7 +97,9 @@ CONDITIONAL_OVERRIDES = {
 # This lets you set skills on a monster that need to be considered unconditional.
 UNCONDITIONAL_OVERRIDES = {
     # These apply to all instances of the skill
-    0: [],
+    0: [
+        18306,  # Shinji&Kaworu
+    ],
     # Use this space for specific monster/skill combinations
     # monster_id : [es_id1, es_id2...]
 }
