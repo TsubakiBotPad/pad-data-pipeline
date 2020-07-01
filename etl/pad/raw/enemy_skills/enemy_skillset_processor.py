@@ -146,6 +146,8 @@ class Context(object):
         self.time_debuff = 0
         # Turns of skyfall, initial:int=0 -> skyfall up:int>0 -> expire:int=0
         self.skyfall = 0
+        # Turns of attack down, initial:int=0 -> attack down:int>0 -> expire:int=0
+        self.attack_down = 0
 
         # The current skill counter value, initialized to max.
         self.skill_counter = max_skill_counter
@@ -193,6 +195,8 @@ class Context(object):
             self.time_debuff -= 1
         if self.skyfall > 0:
             self.skyfall -= 1
+        if self.attack_down > 0:
+            self.attack_down -= 1
 
     def apply_skill_effects(self, b: ESBehavior) -> bool:
         """Check context to see if a skill is allowed to be used, and update flag accordingly"""
@@ -262,6 +266,12 @@ class Context(object):
                 return True
             else:
                 return False
+        elif isinstance(b, ESDebuffATK):
+            if self.attack_down == 0:
+                self.attack_down = b.turns
+                return True
+            else:
+                return False
 
         return True
 
@@ -295,6 +305,8 @@ class Context(object):
             return self.time_debuff == 0
         elif isinstance(b, ESSkyfall):
             return self.skyfall == 0
+        elif isinstance(b, ESDebuffATK):
+            return self.attack_down == 0
 
         return True
 
