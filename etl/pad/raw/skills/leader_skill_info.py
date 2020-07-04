@@ -1038,9 +1038,14 @@ class LSMultiAttrConditionalStatBoost(LeaderSkill):
         self.hp_2 = multi_floor(data[5])
         self.atk_2 = multi_floor(data[6])
         self.rcv_2 = multi_floor(data[7])
-        hp = max(self.hp_1, 1) * max(self.hp_2, 1)
-        atk = max(self.atk_1, 1) * max(self.atk_2, 1)
-        rcv = max(self.rcv_1, 1) * max(self.rcv_2, 1)
+
+        def min_1_if_set(settable, value):
+            """Only constrain the value to 1 if it is optional."""
+            return max(value, 1.0) if len(settable) < 5 else value
+
+        hp = min_1_if_set(self.attributes_1, self.hp_1) * min_1_if_set(self.attributes_2, self.hp_2)
+        atk = min_1_if_set(self.attributes_1, self.atk_1) * min_1_if_set(self.attributes_2, self.atk_2)
+        rcv = min_1_if_set(self.attributes_1, self.rcv_1) * min_1_if_set(self.attributes_2, self.rcv_2)
         super().__init__(136, ms, hp=hp, atk=atk, rcv=rcv)
 
     def text(self, converter) -> str:
