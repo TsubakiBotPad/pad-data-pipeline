@@ -187,7 +187,8 @@ class Card(pad_util.Printable):
         self.inheritable = bool(self.inheritable_flag and self.active_skill_id)
         self.take_assists = bool(self.take_assists_flag and self.active_skill_id)
         self.is_stackable = bool(not self.unstackable_flag and self.type_1_id in [0, 12, 14])
-        self.usable = bool(not self.assist_only_flag and self.monster_no < 100000)
+        self.ownable = self.monster_no < 100000
+        self.usable = bool(not self.assist_only_flag and self.ownable)
 
         self.furigana = str(raw[67])  # JP data only?
         self.limit_mult = int(raw[68])

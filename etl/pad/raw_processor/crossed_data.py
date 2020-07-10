@@ -70,6 +70,8 @@ def build_cross_server_cards(jp_database, na_database, kr_database) -> List[Cros
     jp_gems = {}
     na_gems = {}
     for card in combined_cards[4468:]:
+        if not card.jp_card.card.ownable:
+            continue
         if card.jp_card.card.name.endswith('の希石') or \
                 card.na_card.card.name.endswith("'s Gem"):
             jp_gems[card.jp_card.card.name[:-3]] = card
