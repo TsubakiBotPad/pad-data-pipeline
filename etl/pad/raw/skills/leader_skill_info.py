@@ -1753,12 +1753,12 @@ class LSColorComboBonusCombo(LeaderSkill):
 def convert(skill_list: List[MonsterSkill]):
     results = {}
     for s in skill_list:
-        # try:
-        ns = convert_skill(s)
-        if ns:
-            results[ns.skill_id] = ns
-    # except Exception as ex:
-    # human_fix_logger.warning('Failed to convert {} {}'.format(s.skill_type, ex))
+        try:
+            ns = convert_skill(s)
+            if ns:
+                results[ns.skill_id] = ns
+        except Exception as ex:
+            human_fix_logger.warning('Failed to convert {} {}'.format(s.skill_type, ex))
 
     # Fills in LSMultiPartSkills
     for s in results.values():
@@ -1776,6 +1776,11 @@ def convert(skill_list: List[MonsterSkill]):
 # TODO: These ended up being 1:1, convert skill type to a class value, then
 # load this mapping dynamically via list of skill classes
 def convert_skill(s) -> Optional[LeaderSkill]:
+    if s.skill_id == 1538:
+        # This works around a bug in gungho's code for this specific skill.
+        # Currently the skill data for 1538 is ['無し', '', 0, 0, 0, ''] but it's in use.
+        return LeaderSkill(0, s)
+
     d = {}
     for skill in ALL_LEADER_SKILLS:
         if skill.skill_type in d:
