@@ -1361,17 +1361,17 @@ class ESLeaderAlter(ESAction):
         return converter.lead_alter(self.turns, self.target_card)
 
 
-class ES7x6Change(ESAction):
+class ESBoardSizeChange(ESAction):
     skill_types = [126]
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.turns = self.params[1]
-        self.unknown = self.params[2]  # So far, only a single example with 1, converts to 7x6
+        self.board_size_param = self.params[2]
         self.conditional = True
 
     def description(self, converter):
-        return converter.force_7x6(self.turns)
+        return converter.force_board_size(self.turns, self.board_size_param)
 
 
 class ESNoSkyfall(ESAction):
@@ -1855,7 +1855,7 @@ ENEMY_SKILLS = [
     ESInvulnerableOff,
     ESGachaFever,
     ESLeaderAlter,
-    ES7x6Change,
+    ESBoardSizeChange,
     ESNoSkyfall,
     ESFlagOperation,
     ESBranchFlag0,

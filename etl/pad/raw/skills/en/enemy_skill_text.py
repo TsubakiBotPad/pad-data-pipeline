@@ -366,8 +366,9 @@ class EnESTextConverter(EnBaseTextConverter):
     def lead_alter(self, turns, target):
         return 'Change leader to [{:d}] for {:s}'.format(target, pluralize2('turn', turns))
 
-    def force_7x6(self, turns):
-        return 'Change board size to 7x6 for {:s}'.format(pluralize2('turn', turns))
+    def force_board_size(self, turns: int, size_param: int):
+        size = {1: '7x6', 2: '5x4', 3: '6x5'}.get(size_param, 'unknown')
+        return 'Change board size to {} for {:s}'.format(size, pluralize2('turn', turns))
 
     def no_skyfall(self, turns):
         return 'No skyfall for {:s}'.format(pluralize2('turn', turns))

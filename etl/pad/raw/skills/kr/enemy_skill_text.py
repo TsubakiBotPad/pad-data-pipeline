@@ -345,8 +345,9 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
     def lead_alter(self, turns, target):
         return '{}턴 동안 리더를 [{}]로 변경'.format(target, turns)
 
-    def force_7x6(self, turns):
-        return '{}턴 동안 드롭판을 7x6으로 변경'.format(turns)
+    def force_board_size(self, turns: int, size_param: int):
+        size = {1: '7x6', 2: '5x4', 3: '6x5'}.get(size_param, 'unknown')
+        return '{}턴 동안 드롭판을 {}으로 변경'.format(turns, size)
 
     def no_skyfall(self, turns):
         return '{}턴 동안 낙차 콤보 없음'.format(turns)
