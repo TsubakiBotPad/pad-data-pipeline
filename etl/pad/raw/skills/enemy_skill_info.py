@@ -1209,7 +1209,7 @@ class ESOrbLock(ESAction):
         self.attributes = attribute_bitmap(self.params[1])
         self.count = self.params[2]
 
-        self.conditional = self.attributes != [-1] and len(self.attributes) != 9
+        self.conditional = self.attributes != [-1] and len(self.attributes) < 4
 
     def description(self, converter):
         return converter.orb_lock(self.count, self.attributes)
