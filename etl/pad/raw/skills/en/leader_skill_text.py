@@ -53,6 +53,12 @@ class EnLSTextConverter(EnBaseTextConverter):
     def passive_stats_text(self, ls, **kwargs):
         return self.fmt_stats_type_attr_bonus(ls, **kwargs)
 
+    def hp_reduction_optional_atk(self, hp: float, attributes: List[int], atk: float):
+        text = self.fmt_multiplier_text(hp, 1, 1)
+        if atk != 1:
+            text += '; ' + self.fmt_stats_type_attr_bonus(None, attributes=attributes, atk=atk)
+        return text
+
     def after_attack_text(self, ls):
         return '{}x ATK additional damage when matching orbs'.format(fmt_mult(ls.multiplier))
 

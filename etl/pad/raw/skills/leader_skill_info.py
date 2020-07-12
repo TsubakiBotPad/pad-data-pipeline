@@ -787,12 +787,14 @@ class LSHpReduction(LeaderSkill):
     skill_type = 107
 
     def __init__(self, ms: MonsterSkill):
-        data = ms.data
+        data = merge_defaults(ms.data, [100, 0, 100])
         hp = mult(data[0])
-        super().__init__(107, ms, hp=hp)
+        self.atk_attributes = binary_con(data[1])
+        self.atk_for_attributes = mult(data[2])
+        super().__init__(107, ms, hp=hp, atk=self.atk_for_attributes)
 
     def text(self, converter) -> str:
-        return converter.passive_stats_text(self)
+        return converter.hp_reduction_optional_atk(self.hp, self.atk_attributes, self.atk_for_attributes)
 
 
 class LSReducedHpTypeAtkBoost(LeaderSkill):

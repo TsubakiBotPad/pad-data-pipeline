@@ -54,6 +54,13 @@ class JpLSTextConverter(JpBaseTextConverter):
         o = self.fmt_stats_type_attr_bonus(ls, **kwargs)
         return o + '。' if o else ''
 
+    def hp_reduction_optional_atk(self, hp: float, attributes: List[int], atk: float):
+        text = self.fmt_multiplier_text(hp, 1, 1)
+        if atk != 1:
+            text += '、' + self.fmt_stats_type_attr_bonus(None, attributes=attributes, atk=atk)
+        text += '。'
+        return text
+
     def after_attack_text(self, ls):
         return 'ドロップ消した時、攻撃力ｘ{}倍の追い打ち。'.format(fmt_mult(ls.multiplier))
 
