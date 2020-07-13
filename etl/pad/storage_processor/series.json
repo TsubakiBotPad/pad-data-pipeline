@@ -1234,5 +1234,17 @@
     "name_kr": "P&D W",
     "name_na": "PAD W",
     "series_id": 214
+  },
+  {
+    "name_jp": "Event Invade",
+    "name_kr": "Event Invade",
+    "name_na": "Event Invade",
+    "series_id": 215
+  },
+  {
+    "name_jp": "My Hero Academia Collab",
+    "name_kr": "My Hero Academia Collab",
+    "name_na": "My Hero Academia Collab",
+    "series_id": 216
   }
 ]
