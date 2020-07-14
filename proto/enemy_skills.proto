@@ -73,6 +73,8 @@ message BehaviorGroup {
         DEATH = 7;
         // Could not find a slot for these, so dump them all in a separate group.
         UNKNOWN_USE = 8;
+        // This group will be used before all others.
+        HIGHEST_PRIORITY = 9;
     }
 
     // Type for this group, affects display text and type.
