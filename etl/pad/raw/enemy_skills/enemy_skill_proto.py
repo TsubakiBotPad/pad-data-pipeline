@@ -147,7 +147,7 @@ def add_behavior_group_from_moveset(group_list, group_type, moveset: Moveset) ->
     return bg
 
 
-def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
+def flatten_skillset(level: int, skillset: ProcessedSkillset, skillset_extraction=False) -> LevelBehavior:
     result = LevelBehavior()
     result.level = level
 
@@ -211,7 +211,79 @@ def flatten_skillset(level: int, skillset: ProcessedSkillset) -> LevelBehavior:
         # Add it to the top level group
         es_bg.condition.trigger_enemies_remaining = es_moveset.count
 
+    if skillset_extraction:
+        do_skillset_extraction(result)
+
     return result
+
+
+def do_skillset_extraction(result: LevelBehavior):
+    # Try to identify repeating skillsets and extract them
+    leaf_behavior_groups = {}  # Map[str, List[Behavior]]
+    leaf_behavior_group_counts = defaultdict(int)
+
+    def stringify_proto_list(l):
+        return ''.join(map(lambda x: str(x.SerializeToString()), l))
+
+    def extract_groups(x):
+        if not isinstance(x, BehaviorGroup):
+            return
+        for c in x.children:
+            if c.HasField('group'):
+                return
+        if len(x.children) < 2:
+            return
+        item = list(x.children)
+        key = stringify_proto_list(item)
+        leaf_behavior_group_counts[key] += 1
+        leaf_behavior_groups[key] = item
+
+    for bg in result.groups:
+        visit_tree(bg, extract_groups)
+
+    insertion_point = 0
+    for bg in result.groups:
+        if bg.group_type in [BehaviorGroup.PASSIVE, BehaviorGroup.PREEMPT]:
+            insertion_point += 1
+            continue
+        break
+
+    cur_ss = 0
+    for key, v in sorted(leaf_behavior_group_counts.items(), key=lambda item: item[1], reverse=True):
+        if v < 2:
+            continue
+        cur_ss += 1
+        replacement_skill = ESUseSkillset(cur_ss)
+
+        def replace_groups(x):
+            if not isinstance(x, BehaviorGroup):
+                return
+            compare_key = stringify_proto_list(x.children)
+            if key == compare_key:
+                # Delete the existing behaviors
+                del x.children[:]
+                # Add a new 'use skillset' behavior
+                x.children.add().behavior.enemy_skill_id = replacement_skill.enemy_skill_id
+
+        for bg in result.groups:
+            visit_tree(bg, replace_groups)
+
+        # Create a new group, insert it into the right spot in the list. Kind of tricky in proto.
+        new_groups = list(result.groups)
+        del result.groups[:]
+
+        # Populate the new group correctly
+        g = BehaviorGroup()
+        children = leaf_behavior_groups[key]
+        for behavior_item in children:
+            g.children.append(behavior_item)
+        g.group_type = BehaviorGroup.STANDARD
+        g.condition.skill_set = cur_ss
+
+        # Insert the group in place
+        new_groups.insert(insertion_point, g)
+        insertion_point += 1
+        result.groups.extend(new_groups)
 
 
 def visit_tree(bg_or_behavior, fn):
