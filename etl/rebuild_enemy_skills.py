@@ -108,10 +108,6 @@ UNCONDITIONAL_OVERRIDES = {
 # This apparently is not universally good so this can be used to manually
 # toggle it on.
 APPLY_SKILLSET_GROUPING = [
-    5752,  # Achilles
-    5057,  # Libertas
-    3568,  # Kurogane Maru
-    5179,  # Rokks
 ]
 
 
