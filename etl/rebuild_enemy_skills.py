@@ -104,6 +104,16 @@ UNCONDITIONAL_OVERRIDES = {
     # monster_id : [es_id1, es_id2...]
 }
 
+# Identify monsters who should have their skillsets extracted to a group.
+# This apparently is not universally good so this can be used to manually
+# toggle it on.
+APPLY_SKILLSET_GROUPING = [
+    5752,  # Achilles
+    5057,  # Libertas
+    3568,  # Kurogane Maru
+    5179,  # Rokks
+]
+
 
 def process_card(csc: CrossServerCard) -> MonsterBehavior:
     enemy_behavior = [x.na_skill for x in csc.enemy_behavior]
@@ -144,7 +154,9 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
             skillset = enemy_skillset_processor.convert(card, enemy_behavior, level, long_loop)
             if not skillset.has_actions():
                 continue
-            flattened = enemy_skill_proto.flatten_skillset(level, skillset)
+
+            skillset_extraction = (csc.monster_id % 100000) in APPLY_SKILLSET_GROUPING
+            flattened = enemy_skill_proto.flatten_skillset(level, skillset, skillset_extraction=skillset_extraction)
 
             # Check if we've already seen this level behavior; zero out the level and stick it
             # in a set containing all the levels we've seen. We want the behavior set at the
