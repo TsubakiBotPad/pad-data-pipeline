@@ -1,12 +1,13 @@
 import os
+from collections import defaultdict
 from typing import List, Optional, Union
 
 from google.protobuf import text_format
 
 from dadguide_proto.enemy_skills_pb2 import BehaviorItem, LevelBehavior, BehaviorGroup, MonsterBehavior, \
     MonsterBehaviorWithOverrides, Behavior, Condition
-from pad.raw.skills.enemy_skill_info import ESInstance
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, Moveset, HpActions, TimedSkillGroup
+from pad.raw.skills.enemy_skill_info import ESInstance, ESUseSkillset
 
 
 def behavior_to_proto(instance: ESInstance, is_timed_group=True, cur_hp=100) -> BehaviorItem:
