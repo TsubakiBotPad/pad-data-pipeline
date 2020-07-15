@@ -1689,8 +1689,9 @@ class ESCountdownMessage(ESBehavior):
 class ESUseSkillset(ESBehavior):
     """Dummy action class to represent using a skillset"""
 
-    def __init__(self, skillset_id=0):
-        es_id = -10 - skillset_id
+    def __init__(self, skillset_id=1):
+        # ID is 1-indexed
+        es_id = -9 - skillset_id
         raw = [str(es_id), 'Use Skill Set', '-3', '0']
         dummy_skill = EnemySkill(raw)
         super().__init__(dummy_skill)
