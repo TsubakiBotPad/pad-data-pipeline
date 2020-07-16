@@ -146,8 +146,12 @@ class Context(object):
         self.time_debuff = 0
         # Turns of skyfall, initial:int=0 -> skyfall up:int>0 -> expire:int=0
         self.skyfall = 0
+        # Turns of no skyfall, initial:int=0 -> skyfall off:int>0 -> expire:int=0
+        self.no_skyfall = 0
         # Turns of attack down, initial:int=0 -> attack down:int>0 -> expire:int=0
         self.attack_down = 0
+        # Turns of rcv down, initial:int=0 -> rcv down:int>0 -> expire:int=0
+        self.rcv_down = 0
 
         # The current skill counter value, initialized to max.
         self.skill_counter = max_skill_counter
@@ -195,8 +199,12 @@ class Context(object):
             self.time_debuff -= 1
         if self.skyfall > 0:
             self.skyfall -= 1
+        if self.no_skyfall > 0:
+            self.no_skyfall -= 1
         if self.attack_down > 0:
             self.attack_down -= 1
+        if self.rcv_down > 0:
+            self.rcv_down -= 1
 
     def apply_skill_effects(self, b: ESBehavior) -> bool:
         """Check context to see if a skill is allowed to be used, and update flag accordingly"""
@@ -266,9 +274,21 @@ class Context(object):
                 return True
             else:
                 return False
+        elif isinstance(b, ESNoSkyfall):
+            if self.no_skyfall == 0:
+                self.no_skyfall = b.turns
+                return True
+            else:
+                return False
         elif isinstance(b, ESDebuffATK):
             if self.attack_down == 0:
                 self.attack_down = b.turns
+                return True
+            else:
+                return False
+        elif isinstance(b, ESDebuffRCV):
+            if self.rcv_down == 0:
+                self.rcv_down = b.turns
                 return True
             else:
                 return False
@@ -305,8 +325,12 @@ class Context(object):
             return self.time_debuff == 0
         elif isinstance(b, ESSkyfall):
             return self.skyfall == 0
+        elif isinstance(b, ESNoSkyfall):
+            return self.no_skyfall == 0
         elif isinstance(b, ESDebuffATK):
             return self.attack_down == 0
+        elif isinstance(b, ESDebuffRCV):
+            return self.rcv_down == 0
 
         return True
 
