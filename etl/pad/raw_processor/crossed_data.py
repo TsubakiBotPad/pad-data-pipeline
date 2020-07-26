@@ -12,7 +12,7 @@ from pad.raw.dungeon import SubDungeon
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
-from pad.raw.skills.enemy_skill_info import ESInstance, ESUnknown
+from pad.raw.skills.enemy_skill_info import ESInstance, ESUnknown, ESNone
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw_processor.jp_replacements import jp_en_replacements
 from pad.raw_processor.merged_data import MergedCard
@@ -182,12 +182,20 @@ def make_cross_server_enemy_behavior(jp_skills: List[ESInstance],
     na_skills = list(na_skills) or []
     kr_skills = list(kr_skills) or []
 
-    if len(jp_skills) > len(na_skills):
-        na_skills = jp_skills
-    if len(na_skills) > len(jp_skills):
-        jp_skills = na_skills
-    if len(na_skills) > len(kr_skills):
-        kr_skills = na_skills
+    def override_all_if_necessary(left, right):
+        # Typically if a monster isn't in a server yet, the ES is empty or limited.
+        if len(left) > len(right):
+            return left
+
+        # Occasionally the monster has the same ES count but some of them are ESNone.
+        def count_useful_skills(l: List[ESInstance]) -> int:
+            return sum(map(lambda y: 0 if isinstance(y.behavior, ESNone) else 1, l))
+
+        return left if count_useful_skills(left) > count_useful_skills(right) else right
+
+    na_skills = override_all_if_necessary(jp_skills, na_skills)
+    jp_skills = override_all_if_necessary(na_skills, jp_skills)
+    kr_skills = override_all_if_necessary(na_skills, kr_skills)
 
     def override_if_necessary(override_skills: List[ESInstance], dest_skills: List[ESInstance]):
         # Then check if we need to individually overwrite
