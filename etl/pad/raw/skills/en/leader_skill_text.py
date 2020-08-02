@@ -270,13 +270,13 @@ class EnLSTextConverter(EnBaseTextConverter):
         if ls.collab_id not in self._COLLAB_MAP:
             human_fix_logger.warning('Missing collab name for %s', ls.collab_id)
         collab_name = self._COLLAB_MAP.get(ls.collab_id, '<not populated:{}>'.format(ls.collab_id))
-        return '{} when all cards are from {}'.format(self.fmt_stats_type_attr_bonus(ls), collab_name)
+        return '{} when all subs are from {}'.format(self.fmt_stats_type_attr_bonus(ls), collab_name)
 
     def group_bonus_text(self, ls):
         if ls.group_id not in self._GROUP_MAP:
             human_fix_logger.warning('Missing group name for %s', ls.group_id)
         group_name = self._GROUP_MAP.get(ls.group_id, '<not populated:{}>'.format(ls.group_id))
-        return '{} when all cards are {}'.format(self.fmt_stats_type_attr_bonus(ls), group_name)
+        return '{} when all subs are {}'.format(self.fmt_stats_type_attr_bonus(ls), group_name)
 
     def orb_remain_text(self, ls):
         skill_text = self.fmt_stats_type_attr_bonus(ls, atk=ls.min_atk)

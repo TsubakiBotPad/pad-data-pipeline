@@ -249,7 +249,7 @@ class EnESTextConverter(EnBaseTextConverter):
         return 'Survive attacks with 1 HP when HP > {:d}%'.format(percent)
 
     def superresolve(self, percent, remaining):
-        return 'When reduced from HP > {:d}% to 0 HP, revive at {:d}% HP'.format(percent, remaining)
+        return 'Damage which would reduce HP from above {:d}% to below {:d}% is nullified'.format(percent, remaining)
 
     def leadswap(self, turns):
         return 'Leader changes to random sub for {:s}'.format(pluralize2('turn', turns))
