@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "user": "XXXXXXX",
+  "password": "YYYYYYYY",
+  "charset": "utf8",
+  "db": "dadguide"
+}
