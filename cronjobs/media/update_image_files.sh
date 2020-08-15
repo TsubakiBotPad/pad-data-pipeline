@@ -6,7 +6,7 @@ cd "$(dirname "$0")" || exit
 source ../shared.sh
 
 RUN_DIR="${MEDIA_ETL_DIR}/image_pull"
-ALT_PROCESSOR_DIR="/home/tactical0retreat/git/pad-resources"
+ALT_PROCESSOR_DIR="/home/bot/pad-resources"
 
 yarn --cwd=${ALT_PROCESSOR_DIR} update
 
@@ -35,7 +35,7 @@ python3 ${RUN_DIR}/PADPortraitsGenerator.py \
   --data_dir="${RAW_DIR}" \
   --card_templates_file="${RUN_DIR}/wide_cards.png" \
   --server=na \
-  --output_dir="${IMG_DIR}/na/portrait/local_tmp"
+  --output_dir="${IMG_DIR}/na/portrait/local"
 
 python3 ${RUN_DIR}/PADPortraitsGenerator.py \
   --input_dir="${IMG_DIR}/jp/full/extract_data" \

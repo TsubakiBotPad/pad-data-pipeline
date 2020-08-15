@@ -126,8 +126,8 @@ def load_data(args):
     if not args.skipintermediate:
         logger.info('Storing intermediate data')
         # This is supported for PadSpike, until we can support it better in the dg db
-        jp_database.save_all(args.output_dir, args.pretty)
-        na_database.save_all(args.output_dir, args.pretty)
+        # jp_database.save_all(args.output_dir, args.pretty)
+        # na_database.save_all(args.output_dir, args.pretty)
         # kr_database.save_all(args.output_dir, args.pretty)
 
     logger.info('Connecting to database')
@@ -140,16 +140,16 @@ def load_data(args):
     # Load dimension tables
     DimensionProcessor().process(db_wrapper)
 
-    # Load rank data
+    # # Load rank data
     RankRewardProcessor().process(db_wrapper)
 
-    # Ensure awakenings
+    # # Ensure awakenings
     AwakeningProcessor().process(db_wrapper)
 
-    # Ensure tags
+    # # Ensure tags
     SkillTagProcessor().process(db_wrapper)
 
-    # Load enemy skills
+    # # Load enemy skills
     es_processor = EnemySkillProcessor(db_wrapper, cs_database)
     es_processor.load_static()
     es_processor.load_enemy_skills()
@@ -160,7 +160,7 @@ def load_data(args):
     series_processor = SeriesProcessor(cs_database)
     series_processor.pre_process(db_wrapper)
 
-    # Load monster data
+    # # Load monster data
     MonsterProcessor(cs_database).process(db_wrapper)
 
     # Auto-assign monster series

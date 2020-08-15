@@ -4,8 +4,8 @@ set -e
 set -x
 
 WEBHOOK_BASE_URL="https://discordapp.com/api/webhooks"
-declare -rx PRIVATE_WEBHOOK_URL="$WEBHOOK_BASE_URL/000000000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-declare -rx PUBLIC_WEBHOOK_URL="$WEBHOOK_BASE_URL/000000000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+declare -rx PRIVATE_WEBHOOK_URL="$WEBHOOK_BASE_URL/744624214002237440/v4GZIInJ8t24Mm_HaI3csRma19DNLbt2kTc3Biq0-yaWf6W6bCDWAPLFKhnK5U8SFHV-"
+declare -rx PUBLIC_WEBHOOK_URL="$WEBHOOK_BASE_URL/744624214002237440/v4GZIInJ8t24Mm_HaI3csRma19DNLbt2kTc3Biq0-yaWf6W6bCDWAPLFKhnK5U8SFHV-"
 
 function hook_alert {
     echo "$1"
