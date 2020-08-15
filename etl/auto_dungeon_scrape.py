@@ -59,7 +59,7 @@ def do_dungeon_load(args, dungeon_id, floor_id):
     if not args.doupdates:
         print('skipping due to dry run')
         return
-    dungeon_script = '/home/tactical0retreat/dadguide/dadguide-data/etl/pad_dungeon_pull.py'
+    dungeon_script = '/home/bot/dadguide-data/etl/pad_dungeon_pull.py'
     process_args = [
         'python3',
         dungeon_script,

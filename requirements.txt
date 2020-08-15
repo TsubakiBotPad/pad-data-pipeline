@@ -5,3 +5,4 @@ bs4
 protobuf
 pymysql
 pillow
+pypng

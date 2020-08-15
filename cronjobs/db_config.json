@@ -1,7 +1,7 @@
 {
   "host": "localhost",
-  "user": "XXXXXXX",
-  "password": "YYYYYYYY",
+  "user": "botuser",
+  "password": "tsubaki",
   "charset": "utf8",
   "db": "dadguide"
 }

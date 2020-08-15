@@ -3,27 +3,30 @@
 set -e
 set -x
 
-declare -rx PAD_DATA_DIR="/home/tactical0retreat/pad_data"
-declare -rx RAW_DIR="/home/tactical0retreat/pad_data/raw"
+source ./secrets.sh
+
+declare -rx REPO_ROOT="/home/bot/dadguide-data"
+declare -rx PAD_DATA_DIR="${REPO_ROOT}/pad_data"
+declare -rx RAW_DIR="${REPO_ROOT}/pad_data/raw"
 # This probably needs to move into pad_data.
-declare -rx IMG_DIR="/home/tactical0retreat/image_data"
+declare -rx IMG_DIR="${REPO_ROOT}/pad_data/image_data"
 
-declare -rx ETL_DIR="/home/tactical0retreat/dadguide/dadguide-data/etl"
-declare -rx MEDIA_ETL_DIR="/home/tactical0retreat/dadguide/dadguide-data/media_pipelines"
-declare -rx UTILS_ETL_DIR="/home/tactical0retreat/dadguide/dadguide-data/utils"
+declare -rx ETL_DIR="${REPO_ROOT}/etl"
+declare -rx MEDIA_ETL_DIR="${REPO_ROOT}/media_pipelines"
+declare -rx UTILS_ETL_DIR="${REPO_ROOT}/utils"
 
-declare -rx DADGUIDE_DATA_DIR="/home/tactical0retreat/dadguide/data"
-declare -rx DADGUIDE_PROCESSED_DATA_DIR="/home/tactical0retreat/dadguide/data/processed"
-declare -rx DADGUIDE_MEDIA_DIR="/home/tactical0retreat/dadguide/data/media"
-declare -rx DADGUIDE_EXTRA_DIR="/home/tactical0retreat/dadguide/data/extra"
-declare -rx DADGUIDE_GAME_DB_DIR="/home/tactical0retreat/dadguide/data/db"
-declare -rx GAME_DATA_DIR="/home/tactical0retreat/dadguide/pad-game-data-slim"
+declare -rx DADGUIDE_DATA_DIR="${REPO_ROOT}/output"
+declare -rx DADGUIDE_PROCESSED_DATA_DIR="${DADGUIDE_DATA_DIR}/processed"
+declare -rx DADGUIDE_MEDIA_DIR="${DADGUIDE_DATA_DIR}/media"
+declare -rx DADGUIDE_EXTRA_DIR="${DADGUIDE_DATA_DIR}/extra"
+declare -rx DADGUIDE_GAME_DB_DIR="${DADGUIDE_DATA_DIR}/db"
+declare -rx GAME_DATA_DIR="/home/bot/pad-game-data-slim"
 
-declare -rx DB_CONFIG="/home/tactical0retreat/dadguide/dadguide-jobs/db_config.json"
-declare -rx ACCOUNT_CONFIG="/home/tactical0retreat/dadguide/dadguide-jobs/account_config.csv"
+declare -rx DB_CONFIG="${REPO_ROOT}/cronjobs/db_config.json"
+declare -rx ACCOUNT_CONFIG="${REPO_ROOT}/cronjobs/account_config.csv"
 
-declare -rx SCHEMA_TOOLS_DIR="/home/tactical0retreat/dadguide/dadguide-data/schema"
-declare -rx ETL_IMAGES_DIR="/home/tactical0retreat/dadguide/dadguide-data/images"
-declare -rx ES_DIR="/home/tactical0retreat/dadguide/pad-game-data-slim/behavior_data"
+declare -rx SCHEMA_TOOLS_DIR="${REPO_ROOT}/schema"
+declare -rx ETL_IMAGES_DIR="${REPO_ROOT}/images"
+declare -rx ES_DIR="/home/bot/pad-game-data-slim/behavior_data"
 
 export PYTHONPATH="${ETL_DIR}"

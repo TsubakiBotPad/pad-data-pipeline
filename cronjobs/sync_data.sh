@@ -17,7 +17,7 @@ source ./shared.sh
 
 echo "Copying media"
 python3 "${ETL_DIR}/media_copy.py" \
-  --base_dir=/home/tactical0retreat/image_data \
+  --base_dir="${IMG_DIR}" \
   --output_dir="${DADGUIDE_MEDIA_DIR}"
 
 # Spammy commands
@@ -30,13 +30,5 @@ rsync -t "${ETL_IMAGES_DIR}"/types/*      "${DADGUIDE_MEDIA_DIR}/types"
 rsync -t "${ETL_IMAGES_DIR}"/icons/*      "${DADGUIDE_MEDIA_DIR}/icons"
 set -x
 
-echo "Syncing raw data to GCS"
-gsutil -m rsync -r -c /home/tactical0retreat/pad_data/raw gs://mirubot-data/paddata/raw
-
-echo "Syncing db, media, and extra data to B2"
-b2 sync --compareVersions size "${DADGUIDE_GAME_DB_DIR}" b2://dadguide-data/db
-b2 sync --compareVersions size "${DADGUIDE_MEDIA_DIR}" b2://dadguide-data/media
-b2 sync --compareVersions size "${DADGUIDE_EXTRA_DIR}" b2://dadguide-data/extra
-
-# Temporary for padspike
-b2 sync --compareVersions size "${DADGUIDE_DATA_DIR}/processed" b2://dadguide-data/processed
+echo "Syncing raw data to AWS s3"
+aws s3 sync --acl=private ${DADGUIDE_DATA_DIR} s3://tsubakibot-pad

@@ -96,8 +96,12 @@ for file_name in sorted(os.listdir(raw_dir)):
 
     print('processing', corrected_file_path)
     with tempfile.TemporaryDirectory() as temp_dir:
-        tmp_corrected_file_path = os.path.join(temp_dir, final_image_name)
-        process_animated(working_dir, pad_id, tmp_corrected_file_path)
-        generate_resized_image(tmp_corrected_file_path, corrected_file_path)
+        try:
+            tmp_corrected_file_path = os.path.join(temp_dir, final_image_name)
+            process_animated(working_dir, pad_id, tmp_corrected_file_path)
+            generate_resized_image(tmp_corrected_file_path, corrected_file_path)
+        except:
+            print('error skipping', corrected_file_path)
+            continue
 
 print('done')

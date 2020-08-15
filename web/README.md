@@ -55,7 +55,7 @@ This should be updated periodically.
 To run the server on the DG host:
 
 ```bash
-docker run -d --name admin-api-server --network=host --restart=on-failure -v /home/tactical0retreat/dadguide/pad-game-data:/server/es gcr.io/rpad-discord/admin-api-server:latest
+docker run -d --name admin-api-server --network=host --restart=on-failure -v /home/bot/dadguide/pad-game-data:/server/es gcr.io/rpad-discord/admin-api-server:latest
 ```
 
 I had trouble getting the build args and runtime args to play nicely with the
@@ -86,7 +86,7 @@ cloud-build-local --dryrun=false  --config=admin-api-server-cloudbuild.yaml  .
 Watchtower is set up to continuously deploy new builds:
 
 ```bash
-docker run -d --name watchtower --restart always -v /home/tactical0retreat/.docker/config.json:/config.json -v /var/run/docker.sock:/var/run/docker.sock v2tec/watchtower -i 30
+docker run -d --name watchtower --restart always -v /home/bot/.docker/config.json:/config.json -v /var/run/docker.sock:/var/run/docker.sock v2tec/watchtower -i 30
 ```
 
 Watchtower needs to have authorization to GCR. To set up auth:
