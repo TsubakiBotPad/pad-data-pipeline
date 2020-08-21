@@ -6,6 +6,7 @@ set -x
 source ./secrets.sh
 
 declare -rx REPO_ROOT="/home/bot/dadguide-data"
+declare -rx PAD_RESOURCES_ROOT="/home/bot/pad-resources"
 declare -rx PAD_DATA_DIR="${REPO_ROOT}/pad_data"
 declare -rx RAW_DIR="${REPO_ROOT}/pad_data/raw"
 # This probably needs to move into pad_data.

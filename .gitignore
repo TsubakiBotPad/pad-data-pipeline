@@ -20,6 +20,8 @@ parts/
 sdist/
 var/
 wheels/
+output/
+share/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -116,5 +118,12 @@ etl/db_config.json
 # Ignore secret pad files
 etl/pad/api/keygen.py
 etl/pad/api/dungeon_encoding.py
+cronjobs/secrets.sh
+
+# python venv
+bin/
 
 *.orig
+
+# vim swap files
+*.swp
