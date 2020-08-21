@@ -6,9 +6,8 @@ cd "$(dirname "$0")" || exit
 source ../shared.sh
 
 RUN_DIR="${MEDIA_ETL_DIR}/image_pull"
-ALT_PROCESSOR_DIR="/home/bot/pad-resources"
 
-yarn --cwd=${ALT_PROCESSOR_DIR} update
+yarn --cwd=${PAD_RESOURCES_ROOT} update
 
 # Full pictures
 python3 "${RUN_DIR}/PADTextureDownload.py" \
@@ -17,7 +16,7 @@ python3 "${RUN_DIR}/PADTextureDownload.py" \
 
 python3 "${RUN_DIR}/PADAnimatedGenerator.py" \
   --raw_dir="${IMG_DIR}/na/full/raw_data" \
-  --working_dir="${ALT_PROCESSOR_DIR}" \
+  --working_dir="${PAD_RESOURCES_ROOT}" \
   --output_dir="${IMG_DIR}/na/full/corrected_data"
 
 python3 "${RUN_DIR}/PADTextureDownload.py" \
@@ -26,7 +25,7 @@ python3 "${RUN_DIR}/PADTextureDownload.py" \
 
 python3 "${RUN_DIR}/PADAnimatedGenerator.py" \
   --raw_dir="${IMG_DIR}/jp/full/raw_data" \
-  --working_dir="${ALT_PROCESSOR_DIR}" \
+  --working_dir="${PAD_RESOURCES_ROOT}" \
   --output_dir="${IMG_DIR}/jp/full/corrected_data"
 
 # Portraits
@@ -47,7 +46,7 @@ python3 ${RUN_DIR}/PADPortraitsGenerator.py \
 # Animations
 python3 "${RUN_DIR}/PADAnimationGenerator.py" \
   --raw_dir="${IMG_DIR}/jp/full/raw_data" \
-  --working_dir="${ALT_PROCESSOR_DIR}" \
+  --working_dir="${PAD_RESOURCES_ROOT}" \
   --output_dir="${IMG_DIR}/animated"
 
 # Force a sync
