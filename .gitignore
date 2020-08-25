@@ -120,6 +120,7 @@ etl/db_config.json
 etl/pad/api/keygen.py
 etl/pad/api/dungeon_encoding.py
 cronjobs/secrets.sh
+cronjobs/account_config.csv
 
 # python venv
 bin/
