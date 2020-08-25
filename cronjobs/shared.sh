@@ -3,9 +3,8 @@
 set -e
 set -x
 
-source ./secrets.sh
 
-declare -rx REPO_ROOT="/home/bot/dadguide-data"
+declare -rx REPO_ROOT="/home/bot/pad-data-pipeline"
 declare -rx PAD_RESOURCES_ROOT="/home/bot/pad-resources"
 declare -rx PAD_DATA_DIR="${REPO_ROOT}/pad_data"
 declare -rx RAW_DIR="${REPO_ROOT}/pad_data/raw"
@@ -25,9 +24,11 @@ declare -rx GAME_DATA_DIR="/home/bot/pad-game-data-slim"
 
 declare -rx DB_CONFIG="${REPO_ROOT}/cronjobs/db_config.json"
 declare -rx ACCOUNT_CONFIG="${REPO_ROOT}/cronjobs/account_config.csv"
+declare -rx SECRETS_CONFIG="${REPO_ROOT}/cronjobs/secrets.sh"
 
 declare -rx SCHEMA_TOOLS_DIR="${REPO_ROOT}/schema"
 declare -rx ETL_IMAGES_DIR="${REPO_ROOT}/images"
 declare -rx ES_DIR="/home/bot/pad-game-data-slim/behavior_data"
 
+source ${SECRETS_CONFIG}
 export PYTHONPATH="${ETL_DIR}"
