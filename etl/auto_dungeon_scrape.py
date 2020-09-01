@@ -9,6 +9,7 @@ from pad.common.shared_types import Server
 from pad.db import db_util
 from pad.raw.bonus import BonusType
 from pad.raw_processor import merged_database
+from pad_dungeon_pull import pull_data
 
 fail_logger = logging.getLogger('human_fix')
 fail_logger.disabled = True
@@ -54,27 +55,24 @@ def parse_args():
 
     return parser.parse_args()
 
+class Arg:
+    pass
 
 def do_dungeon_load(args, dungeon_id, floor_id):
     if not args.doupdates:
         print('skipping due to dry run')
         return
-    dungeon_script = '/home/bot/dadguide-data/etl/pad_dungeon_pull.py'
-    process_args = [
-        'python3',
-        dungeon_script,
-        '--db_config={}'.format(args.db_config),
-        '--server={}'.format(args.server),
-        '--dungeon_id={}'.format(dungeon_id),
-        '--floor_id={}'.format(floor_id),
-        '--user_uuid={}'.format(args.user_uuid),
-        '--user_intid={}'.format(args.user_intid),
-        '--loop_count=20',
-    ]
-    p = subprocess.run(process_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    print(str(p.stdout))
-    print(str(p.stderr))
 
+    dg_pull_arg = Arg()
+    dg_pull_arg.db_config = args.db_config
+    dg_pull_arg.server = args.server
+    dg_pull_arg.user_uuid = args.user_uuid
+    dg_pull_arg.user_intid = args.user_intid
+    dg_pull_arg.floor_id = floor_id
+    dg_pull_arg.dungeon_id = dungeon_id
+    dg_pull_arg.loop_count = 20
+    dg_pull_arg.logsql = False
+    pull_data(dg_pull_arg)
 
 CHECK_AGE_SQL = '''
 SELECT
