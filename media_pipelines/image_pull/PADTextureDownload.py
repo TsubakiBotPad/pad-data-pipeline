@@ -150,7 +150,8 @@ for asset in assets:
                 break
             else: # is a bug a la polowne, crop garbage pixels off the bottom
                 img = img.crop((0,0,img.width,IMAGE_SIZE[1]))
-            img = img.crop(img.getbbox())
+                _,y0,_,y1 = img.getbbox()
+                img = img.crop((0,y0,img.width,y1))
 
         old_size = img.size
 
