@@ -131,10 +131,39 @@ for asset in assets:
         # come in parts that are assembled by PAD.
         print('Error, could not find file:', extract_file_path)
     else:
-        img = Image.open(extract_file_path)
+        img = Image.open(extract_file_path).convert('RGBA')
         if img.size[1] > IMAGE_SIZE[1]:
-            # this is a two-part image
-            img = img.crop((0, 0, img.size[0], img.size[1] / 2))
+            # Fix extracted images that have garbage pixels
+            # Garbage pixels result in tons of empty space, and incorrect cropping
+            color, empty, x, y = 1, 0, 0, 0
+            # Counts how many rows are majority empty pixels, and should be safe to remove
+            # Checks pixels from bottom right to top left
+            for pixel in reversed(img.getdata(3)):
+                # Check every new row, if it was a majority empty row
+                # Increment height if so
+                if x >= img.size[0]:
+                    if (empty / color > 100):
+                        y += 1
+                    else:
+                        # Majority non-empty row means we've reached the picture
+                        # Found where to potentially crop
+                        break
+                    color = 1
+                    empty = 0
+                    x = 0
+                if pixel == 0:  # transparent
+                    empty += 1
+                else:
+                    color += 1
+                x += 1
+            if (y > 50):
+                # If height greater than ^, most likely image with garbage pixels; crop it
+                # Normal images have as little as 10 pixels or less empty space at bottom
+                # Images with garbage pixels have as much as 100+ pixels empty space
+                img = img.crop((0, 0, img.size[0], img.size[1] - y))
+            else:
+                # this is a two-part image; two-frame pixel monster
+                img = img.crop((0, 0, img.size[0], img.size[1] / 2))
 
         old_size = img.size
 
