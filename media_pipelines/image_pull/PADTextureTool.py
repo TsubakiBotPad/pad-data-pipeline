@@ -58,7 +58,7 @@ PVRTC2BPP = Encoding([2])
 
 
 class Texture(object):
-    def __init__(self, width, height, name, buffer, encoding):
+    def __init__(self, width, height, name, buffer, encoding, givenWidth=0, givenHeight=0):
         super(Texture, self).__init__()
         self.width = width
         self.height = height
@@ -66,6 +66,8 @@ class Texture(object):
         self.buffer = buffer
         self.encoding = encoding
         self.packedPixels = None
+        self.givenWidth = givenWidth or self.width
+        self.givenHeight = givenHeight or self.height
 
         if self.encoding.strideInBits:
             if self.encoding.strideInBits == 32:
@@ -115,7 +117,7 @@ class TextureWriter(object):
         cls.blackeningEnabled = blackeningEnabled
 
     @classmethod
-    def trimTransparentEdges(cls, flatPixelArray, width, height, channels):
+    def trimTransparentEdges(cls, flatPixelArray, width, height, channels, givenWidth, givenHeight):
         channelsPerPixel = len(channels)
 
         # Isolate the image's alpha channel
@@ -133,8 +135,8 @@ class TextureWriter(object):
                 maxIndex -= 1
             return minIndex, maxIndex
 
-        top, bottom = findTrimEdges(0, height - 1, getRow)
-        left, right = findTrimEdges(0, width - 1, getColumn)
+        top, bottom = findTrimEdges(0, givenHeight - 1, getRow)
+        left, right = findTrimEdges(0, givenWidth - 1, getColumn)
 
         trimmedWidth = (right - left) + 1
         trimmedHeight = (bottom - top) + 1
@@ -188,7 +190,7 @@ class TextureWriter(object):
             if texture.encoding.hasAlpha:
                 if cls.trimmingEnabled:
                     width, height, flatPixelArray = cls.trimTransparentEdges(
-                        flatPixelArray, width, height, texture.encoding.channels)
+                        flatPixelArray, width, height, texture.encoding.channels, texture.givenWidth, texture.givenHeight)
                 if cls.blackeningEnabled:
                     flatPixelArray = cls.blackenTransparentPixels(
                         flatPixelArray, width, height, texture.encoding.channels)
@@ -357,7 +359,13 @@ class TextureReader(object):
                     if encoding == PVRTC4BPP or encoding == PVRTC2BPP:
                         offset += 12
 
-                    yield Texture(width, height, name, binaryBlob[imageDataStart:imageDataEnd], encoding)
+                    # MONS images mostly have size data in their footer, use this for trimming
+                    givenWidth, givenHeight = 0,0
+                    if encoding == R4G4B4A4 and len(binaryBlob) >= offset + 16:
+                        # 8 bytes of idk perhaps image size | img width | img height | # of frames | idk maybe palette related
+                        _,givenWidth,givenHeight,_,_ = struct.unpack('<8sHHHH',binaryBlob[offset:offset+16])
+
+                    yield Texture(width, height, name, binaryBlob[imageDataStart:imageDataEnd], encoding, givenWidth, givenHeight)
 
             offset += cls.textureBlockHeaderAlignment
 
