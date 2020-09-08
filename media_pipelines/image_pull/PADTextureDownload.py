@@ -133,32 +133,24 @@ for asset in assets:
     else:
         img = Image.open(extract_file_path).convert('RGBA')
         if img.size[1] > IMAGE_SIZE[1]:
-            # fix for broken images (3662, 3838, 5990, 5991 so far)
-            # trash pixels at bottom make these too tall, crop them off here
-            color,empty = 0,1
-            for pixel in img.crop((0, IMAGE_SIZE[1], img.width, img.height)).getdata(3):
-                if not pixel:
-                    color += 1
-                else:
-                    empty += 1
-            if color/empty > 100:
-                # If bottom of image (below IMAGE_SIZE[1]) is mostly (99%) transparent:
-                # we can assume this is a broken image and fix it.
-                imdata = img.getdata(3)
-                # find first empty row from the bottom:
-                for i in reversed(range(IMAGE_SIZE[1]*img.width,img.height*img.width,img.width)):
-                    for j in range(i, i + img.width):
-                        if imdata[j]:
-                            break
-                    else:
-                        # crop image at first empty row
-                        img = img.crop((0,0,img.width,i//img.width))
+            # this is either a two-part pixel image, or a bug.
+            SEARCH_DIST = 10
+            # Image splitting:
+            # find fully transparent row closest to image midpoint within SEARCH_DIST pixels
+            # crop off everything below this row, if no row is found crop below IMAGE_SIZE[1]
+            # crop remaining whitespace off image
+            for i in range(SEARCH_DIST):
+                for j in (i,-i):
+                    alpha_row_sum = sum(tuple(img.getdata(3))[img.width*(img.height//2 + j):img.width*(img.height//2 + j + 1)])
+                    if not alpha_row_sum: # row is empty, crop image here
+                        img = img.crop((0,0,img.width,img.height//2 + j))
                         break
-                # crop to bounding box to remove the remaining white space
-                img = img.crop(img.getbbox())
-            else:
-                # this is a two-part (animated pixel) image
-                img = img.crop((0, 0, img.size[0], img.size[1] / 2))
+                else:
+                    continue
+                break
+            else: # is a bug a la polowne, crop garbage pixels off the bottom
+                img = img.crop((0,0,img.width,IMAGE_SIZE[1]))
+            img = img.crop(img.getbbox())
 
         old_size = img.size
 
