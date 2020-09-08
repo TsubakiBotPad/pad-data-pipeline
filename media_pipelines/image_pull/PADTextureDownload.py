@@ -131,10 +131,29 @@ for asset in assets:
         # come in parts that are assembled by PAD.
         print('Error, could not find file:', extract_file_path)
     else:
-        img = Image.open(extract_file_path)
+        img = Image.open(extract_file_path).convert('RGBA')
         if img.size[1] > IMAGE_SIZE[1]:
-            # this is a two-part image
-            img = img.crop((0, 0, img.size[0], img.size[1] / 2))
+            color,empty = 0,1
+            for pixel in img.crop((0, img.height / 2, img.width, img.height)).getdata(3):
+                if not pixel:
+                    color += 1
+                else:
+                    empty += 1
+            if color/empty > 1:
+                # this is a broken (too tall) image
+                imdata = img.getdata(3)
+                for i in reversed(range(img.height*img.width//2,img.height*img.width,img.width)):
+                    for j in range(i, i + img.width):
+                        if imdata[j]:
+                            break
+                    else:
+                        # first empty row from the bottom, crop here
+                        img = img.crop((0,0,img.width,i//img.width))
+                        break
+                img = img.crop(img.getbbox())
+            else:
+                # this is a two-part image
+                img = img.crop((0, 0, img.size[0], img.size[1] / 2))
 
         old_size = img.size
 
