@@ -133,26 +133,31 @@ for asset in assets:
     else:
         img = Image.open(extract_file_path).convert('RGBA')
         if img.size[1] > IMAGE_SIZE[1]:
+            # fix for broken images (3662, 3838, 5990, 5991 so far)
+            # trash pixels at bottom make these too tall, crop them off here
             color,empty = 0,1
-            for pixel in img.crop((0, img.height / 2, img.width, img.height)).getdata(3):
+            for pixel in img.crop((0, IMAGE_SIZE[1], img.width, img.height)).getdata(3):
                 if not pixel:
                     color += 1
                 else:
                     empty += 1
-            if color/empty > 1:
-                # this is a broken (too tall) image
+            if color/empty > 100:
+                # If bottom of image (below IMAGE_SIZE[1]) is mostly (99%) transparent:
+                # we can assume this is a broken image and fix it.
                 imdata = img.getdata(3)
-                for i in reversed(range(img.height*img.width//2,img.height*img.width,img.width)):
+                # find first empty row from the bottom:
+                for i in reversed(range(IMAGE_SIZE[1]*img.width,img.height*img.width,img.width)):
                     for j in range(i, i + img.width):
                         if imdata[j]:
                             break
                     else:
-                        # first empty row from the bottom, crop here
+                        # crop image at first empty row
                         img = img.crop((0,0,img.width,i//img.width))
                         break
+                # crop to bounding box to remove the remaining white space
                 img = img.crop(img.getbbox())
             else:
-                # this is a two-part image
+                # this is a two-part (animated pixel) image
                 img = img.crop((0, 0, img.size[0], img.size[1] / 2))
 
         old_size = img.size
