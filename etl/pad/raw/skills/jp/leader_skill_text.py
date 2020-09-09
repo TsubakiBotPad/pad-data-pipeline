@@ -180,11 +180,14 @@ class JpLSTextConverter(JpBaseTextConverter):
     def mass_match_text(self, ls):
         stat_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True,
                                                    atk=ls.min_atk, rcv=ls.min_rcv)
-        skill_text = 'ドロップを{}個{}つなげて消すと{}'.format(ls.min_count,
+        skill_text = 'を{}個{}つなげて消すと{}'.format(ls.min_count,
                                               '以上' if ls.max_count != ls.min_count else '',
                                               stat_text)
-        if self.fmt_multi_attr(ls.match_attributes):
-            skill_text = self.fmt_multi_attr(ls.match_attributes) + skill_text
+        attr_text = self.fmt_multi_attr(ls.match_attributes)
+        if attr_text:
+            skill_text = attr_text + skill_text
+        else:
+            skill_text = 'ドロップ' + skill_text
         if ls.max_count != ls.min_count and ls.max_count > 0:
             skill_text += '、最大{}個で{}倍'.format(ls.max_count, fmt_mult(ls.atk))
         return skill_text + '。'
