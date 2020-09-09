@@ -1644,11 +1644,11 @@ class LSAttrMatchBonusCombo(LeaderSkill):
     skill_type = 194
 
     def __init__(self, ms: MonsterSkill):
-        data = ms.data
+        data = merge_defaults(ms.data, [0, 0, 100, 0])
         self.attributes = binary_con(data[0])
         self.min_attr = data[1]
-        self.bonus_combo = data[3]
         atk = multi_floor(data[2])
+        self.bonus_combo = data[3]
         super().__init__(194, ms, atk=atk, extra_combos=self.bonus_combo)
 
     def text(self, converter) -> str:
