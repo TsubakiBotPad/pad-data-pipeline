@@ -92,7 +92,7 @@ for asset in assets:
     should_always_process = False
     if 'card' in raw_file_path.lower():
         num = int(raw_file_name.rstrip('.bc').lstrip('cards_'))
-        if num >= 45:
+        if num >= 57:
             # Arbitrary cutoff; all the slots below here have been filled, no need to
             # keep downloading/processing
             should_always_process = True   
