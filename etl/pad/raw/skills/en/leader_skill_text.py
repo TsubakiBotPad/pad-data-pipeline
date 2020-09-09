@@ -313,8 +313,12 @@ class EnLSTextConverter(EnBaseTextConverter):
         attr_condition_text = self.matching_n_or_more_attr(ls.attributes, ls.min_attr)
         skill_text = ''
         if ls.atk not in [0, 1]:
-            skill_text += self.fmt_multiplier_text(1, ls.atk, 1) + ' and '
-        skill_text += 'increase combo by {}{}'.format(ls.bonus_combo, attr_condition_text)
+            skill_text += self.fmt_multiplier_text(1, ls.atk, 1)
+            if ls.bonus_combo:
+                skill_text += ' and '
+        if ls.bonus_combo:
+            skill_text += 'increase combo by {}'.format(ls.bonus_combo)
+        skill_text += attr_condition_text
         return skill_text
 
     def orb_heal_text(self, ls):
