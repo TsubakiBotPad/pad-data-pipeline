@@ -37,7 +37,7 @@ class Monster(SimpleSqlItem):
         voice_id_jp = jp_card.voice_id or None if o.jp_card.server == Server.jp else None
         voice_id_na = na_card.voice_id or None if o.na_card.server == Server.na else None
         linked_monster_id = o.jp_card.linked_monster_id or o.na_card.linked_monster_id
-        total_latent_slots = 8 if jp_card.latent_slot_unlock_flag else 6
+        latent_slots = 8 if jp_card.latent_slot_unlock_flag else 6
 
         def none_or(value: int):
             return value if value > -1 else None
@@ -117,7 +117,7 @@ class Monster(SimpleSqlItem):
             voice_id_jp=voice_id_jp,
             voice_id_na=voice_id_na,
             linked_monster_id=linked_monster_id,
-            total_latent_slots=total_latent_slots)
+            latent_slots=latent_slots)
 
     def __init__(self,
                  monster_id: int = None,
@@ -171,7 +171,7 @@ class Monster(SimpleSqlItem):
                  voice_id_jp: int = None,
                  voice_id_na: int = None,
                  linked_monster_id: int = None,
-                 total_latent_slots: int = None,
+                 latent_slots: int = None,
                  tstamp: int = None):
         self.monster_id = monster_id
         self.monster_no_jp = monster_no_jp
@@ -226,7 +226,7 @@ class Monster(SimpleSqlItem):
         self.voice_id_jp = voice_id_jp
         self.voice_id_na = voice_id_na
         self.linked_monster_id = linked_monster_id
-        self.total_latent_slots = total_latent_slots
+        self.latent_slots = latent_slots
         self.tstamp = tstamp
 
     def _non_auto_update_cols(self):
