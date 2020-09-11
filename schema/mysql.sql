@@ -638,7 +638,7 @@ CREATE TABLE `monsters` (
   `voice_id_jp` int(11) DEFAULT NULL,
   `voice_id_na` int(11) DEFAULT NULL,
   `linked_monster_id` int(11) DEFAULT NULL,
-  `extra_latent_slot` tinyint(1) NOT NULL DEFAULT '0',
+  `total_latent_slots` int(11) NOT NULL,
   `name_na_override` text,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`monster_id`),
