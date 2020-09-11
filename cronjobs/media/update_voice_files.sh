@@ -2,6 +2,9 @@
 #
 # Updates the local cache of voice files and fixes them.
 
+source /home/bot/pad-data-pipeline/bin/activate
+
+
 cd "$(dirname "$0")" || exit
 source ../shared.sh
 
