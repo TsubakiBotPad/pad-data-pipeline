@@ -1,4 +1,7 @@
 #!/bin/bash
+
+source /home/bot/pad-data-pipeline/bin/activate
+
 set -e
 set -x
 
