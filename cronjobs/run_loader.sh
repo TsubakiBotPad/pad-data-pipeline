@@ -5,6 +5,8 @@
 #
 # Group ID and starter color are not used, just for documentation
 
+source /home/bot/pad-data-pipeline/bin/activate
+
 set -e
 set -x
 
