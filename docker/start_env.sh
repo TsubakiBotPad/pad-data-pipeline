@@ -12,7 +12,7 @@ echo "Checking for db file"
 local_db_file="${folder}/dadguide.mysql"
 if [[ ! -f "${local_db_file}" ]]; then
   echo "Downloading to ${local_db_file}"
-  mysql_db="https://f002.backblazeb2.com/file/dadguide-data/db/dadguide.mysql"
+  mysql_db="https://d1kpnpud0qoyxf.cloudfront.net/db/dadguide.mysql"
   wget -P $folder -N $mysql_db
 fi
 

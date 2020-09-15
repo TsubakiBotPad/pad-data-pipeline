@@ -62,7 +62,7 @@ class JpBaseTextConverter(BaseTextConverter):
         15: '売却用',
     }
 
-    _AWAKENING_MAP = {x['pad_awakening_id']: x['name_jp'] for x in AWOSKILLS}
+    _AWAKENING_MAP = {x['pad_awakening_id']: x['name_ja'] for x in AWOSKILLS}
     _AWAKENING_MAP[0] = ''
 
     @property

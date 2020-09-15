@@ -14,24 +14,24 @@ class Dungeon(SimpleSqlItem):
     def from_csd(o: CrossServerDungeon) -> 'Dungeon':
         return Dungeon(
             dungeon_id=o.dungeon_id,
-            name_jp=o.jp_dungeon.clean_name,
-            name_na=o.na_dungeon.clean_name,
-            name_kr=o.kr_dungeon.clean_name,
+            name_ja=o.jp_dungeon.clean_name,
+            name_en=o.na_dungeon.clean_name,
+            name_ko=o.kr_dungeon.clean_name,
             dungeon_type=o.jp_dungeon.full_dungeon_type.value,
             visible=True)
 
     def __init__(self,
                  dungeon_id: int = None,
-                 name_jp: str = None,
-                 name_na: str = None,
-                 name_kr: str = None,
+                 name_ja: str = None,
+                 name_en: str = None,
+                 name_ko: str = None,
                  dungeon_type: int = None,
                  visible: bool = None,
                  tstamp: int = None):
         self.dungeon_id = dungeon_id
-        self.name_jp = name_jp
-        self.name_na = name_na
-        self.name_kr = name_kr
+        self.name_ja = name_ja
+        self.name_en = name_en
+        self.name_ko = name_ko
         self.dungeon_type = dungeon_type
         self.visible = visible
         self.tstamp = tstamp
@@ -40,7 +40,7 @@ class Dungeon(SimpleSqlItem):
         return ['visible']
 
     def __str__(self):
-        return 'Dungeon({}): {}'.format(self.key_value(), self.name_na)
+        return 'Dungeon({}): {}'.format(self.key_value(), self.name_en)
 
 
 class DungeonWaveData(SimpleSqlItem):
@@ -93,9 +93,9 @@ class SubDungeon(SimpleSqlItem):
             results.append(SubDungeon(
                 sub_dungeon_id=sd.sub_dungeon_id,
                 dungeon_id=o.dungeon_id,
-                name_jp=sd.jp_sub_dungeon.clean_name,
-                name_na=sd.na_sub_dungeon.clean_name,
-                name_kr=sd.kr_sub_dungeon.clean_name,
+                name_ja=sd.jp_sub_dungeon.clean_name,
+                name_en=sd.na_sub_dungeon.clean_name,
+                name_ko=sd.kr_sub_dungeon.clean_name,
                 floors=sd.jp_sub_dungeon.floors,
                 stamina=sd.jp_sub_dungeon.stamina,
                 hp_mult=sd.jp_sub_dungeon.hp_mult,
@@ -108,9 +108,9 @@ class SubDungeon(SimpleSqlItem):
     def __init__(self,
                  sub_dungeon_id: int = None,
                  dungeon_id: int = None,
-                 name_jp: str = None,
-                 name_na: str = None,
-                 name_kr: str = None,
+                 name_ja: str = None,
+                 name_en: str = None,
+                 name_ko: str = None,
                  floors: int = None,
                  stamina: int = None,
                  hp_mult: float = None,
@@ -121,9 +121,9 @@ class SubDungeon(SimpleSqlItem):
                  tstamp: int = None):
         self.sub_dungeon_id = sub_dungeon_id
         self.dungeon_id = dungeon_id
-        self.name_jp = name_jp
-        self.name_na = name_na
-        self.name_kr = name_kr
+        self.name_ja = name_ja
+        self.name_en = name_en
+        self.name_ko = name_ko
         self.floors = floors
         self.stamina = stamina
         self.hp_mult = hp_mult
@@ -134,7 +134,7 @@ class SubDungeon(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'SubDungeon({}): {}'.format(self.key_value(), self.name_na)
+        return 'SubDungeon({}): {}'.format(self.key_value(), self.name_en)
 
 
 class SubDungeonWaveData(SimpleSqlItem):

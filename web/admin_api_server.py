@@ -76,7 +76,7 @@ async def serve_state(request):
 
 
 MONSTERS_SQL = '''
-    select m.monster_id as monster_id, e.enemy_id as enemy_id, m.name_na as name
+    select m.monster_id as monster_id, e.enemy_id as enemy_id, m.name_en as name
     from monsters m
     inner join encounters e
     on m.monster_id = (e.enemy_id % 100000)
@@ -153,15 +153,15 @@ async def serve_monster_info(request):
     enemy_id = int(request.args.get('id'))
     monster_id = enemy_id % 100000
     sql = '''
-        select m.monster_id as monster_id, m.name_na as name
+        select m.monster_id as monster_id, m.name_en as name
         from monsters m
         where monster_id = {}
     '''.format(monster_id)
     monster_data = db_wrapper.fetch_data(sql)[0]
     sql = '''
         select
-            d.name_na as dungeon_name, d.icon_id as dungeon_icon_id,
-            sd.name_na as sub_dungeon_name, sd.sub_dungeon_id as sub_dungeon_id,
+            d.name_en as dungeon_name, d.icon_id as dungeon_icon_id,
+            sd.name_en as sub_dungeon_name, sd.sub_dungeon_id as sub_dungeon_id,
             e.amount as amount, e.turns as turns, e.level as level,
             e.hp as hp, e.atk as atk, e.defence as defence
         from encounters e
