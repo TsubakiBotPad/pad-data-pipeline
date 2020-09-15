@@ -592,7 +592,7 @@ CREATE TABLE `monsters` (
   `name_ja` text NOT NULL,
   `name_en` text NOT NULL,
   `name_ko` text NOT NULL,
-  `pronunciation_jp` text NOT NULL,
+  `pronunciation_ja` text NOT NULL,
   `hp_max` int(11) NOT NULL,
   `hp_min` int(11) NOT NULL,
   `hp_scale` decimal(5,2) NOT NULL,

@@ -73,7 +73,7 @@ class Monster(SimpleSqlItem):
             name_ja=jp_card.name,
             name_en=na_card.name,
             name_ko=kr_card.name,
-            pronunciation_jp=jp_card.furigana,
+            pronunciation_ja=jp_card.furigana,
             hp_min=jp_card.min_hp,
             hp_max=jp_card.max_hp,
             hp_scale=jp_card.hp_scale,
@@ -127,7 +127,7 @@ class Monster(SimpleSqlItem):
                  name_ja: str = None,
                  name_en: str = None,
                  name_ko: str = None,
-                 pronunciation_jp: str = None,
+                 pronunciation_ja: str = None,
                  hp_min: int = None,
                  hp_max: int = None,
                  hp_scale: float = None,
@@ -180,7 +180,7 @@ class Monster(SimpleSqlItem):
         self.name_ja = name_ja
         self.name_en = name_en
         self.name_ko = name_ko
-        self.pronunciation_jp = pronunciation_jp
+        self.pronunciation_ja = pronunciation_ja
         self.hp_min = hp_min
         self.hp_max = hp_max
         self.hp_scale = hp_scale
