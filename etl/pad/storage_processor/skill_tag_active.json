@@ -1,338 +1,338 @@
 [
   {
     "active_tag_id": 2,
-    "name_jp": "ドロップ強化",
-    "name_kr": "드롭 강화",
-    "name_na": "Enhanced Orbs",
+    "name_ja": "ドロップ強化",
+    "name_ko": "드롭 강화",
+    "name_en": "Enhanced Orbs",
     "order_idx": 19
   },
   {
     "active_tag_id": 3,
-    "name_jp": "エンハンス",
-    "name_kr": "공격 강화",
-    "name_na": "Enhanced Attack",
+    "name_ja": "エンハンス",
+    "name_ko": "공격 강화",
+    "name_en": "Enhanced Attack",
     "order_idx": 20
   },
   {
     "active_tag_id": 4,
-    "name_jp": "防御力減少",
-    "name_kr": "방어력 감소",
-    "name_na": "Reduce Defense",
+    "name_ja": "防御力減少",
+    "name_ko": "방어력 감소",
+    "name_en": "Reduce Defense",
     "order_idx": 21
   },
   {
     "active_tag_id": 5,
-    "name_jp": "グラビティ",
-    "name_kr": "그라비티",
-    "name_na": "Gravity",
+    "name_ja": "グラビティ",
+    "name_ko": "그라비티",
+    "name_en": "Gravity",
     "order_idx": 23
   },
   {
     "active_tag_id": 7,
-    "name_jp": "攻撃態勢",
-    "name_kr": "공격 태세",
-    "name_na": "Attack Stance",
+    "name_ja": "攻撃態勢",
+    "name_ko": "공격 태세",
+    "name_en": "Attack Stance",
     "order_idx": 10
   },
   {
     "active_tag_id": 8,
-    "name_jp": "防御態勢",
-    "name_kr": "방어 태세",
-    "name_na": "Guard Stance",
+    "name_ja": "防御態勢",
+    "name_ko": "방어 태세",
+    "name_en": "Guard Stance",
     "order_idx": 11
   },
   {
     "active_tag_id": 9,
-    "name_jp": "威嚇",
-    "name_kr": "위협",
-    "name_na": "Menace",
+    "name_ja": "威嚇",
+    "name_ko": "위협",
+    "name_en": "Menace",
     "order_idx": 22
   },
   {
     "active_tag_id": 10,
-    "name_jp": "時間停止",
-    "name_kr": "시간 정지",
-    "name_na": "Stop Time",
+    "name_ja": "時間停止",
+    "name_ko": "시간 정지",
+    "name_en": "Stop Time",
     "order_idx": 24
   },
   {
     "active_tag_id": 11,
-    "name_jp": "ダメージ減少",
-    "name_kr": "대미지 감소",
-    "name_na": "Reduce Damage",
+    "name_ja": "ダメージ減少",
+    "name_ko": "대미지 감소",
+    "name_en": "Reduce Damage",
     "order_idx": 32
   },
   {
     "active_tag_id": 12,
-    "name_jp": "ダメージ無効化",
-    "name_kr": "대미지 무효화",
-    "name_na": "Void Damage",
+    "name_ja": "ダメージ無効化",
+    "name_ko": "대미지 무효화",
+    "name_en": "Void Damage",
     "order_idx": 33
   },
   {
     "active_tag_id": 13,
-    "name_jp": "単一対象攻撃",
-    "name_kr": "단일 대상 공격",
-    "name_na": "Single-Target Attack",
+    "name_ja": "単一対象攻撃",
+    "name_ko": "단일 대상 공격",
+    "name_en": "Single-Target Attack",
     "order_idx": 0
   },
   {
     "active_tag_id": 14,
-    "name_jp": "全体攻撃",
-    "name_kr": "전체 공격",
-    "name_na": "Massive Attack",
+    "name_ja": "全体攻撃",
+    "name_ko": "전체 공격",
+    "name_en": "Massive Attack",
     "order_idx": 1
   },
   {
     "active_tag_id": 15,
-    "name_jp": "毒",
-    "name_kr": "독",
-    "name_na": "Poison",
+    "name_ja": "毒",
+    "name_ko": "독",
+    "name_en": "Poison",
     "order_idx": 4
   },
   {
     "active_tag_id": 16,
-    "name_jp": "反撃",
-    "name_kr": "반격",
-    "name_na": "Counterattack",
+    "name_ja": "反撃",
+    "name_ko": "반격",
+    "name_en": "Counterattack",
     "order_idx": 3
   },
   {
     "active_tag_id": 17,
-    "name_jp": "恨みの一撃",
-    "name_kr": "원망의 일격",
-    "name_na": "Grudge Strike",
+    "name_ja": "恨みの一撃",
+    "name_ko": "원망의 일격",
+    "name_en": "Grudge Strike",
     "order_idx": 2
   },
   {
     "active_tag_id": 18,
-    "name_jp": "回復",
-    "name_kr": "회복",
-    "name_na": "Heal",
+    "name_ja": "回復",
+    "name_ko": "회복",
+    "name_en": "Heal",
     "order_idx": 30
   },
   {
     "active_tag_id": 19,
-    "name_jp": "ドロップ変換",
-    "name_kr": "드롭 변환",
-    "name_na": "Orb Convert",
+    "name_ja": "ドロップ変換",
+    "name_ko": "드롭 변환",
+    "name_en": "Orb Convert",
     "order_idx": 12
   },
   {
     "active_tag_id": 20,
-    "name_jp": "攻撃後回復",
-    "name_kr": "공격 후 회복",
-    "name_na": "Attack & Heal",
+    "name_ja": "攻撃後回復",
+    "name_ko": "공격 후 회복",
+    "name_en": "Attack & Heal",
     "order_idx": 6
   },
   {
     "active_tag_id": 21,
-    "name_jp": "回復強化",
-    "name_kr": "회복 강화",
-    "name_na": "Enhanced Heal",
+    "name_ja": "回復強化",
+    "name_ko": "회복 강화",
+    "name_en": "Enhanced Heal",
     "order_idx": 31
   },
   {
     "active_tag_id": 22,
-    "name_jp": "リーダーチェンジ",
-    "name_kr": "리더 체인지",
-    "name_na": "The Switch",
+    "name_ja": "リーダーチェンジ",
+    "name_ko": "리더 체인지",
+    "name_en": "The Switch",
     "order_idx": 41
   },
   {
     "active_tag_id": 23,
-    "name_jp": "全体攻撃転換",
-    "name_kr": "전체 공격 전환",
-    "name_na": "Attack Changer",
+    "name_ja": "全体攻撃転換",
+    "name_ko": "전체 공격 전환",
+    "name_en": "Attack Changer",
     "order_idx": 40
   },
   {
     "active_tag_id": 24,
-    "name_jp": "属性攻撃",
-    "name_kr": "속성 공격",
-    "name_na": "Attribute Attack",
+    "name_ja": "属性攻撃",
+    "name_ko": "속성 공격",
+    "name_en": "Attribute Attack",
     "order_idx": 5
   },
   {
     "active_tag_id": 38,
-    "name_jp": "ダブルドロップ変換",
-    "name_kr": "더블 드롭 변환",
-    "name_na": "Double Orbs Convert",
+    "name_ja": "ダブルドロップ変換",
+    "name_ko": "더블 드롭 변환",
+    "name_en": "Double Orbs Convert",
     "order_idx": 13
   },
   {
     "active_tag_id": 39,
-    "name_jp": "全ドロップ変換",
-    "name_kr": "전체 드롭 변환",
-    "name_na": "All Orbs Convert",
+    "name_ja": "全ドロップ変換",
+    "name_ko": "전체 드롭 변환",
+    "name_en": "All Orbs Convert",
     "order_idx": 14
   },
   {
     "active_tag_id": 40,
-    "name_jp": "自爆",
-    "name_kr": "자폭",
-    "name_na": "Suicide",
+    "name_ja": "自爆",
+    "name_ko": "자폭",
+    "name_en": "Suicide",
     "order_idx": 50
   },
   {
     "active_tag_id": 41,
-    "name_jp": "バインド回復",
-    "name_kr": "바인드 회복",
-    "name_na": "Recover Bind",
+    "name_ja": "バインド回復",
+    "name_ko": "바인드 회복",
+    "name_en": "Recover Bind",
     "order_idx": 60
   },
   {
     "active_tag_id": 50,
-    "name_jp": "ドロップ確率",
-    "name_kr": "드랍 확률",
-    "name_na": "Drop Chance",
+    "name_ja": "ドロップ確率",
+    "name_ko": "드랍 확률",
+    "name_en": "Drop Chance",
     "order_idx": 70
   },
   {
     "active_tag_id": 60,
-    "name_jp": "固定ダメージ",
-    "name_kr": "고정 대미지",
-    "name_na": "Fixed Damage",
+    "name_ja": "固定ダメージ",
+    "name_ko": "고정 대미지",
+    "name_en": "Fixed Damage",
     "order_idx": 80
   },
   {
     "active_tag_id": 70,
-    "name_jp": "列ドロップ変換",
-    "name_kr": "줄 드롭 변환",
-    "name_na": "Line Orbs Converter",
+    "name_ja": "列ドロップ変換",
+    "name_ko": "줄 드롭 변환",
+    "name_en": "Line Orbs Converter",
     "order_idx": 16
   },
   {
     "active_tag_id": 80,
-    "name_jp": "ドロップ移動時間延長",
-    "name_kr": "드롭 이동 시간 연장",
-    "name_na": "Extends time",
+    "name_ja": "ドロップ移動時間延長",
+    "name_ko": "드롭 이동 시간 연장",
+    "name_en": "Extends time",
     "order_idx": 90
   },
   {
     "active_tag_id": 100,
-    "name_jp": "属性変化",
-    "name_kr": "속성 변화",
-    "name_na": "Change Attribute",
+    "name_ja": "属性変化",
+    "name_ko": "속성 변화",
+    "name_en": "Change Attribute",
     "order_idx": 100
   },
   {
     "active_tag_id": 110,
-    "name_jp": "スキルターン減少",
-    "name_kr": "스킬 턴 감소",
-    "name_na": "Reduce Skill Turn",
+    "name_ja": "スキルターン減少",
+    "name_ko": "스킬 턴 감소",
+    "name_en": "Reduce Skill Turn",
     "order_idx": 110
   },
   {
     "active_tag_id": 130,
-    "name_jp": "ドロップリフレッシュ",
-    "name_kr": "드롭 리프레쉬",
-    "name_na": "Orb Refresh",
+    "name_ja": "ドロップリフレッシュ",
+    "name_ko": "드롭 리프레쉬",
+    "name_en": "Orb Refresh",
     "order_idx": 15
   },
   {
     "active_tag_id": 140,
-    "name_jp": "敵の属性変化",
-    "name_kr": "적의 속성 변화",
-    "name_na": "Change Enemies' Attribute",
+    "name_ja": "敵の属性変化",
+    "name_ko": "적의 속성 변화",
+    "name_en": "Change Enemies' Attribute",
     "order_idx": 140
   },
   {
     "active_tag_id": 160,
-    "name_jp": "コンボ加算",
-    "name_kr": "콤보 추가",
-    "name_na": "Add Combo",
+    "name_ja": "コンボ加算",
+    "name_ko": "콤보 추가",
+    "name_en": "Add Combo",
     "order_idx": 160
   },
   {
     "active_tag_id": 180,
-    "name_jp": "最大HP比例ダメージ",
-    "name_kr": "최대 HP 비례 대미지",
-    "name_na": "True Gravity",
+    "name_ja": "最大HP比例ダメージ",
+    "name_ko": "최대 HP 비례 대미지",
+    "name_en": "True Gravity",
     "order_idx": 180
   },
   {
     "active_tag_id": 190,
-    "name_jp": "回復 & バインド回復",
-    "name_kr": "회복 & 바인드 회복",
-    "name_na": "Heal & Bind Recovery",
+    "name_ja": "回復 & バインド回復",
+    "name_ko": "회복 & 바인드 회복",
+    "name_en": "Heal & Bind Recovery",
     "order_idx": 190
   },
   {
     "active_tag_id": 215,
-    "name_jp": "覚醒無効回復",
-    "name_kr": "각성 무효 회복",
-    "name_na": "Awoken Invalid Recovery",
+    "name_ja": "覚醒無効回復",
+    "name_ko": "각성 무효 회복",
+    "name_en": "Awoken Invalid Recovery",
     "order_idx": 215
   },
   {
     "active_tag_id": 220,
-    "name_jp": "バインド&覚醒無効回復",
-    "name_kr": "바인드 & 각성 무효 회복",
-    "name_na": "Bind & Awoken Invalid Recovery",
+    "name_ja": "バインド&覚醒無効回復",
+    "name_ko": "바인드 & 각성 무효 회복",
+    "name_en": "Bind & Awoken Invalid Recovery",
     "order_idx": 220
   },
   {
     "active_tag_id": 230,
-    "name_jp": "ロック状態解除",
-    "name_kr": "잠금 상태 해제",
-    "name_na": "Remove Lock",
+    "name_ja": "ロック状態解除",
+    "name_ko": "잠금 상태 해제",
+    "name_en": "Remove Lock",
     "order_idx": 230
   },
   {
     "active_tag_id": 240,
-    "name_jp": "ダメージ吸収無効化",
-    "name_kr": "대미지 흡수 무효화",
-    "name_na": "Void damage absorbs",
+    "name_ja": "ダメージ吸収無効化",
+    "name_ko": "대미지 흡수 무효화",
+    "name_en": "Void damage absorbs",
     "order_idx": 240
   },
   {
     "active_tag_id": 250,
-    "name_jp": "属性吸収無効化",
-    "name_kr": "속성 흡수 무효화",
-    "name_na": "Void Att. Absorbs",
+    "name_ja": "属性吸収無効化",
+    "name_ko": "속성 흡수 무효화",
+    "name_en": "Void Att. Absorbs",
     "order_idx": 250
   },
   {
     "active_tag_id": 282,
-    "name_jp": "Pierce Damage Void",
-    "name_kr": "Pierce Damage Void",
-    "name_na": "Pierce Damage Void",
+    "name_ja": "Pierce Damage Void",
+    "name_ko": "Pierce Damage Void",
+    "name_en": "Pierce Damage Void",
     "order_idx": 255
   },
   {
     "active_tag_id": 260,
-    "name_jp": "落ちコン無効化",
-    "name_kr": "낙차 콤보 무효화",
-    "name_na": "Void Skyfalls",
+    "name_ja": "落ちコン無効化",
+    "name_ko": "낙차 콤보 무효화",
+    "name_en": "Void Skyfalls",
     "order_idx": 260
   },
   {
     "active_tag_id": 270,
-    "name_jp": "ドロップ ロック",
-    "name_kr": "드롭 잠금",
-    "name_na": "Orb Lock",
+    "name_ja": "ドロップ ロック",
+    "name_ko": "드롭 잠금",
+    "name_en": "Orb Lock",
     "order_idx": 270
   },
   {
     "active_tag_id": 280,
-    "name_jp": "ルート表示",
-    "name_kr": "루트 표시",
-    "name_na": "Combo Route",
+    "name_ja": "ルート表示",
+    "name_ko": "루트 표시",
+    "name_en": "Combo Route",
     "order_idx": 280
   },
   {
     "active_tag_id": 281,
-    "name_jp": "Reduce Match Restriction",
-    "name_kr": "Reduce Match Restriction",
-    "name_na": "Reduce Match Restriction",
+    "name_ja": "Reduce Match Restriction",
+    "name_ko": "Reduce Match Restriction",
+    "name_en": "Reduce Match Restriction",
     "order_idx": 281
   },
   {
     "active_tag_id": 999,
-    "name_jp": "その他",
-    "name_kr": "기타",
-    "name_na": "Etc",
+    "name_ja": "その他",
+    "name_ko": "기타",
+    "name_en": "Etc",
     "order_idx": 999
   }
 ]

@@ -101,7 +101,7 @@ class EnBaseTextConverter(BaseTextConverter):
         15: 'Redeemable Material',
     }
 
-    _AWAKENING_MAP = {x['pad_awakening_id']: x['name_na'] for x in AWOSKILLS}
+    _AWAKENING_MAP = {x['pad_awakening_id']: x['name_en'] for x in AWOSKILLS}
     _AWAKENING_MAP[0] = ''
 
     @property

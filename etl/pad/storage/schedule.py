@@ -25,9 +25,9 @@ class ScheduleEvent(SimpleSqlItem):
             group_name=o.group.name if o.group else None,
             dungeon_id=o.dungeon.dungeon_id if o.dungeon else None,
             url=None,
-            info_jp=None,
-            info_na=None,
-            info_kr=None
+            info_ja=None,
+            info_en=None,
+            info_ko=None
         )
 
     def __init__(self,
@@ -40,9 +40,9 @@ class ScheduleEvent(SimpleSqlItem):
                  group_name: str = None,
                  dungeon_id: int = None,
                  url: str = None,
-                 info_jp: str = None,
-                 info_na: str = None,
-                 info_kr: str = None,
+                 info_ja: str = None,
+                 info_en: str = None,
+                 info_ko: str = None,
                  tstamp: int = None):
         self.event_id = event_id
         self.server_id = server_id
@@ -53,9 +53,9 @@ class ScheduleEvent(SimpleSqlItem):
         self.group_name = group_name
         self.dungeon_id = dungeon_id
         self.url = url
-        self.info_jp = info_jp
-        self.info_na = info_na
-        self.info_kr = info_kr
+        self.info_ja = info_ja
+        self.info_en = info_en
+        self.info_ko = info_ko
         self.tstamp = tstamp
 
     def exists_strategy(self):

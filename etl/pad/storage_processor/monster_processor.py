@@ -53,11 +53,11 @@ class MonsterProcessor(object):
             name_clean = remove_diacritics(name)
             if name != name_clean:
                 existing_name = db.get_single_value(
-                    'select name_na_override from monsters where monster_id = {}'.format(m.monster_id),
+                    'select name_en_override from monsters where monster_id = {}'.format(m.monster_id),
                     fail_on_empty=False)
                 if not existing_name:
                     logger.info('applying name override (%s): %s -> %s', m.monster_id, name, name_clean)
-                    db.update_item('update monsters set name_na_override = "{}" where monster_id = {}'.format(
+                    db.update_item('update monsters set name_en_override = "{}" where monster_id = {}'.format(
                         name_clean, m.monster_id))
 
     def _process_monster_images(self, db):

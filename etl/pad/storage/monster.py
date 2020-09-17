@@ -70,10 +70,10 @@ class Monster(SimpleSqlItem):
             monster_no_jp=jp_card.monster_no,
             monster_no_na=na_card.monster_no,
             monster_no_kr=kr_card.monster_no,
-            name_jp=jp_card.name,
-            name_na=na_card.name,
-            name_kr=kr_card.name,
-            pronunciation_jp=jp_card.furigana,
+            name_ja=jp_card.name,
+            name_en=na_card.name,
+            name_ko=kr_card.name,
+            pronunciation_ja=jp_card.furigana,
             hp_min=jp_card.min_hp,
             hp_max=jp_card.max_hp,
             hp_scale=jp_card.hp_scale,
@@ -124,10 +124,10 @@ class Monster(SimpleSqlItem):
                  monster_no_jp: int = None,
                  monster_no_na: int = None,
                  monster_no_kr: int = None,
-                 name_jp: str = None,
-                 name_na: str = None,
-                 name_kr: str = None,
-                 pronunciation_jp: str = None,
+                 name_ja: str = None,
+                 name_en: str = None,
+                 name_ko: str = None,
+                 pronunciation_ja: str = None,
                  hp_min: int = None,
                  hp_max: int = None,
                  hp_scale: float = None,
@@ -177,10 +177,10 @@ class Monster(SimpleSqlItem):
         self.monster_no_jp = monster_no_jp
         self.monster_no_na = monster_no_na
         self.monster_no_kr = monster_no_kr
-        self.name_jp = name_jp
-        self.name_na = name_na
-        self.name_kr = name_kr
-        self.pronunciation_jp = pronunciation_jp
+        self.name_ja = name_ja
+        self.name_en = name_en
+        self.name_ko = name_ko
+        self.pronunciation_ja = pronunciation_ja
         self.hp_min = hp_min
         self.hp_max = hp_max
         self.hp_scale = hp_scale
@@ -241,7 +241,7 @@ class Monster(SimpleSqlItem):
         ]
 
     def __str__(self):
-        return 'Monster({}): {}'.format(self.key_value(), self.name_na)
+        return 'Monster({}): {}'.format(self.key_value(), self.name_en)
 
 
 class MonsterWithSeries(SimpleSqlItem):
@@ -309,56 +309,56 @@ class ActiveSkill(SimpleSqlItem):
         kr_skill = css.kr_skill
 
         jp_as_converter = JpASTextConverter()
-        jp_description = jp_skill.full_text(jp_as_converter)
+        ja_description = jp_skill.full_text(jp_as_converter)
 
         en_as_converter = EnASTextConverter()
-        na_description = jp_skill.full_text(en_as_converter)
+        en_description = jp_skill.full_text(en_as_converter)
 
         skill_type_tags = skill_text_typing.parse_as_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
         kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
-        kr_desc = kr_skill.raw_description if jp_skill != kr_skill else na_description
+        ko_desc = kr_skill.raw_description if jp_skill != kr_skill else en_description
 
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
-            name_jp=jp_skill.name,
-            name_na=na_skill.name,
-            name_kr=kr_name,
-            desc_jp=jp_description,
-            desc_na=na_description,
-            desc_kr=kr_desc,
+            name_ja=jp_skill.name,
+            name_en=na_skill.name,
+            name_ko=kr_name,
+            desc_ja=ja_description,
+            desc_en=en_description,
+            desc_ko=ko_desc,
             turn_max=jp_skill.turn_max,
             turn_min=jp_skill.turn_min,
             tags=tags)
 
     def __init__(self,
                  active_skill_id: int = None,
-                 name_jp: str = None,
-                 name_na: str = None,
-                 name_kr: str = None,
-                 desc_jp: str = None,
-                 desc_na: str = None,
-                 desc_kr: str = None,
+                 name_ja: str = None,
+                 name_en: str = None,
+                 name_ko: str = None,
+                 desc_ja: str = None,
+                 desc_en: str = None,
+                 desc_ko: str = None,
                  turn_max: int = None,
                  turn_min: int = None,
                  tags: str = None,
                  tstamp: int = None):
         self.active_skill_id = active_skill_id
-        self.name_jp = name_jp
-        self.name_na = name_na
-        self.name_kr = name_kr
-        self.desc_jp = desc_jp
-        self.desc_na = desc_na
-        self.desc_kr = desc_kr
+        self.name_ja = name_ja
+        self.name_en = name_en
+        self.name_ko = name_ko
+        self.desc_ja = desc_ja
+        self.desc_en = desc_en
+        self.desc_ko = desc_ko
         self.turn_max = turn_max
         self.turn_min = turn_min
         self.tags = tags
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'Active({}): {} -> {}'.format(self.key_value(), self.name_na, self.desc_na)
+        return 'Active({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
 
 
 class LeaderSkill(SimpleSqlItem):
@@ -374,23 +374,23 @@ class LeaderSkill(SimpleSqlItem):
 
         en_ls_converter = EnLSTextConverter()
         jp_ls_converter = JpLSTextConverter()
-        na_description = jp_skill.full_text(en_ls_converter) or na_skill.raw_description
-        jp_description = jp_skill.full_text(jp_ls_converter) or jp_skill.raw_description
+        en_description = jp_skill.full_text(en_ls_converter) or na_skill.raw_description
+        ja_description = jp_skill.full_text(jp_ls_converter) or jp_skill.raw_description
         skill_type_tags = skill_text_typing.parse_ls_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
         kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
-        kr_desc = kr_skill.raw_description if jp_skill != kr_skill else na_description
+        ko_desc = kr_skill.raw_description if jp_skill != kr_skill else en_description
 
         return LeaderSkill(
             leader_skill_id=jp_skill.skill_id,
-            name_jp=jp_skill.name,
-            name_na=na_skill.name,
-            name_kr=kr_name,
-            desc_jp=jp_description,
-            desc_na=na_description,
-            desc_kr=kr_desc,
+            name_ja=jp_skill.name,
+            name_en=na_skill.name,
+            name_ko=kr_name,
+            desc_ja=ja_description,
+            desc_en=en_description,
+            desc_ko=ko_desc,
             max_hp=jp_skill.hp,
             max_atk=jp_skill.atk,
             max_rcv=jp_skill.rcv,
@@ -400,12 +400,12 @@ class LeaderSkill(SimpleSqlItem):
 
     def __init__(self,
                  leader_skill_id: int = None,
-                 name_jp: str = None,
-                 name_na: str = None,
-                 name_kr: str = None,
-                 desc_jp: str = None,
-                 desc_na: str = None,
-                 desc_kr: str = None,
+                 name_ja: str = None,
+                 name_en: str = None,
+                 name_ko: str = None,
+                 desc_ja: str = None,
+                 desc_en: str = None,
+                 desc_ko: str = None,
                  max_hp: float = None,
                  max_atk: float = None,
                  max_rcv: float = None,
@@ -414,12 +414,12 @@ class LeaderSkill(SimpleSqlItem):
                  tags: str = None,
                  tstamp: int = None):
         self.leader_skill_id = leader_skill_id
-        self.name_jp = name_jp
-        self.name_na = name_na
-        self.name_kr = name_kr
-        self.desc_jp = desc_jp
-        self.desc_na = desc_na
-        self.desc_kr = desc_kr
+        self.name_ja = name_ja
+        self.name_en = name_en
+        self.name_ko = name_ko
+        self.desc_ja = desc_ja
+        self.desc_en = desc_en
+        self.desc_ko = desc_ko
         self.max_hp = max_hp
         self.max_atk = max_atk
         self.max_rcv = max_rcv
@@ -429,7 +429,7 @@ class LeaderSkill(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'Leader ({}): {} -> {}'.format(self.key_value(), self.name_na, self.desc_na)
+        return 'Leader ({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
 
 
 class Awakening(SimpleSqlItem):
