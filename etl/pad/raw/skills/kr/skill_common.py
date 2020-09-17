@@ -57,7 +57,7 @@ class KrBaseTextConverter(BaseTextConverter):
     def typing_to_str(self, types):
         return self.concat_list_and([self.TYPES[x] for x in types])
 
-    _AWAKENING_MAP = {x['pad_awakening_id']: x['name_kr'] for x in AWOSKILLS}
+    _AWAKENING_MAP = {x['pad_awakening_id']: x['name_ko'] for x in AWOSKILLS}
     _AWAKENING_MAP[0] = ''
 
     @property

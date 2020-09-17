@@ -13,12 +13,12 @@ class EnemySkill(SimpleSqlItem):
     @staticmethod
     def from_json(o):
         return EnemySkill(enemy_skill_id=o['enemy_skill_id'],
-                          name_jp=o['name_jp'],
-                          name_na=o['name_na'],
-                          name_kr=o['name_kr'],
-                          desc_jp=o['desc_jp'],
-                          desc_na=o['desc_na'],
-                          desc_kr=o['desc_kr'],
+                          name_ja=o['name_ja'],
+                          name_en=o['name_en'],
+                          name_ko=o['name_ko'],
+                          desc_ja=o['desc_ja'],
+                          desc_en=o['desc_en'],
+                          desc_ko=o['desc_ko'],
                           min_hits=o['min_hits'],
                           max_hits=o['max_hits'],
                           atk_mult=o['atk_mult'])
@@ -32,48 +32,48 @@ class EnemySkill(SimpleSqlItem):
         max_hits = exemplar.attack.max_hits if has_attack else 0
         atk_mult = exemplar.attack.atk_multiplier if has_attack else 0
 
-        jp_desc = exemplar.full_description(JpESTextConverter())
+        ja_desc = exemplar.full_description(JpESTextConverter())
         en_desc = exemplar.full_description(EnESTextConverter())
-       #kr_desc = exemplar.full_description(KrESTextConverter())
+       #ko_desc = exemplar.full_description(KrESTextConverter())
         
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,
-            name_jp=o.jp_skill.name,
-            name_na=o.na_skill.name,
-            name_kr=o.kr_skill.name,
-            desc_jp=jp_desc,
-            desc_na=en_desc,
-            desc_kr=en_desc,
+            name_ja=o.jp_skill.name,
+            name_en=o.na_skill.name,
+            name_ko=o.kr_skill.name,
+            desc_ja=ja_desc,
+            desc_en=en_desc,
+            desc_ko=en_desc,
             min_hits=min_hits,
             max_hits=max_hits,
             atk_mult=atk_mult)
 
     def __init__(self,
                  enemy_skill_id: int = None,
-                 name_jp: str = None,
-                 name_na: str = None,
-                 name_kr: str = None,
-                 desc_jp: str = None,
-                 desc_na: str = None,
-                 desc_kr: str = None,
+                 name_ja: str = None,
+                 name_en: str = None,
+                 name_ko: str = None,
+                 desc_ja: str = None,
+                 desc_en: str = None,
+                 desc_ko: str = None,
                  min_hits: int = None,
                  max_hits: int = None,
                  atk_mult: int = None,
                  tstamp: int = None):
         self.enemy_skill_id = enemy_skill_id
-        self.name_jp = name_jp
-        self.name_na = name_na
-        self.name_kr = name_kr
-        self.desc_jp = desc_jp
-        self.desc_na = desc_na
-        self.desc_kr = desc_kr
+        self.name_ja = name_ja
+        self.name_en = name_en
+        self.name_ko = name_ko
+        self.desc_ja = desc_ja
+        self.desc_en = desc_en
+        self.desc_ko = desc_ko
         self.min_hits = min_hits
         self.max_hits = max_hits
         self.atk_mult = atk_mult
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'EnemySkill({}): {} - {}'.format(self.key_value(), self.name_na, self.desc_na)
+        return 'EnemySkill({}): {} - {}'.format(self.key_value(), self.name_en, self.desc_en)
 
 
 class EnemyData(SimpleSqlItem):

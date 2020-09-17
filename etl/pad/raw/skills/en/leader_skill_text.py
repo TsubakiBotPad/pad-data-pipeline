@@ -12,7 +12,7 @@ SERIES = json.load(open(os.path.join(__location__, "../../../storage_processor/s
 
 
 class EnLSTextConverter(EnBaseTextConverter):
-    _COLLAB_MAP = {x['collab_id']: x['name_na'] for x in SERIES if 'collab_id' in x}
+    _COLLAB_MAP = {x['collab_id']: x['name_en'] for x in SERIES if 'collab_id' in x}
     _GROUP_MAP = {
         0: 'Pixel Evolutions',
         1: 'Super Reincarnated Evolutions',
