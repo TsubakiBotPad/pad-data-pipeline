@@ -183,8 +183,8 @@ class JpLSTextConverter(JpBaseTextConverter):
         skill_text = 'を{}個{}つなげて消すと{}'.format(ls.min_count,
                                               '以上' if ls.max_count != ls.min_count else '',
                                               stat_text)
-        if self.fmt_multi_attr(ls.match_attributes):
-            skill_text = self.fmt_multi_attr(ls.match_attributes) + skill_text
+        attr_text = self.fmt_multi_attr(ls.match_attributes) or 'ドロップ'
+        skill_text = attr_text + skill_text
         if ls.max_count != ls.min_count and ls.max_count > 0:
             skill_text += '、最大{}個で{}倍'.format(ls.max_count, fmt_mult(ls.atk))
         return skill_text + '。'

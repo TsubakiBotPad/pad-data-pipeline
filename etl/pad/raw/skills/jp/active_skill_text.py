@@ -227,14 +227,14 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
         return skill_text
 
     def awakening_attack_boost_convert(self, act):
-        skill_text = 'チーム内の'
+        skill_text = self.fmt_duration(act.duration) + 'チーム内の'
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
         skill_text += self.concat_list_and(filter(None, awakens))
         skill_text += 'の覚醒数1つにつき攻撃力が{}％上がる'.format(fmt_mult(act.amount_per * 100))
         return skill_text
 
     def awakening_shield_convert(self, act):
-        skill_text = 'チーム内の'
+        skill_text = self.fmt_duration(act.duration) + 'チーム内の'
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
         skill_text += self.concat_list_and(filter(None, awakens))
         skill_text += 'の覚醒数1つにつき受けるダメージを{}％減少'.format(fmt_mult(act.amount_per * 100))
