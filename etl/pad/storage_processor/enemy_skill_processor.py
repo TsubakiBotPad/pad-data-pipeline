@@ -80,7 +80,8 @@ class EnemySkillProcessor(object):
                 mb.levels.extend(mbwo.level_overrides)
                 mb.approved = True
                 if mbwo.status == enemy_skills_pb2.MonsterBehaviorWithOverrides.NEEDS_REAPPROVAL:
-                    human_fix_logger.warning('needs reapproval: %d', mb.monster_id)
+                    # human_fix_logger.warning('needs reapproval: %d', mb.monster_id)
+                    pass
                 else:
                     count_approved += 1
 

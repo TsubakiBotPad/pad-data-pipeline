@@ -1385,6 +1385,18 @@ class ESNoSkyfall(ESAction):
         return converter.no_skyfall(self.turns)
 
 
+class ESComboSkyfall(ESAction):
+    skill_types = [131]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.turns = self.params[2]
+        self.chance = self.params[3]
+
+    def description(self, converter):
+        return converter.combo_skyfall(self.turns, self.chance)
+
+
 # Passive
 class ESPassive(ESBehavior):
     def __init__(self, skill: EnemySkill):
@@ -1858,6 +1870,7 @@ ENEMY_SKILLS = [
     ESLeaderAlter,
     ESBoardSizeChange,
     ESNoSkyfall,
+    ESComboSkyfall,
     ESFlagOperation,
     ESBranchFlag0,
     ESSetCounter,

@@ -342,6 +342,9 @@ class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
     def no_skyfall(self, turns):
         return '{}ターンの間、落ちコンしなくなる'.format(turns)
 
+    def combo_skyfall(self, turns, chance):
+        return '{}ターンの間、{}%の確率でコンボドロップが発生'.format(turns, chance)
+
     def debuff_atk(self, turns, amount):
         return '{}ターンの間、攻撃力が{}%減少'.format(turns, amount)
 
