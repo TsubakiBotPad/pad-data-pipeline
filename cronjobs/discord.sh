@@ -3,9 +3,8 @@
 set -e
 set -x
 
-WEBHOOK_BASE_URL="https://discordapp.com/api/webhooks"
-declare -rx PRIVATE_WEBHOOK_URL="$WEBHOOK_BASE_URL/756665273251266671/h6rCZyftIPOr94Bq-IR8evVoZNqc6urBOmxTveAUhzcDWQdYIrlnNUPMG77l490X2JVm"
-declare -rx PUBLIC_WEBHOOK_URL="$WEBHOOK_BASE_URL/756665273251266671/h6rCZyftIPOr94Bq-IR8evVoZNqc6urBOmxTveAUhzcDWQdYIrlnNUPMG77l490X2JVm"
+cd "$(dirname "$0")" || exit
+source ./secrets.sh
 
 function hook_alert {
     echo "$1"
