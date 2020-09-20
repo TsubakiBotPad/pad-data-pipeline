@@ -373,6 +373,9 @@ class EnESTextConverter(EnBaseTextConverter):
     def no_skyfall(self, turns):
         return 'No skyfall for {:s}'.format(pluralize2('turn', turns))
 
+    def combo_skyfall(self, turns, chance):
+        return 'For {:s}, {}% chance for combo orb skyfall.'.format(pluralize2('turn', turns), chance)
+
     def debuff_atk(self, turns, amount):
         return 'ATK -{}% for {:s}'.format(amount, pluralize2('turn', turns))
 

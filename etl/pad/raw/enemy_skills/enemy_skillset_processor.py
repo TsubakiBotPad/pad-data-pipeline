@@ -148,6 +148,8 @@ class Context(object):
         self.skyfall = 0
         # Turns of no skyfall, initial:int=0 -> skyfall off:int>0 -> expire:int=0
         self.no_skyfall = 0
+        # Turns of combo skyfall, initial:int=0 -> skyfall combo:int>0 -> expire:int=0
+        self.combo_skyfall = 0
         # Turns of attack down, initial:int=0 -> attack down:int>0 -> expire:int=0
         self.attack_down = 0
         # Turns of rcv down, initial:int=0 -> rcv down:int>0 -> expire:int=0
@@ -201,6 +203,8 @@ class Context(object):
             self.skyfall -= 1
         if self.no_skyfall > 0:
             self.no_skyfall -= 1
+        if self.combo_skyfall > 0:
+            self.combo_skyfall -= 1
         if self.attack_down > 0:
             self.attack_down -= 1
         if self.rcv_down > 0:
@@ -280,6 +284,12 @@ class Context(object):
                 return True
             else:
                 return False
+        elif isinstance(b, ESComboSkyfall):
+            if self.combo_skyfall == 0:
+                self.combo_skyfall = b.turns
+                return True
+            else:
+                return False
         elif isinstance(b, ESDebuffATK):
             if self.attack_down == 0:
                 self.attack_down = b.turns
@@ -327,6 +337,8 @@ class Context(object):
             return self.skyfall == 0
         elif isinstance(b, ESNoSkyfall):
             return self.no_skyfall == 0
+        elif isinstance(b, ESComboSkyfall):
+            return self.combo_skyfall == 0
         elif isinstance(b, ESDebuffATK):
             return self.attack_down == 0
         elif isinstance(b, ESDebuffRCV):
