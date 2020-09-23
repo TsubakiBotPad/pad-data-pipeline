@@ -3,6 +3,7 @@
 # Updates the local cache of orb skin files.
 
 cd "$(dirname "$0")" || exit
+source /home/bot/pad-data-pipeline/bin/activate
 source ../shared.sh
 
 RUN_DIR="${MEDIA_ETL_DIR}/orb_styles_pull"
