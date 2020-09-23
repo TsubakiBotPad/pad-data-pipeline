@@ -3,6 +3,7 @@
 # Updates the local cache of hq monster pics.
 
 cd "$(dirname "$0")" || exit
+source /home/bot/pad-data-pipeline/bin/activate
 source ../shared.sh
 
 python3 "${MEDIA_ETL_DIR}/image_pull/PADImageDownload.py" \
