@@ -32,7 +32,7 @@ def half_to_full(n):
     return o
 
 
-class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
+class JpASTextConverter(JpBaseTextConverter):
     def fmt_repeated(self, text, amount):
         return '{}ｘ{}回'.format(text, amount)
 
