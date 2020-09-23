@@ -110,10 +110,6 @@ class JpASTextConverter(JpBaseTextConverter):
                                ('覚醒無効を{}ターン回復'.format(awoken_unbind)))))))
         return skill_text
 
-    def single_orb_change_convert(self, act):
-        return '{}ドロップを{}ドロップに変化'.format(self.ATTRIBUTES[act.from_1],
-                                         self.ATTRIBUTES[act.to_1])
-
     def delay_convert(self, act):
         return '敵の行動を{}ターン遅らせる'.format(act.turns)
 
