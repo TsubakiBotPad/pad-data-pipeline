@@ -245,9 +245,12 @@ class JpLSTextConverter(JpBaseTextConverter):
     def five_orb_one_enhance_text(self, ls):
         return '強化ドロップを含めてを5個消した属性の攻撃力が{}倍。'.format(fmt_mult(ls.atk))
 
-    def heart_cross_text(self, ls):
+    def heart_cross_shield_text(self, ls):
         multiplier_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、')
         return '回復の5個十字消しで{}。'.format(multiplier_text)
+
+    def heart_cross_combo_text(self, ls):
+        return '回復の5個十字消しで{}コンボ加算。'.format(ls.bonus_combos)
 
     def multi_play_text(self, ls):
         multiplier_text = self.fmt_stats_type_attr_bonus(ls)
@@ -349,7 +352,7 @@ class JpLSTextConverter(JpBaseTextConverter):
             cond = '{}の{}コンボ以上'.format(self.fmt_multi_attr(list(set(ls.attributes))), ls.min_combo)
         else:
             cond = '{}コンボ以上'.format(ls.min_combo)
-        return cond + "で{}コンボ加算".format(ls.bonus_combos)
+        return cond + "で{}コンボ加算。".format(ls.bonus_combos)
 
     def full_text(self, text, tags=None):
         tags = tags or []

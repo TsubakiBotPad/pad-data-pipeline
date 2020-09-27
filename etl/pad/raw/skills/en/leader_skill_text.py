@@ -253,9 +253,12 @@ class EnLSTextConverter(EnBaseTextConverter):
     def five_orb_one_enhance_text(self, ls):
         return '{}x ATK for matched Att. when matching 5 Orbs with 1+ enhanced'.format(fmt_mult(ls.atk))
 
-    def heart_cross_text(self, ls):
+    def heart_cross_shield_text(self, ls):
         multiplier_text = self.passive_stats_text(ls, reduce_join_txt=' and ')
         return '{} when matching 5 Heal orbs in a cross formation'.format(multiplier_text)
+
+    def heart_cross_combo_text(self, ls):
+        return 'Increase combo by {} when matching 5 Heal orbs in a cross formation'.format(ls.bonus_combos)
 
     def multi_play_text(self, ls):
         multiplier_text = self.passive_stats_text(ls)
