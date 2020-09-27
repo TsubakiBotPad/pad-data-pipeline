@@ -9,7 +9,7 @@ cd "$(dirname "$0")" || exit
 source ../shared.sh
 
 RUN_DIR="${MEDIA_ETL_DIR}/voice_pull"
-CACHE_DIR=/home/bot/pad_data/voices/raw
+CACHE_DIR="${PAD_DATA_DIR}/voices/raw"
 FINAL_DIR=/home/bot/dadguide/data/media/voices
 
 python3 "${RUN_DIR}/PADVoiceDownload.py" \
