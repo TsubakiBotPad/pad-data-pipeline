@@ -57,7 +57,7 @@ SOURCE_FUNCS = {
 }
 
 
-class JpESTextConverter(JpBaseTextConverter, BaseESTextConverter):
+class JpESTextConverter(JpBaseTextConverter):
     def not_set(self):
         return '詳細はありません'
 
