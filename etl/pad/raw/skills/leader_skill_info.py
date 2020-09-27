@@ -1195,7 +1195,7 @@ class LSEnhanceOrbMatch5(LeaderSkill):
         return converter.five_orb_one_enhance_text(self)
 
 
-class LSHeartCross(LeaderSkill):
+class LSHeartCrossShield(LeaderSkill):
     skill_type = 151
 
     def __init__(self, ms: MonsterSkill):
@@ -1206,7 +1206,7 @@ class LSHeartCross(LeaderSkill):
         super().__init__(151, ms, atk=atk, rcv=rcv, shield=shield)
 
     def text(self, converter) -> str:
-        return converter.heart_cross_text(self)
+        return converter.heart_cross_shield_text(self)
 
 
 class LSMultiboost(LeaderSkill):
@@ -1751,6 +1751,16 @@ class LSColorComboBonusCombo(LeaderSkill):
     def text(self, converter) -> str:
         return converter.color_combo_bonus_combo_text(self)
 
+class LSHeartCrossCombo(LeaderSkill):
+    skill_type = 209
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0])
+        self.bonus_combos = data[0]
+        super().__init__(209, ms, extra_combos=self.bonus_combos)
+
+    def text(self, converter) -> str:
+        return converter.heart_cross_combo_text(self)
 
 def convert(skill_list: List[MonsterSkill]):
     results = {}
@@ -1868,7 +1878,7 @@ ALL_LEADER_SKILLS = [
     LSRankXpBoost,
     LSHealMatchRcvBoost,
     LSEnhanceOrbMatch5,
-    LSHeartCross,
+    LSHeartCrossShield,
     LSMultiboost,
     LSAttrCross,
     LSMatchXOrMoreOrbs,
@@ -1899,4 +1909,5 @@ ALL_LEADER_SKILLS = [
     LSBlobBonusDamage,
     LSColorComboBonusDamage,
     LSColorComboBonusCombo,
+    LSHeartCrossCombo,
 ]

@@ -33,10 +33,12 @@ class Exchange(Printable):
         # Trade monster ID
         self.monster_id = int(raw[4])
 
-        # Usually 1 and 0 
-        # Except for the PAD Appreciation/Spring Fest Medal trades which are 99 and 3
-        self.unknown_005 = int(raw[5])
-        self.unknown_006 = int(raw[6])
+        # Trade monster info
+        self.monster_level = int(raw[5])
+        monster_flags = int(raw[6])
+
+        self.monster_max_skill = bool(monster_flags & 1)
+        self.monster_max_awoken = bool(monster_flags & 2)
 
         # Trade availability start time string
         self.start_time_str = str(raw[7])
@@ -65,10 +67,11 @@ class Exchange(Printable):
         # Number of required monsters for the trade
         self.required_count = int(raw[12])
 
-        # Seems to be the 'flag' type, e.g. 'restricted'?
-        # If so, 0=No Flag, 2='Restricted'.
+        # Flags, e.g. restricted
         self.flag_type = int(raw[13])
-        self.restricted = (self.flag_type == 2)
+        self.no_dupes = bool(self.flag_type & 1)
+        self.restricted = bool(self.flag_type & 2)
+        self.multi_exchange = bool(self.flag_type & 4)
 
         # Options for trading the monster
         self.required_monsters = list(map(int, raw[14:]))
