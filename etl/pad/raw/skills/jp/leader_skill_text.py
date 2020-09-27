@@ -245,7 +245,7 @@ class JpLSTextConverter(JpBaseTextConverter):
     def five_orb_one_enhance_text(self, ls):
         return '強化ドロップを含めてを5個消した属性の攻撃力が{}倍。'.format(fmt_mult(ls.atk))
 
-    def heart_cross_sheild_text(self, ls):
+    def heart_cross_shield_text(self, ls):
         multiplier_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、')
         return '回復の5個十字消しで{}。'.format(multiplier_text)
 

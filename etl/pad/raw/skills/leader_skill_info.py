@@ -1206,7 +1206,7 @@ class LSHeartCrossShield(LeaderSkill):
         super().__init__(151, ms, atk=atk, rcv=rcv, shield=shield)
 
     def text(self, converter) -> str:
-        return converter.heart_cross_sheild_text(self)
+        return converter.heart_cross_shield_text(self)
 
 
 class LSMultiboost(LeaderSkill):
@@ -1909,4 +1909,5 @@ ALL_LEADER_SKILLS = [
     LSBlobBonusDamage,
     LSColorComboBonusDamage,
     LSColorComboBonusCombo,
+    LSHeartCrossCombo,
 ]
