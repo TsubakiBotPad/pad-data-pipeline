@@ -32,7 +32,7 @@ def half_to_full(n):
     return o
 
 
-class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
+class JpASTextConverter(JpBaseTextConverter):
     def fmt_repeated(self, text, amount):
         return '{}ｘ{}回'.format(text, amount)
 
@@ -109,10 +109,6 @@ class JpASTextConverter(JpBaseTextConverter, BaseASTextConverter):
                               ('覚醒無効を全回復' if awoken_unbind >= 9999 else
                                ('覚醒無効を{}ターン回復'.format(awoken_unbind)))))))
         return skill_text
-
-    def single_orb_change_convert(self, act):
-        return '{}ドロップを{}ドロップに変化'.format(self.ATTRIBUTES[act.from_1],
-                                         self.ATTRIBUTES[act.to_1])
 
     def delay_convert(self, act):
         return '敵の行動を{}ターン遅らせる'.format(act.turns)
