@@ -27,6 +27,8 @@ D_ATTRIBUTES = [
     DAttribute(2, 'Wood'),
     DAttribute(3, 'Light'),
     DAttribute(4, 'Dark'),
+    DAttribute(5, 'Unused'),
+    DAttribute(6, 'Null'),
 ]
 
 
