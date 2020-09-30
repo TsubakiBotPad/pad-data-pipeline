@@ -11,7 +11,7 @@ function human_fixes_check {
     if [[ -s ${human_fixes_path} ]]
     then
         echo "Alerting for human fixes"
-        public_hook_file ${human_fixes_path}
+        hook_warn ${human_fixes_path}
     else
         echo "No fixes required"
     fi
