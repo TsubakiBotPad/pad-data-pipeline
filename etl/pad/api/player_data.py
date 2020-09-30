@@ -92,7 +92,7 @@ class CardEntry(pad_util.Printable):
 
 
 class FriendEntry(pad_util.Printable):
-    BASE_SIZE = 17
+    BASE_SIZE = 16
 
     def __init__(self, row_values):
         self.base_values = row_values[0:FriendEntry.BASE_SIZE]
@@ -102,7 +102,7 @@ class FriendEntry(pad_util.Printable):
         self.leader_2 = FriendLeader(
             row_values[FriendEntry.BASE_SIZE + 1 * FriendLeader.SIZE: FriendEntry.BASE_SIZE + 2 * FriendLeader.SIZE])
 
-        if len(row_values) > FriendEntry.BASE_SIZE + 2 * FriendLeader.SIZE:
+        if len(row_values) > FriendEntry.BASE_SIZE + 2 * FriendLeader.SIZE + 2:
             self.leader_3 = FriendLeader(
                 row_values[
                 FriendEntry.BASE_SIZE + 2 * FriendLeader.SIZE: FriendEntry.BASE_SIZE + 3 * FriendLeader.SIZE])
