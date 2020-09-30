@@ -18,7 +18,7 @@ echo "Processing"
 IFS=","
 
 function error_exit {
-    hook_alert "DadGuide Pipeline failed"
+    hook_error "DadGuide Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
     hook_file "/tmp/dg_update_log.txt"
 }
 
@@ -49,7 +49,7 @@ function dl_data() {
       ${do_only_bonus} || EXIT_CODE=$?
 
     if [ $EXIT_CODE -ne 0 ]; then
-      hook_alert "Processing ${server}/${scolor} failed with code ${EXIT_CODE}"
+      hook_error "Processing ${server}/${scolor} failed with code ${EXIT_CODE}"
     fi
   done <$1
 }
@@ -64,3 +64,5 @@ echo "Exporting Data"
 
 echo "Syncing"
 ./sync_data.sh
+      
+hook_info "Pipeline completed successfully!"
