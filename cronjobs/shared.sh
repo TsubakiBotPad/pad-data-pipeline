@@ -7,6 +7,7 @@ set -x
 declare -rx REPO_ROOT="/home/bot/pad-data-pipeline"
 declare -rx PAD_RESOURCES_ROOT="/home/bot/pad-resources"
 declare -rx PAD_DATA_DIR="${REPO_ROOT}/pad_data"
+declare -rx CRONJOBS_DIR="${REPO_ROOT}/cronjobs"
 declare -rx RAW_DIR="${PAD_DATA_DIR}/raw"
 declare -rx IMG_DIR="${PAD_DATA_DIR}/image_data"
 
