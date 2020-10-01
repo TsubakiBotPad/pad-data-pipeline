@@ -33,7 +33,7 @@ output_dir = args.output_dir
 templates_img = Image.open(card_templates_file)
 attr_imgs = {}
 sattr_imgs = {}
-for idx, t in enumerate(['r', 'b', 'g', 'l', 'd']):
+for idx, t in enumerate(['r', 'b', 'g', 'l', 'd', 'x']):
     pwidth = 100
     pheight = 100
     xstart = idx * (pwidth + 2)
@@ -58,6 +58,7 @@ attr_map = {
     2: 'g',
     3: 'l',
     4: 'd',
+    6: 'x'
 }
 
 server = Server.from_str(args.server)
