@@ -12,8 +12,9 @@ set -e
 set -x
 
 cd "$(dirname "$0")" || exit
-source ./discord.sh
-source ./shared.sh
+
+source ${CRONJOBS_DIR}/discord.sh
+source ${CRONJOBS_DIR}/shared.sh
 
 echo "Copying media"
 python3 "${ETL_DIR}/media_copy.py" \
