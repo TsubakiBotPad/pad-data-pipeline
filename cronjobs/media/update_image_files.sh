@@ -4,7 +4,7 @@
 
 cd "$(dirname "$0")" || exit
 source /home/bot/pad-data-pipeline/bin/activate
-source ${CRONJOBS_DIR}/shared.sh
+source ../shared.sh
 
 function error_exit {
     hook_error "Image Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
@@ -13,6 +13,7 @@ function error_exit {
 
 function success_exit { 
     echo "Image pipeline finished"  
+    hook_info "Image pipeline finished"
 }
 
 # Enable alerting to discord 
