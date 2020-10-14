@@ -252,6 +252,10 @@ class JpLSTextConverter(JpBaseTextConverter):
     def heart_cross_combo_text(self, ls):
         return '回復の5個十字消しで{}コンボ加算。'.format(ls.bonus_combos)
 
+    def color_cross_combo_text(self, ls):
+        attrs = self.attributes_to_str(ls.attributes, concat='か').replace('、', 'か')
+        return '{}の5個十字消しで{}コンボ加算。'.format(attrs, ls.bonus_combos)
+
     def multi_play_text(self, ls):
         multiplier_text = self.fmt_stats_type_attr_bonus(ls)
         return 'マルチプレイ時に{}。'.format(multiplier_text)
