@@ -260,6 +260,10 @@ class EnLSTextConverter(EnBaseTextConverter):
     def heart_cross_combo_text(self, ls):
         return 'Increase combo by {} when matching 5 Heal orbs in a cross formation'.format(ls.bonus_combos)
 
+    def color_cross_combo_text(self, ls):
+        attrs = self.attributes_to_str(ls.attributes, concat='or')
+        return 'Increase combo by {} for each cross of 5 {} orbs'.format(ls.bonus_combos, attrs)
+
     def multi_play_text(self, ls):
         multiplier_text = self.passive_stats_text(ls)
         return '{} when in multiplayer mode'.format(multiplier_text)
