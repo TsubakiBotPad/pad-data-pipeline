@@ -522,6 +522,9 @@ class EnASTextConverter(EnBaseTextConverter):
     def spawn_spinner(self, turns: int, speed: float, count: int):
         return 'Random {:d} orbs change every {:.1f}s for {:s}' \
             .format(count, speed, pluralize2('turn', turns))
+
+    def self_active_skill_disable(self, turns: int):
+        return 'Disable active skills for {:s}'.format(pluralize2('turn', turns))
     
     def two_part_active(self, strs):
         return '; '.join(strs)
