@@ -1113,6 +1113,18 @@ class ASSpawnSpinner(ActiveSkill):
         return converter.spawn_spinner(self.turns, self.speed, self.count)
 
 
+class ASDisableActiveSkill(ActiveSkill):
+    skill_type = 214
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0])
+        self.turns = data[0]
+        super().__init__(ms)
+
+    def text(self, converter) -> str:
+        return converter.self_active_skill_disable(self.turns)
+
+
 def convert(skill_list: List[MonsterSkill]):
     skill_type_to_constructor = {}
     for skill in ALL_ACTIVE_SKILLS:
@@ -1232,4 +1244,5 @@ ALL_ACTIVE_SKILLS = [
     ASChangeMonster,
     ASSkyfallLock,
     ASSpawnSpinner,
+    ASDisableActiveSkill,
 ]
