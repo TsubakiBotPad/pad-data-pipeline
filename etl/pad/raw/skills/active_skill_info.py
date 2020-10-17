@@ -1122,7 +1122,7 @@ class ASDisableActiveSkill(ActiveSkill):
         super().__init__(ms)
 
     def text(self, converter) -> str:
-        return converter.self_active_skill_disable(self)
+        return converter.self_active_skill_disable(self.turns)
 
 
 def convert(skill_list: List[MonsterSkill]):
