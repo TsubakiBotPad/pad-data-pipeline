@@ -294,10 +294,12 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def multi_mass_match_text(self, ls):
         if ls.atk not in [0, 1]:
-            skill_text = self.fmt_multiplier_text(1, ls.atk, 1) + ' and increase '
-        else:
-            skill_text = 'Increase '
-        skill_text += 'combo by {} when matching {} or more connected '.format(ls.bonus_combo, ls.min_match)
+            skill_text = self.fmt_multiplier_text(1, ls.atk, 1)
+            if ls.bonus_combo:
+                skill_text += ' and increase combo by {}'.format(ls.bonus_combo)
+        elif ls.bonus_combo:
+            skill_text = 'Increase combo by {}'.format(ls.bonus_combo)
+        skill_text += ' when matching {} or more connected '.format(ls.min_match)
         skill_text += self.fmt_multi_attr(ls.attributes, conj='and') + ' orbs at once'
         return skill_text
 
