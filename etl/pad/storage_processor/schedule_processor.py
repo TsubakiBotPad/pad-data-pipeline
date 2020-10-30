@@ -99,7 +99,7 @@ class ScheduleProcessor(object):
             bonus_type = bonus.bonus.bonus_info.bonus_type
 
             if bonus_type in WARN_BONUS_TYPES:
-                human_fix_logger.error('Unexpected bonus: %s', bonus)
+                human_fix_logger.error('Unexpected bonus: %s\n%s', bonus, bonus.bonus.raw)
                 continue
 
             if bonus_type in IGNORED_BONUS_TYPES:

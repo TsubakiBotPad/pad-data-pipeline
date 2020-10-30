@@ -196,6 +196,8 @@ class Bonus(Printable):
             self.bonus_name += '({})'.format(bonus_id)
         self.bonus_id = bonus_id
 
+        self.raw = raw
+
     def is_open(self):
         current_time = int(time.time())
         return self.start_timestamp < current_time < self.end_timestamp
