@@ -1762,6 +1762,18 @@ class LSHeartCrossCombo(LeaderSkill):
     def text(self, converter) -> str:
         return converter.heart_cross_combo_text(self)
 
+class LSColorCrossCombo(LeaderSkill):
+    skill_type = 210
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 1])
+        self.bonus_combos = data[2]
+        self.attributes = binary_con(data[0])
+        super().__init__(210, ms, extra_combos=self.bonus_combos)
+
+    def text(self, converter) -> str:
+        return converter.color_cross_combo_text(self)
+
 def convert(skill_list: List[MonsterSkill]):
     results = {}
     for s in skill_list:
@@ -1910,4 +1922,5 @@ ALL_LEADER_SKILLS = [
     LSColorComboBonusDamage,
     LSColorComboBonusCombo,
     LSHeartCrossCombo,
+    LSColorCrossCombo,
 ]
