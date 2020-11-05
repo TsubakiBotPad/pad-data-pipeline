@@ -154,7 +154,10 @@ class JpLSTextConverter(JpBaseTextConverter):
         else:
             skill_text = '{}'.format(self.attributes_to_str(ls.match_attributes[:ls.min_match], concat='、'))
             if len(ls.match_attributes) > ls.min_match:
-                skill_text += '({})のコンボ消すと{}'.format(self.attributes_to_str(ls.match_attributes[1:]), stat_text)
+                if ls.min_match == 1:
+                    skill_text += 'が{}ドロップを消すと{}'.format(self.attributes_to_str(ls.match_attributes[1:]), stat_text)
+                else:
+                    skill_text += '({})のコンボ消すと{}'.format(self.attributes_to_str(ls.match_attributes[1:]), stat_text)
             else:
                 skill_text += 'の同時攻撃で{}'.format(stat_text)
             if ls.max_atk > ls.min_atk:
@@ -340,8 +343,12 @@ class JpLSTextConverter(JpBaseTextConverter):
 
     def color_combo_bonus_damage_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            skill_text = '{}同時攻撃で固定{}ダメージ'.format(self.fmt_multi_attr(list(set(ls.attributes)), conj=''),
-                                                  ls.bonus_damage)
+            if ls.min_combo == 1:
+                skill_text = '{}ドロップを消すと固定{}ダメージ'.format(self.fmt_multi_attr(list(set(ls.attributes)), conj='が'),
+                                                      ls.bonus_damage)
+            else:
+                skill_text = '{}同時攻撃で固定{}ダメージ'.format(self.fmt_multi_attr(list(set(ls.attributes)), conj=''),
+                                                      ls.bonus_damage)
         else:
             skill_text = '{}コンボ以上で固定{}ダメージ'.format(ls.min_combo, ls.bonus_damage)
             if ls.attributes:
@@ -351,7 +358,10 @@ class JpLSTextConverter(JpBaseTextConverter):
 
     def color_combo_bonus_combo_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            cond = '{}の同時攻擊'.format(self.fmt_multi_attr(list(set(ls.attributes))))
+            if ls.min_combo == 1:
+                cond = '{}の同時攻擊'.format(self.fmt_multi_attr(list(set(ls.attributes)), conj=''))
+            else:
+                cond = '{}の同時攻擊'.format(self.fmt_multi_attr(list(set(ls.attributes))))
         elif not ls.attributes:
             cond = '{}の{}コンボ以上'.format(self.fmt_multi_attr(list(set(ls.attributes))), ls.min_combo)
         else:
