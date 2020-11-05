@@ -155,7 +155,10 @@ class EnLSTextConverter(EnBaseTextConverter):
         else:
             skill_text += ' when matching {}'.format(self.attributes_to_str(ls.match_attributes[:ls.min_match]))
             if len(ls.match_attributes) > ls.min_match:
-                skill_text += ' (or {})'.format(self.attributes_to_str(ls.match_attributes[1:]))
+                if ls.min_match == 1:
+                    skill_text += ' or {}'.format(self.attributes_to_str(ls.match_attributes[1:]))
+                else:
+                    skill_text += ' (or {})'.format(self.attributes_to_str(ls.match_attributes[1:]))
             if ls.max_atk > ls.min_atk:
                 skill_text += ' up to {}x when matching {}'.format(fmt_mult(ls.max_atk),
                                                                    self.attributes_to_str(ls.match_attributes))
@@ -357,7 +360,14 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def color_combo_bonus_damage_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            skill_text = '{} additional damage when matching {}'.format(ls.bonus_damage,
+            if ls.min_combo == 1:
+                skill_text = '{} additional damage when matching {}'.format(ls.bonus_damage,
+                                                                            self.fmt_multi_attr(list(set(ls.attributes)),
+                                                                                            conj='or'))
+            elif ls.min_combo < len(ls.attributes):
+                human_fix_logger.warning('Unexpected min_combo to color combo bonus damage text. %s', ls)
+            else:
+                skill_text = '{} additional damage when matching {}'.format(ls.bonus_damage,
                                                                         self.fmt_multi_attr(list(set(ls.attributes)),
                                                                                             conj='and'))
         else:
@@ -370,7 +380,14 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def color_combo_bonus_combo_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            skill_text = 'Increase combo by {} when matching {}'.format(ls.bonus_combos,
+            if ls.min_combo == 1:
+                skill_text = 'Increase combo by {} when matching {}'.format(ls.bonus_combos,
+                                                                        self.fmt_multi_attr(list(set(ls.attributes)),
+                                                                                            conj='or'))
+            elif ls.min_combo < len(ls.attributes):
+                human_fix_logger.warning('Unexpected min_combo to color combo bonus combo text. %s', ls)
+            else:
+                skill_text = 'Increase combo by {} when matching {}'.format(ls.bonus_combos,
                                                                         self.fmt_multi_attr(list(set(ls.attributes)),
                                                                                             conj='and'))
         else:
