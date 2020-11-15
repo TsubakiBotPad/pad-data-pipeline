@@ -13,7 +13,13 @@ class LeaderSkill(object):
     skill_type = -1
 
     def __init__(self, skill_type: int, ms: MonsterSkill,
-                 hp: float = 1, atk: float = 1, rcv: float = 1, shield: float = 0, extra_combos: int = 0):
+                 hp: float = 1,
+                 atk: float = 1,
+                 rcv: float = 1,
+                 shield: float = 0,
+                 extra_combos: int = 0,
+                 bonus_damage: int = 0,
+                 extra_time: int = 0):
         if skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(skill_type, ms.skill_type))
         self.skill_id = ms.skill_id
@@ -27,6 +33,8 @@ class LeaderSkill(object):
         self._rcv = round(rcv, 2)
         self._shield = round(shield, 2)
         self._extra_combos = extra_combos
+        self._bonus_damage = bonus_damage
+        self._extra_time = extra_time
 
     @property
     def hp(self):
@@ -47,6 +55,14 @@ class LeaderSkill(object):
     @property
     def extra_combos(self):
         return self._extra_combos
+
+    @property
+    def bonus_damage(self):
+        return self._bonus_damage
+
+    @property
+    def extra_time(self):
+        return self._extra_time
 
     @property
     def parts(self):
@@ -113,7 +129,7 @@ class LSMovementTimeIncrease(LeaderSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.time = mult(data[0])
-        super().__init__(15, ms)
+        super().__init__(15, ms, extra_time=self.time)
 
     def text(self, converter) -> str:
         return converter.bonus_time_text(self)
@@ -1119,6 +1135,14 @@ class LSMultiPartSkill(LeaderSkill):
         return sum([x.extra_combos for x in self.child_skills])
 
     @property
+    def bonus_damage(self):
+        return sum([x.bonus_damage for x in self.child_skills])
+
+    @property
+    def extra_time(self):
+        return sum([x.extra_time for x in self.child_skills])
+
+    @property
     def parts(self):
         return self.child_skills
 
@@ -1587,7 +1611,7 @@ class LSBonusTimeStatBoost(LeaderSkill):
         hp = multi_floor(data[3])
         atk = multi_floor(data[4])
         rcv = multi_floor(data[5])
-        super().__init__(185, ms, hp=hp, atk=atk, rcv=rcv)
+        super().__init__(185, ms, hp=hp, atk=atk, rcv=rcv, extra_time=self.time)
 
     def text(self, converter) -> str:
         return converter.bonus_time_text(self)
@@ -1688,8 +1712,7 @@ class LSRainbowBonusDamage(LeaderSkill):
         data = ms.data
         self.attributes = binary_con(data[0])
         self.min_attr = data[1]
-        self.bonus_damage = data[2]
-        super().__init__(199, ms)
+        super().__init__(199, ms, bonus_damage=data[2])
 
     def text(self, converter) -> str:
         return converter.rainbow_bonus_damage_text(self)
@@ -1702,8 +1725,7 @@ class LSBlobBonusDamage(LeaderSkill):
         data = ms.data
         self.attributes = binary_con(data[0])
         self.min_match = data[1]
-        self.bonus_damage = data[2]
-        super().__init__(200, ms)
+        super().__init__(200, ms, bonus_damage=data[2])
 
     def text(self, converter) -> str:
         return converter.mass_match_bonus_damage_text(self)
@@ -1716,8 +1738,7 @@ class LSColorComboBonusDamage(LeaderSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0])
         self.attributes = list_binary_con(data[:4])
         self.min_combo = data[4]
-        self.bonus_damage = data[5]
-        super().__init__(201, ms)
+        super().__init__(201, ms, bonus_damage=data[5])
 
     def text(self, converter) -> str:
         return converter.color_combo_bonus_damage_text(self)
