@@ -396,6 +396,7 @@ class LeaderSkill(SimpleSqlItem):
             max_rcv=jp_skill.rcv,
             max_shield=jp_skill.shield,
             max_combos=jp_skill.extra_combos,
+            mult_bonus_damage=jp_skill.mult_bonus_damage,
             bonus_damage=jp_skill.bonus_damage,
             extra_time=jp_skill.extra_time,
             tags=tags)

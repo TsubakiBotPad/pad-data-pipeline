@@ -99,7 +99,7 @@ class LSBonusAttack(LeaderSkill):
 
     def __init__(self, ms: MonsterSkill):
         self.multiplier = mult(ms.data[0])
-        super().__init__(12, ms)
+        super().__init__(12, ms, mult_bonus_damage=self.multiplier)
 
     def text(self, converter) -> str:
         return converter.after_attack_text(self)
