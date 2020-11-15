@@ -414,6 +414,7 @@ class LeaderSkill(SimpleSqlItem):
                  max_shield: float = None,
                  max_combos: int = None,
                  bonus_damage: int = None,
+                 mult_bonus_damage: int = None,
                  extra_time: float = None,
                  tags: str = None,
                  tstamp: int = None):
@@ -430,6 +431,7 @@ class LeaderSkill(SimpleSqlItem):
         self.max_shield = max_shield
         self.max_combos = max_combos
         self.bonus_damage = bonus_damage
+        self.mult_bonus_damage = mult_bonus_damage
         self.extra_time = extra_time
         self.tags = tags
         self.tstamp = tstamp

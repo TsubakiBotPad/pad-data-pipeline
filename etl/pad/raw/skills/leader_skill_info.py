@@ -19,6 +19,7 @@ class LeaderSkill(object):
                  shield: float = 0,
                  extra_combos: int = 0,
                  bonus_damage: int = 0,
+                 mult_bonus_damage: int = 0,
                  extra_time: int = 0):
         if skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(skill_type, ms.skill_type))
@@ -34,6 +35,7 @@ class LeaderSkill(object):
         self._shield = round(shield, 2)
         self._extra_combos = extra_combos
         self._bonus_damage = bonus_damage
+        self._mult_bonus_damage = mult_bonus_damage
         self._extra_time = extra_time
 
     @property
@@ -59,6 +61,10 @@ class LeaderSkill(object):
     @property
     def bonus_damage(self):
         return self._bonus_damage
+
+    @property
+    def mult_bonus_damage(self):
+        return self._mult_bonus_damage
 
     @property
     def extra_time(self):
@@ -1137,6 +1143,10 @@ class LSMultiPartSkill(LeaderSkill):
     @property
     def bonus_damage(self):
         return sum([x.bonus_damage for x in self.child_skills])
+
+    @property
+    def mult_bonus_damage(self):
+        return sum([x.mult_bonus_damage for x in self.child_skills])
 
     @property
     def extra_time(self):

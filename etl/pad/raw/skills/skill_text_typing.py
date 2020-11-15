@@ -318,7 +318,7 @@ def parse_ls_conditions(skill, child=False) -> List[LSCondition]:
     if isinstance(skill, LSAutoheal):
         results.add(LSCondition.AUTO_HEAL)
 
-    if isinstance(skill, LSBonusAttack) or skill.bonus_damage:
+    if skill.mult_bonus_damage or skill.bonus_damage:
         results.add(LSCondition.ADDITIONAL_ATTACK)
 
     if isinstance(skill, LSCounterattack):

@@ -571,6 +571,7 @@ CREATE TABLE `leader_skills` (
   `max_shield` decimal(8,2) NOT NULL,
   `max_combos` decimal(8,2) NOT NULL,
   `bonus_damage` decimal(8,2) NOT NULL,
+  `mult_bonus_damage` decimal(8,2) NOT NULL,
   `extra_time` decimal(8,2) NOT NULL,
   `tags` text NOT NULL,
   `tstamp` int(11) NOT NULL,
