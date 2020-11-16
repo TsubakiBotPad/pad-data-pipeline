@@ -318,7 +318,7 @@ def parse_ls_conditions(skill, child=False) -> List[LSCondition]:
     if isinstance(skill, LSAutoheal):
         results.add(LSCondition.AUTO_HEAL)
 
-    if isinstance(skill, (LSBonusAttack, LSRainbowBonusDamage, LSBlobBonusDamage, LSColorComboBonusDamage)):
+    if skill.mult_bonus_damage or skill.bonus_damage:
         results.add(LSCondition.ADDITIONAL_ATTACK)
 
     if isinstance(skill, LSCounterattack):
@@ -327,7 +327,7 @@ def parse_ls_conditions(skill, child=False) -> List[LSCondition]:
     if isinstance(skill, LSResolve):
         results.add(LSCondition.RESOLVE)
 
-    if isinstance(skill, (LSMovementTimeIncrease, LSBonusTimeStatBoost)):
+    if skill.extra_time:
         results.add(LSCondition.EXTEND_TIME)
 
     if isinstance(skill, LSCoinDropBoost):
