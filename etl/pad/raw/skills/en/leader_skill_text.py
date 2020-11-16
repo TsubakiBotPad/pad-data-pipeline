@@ -347,11 +347,11 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def rainbow_bonus_damage_text(self, ls):
         attr_condition_text = self.matching_n_or_more_attr(ls.attributes, ls.min_attr)
-        skill_text = '{:,} additional damage{}'.format(ls.bonus_damage, attr_condition_text)
+        skill_text = '{:,} additional true damage{}'.format(ls.bonus_damage, attr_condition_text)
         return skill_text
 
     def mass_match_bonus_damage_text(self, ls):
-        skill_text = '{:,} additional damage when matching {} or more'.format(ls.bonus_damage, ls.min_match)
+        skill_text = '{:,} additional true damage when matching {} or more'.format(ls.bonus_damage, ls.min_match)
         if self.fmt_multi_attr(ls.attributes):
             skill_text += ' {} orbs'.format(self.fmt_multi_attr(ls.attributes))
         else:
@@ -360,11 +360,11 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def color_combo_bonus_damage_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            skill_text = '{:,} additional damage when matching {}'.format(ls.bonus_damage,
+            skill_text = '{:,} additional true damage when matching {}'.format(ls.bonus_damage,
                                                                     self.fmt_multi_attr(list(set(ls.attributes)),
                                                                     conj='or' if ls.min_combo < len(ls.attributes) else 'and'))
         else:
-            skill_text = '{:,} additional damage when matching {} or more'.format(ls.bonus_damage, ls.min_combo)
+            skill_text = '{:,} additional true damage when matching {} or more'.format(ls.bonus_damage, ls.min_combo)
             if ls.attributes:
                 skill_text += ' {} combos'.format(self.fmt_multi_attr(list(set(ls.attributes))))
             else:
