@@ -327,9 +327,9 @@ class EnLSTextConverter(EnBaseTextConverter):
         if ls.atk not in [0, 1]:
             skill_text += self.fmt_multiplier_text(1, ls.atk, 1)
             if ls.bonus_combo:
-                skill_text += ' and '
-        if ls.bonus_combo:
-            skill_text += 'increase combo by {}'.format(ls.bonus_combo)
+                skill_text += ' and increase combo by {}'.format(ls.bonus_combo)
+        elif ls.bonus_combo:
+            skill_text += 'Increase combo by {}'.format(ls.bonus_combo)
         skill_text += attr_condition_text
         return skill_text
 
