@@ -39,7 +39,7 @@ class EnASTextConverter(EnBaseTextConverter):
             act.attribute)] + ' damage to ' + self.fmt_mass_atk(act.mass_attack)
 
     def fixed_attr_nuke_convert(self, act):
-        return 'Deal ' + str(act.damage) + ' ' + self.ATTRIBUTES[int(
+        return 'Deal ' + '{:,}'.format(act.damage) + ' ' + self.ATTRIBUTES[int(
             act.attribute)] + ' damage to ' + self.fmt_mass_atk(act.mass_attack)
 
     def self_att_nuke_convert(self, act):
@@ -127,7 +127,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return skill_text
 
     def damage_to_att_enemy_convert(self, act):
-        return 'Deal ' + str(act.damage) + ' ' + self.ATTRIBUTES[int(
+        return 'Deal ' + '{:,}'.format(act.damage) + ' ' + self.ATTRIBUTES[int(
             act.attack_attribute)] + ' damage to all ' + self.ATTRIBUTES[int(act.enemy_attribute)] + ' Att. enemies'
 
     def rcv_boost_convert(self, act):
@@ -165,7 +165,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return ' '.join(result.split())
 
     def laser_convert(self, act):
-        return 'Deal ' + str(act.damage) + \
+        return 'Deal ' + '{:,}'.format(act.damage) + \
                ' fixed damage to ' + self.fmt_mass_atk(act.mass_attack)
 
     def no_skyfall_convert(self, act):
@@ -348,7 +348,7 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def suicide_nuke_convert(self, act):
         skill_text = self.suicide_convert(act) + '; '
-        skill_text += 'Deal ' + str(act.damage) + ' ' + self.ATTRIBUTES[
+        skill_text += 'Deal ' + '{:,}'.format(act.damage) + ' ' + self.ATTRIBUTES[
             act.attribute] + ' damage to ' + self.fmt_mass_atk(
             act.mass_attack)
         return skill_text
@@ -386,7 +386,7 @@ class EnASTextConverter(EnBaseTextConverter):
                self.ATTRIBUTES[act.attribute] + ' for ' + str(act.duration) + ' turns'
 
     def multi_hit_laser_convert(self, act):
-        return 'Deal ' + str(act.damage) + ' damage to ' + \
+        return 'Deal ' + '{:,}'.format(act.damage) + ' damage to ' + \
                self.fmt_mass_atk(act.mass_attack)
 
     def hp_nuke_convert(self, act):
@@ -525,7 +525,7 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def self_active_skill_disable(self, turns: int):
         return 'Disable active skills for {:s}'.format(pluralize2('turn', turns))
-    
+
     def two_part_active(self, strs):
         return '; '.join(strs)
 
