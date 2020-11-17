@@ -86,7 +86,7 @@ class EnASTextConverter(EnBaseTextConverter):
         unbind = getattr(act, 'card_bind', 0)
         awoken_unbind = getattr(act, 'awoken_bind', 0)
 
-        skill_text = ('Recover ' + str(hp) + ' HP' if hp != 0 else
+        skill_text = ('Recover ' + '{:,}'.format(hp) + ' HP' if hp != 0 else
                       ('Recover ' + fmt_mult(rcv_mult) + 'x RCV as HP' if rcv_mult != 0 else
                        ('Recover all HP' if php == 1 else
                         ('Recover ' + fmt_mult(php * 100) + '% of max HP' if php > 0 else

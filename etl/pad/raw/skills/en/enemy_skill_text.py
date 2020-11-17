@@ -198,7 +198,7 @@ class EnESTextConverter(EnBaseTextConverter):
             return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
 
     def gravity(self, percent):
-        return 'Player -{:d}% HP'.format(percent)
+        return 'Player -{:,}% HP'.format(percent)
 
     def absorb(self, abs_type: Absorb, condition, min_turns, max_turns=None):
         if abs_type == Absorb.attr:
