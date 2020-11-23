@@ -53,6 +53,8 @@ IGNORED_BONUS_TYPES = [
     BonusType.pad_metadata,
     BonusType.pad_metadata_2,
     BonusType.story_category_text,
+    BonusType.normal_announcement,
+    BonusType.technical_announcement,
 
     # Might need this to tag dungeons as tournaments, even closed ones.
     # Probably happens outside this processor though.
