@@ -17,7 +17,7 @@ class I13NotImplemented(NotImplementedError):
 
 @public
 def fmt_mult(x):
-    return str(round(float(x), 2)).rstrip('0').rstrip('.')
+    return '{:,}'.format(round(float(x), 2)).rstrip('0').rstrip('.')
 
 
 @public
@@ -31,9 +31,9 @@ def multi_getattr(o, *args):
 
 @public
 def minmax(nmin, nmax, p=False, fmt=False):
-    fmt = fmt_mult if fmt else (lambda x: x)
+    fmt = fmt_mult if fmt else (lambda x: '{:,}'.format(x))
     if None in [nmin, nmax] or nmin == nmax:
-        return str(fmt(nmin or nmax)) + ("%" if p else '')
+        return "{}".format(fmt(nmin or nmax)) + ("%" if p else '')
     elif p:
         return "{}%~{}%".format(fmt(int(nmin)), fmt(int(nmax)))
     else:
