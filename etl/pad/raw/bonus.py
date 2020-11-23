@@ -48,8 +48,6 @@ class BonusType(Enum):
     exchange_text = 38
     dungeon_floor_text = 39
     unknown_40 = 40
-    normal_announcement = 41
-    technical_announcement = 42
     dungeon_web_info_link = 43
     stone_purchase_text = 44
     story_category_text = 47
@@ -130,10 +128,6 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.dungeon_floor_text),
     # Some kind of flag, message is '|23'
     BonusTypeEntry(BonusType.unknown_40),
-    # Text above the normal dungeon icon in the Dungeon menu
-    BonusTypeEntry(BonusType.normal_announcement),
-    # Text above the technical dungeon icon in the Dungeon menu
-    BonusTypeEntry(BonusType.technical_announcement),
     # https://bit.ly/2zWWGPd - #Q#6th Year Anniversary Quest 1
     BonusTypeEntry(BonusType.dungeon_web_info_link),
     # !June Bride bundles available!
