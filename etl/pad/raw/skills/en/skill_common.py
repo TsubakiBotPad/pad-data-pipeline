@@ -56,13 +56,12 @@ def pluralize(noun, number):
 
 @public
 def pluralize2(noun, number, max_number=None):
-    if max_number is not None:
+    if isinstance(number, int) or max_number is not None:
         number = minmax(number, max_number)
     if number is None:
         return noun
-    irregular_plural = irregulars.get(noun)
-    if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'
+    if number != '1':
+        noun = irregulars.get(noun, noun+'s')
     return "{} {}".format(number, noun)
 
 
@@ -263,4 +262,3 @@ class EnBaseTextConverter(BaseTextConverter):
         else:
             attr_text = self.attributes_to_str(reduct_att)
             return self.reduce_attr_pct(attr_text, shield_text)
-

@@ -340,9 +340,9 @@ class EnLSTextConverter(EnBaseTextConverter):
         if ls.shield:
             skill_parts.append(self.fmt_reduct_text(ls.shield))
         if ls.unbind_amt != 0:
-            skill_parts.append('reduce awoken skill binds by {} turns'.format(ls.unbind_amt))
+            skill_parts.append('reduce awoken skill binds by {:,} turns'.format(ls.unbind_amt))
         skill_text = self.concat_list_and(skill_parts)
-        skill_text += ' when recovering more than {} HP from Heal orbs'.format(ls.heal_amt)
+        skill_text += ' when recovering more than {:,} HP from Heal orbs'.format(ls.heal_amt)
         return skill_text
 
     def rainbow_bonus_damage_text(self, ls):
