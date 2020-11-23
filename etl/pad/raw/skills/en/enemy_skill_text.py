@@ -91,7 +91,7 @@ class EnESTextConverter(EnBaseTextConverter):
         output = 'Deal {:s}% damage'. \
             format(minmax(int(min_hit) * int(mult), int(max_hit) * int(mult)))
         if min_hit and max_hit != 1:
-            output += ' ({:s}, {:d}% each)'. \
+            output += ' ({:s}, {:,}% each)'. \
                 format(pluralize2("hit", minmax(min_hit, max_hit)), mult)
         return output
 
@@ -171,7 +171,7 @@ class EnESTextConverter(EnBaseTextConverter):
             return capitalize_first('{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)))
 
     def enrage(self, mult, turns):
-        output = 'Increase damage to {:d}% for the next '.format(mult)
+        output = 'Increase damage to {:,}% for the next '.format(mult)
         output += pluralize2('turn', turns) if turns else 'attack'
         return output
 
@@ -198,7 +198,7 @@ class EnESTextConverter(EnBaseTextConverter):
             return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
 
     def gravity(self, percent):
-        return 'Player -{:d}% HP'.format(percent)
+        return 'Player -{:,}% HP'.format(percent)
 
     def absorb(self, abs_type: Absorb, condition, min_turns, max_turns=None):
         if abs_type == Absorb.attr:
@@ -225,7 +225,7 @@ class EnESTextConverter(EnBaseTextConverter):
             .format(lock, orbs, chance, pluralize2('turn', min_turns, max_turns))
 
     def void(self, threshold, turns):
-        return 'Void damage >= {:d} for {:s}'.format(threshold, pluralize2('turn', turns))
+        return 'Void damage >= {:,} for {:s}'.format(threshold, pluralize2('turn', turns))
 
     def damage_reduction(self, source_type: Source, source=None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)
@@ -338,9 +338,9 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def max_hp_change(self, turns, max_hp, percent):
         if percent:
-            return 'Change player HP to {:d}% for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return 'Change player HP to {:,}% for {:s}'.format(max_hp, pluralize2('turn', turns))
         else:
-            return 'Change player HP to {:d} for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return 'Change player HP to {:,} for {:s}'.format(max_hp, pluralize2('turn', turns))
 
     def fixed_target(self, turns):
         return 'Forces attacks to hit this enemy for {:s}'.format(pluralize2('turn', turns))
