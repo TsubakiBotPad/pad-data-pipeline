@@ -53,6 +53,8 @@ IGNORED_BONUS_TYPES = [
     BonusType.pad_metadata,
     BonusType.pad_metadata_2,
     BonusType.story_category_text,
+    BonusType.normal_announcement,
+    BonusType.technical_announcement,
 
     # Might need this to tag dungeons as tournaments, even closed ones.
     # Probably happens outside this processor though.
@@ -74,8 +76,9 @@ IGNORED_BONUS_TYPES = [
     BonusType.gift_dungeon_with_reward,
 
     # Not sure what this does; has no text, no dungeon,
-    # only a value of 10000, runs for a week, spotted in NA.
+    # only a value of 10000, runs for a week, spotted in NA nad JP.
     BonusType.unknown_13,
+    BonusType.unknown_14,
     # Not sure what it does, some kind of flag, spotted in JP.
     BonusType.unknown_40,
 ]

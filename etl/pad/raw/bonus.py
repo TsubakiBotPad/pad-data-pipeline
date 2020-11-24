@@ -30,6 +30,7 @@ class BonusType(Enum):
     feed_xp_bonus_chance = 11
     plus_drop_rate_1 = 12
     unknown_13 = 13
+    unknown_14 = 14
     send_egg_roll = 15
     plus_drop_rate_2 = 16
     feed_skillup_bonus_chance = 17
@@ -87,8 +88,9 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.feed_xp_bonus_chance, ghmult_plain),
     # Increased plus rate 1?
     BonusTypeEntry(BonusType.plus_drop_rate_1, ghchance_plain),
-    # Unknown, no text, only value of 10K, multi-day event seen in NA
+    # Unknown, no text, only value of 10K, multi-day event 
     BonusTypeEntry(BonusType.unknown_13),
+    BonusTypeEntry(BonusType.unknown_14),
     # Send a Premium Egg Machine to a Friend and you will get one too!
     BonusTypeEntry(BonusType.send_egg_roll),
     # Increased plus rate 2?
