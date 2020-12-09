@@ -211,6 +211,12 @@ class PadApiClient(object):
         # List of suggested helpers (must have logged in and retrieved helpers)
         self.recommended_helpers_data = None
 
+        # HTTP session
+        self.session = requests.Session(headers=self.default_headers)
+        
+        # Failcount for res!=0 only. Resets every success.
+        self.resfails = 0
+
         # TODO: add retry/relogin on failure (res:3)
 
     def login(self):
@@ -387,18 +393,23 @@ class PadApiClient(object):
         return '{}?{}'.format(self.server_api_endpoint, final_payload_str)
 
     def get_json_results(self, url, post_data=None):
-        s = requests.Session()
-        if post_data:
-            req = requests.Request('POST', url, headers=self.default_headers, data=post_data)
+        if post_data is not None:
+            r = self.session.post(url, data=post_data)
         else:
-            req = requests.Request('GET', url, headers=self.default_headers)
-        p = req.prepare()
-        r = s.send(p)
-        result_json = r.json()
-        response_code = result_json.get('res', 0)
-        if response_code != 0:
+            r = self.session.get(url)
+        r.raise_for_status()  #May raise
+        result_json = r.json()  #May raise
+        response_code = result_json['res']  #May raise
+        if response_code == 0:
+            self.resfails = 0
+            return result_json
+        self.resfails += 1
+        if response_code == 2 and self.resfails < 3:
+            # Try to log in and do it again.
+            self.login()
+            return self.get_json_results(url, post_data)
+        else:
             raise Exception('Bad server response: {} ({})'.format(response_code, RESPONSE_CODES.get(response_code, '???')))
-        return result_json
 
     def get_egg_machine_page(self, gtype, grow):
         payload = [
@@ -407,15 +418,12 @@ class PadApiClient(object):
             ('pid', self.user_intid),
             ('sid', self.session_id),
         ]
-        combined_payload = ['{}={}'.format(x[0], x[1]) for x in payload]
+        combined_payload = ['{}={}'.format(k, v) for k, v in payload]
         payload_str = '&'.join(combined_payload)
         final_url = '{}?{}'.format(self.player_data.gacha_url, payload_str)
 
         ua = UserAgent()
         headers = {'User-Agent': ua.chrome}
 
-        s = requests.Session()
-        req = requests.Request('GET', final_url, headers=headers)
-        p = req.prepare()
-        r = s.send(p)
+        r = requests.get(final_url, headers=headers)
         return r.text
