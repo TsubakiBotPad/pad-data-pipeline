@@ -1643,6 +1643,42 @@ class ESBranchCombo(ESBranch):
         self.operation = '>='
 
 
+class ESBranchDamageAttribute(ESBranch):
+    skill_types = [114]
+    branch_condition = 'color attacked with'
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = '=='
+
+
+class ESBranchSkillUse(ESBranch):
+    skill_types = [115]
+    branch_condition = 'uses of skills'
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = '>='
+
+
+class ESBranchDamage(ESBranch):
+    skill_types = [116]
+    branch_condition = 'damage last turn'
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = '>='
+
+
+class ESBranchEraseAttr(ESBranch):
+    skill_types = [117]
+    branch_condition = 'color erased'
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = '=='
+
+
 class ESBranchRemainingEnemies(ESBranch):
     skill_types = [120]
     branch_condition = 'remaining enemies'
@@ -1877,6 +1913,10 @@ ENEMY_SKILLS = [
     ESBranchHP,
     ESBranchCounter,
     ESBranchLevel,
+    ESBranchDamageAttribute,
+    ESBranchSkillUse,
+    ESBranchDamage,
+    ESBranchEraseAttr,
     ESEndPath,
     ESCountdown,
     ESSetCounterIf,
@@ -1900,3 +1940,4 @@ BEHAVIOR_MAP[0] = ESNone
 BEHAVIOR_MAP[9] = ESUnknown
 BEHAVIOR_MAP[21] = ESUnknown
 BEHAVIOR_MAP[93] = ESNone  # FF Animation
+BEHAVIOR_MAP[136] = ESNone  # Shikigami Animation
