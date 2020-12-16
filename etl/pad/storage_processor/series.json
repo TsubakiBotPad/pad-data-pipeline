@@ -1236,21 +1236,15 @@
     "series_id": 214
   },
   {
-    "name_en": "Event Invade",
-    "name_ja": "Event Invade",
-    "name_ko": "Event Invade",
-    "series_id": 215
-  },
-  {
     "name_en": "Arena Invade Equip Material",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
     "series_id": 216
   },
   {
-    "name_en": "My Hero Academia Collab",
-    "name_ja": "Untranslated",
-    "name_ko": "Untranslated",
+    "name_en": "My Hero Academia",
+    "name_ja": "僕のヒーローアカデミア",
+    "name_ko": "나의 히어로 아카데미아",
     "series_id": 217
   },
   {
@@ -1264,5 +1258,11 @@
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
     "series_id": 219
+  },
+  {
+    "name_en": "Shikigami Tsukai & Ayakashi",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 220
   }
 ]
