@@ -1113,6 +1113,23 @@ class ASSpawnSpinner(ActiveSkill):
         return converter.spawn_spinner(self.turns, self.speed, self.count)
 
 
+class ASRandomLocationDoubleOrbSpawn(ActiveSkill):
+    skill_type = 208
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0])
+        self.amount = data[0]
+        self.orbs = binary_con(data[1])
+        self.excluding_orbs = binary_con(data[2])
+        self.amount2 = data[3]
+        self.orbs2 = binary_con(data[4])
+        self.excluding_orbs2 = binary_con(data[5])
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.double_spawn_orb_convert(self)
+
+
 class ASDisableActiveSkill(ActiveSkill):
     skill_type = 214
 
@@ -1152,7 +1169,7 @@ def convert(skill_list: List[MonsterSkill]):
 
         for p_id in s.child_ids:
             if p_id not in results:
-                human_fix_logger.error('failed to look up multipart leader skill id: %d', p_id)
+                human_fix_logger.error('failed to look up multipart active skill id: %d', p_id)
                 continue
             p_skill = results[p_id]
             s.child_skills.append(p_skill)
