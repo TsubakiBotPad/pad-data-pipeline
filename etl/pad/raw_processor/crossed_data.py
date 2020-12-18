@@ -103,15 +103,16 @@ def is_bad_name(name):
     return any([x in name for x in ['***', '???']]) or any([x == name for x in ['None', '無し', '없음', 'なし']])
 
 
-def _compare_named(override, dest):
+def _compare_named(overrides, dest):
     """Tries to determine if we should replace dest with override.
 
     First compares the null-ness of each, and then compares the quality of the 'name' property.
     """
-    if override and not dest:
-        return override
-    if override and dest and is_bad_name(dest.name) and not is_bad_name(override.name):
-        return override
+    for override in overrides:
+        if override and not dest:
+            return override
+        if override and dest and is_bad_name(dest.name) and not is_bad_name(override.name):
+            return override
     return dest
 
 
@@ -120,31 +121,32 @@ def _compare_named(override, dest):
 def make_cross_server_card(jp_card: MergedCard,
                            na_card: MergedCard,
                            kr_card: MergedCard) -> (CrossServerCard, str):
-    def override_if_necessary(source_card: MergedCard, dest_card: MergedCard):
-        if dest_card is None:
-            return source_card
-        if source_card is None:
+    def override_if_necessary(source_cards: List[MergedCard], dest_card: MergedCard):
+        for source_card in source_cards:
+            if dest_card is None:
+                return source_card
+            if source_card is None:
+                return dest_card
+
+            # Check if the card isn't available based on the name.
+            new_data_card = _compare_named([source_card.card], dest_card.card)
+            if new_data_card != dest_card.card:
+                dest_card.card = new_data_card
+                # This is kind of gross and makes me think it might be wrong. We're checking the MergedCard.server
+                # when creating the monster to determine where the data was sourced from, so we have to also
+                # overwrite it here.
+                dest_card.server = source_card.server
+
+            # Apparently some monsters can be ported to servers before their skills are
+            dest_card.leader_skill = _compare_named([source_card.leader_skill], dest_card.leader_skill)
+            dest_card.active_skill = _compare_named([source_card.active_skill], dest_card.active_skill)
+
             return dest_card
 
-        # Check if the card isn't available based on the name.
-        new_data_card = _compare_named(source_card.card, dest_card.card)
-        if new_data_card != dest_card.card:
-            dest_card.card = new_data_card
-            # This is kind of gross and makes me think it might be wrong. We're checking the MergedCard.server
-            # when creating the monster to determine where the data was sourced from, so we have to also
-            # overwrite it here.
-            dest_card.server = source_card.server
-
-        # Apparently some monsters can be ported to servers before their skills are
-        dest_card.leader_skill = _compare_named(source_card.leader_skill, dest_card.leader_skill)
-        dest_card.active_skill = _compare_named(source_card.active_skill, dest_card.active_skill)
-
-        return dest_card
-
     # Override priority: JP > NA, NA -> JP, NA -> KR.
-    na_card = override_if_necessary(jp_card, na_card)
-    jp_card = override_if_necessary(na_card, jp_card)
-    kr_card = override_if_necessary(na_card, kr_card)
+    na_card = override_if_necessary([jp_card, kr_card], na_card)
+    jp_card = override_if_necessary([na_card, kr_card], jp_card)
+    kr_card = override_if_necessary([na_card], kr_card)
 
     # What the hell gungho. This showed up (104955) only in Korea.
     if kr_card is not None and na_card is None and jp_card is None:
@@ -197,19 +199,20 @@ def make_cross_server_enemy_behavior(jp_skills: List[ESInstance],
     jp_skills = override_all_if_necessary(na_skills, jp_skills)
     kr_skills = override_all_if_necessary(na_skills, kr_skills)
 
-    def override_if_necessary(override_skills: List[ESInstance], dest_skills: List[ESInstance]):
+    def override_if_necessary(override_skills_lists: List[List[ESInstance]], dest_skills: List[ESInstance]):
         # Then check if we need to individually overwrite
-        for idx in range(len(override_skills)):
-            override_skill = override_skills[idx].behavior
+        for override_skills in override_skills_lists:
+            for idx in range(len(override_skills)):
+                override_skill = override_skills[idx].behavior
 
-            dest_skill = dest_skills[idx].behavior
-            if override_skill is _compare_named(override_skill, dest_skill):
-                dest_skills[idx] = override_skills[idx]
+                dest_skill = dest_skills[idx].behavior
+                if override_skill is _compare_named([override_skill], dest_skill):
+                    dest_skills[idx] = override_skills[idx]
 
     # Override priority: JP > NA, NA -> JP
-    override_if_necessary(jp_skills, na_skills)
-    override_if_necessary(na_skills, jp_skills)
-    override_if_necessary(na_skills, kr_skills)
+    override_if_necessary([jp_skills, kr_skills], na_skills)
+    override_if_necessary([na_skills, kr_skills], jp_skills)
+    override_if_necessary([na_skills, jp_skills], kr_skills)
 
     return _combine_es(jp_skills, na_skills, kr_skills)
 
@@ -375,9 +378,9 @@ def make_cross_server_skill(jp_skill: EitherSkillType,
                             na_skill: EitherSkillType,
                             kr_skill: EitherSkillType) -> Optional[CrossServerSkill]:
     # Override priority: JP > NA, NA -> JP, NA -> KR.
-    na_skill = _compare_named(jp_skill, na_skill)
-    jp_skill = _compare_named(na_skill, jp_skill)
-    kr_skill = _compare_named(na_skill, kr_skill)
+    na_skill = _compare_named([jp_skill, kr_skill], na_skill)
+    jp_skill = _compare_named([na_skill, kr_skill], jp_skill)
+    kr_skill = _compare_named([na_skill], kr_skill)
 
     if na_skill or jp_skill or kr_skill:
         return CrossServerSkill(jp_skill, na_skill, kr_skill)
@@ -412,9 +415,9 @@ def build_cross_server_enemy_skills(jp_skills: List[EnemySkill],
         kr_skill = kr_map.get(skill_id, None)
 
         # Override priority: JP > NA, NA -> JP, NA -> KR.
-        na_skill = _compare_named(jp_skill, na_skill)
-        jp_skill = _compare_named(na_skill, jp_skill)
-        kr_skill = _compare_named(na_skill, kr_skill)
+        na_skill = _compare_named([jp_skill, kr_skill], na_skill)
+        jp_skill = _compare_named([na_skill, kr_skill], jp_skill)
+        kr_skill = _compare_named([na_skill], kr_skill)
 
         if na_skill or jp_skill or kr_skill:
             results.append(CrossServerEnemySkill(jp_skill, na_skill, kr_skill))
