@@ -275,6 +275,23 @@ class JpASTextConverter(JpBaseTextConverter):
                 s_text = '{}ドロップを{}個生成'
             return s_text.format(to_orbs, act.amount)
 
+    def double_spawn_orb_convert(self, act):
+        s_text = self.spawn_orb_convert(act)+"。"
+        to_orbs = self.attributes_to_str(act.orbs2)
+        excl_orbs = self.attributes_to_str(set(act.excluding_orbs2) - set(act.orbs2))
+        if act.orbs2 != act.excluding_orbs2 and act.excluding_orbs2 != []:
+            if len(act.orbs2) > 1:
+                s_text += '{}以外ランダムで{}を{}個ずつ生成'
+            else:
+                s_text += '{}以外{}ドロップを{}個生成'
+            return s_text.format(excl_orbs, to_orbs, act.amount2)
+        else:
+            if len(act.orbs2) > 1:
+                s_text += 'ランダムで{}を{}個ずつ生成'
+            else:
+                s_text += '{}ドロップを{}個生成'
+            return s_text.format(to_orbs, act.amount2)
+
     def move_time_buff_convert(self, act):
         s_text = self.fmt_duration(act.duration) + 'ドロップ操作時間が'
         if act.static == 0:

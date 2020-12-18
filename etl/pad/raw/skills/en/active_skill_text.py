@@ -276,6 +276,19 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += ' over any ' + pluralize('orb', act.amount)
         return skill_text
 
+    def double_spawn_orb_convert(self, act):
+        skill_text = self.spawn_orb_convert(act)
+        skill_text += 'and create {} '.format(act.amount2)
+        skill_text += self.concat_list_and([self.ATTRIBUTES[o] for o in act.orbs2])
+        skill_text += ' ' + pluralize('orb', act.amount2)
+        if act.orbs != act.excluding_orbs2 and act.excluding_orbs2 != []:
+            templist = set(act.excluding_orbs2) - set(act.orbs2)
+            skill_text += ' over non '
+            skill_text += self.concat_list_and([self.ATTRIBUTES[o] for o in templist]) + ' orbs'
+        elif len(act.excluding_orbs2) == 0:
+            skill_text += ' over any ' + pluralize('orb', act.amount2)
+        return skill_text
+
     def move_time_buff_convert(self, act):
         if act.static == 0:
             return self.fmt_duration(act.duration) + \
