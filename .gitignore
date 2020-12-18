@@ -125,6 +125,8 @@ cronjobs/account_config.csv
 # python venv
 bin/
 
+.DS_Store
+
 *.orig
 
 # vim swap files
