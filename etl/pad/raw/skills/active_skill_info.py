@@ -1235,6 +1235,7 @@ ALL_ACTIVE_SKILLS = [
     ASIncreasedOrbMovementTime,
     ASOrbEnhanceNew,
     ASRandomLocationOrbSpawn,
+    ASRandomLocationDoubleOrbSpawn,
     ASAttributeChange,
     ASHpMultiplierNuke,
     ASAttrNukeOfAttrTwoAtk,
