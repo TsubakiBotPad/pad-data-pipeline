@@ -54,6 +54,7 @@ class BonusType(Enum):
     dungeon_web_info_link = 43
     stone_purchase_text = 44
     story_category_text = 47
+    special_dungeon_info_link = 50
 
 
 class BonusTypeEntry(object):
@@ -142,6 +143,8 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.stone_purchase_text),
     # ソニア編登 - appears above the story dungeon card
     BonusTypeEntry(BonusType.story_category_text),
+    # An infobox that links to a webpage appears at the top of the special dungeons
+    BonusTypeEntry(BonusType.special_dungeon_info_link),
 ]
 
 TYPES_MAP = {bte.bonus_type.value: bte for bte in ALL_TYPES}
