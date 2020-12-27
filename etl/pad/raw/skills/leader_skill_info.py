@@ -1488,7 +1488,7 @@ class LSMatchAttrPlusShield(LeaderSkill):
     skill_type = 171
 
     def __init__(self, ms: MonsterSkill):
-        data = ms.data
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 100, 0])
         self.match_attributes = list_binary_con(data[0:4])
         self.min_match = data[4]
         self.min_atk = mult(data[5])
