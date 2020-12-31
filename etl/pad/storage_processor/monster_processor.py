@@ -18,7 +18,7 @@ class MonsterProcessor(object):
         logger.info('loading monster data')
         self._process_skills(db)
         self._process_monsters(db)
-        self._process_auto_override(db)
+        # self._process_auto_override(db)
         self._process_monster_images(db)
         self._process_awakenings(db)
         self._process_evolutions(db)
