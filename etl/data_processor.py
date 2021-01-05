@@ -43,6 +43,10 @@ db_logger.setLevel(logging.INFO)
 human_fix_logger = logging.getLogger('human_fix')
 human_fix_logger.setLevel(logging.INFO)
 
+type_name_to_processor = {
+    'DungeonContentProcessor': DungeonContentProcessor
+}
+
 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
@@ -70,6 +74,8 @@ def parse_args():
                              help="If true, only load ES and then quit")
     input_group.add_argument("--media_dir", required=False,
                              help="Path to the root folder containing images, voices, etc")
+    input_group.add_argument("--processor", required=False,
+                             help="Specific processor to run.")
 
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--output_dir", required=True,
@@ -99,7 +105,7 @@ def load_es_quick_and_die(args):
     es_processor = EnemySkillProcessor(db_wrapper, cs_database)
     es_processor.load_enemy_data(args.es_dir)
 
-    print('done loading ES')
+    logger.info('done loading ES')
     exit(0)
 
 
@@ -136,6 +142,14 @@ def load_data(args):
 
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
+
+    if args.processor:
+        logger.info('Running specific processor {}'.format(args.processor))
+        class_type = type_name_to_processor[args.processor]
+        processor = class_type(cs_database)
+        processor.process(db_wrapper)
+        logger.info('done')
+        return
 
     # Load dimension tables
     DimensionProcessor().process(db_wrapper)
@@ -193,7 +207,7 @@ def load_data(args):
 
     PurgeDataProcessor().process(db_wrapper)
 
-    print('done')
+    logger.info('done')
 
 
 if __name__ == '__main__':
