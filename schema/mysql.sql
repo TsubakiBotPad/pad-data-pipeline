@@ -631,8 +631,6 @@ CREATE TABLE `monsters` (
   `on_jp` tinyint(1) NOT NULL,
   `on_na` tinyint(1) NOT NULL,
   `on_kr` tinyint(1) NOT NULL,
-  `pal_egg` tinyint(1) NOT NULL,
-  `rem_egg` tinyint(1) NOT NULL,
   `series_id` int(11) NOT NULL,
   `super_awakenings` text NOT NULL,
   `has_animation` tinyint(1) NOT NULL DEFAULT '0',
