@@ -793,7 +793,7 @@ CREATE TABLE `series` (
   `name_ja` text NOT NULL,
   `name_en` text NOT NULL,
   `name_ko` text NOT NULL,
-  `series_type` text NOT NULL,
+  `series_type` text,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`series_id`),
   KEY `tstamp` (`tstamp`)
