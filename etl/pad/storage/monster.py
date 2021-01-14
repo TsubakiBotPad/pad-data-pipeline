@@ -110,8 +110,6 @@ class Monster(SimpleSqlItem):
             diff_awakenings=diff_awakenings,
             diff_leader_skill=diff_leader_skill,
             diff_active_skill=diff_active_skill,
-            pal_egg=False,
-            rem_egg=False,
             series_id=Series.UNSORTED_SERIES_ID,
             orb_skin_id=orb_skin_id,
             voice_id_jp=voice_id_jp,
@@ -164,8 +162,6 @@ class Monster(SimpleSqlItem):
                  diff_awakenings: bool = None,
                  diff_leader_skill: bool = None,
                  diff_active_skill: bool = None,
-                 pal_egg: bool = None,
-                 rem_egg: bool = None,
                  series_id: int = None,
                  orb_skin_id: int = None,
                  voice_id_jp: int = None,
@@ -217,8 +213,6 @@ class Monster(SimpleSqlItem):
         self.diff_awakenings = diff_awakenings
         self.diff_leader_skill = diff_leader_skill
         self.diff_active_skill = diff_active_skill
-        self.pal_egg = pal_egg
-        self.rem_egg = rem_egg
         self.series_id = series_id
         self.has_animation = False
         self.has_hqimage = False
@@ -234,8 +228,6 @@ class Monster(SimpleSqlItem):
             'buy_mp',
             'reg_date',
             'series_id',
-            'pal_egg',
-            'rem_egg',
             'has_animation',
             'has_hqimage',
         ]
