@@ -12,7 +12,8 @@ class Series(SimpleSqlItem):
         return Series(series_id=o['series_id'],
                       name_ja=o['name_ja'],
                       name_en=o['name_en'],
-                      name_ko=o['name_ko'])
+                      name_ko=o['name_ko'],
+                      series_type=o['series_type'])
 
     def __init__(self,
                  series_id: int = None,
