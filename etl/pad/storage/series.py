@@ -13,7 +13,7 @@ class Series(SimpleSqlItem):
                       name_ja=o['name_ja'],
                       name_en=o['name_en'],
                       name_ko=o['name_ko'],
-                      series_type=o['series_type'])
+                      series_type=o.get('series_type'))
 
     def __init__(self,
                  series_id: int = None,
