@@ -10,1265 +10,1480 @@
     "name_en": "Starter Dragon",
     "name_ja": "御三家",
     "name_ko": "시작용",
-    "series_id": 1
+    "series_id": 1,
+    "series_type": "default"
   },
   {
     "name_en": "Ripper Dragon",
     "name_ja": "カラードラゴン",
     "name_ko": "칼라용",
-    "series_id": 2
+    "series_id": 2,
+    "series_type": "default"
   },
   {
     "name_en": "Slime",
     "name_ja": "りん",
     "name_ko": "슬라임",
-    "series_id": 3
+    "series_id": 3,
+    "series_type": "default"
   },
   {
     "name_en": "Carbuncle",
     "name_ja": "カーバンクル",
     "name_ko": "카벙클",
-    "series_id": 4
+    "series_id": 4,
+    "series_type": "default"
   },
   {
     "name_en": "Goblin",
     "name_ja": "ゴブリン",
     "name_ko": "고블린",
-    "series_id": 5
+    "series_id": 5,
+    "series_type": "default"
   },
   {
     "name_en": "Ogre",
     "name_ja": "オーガ",
     "name_ko": "오우거",
-    "series_id": 6
+    "series_id": 6,
+    "series_type": "default"
   },
   {
     "name_en": "Knight",
     "name_ja": "ファイター",
     "name_ko": "파이터",
-    "series_id": 7
+    "series_id": 7,
+    "series_type": "default"
   },
   {
     "name_en": "Golem",
     "name_ja": "ゴーレム",
     "name_ko": "골렘",
-    "series_id": 8
+    "series_id": 8,
+    "series_type": "default"
   },
   {
     "name_en": "Healer Girl",
     "name_ja": "女の子",
     "name_ko": "여친",
-    "series_id": 9
+    "series_id": 9,
+    "series_type": "default"
   },
   {
     "name_en": "Mystic Knight",
     "name_ja": "魔剣士",
     "name_ko": "마검사",
-    "series_id": 10
+    "series_id": 10,
+    "series_type": "default"
   },
   {
     "name_en": "Attack Stance",
     "name_ja": "攻撃態勢組",
     "name_ko": "공격 태세",
-    "series_id": 11
+    "series_id": 11,
+    "series_type": "default"
   },
   {
     "name_en": "Late Bloomer Dragon",
     "name_ja": "ガチャ龍",
     "name_ko": "만성용",
-    "series_id": 12
+    "series_id": 12,
+    "series_type": "default"
   },
   {
     "name_en": "Greco-Roman God",
     "name_ja": "西洋神",
     "name_ko": "그리스로마신",
-    "series_id": 13
+    "series_id": 13,
+    "series_type": "default"
   },
   {
     "name_en": "Japanese God",
     "name_ja": "和神",
     "name_ko": "일본신",
-    "series_id": 14
+    "series_id": 14,
+    "series_type": "default"
   },
   {
     "name_en": "Legendary Dragon",
     "name_ja": "伝説龍",
     "name_ko": "전설용",
-    "series_id": 15
+    "series_id": 15,
+    "series_type": "default"
   },
   {
     "name_en": "Evo Material",
     "name_ja": "進化素材",
     "name_ko": "진화재료",
-    "series_id": 16
+    "series_id": 16,
+    "series_type": "default"
   },
   {
     "name_en": "Metal Dragon",
     "name_ja": "メタドラ",
     "name_ko": "메탈 드래곤",
-    "series_id": 20
+    "series_id": 20,
+    "series_type": "default"
   },
   {
     "name_en": "Poring",
     "name_ja": "ポリン",
     "name_ko": "포링",
-    "series_id": 21
+    "series_id": 21,
+    "series_type": "collab"
   },
   {
     "name_en": "Descended",
     "name_ja": "降臨",
     "name_ko": "강림",
-    "series_id": 22
+    "series_id": 22,
+    "series_type": "default"
   },
   {
     "name_en": "Devil",
     "name_ja": "デーモン",
     "name_ko": "데몬",
-    "series_id": 23
+    "series_id": 23,
+    "series_type": "default"
   },
   {
     "name_en": "Sky Dragon",
     "name_ja": "天空龍",
     "name_ko": "천공용",
-    "series_id": 24
+    "series_id": 24,
+    "series_type": "default"
   },
   {
     "name_en": "Special Gift",
     "name_ja": "限定モンスター",
     "name_ko": "한정판 몬스터",
-    "series_id": 25
+    "series_id": 25,
+    "series_type": "default"
   },
   {
     "name_en": "Indian God",
     "name_ja": "東洋の神",
     "name_ko": "인도신",
-    "series_id": 26
+    "series_id": 26,
+    "series_type": "default"
   },
   {
     "name_en": "Chimera",
     "name_ja": "キメラ",
     "name_ko": "키메라",
-    "series_id": 27
+    "series_id": 27,
+    "series_type": "default"
   },
   {
     "name_en": "Taiko no Tatsujin Collab",
     "name_ja": "太鼓の達人",
     "name_ko": "태고의 달인",
-    "series_id": 28
+    "series_id": 28,
+    "series_type": "collab"
   },
   {
     "name_en": "Mech Dragon",
     "name_ja": "機械龍",
     "name_ko": "기계룡",
-    "series_id": 29
+    "series_id": 29,
+    "series_type": "default"
   },
   {
     "name_en": "Toy Dragon",
     "name_ja": "玩具龍",
     "name_ko": "완구룡",
-    "series_id": 30
+    "series_id": 30,
+    "series_type": "default"
   },
   {
     "name_en": "Pengdra",
     "name_ja": "ペンドラ",
     "name_ko": "펭공",
-    "series_id": 31
+    "series_id": 31,
+    "series_type": "default"
   },
   {
     "name_en": "ECO Collab",
     "name_ja": "ECOコラボ",
     "name_ko": "ECO 콜라보",
-    "series_id": 32
+    "series_id": 32,
+    "series_type": "collab"
   },
   {
     "name_en": "Elemental",
     "name_ja": "精霊",
     "name_ko": "정령",
-    "series_id": 33
+    "series_id": 33,
+    "series_type": "default"
   },
   {
     "name_en": "GodFest Exclusive",
     "name_ja": "ゴッドフェス限定",
     "name_ko": "갓페스 한정",
-    "series_id": 34
+    "series_id": 34,
+    "series_type": "default"
   },
   {
     "name_en": "Norse God",
     "name_ja": "北欧神",
     "name_ko": "북유럽신",
-    "series_id": 35
+    "series_id": 35,
+    "series_type": "default"
   },
   {
     "name_en": "Rider",
     "name_ja": "ライダー",
     "name_ko": "라이더",
-    "series_id": 36
+    "series_id": 36,
+    "series_type": "default"
   },
   {
     "name_en": "Mythical Beast",
     "name_ja": "幻獣",
     "name_ko": "환수",
-    "series_id": 37
+    "series_id": 37,
+    "series_type": "default"
   },
   {
     "name_en": "Pink REM",
     "name_ja": "女の子ガチャ",
     "name_ko": "소녀 에그",
-    "series_id": 38
+    "series_id": 38,
+    "series_type": "default"
   },
   {
     "name_en": "Gunma Collab",
     "name_ja": "ぐんまコラボ",
     "name_ko": "군마 콜라보",
-    "series_id": 39
+    "series_id": 39,
+    "series_type": "collab"
   },
   {
     "name_en": "Ancient Dragon",
     "name_ja": "歴龍",
     "name_ko": "역룡",
-    "series_id": 40
+    "series_id": 40,
+    "series_type": "default"
   },
   {
     "name_en": "CD Collab",
     "name_ja": "CDコラボ",
     "name_ko": "CD 콜라보",
-    "series_id": 41
+    "series_id": 41,
+    "series_type": "collab"
   },
   {
     "name_en": "Egyptian God",
     "name_ja": "エジプトの神",
     "name_ko": "이집트신",
-    "series_id": 43
+    "series_id": 43,
+    "series_type": "default"
   },
   {
     "name_en": "Princess Punt Collab",
     "name_ja": "ケリ姫コラボ",
     "name_ko": "발차기 공주 콜라보",
-    "series_id": 44
+    "series_id": 44,
+    "series_type": "collab"
   },
   {
     "name_en": "Snow Globe Dragon",
     "name_ja": "ノエル",
     "name_ko": "노엘 드래곤",
-    "series_id": 45
+    "series_id": 45,
+    "series_type": "default"
   },
   {
     "name_en": "Moltdra",
     "name_ja": "ムギドラ",
     "name_ko": "보리용",
-    "series_id": 46
+    "series_id": 46,
+    "series_type": "default"
   },
   {
     "name_en": "Samurai Dragon",
     "name_ja": "戦国龍",
     "name_ko": "무사룡",
-    "series_id": 47
+    "series_id": 47,
+    "series_type": "default"
   },
   {
     "name_en": "Sengoku Ninja",
     "name_ja": "忍者",
     "name_ko": "닌자",
-    "series_id": 48
+    "series_id": 48,
+    "series_type": "default"
   },
   {
     "name_en": "Greco-Roman God II",
     "name_ja": "新西洋神",
     "name_ko": "그리스로마신 II",
-    "series_id": 50
+    "series_id": 50,
+    "series_type": "default"
   },
   {
     "name_en": "Fey",
     "name_ja": "妖精",
     "name_ko": "요정",
-    "series_id": 51
+    "series_id": 51,
+    "series_type": "default"
   },
   {
     "name_en": "Capybara-san Collab",
     "name_ja": "カピバラさんコラボ",
     "name_ko": "카피바라상 콜라보",
-    "series_id": 53
+    "series_id": 53,
+    "series_type": "collab"
   },
   {
     "name_en": "Archangel",
     "name_ja": "天使",
     "name_ko": "천사",
-    "series_id": 54
+    "series_id": 54,
+    "series_type": "default"
   },
   {
     "name_en": "Archdemon",
     "name_ja": "悪魔",
     "name_ko": "악마",
-    "series_id": 55
+    "series_id": 55,
+    "series_type": "default"
   },
   {
     "name_en": "Monster Exchange",
     "name_ja": "モンスター交換所",
     "name_ko": "Monster Exchange",
-    "series_id": 57
+    "series_id": 57,
+    "series_type": "default"
   },
   {
     "name_en": "Gungho Collab",
     "name_ja": "ガンホーコラボダンジョン",
     "name_ko": "겅호 콜라보",
-    "series_id": 58
+    "series_id": 58,
+    "series_type": "collab"
   },
   {
     "name_en": "Shinra Bansho Collab",
     "name_ja": "神羅万象チョココラボ",
     "name_ko": "신라만상 초콜렛 콜라보",
-    "series_id": 60
+    "series_id": 60,
+    "series_type": "collab"
   },
   {
     "name_en": "Evangelion Collab",
     "name_ja": "エヴァコラボ",
     "name_ko": "에반게리온 콜라보",
-    "series_id": 61
+    "series_id": 61,
+    "series_type": "collab"
   },
   {
     "name_en": "Japanese Myth",
     "name_ja": "妖怪",
     "name_ko": "요괴",
-    "series_id": 62
+    "series_id": 62,
+    "series_type": "default"
   },
   {
     "name_en": "Clash of Clans Dungeon",
     "name_ja": "CoC コラボ",
     "name_ko": "Clash of Clans 콜라보",
-    "series_id": 63
+    "series_id": 63,
+    "series_type": "collab"
   },
   {
     "name_en": "Stone Dragon",
     "name_ja": "魔石龍",
     "name_ko": "마석용",
-    "series_id": 64
+    "series_id": 64,
+    "series_type": "default"
   },
   {
     "name_en": "Chinese God",
     "name_ja": "四神",
     "name_ko": "사방신",
-    "series_id": 65
+    "series_id": 65,
+    "series_type": "default"
   },
   {
     "name_en": "GROOVE COASTER Collab",
     "name_ja": "グルーヴコースター ゼロ コラボ",
     "name_ko": "GROOVE COASTER 콜라보",
-    "series_id": 66
+    "series_id": 66,
+    "series_type": "collab"
   },
   {
     "name_en": "Mystic Dragon",
     "name_ja": "神秘龍",
     "name_ko": "신비용",
-    "series_id": 67
+    "series_id": 67,
+    "series_type": "default"
   },
   {
     "name_en": "Japanese God II",
     "name_ja": "新和神",
     "name_ko": "일본신 II",
-    "series_id": 68
+    "series_id": 68,
+    "series_type": "default"
   },
   {
     "name_en": "Ragnarok Odyssey Ace Collab",
     "name_ja": "ラグオデA コラボ",
     "name_ko": "라그오디A 콜라보",
-    "series_id": 69
+    "series_id": 69,
+    "series_type": "collab"
   },
   {
     "name_en": "Takaoka City Collab",
     "name_ja": "高岡市コラボ",
     "name_ko": "타카오카시 콜라보",
-    "series_id": 70
+    "series_id": 70,
+    "series_type": "collab"
   },
   {
     "name_en": "DDQ Collab",
     "name_ja": "ドラゴンズドグマ クエストコラボ",
     "name_ko": "드래곤즈 도그마 퀘스트 콜라보",
-    "series_id": 71
+    "series_id": 71,
+    "series_type": "collab"
   },
   {
     "name_en": "Monster Hunter 4G Collab",
     "name_ja": "モンスターハンター4G コラボ ",
     "name_ko": "몬스터 헌터 4G 콜라보",
-    "series_id": 72
+    "series_id": 72,
+    "series_type": "collab"
   },
   {
     "name_en": "Batman Collab",
     "name_ja": "バットマン コラボ",
     "name_ko": "배트맨 콜라보",
-    "series_id": 74
+    "series_id": 74,
+    "series_type": "collab"
   },
   {
     "name_en": "Baskin-Robbins Collab",
     "name_ja": "サーティワン コラボ",
     "name_ko": "배스킨라빈스 31 콜라보",
-    "series_id": 75
+    "series_id": 75,
+    "series_type": "collab"
   },
   {
     "name_en": "Angry Birds Collab",
     "name_ja": "アングリーバード コラボ",
     "name_ko": "앵그리 버드 콜라보",
-    "series_id": 76
+    "series_id": 76,
+    "series_type": "collab"
   },
   {
     "name_en": "Pirate Dragon",
     "name_ja": "海賊龍",
     "name_ko": "해적룡",
-    "series_id": 77
+    "series_id": 77,
+    "series_type": "default"
   },
   {
     "name_en": "Greco-Roman Myth",
     "name_ja": "西洋妖怪",
     "name_ko": "그리스로마 신화",
-    "series_id": 78
+    "series_id": 78,
+    "series_type": "default"
   },
   {
     "name_en": "Puzzle & Dragons Z Collab",
     "name_ja": "パズドラＺ コラボ",
     "name_ko": "퍼즐앤드래곤 Z 콜라보",
-    "series_id": 79
+    "series_id": 79,
+    "series_type": "regular"
   },
   {
     "name_en": "Heroic God",
     "name_ja": "英雄神",
     "name_ko": "영웅신",
-    "series_id": 80
+    "series_id": 80,
+    "series_type": "default"
   },
   {
     "name_en": "Fruit Dragon",
     "name_ja": "フルーツドラゴン",
     "name_ko": "과일용",
-    "series_id": 81
+    "series_id": 81,
+    "series_type": "default"
   },
   {
     "name_en": "HUNTER×HUNTER Collab",
     "name_ja": "HUNTER×HUNTER コラボ",
     "name_ko": "헌터×헌터 콜라보",
-    "series_id": 82
+    "series_id": 82,
+    "series_type": "collab"
   },
   {
     "name_en": "Pirates",
     "name_ja": "海賊",
     "name_ko": "해적",
-    "series_id": 83
+    "series_id": 83,
+    "series_type": "default"
   },
   {
     "name_en": "Hello Kitty Collab",
     "name_ja": "ハローキティ コラボ",
     "name_ko": "헬로키티 콜라보",
-    "series_id": 84
+    "series_id": 84,
+    "series_type": "collab"
   },
   {
     "name_en": "Flower Dragon",
     "name_ja": "華龍",
     "name_ko": "화룡",
-    "series_id": 85
+    "series_id": 85,
+    "series_type": "default"
   },
   {
     "name_en": "Misc Skill Up Monsters",
     "name_ja": "その他スキル アップ モンスター",
     "name_ko": "기타 스킬업 몬스터",
-    "series_id": 86
+    "series_id": 86,
+    "series_type": "default"
   },
   {
-    "name_en": "CoroCoro Monster",
-    "name_ja": "スペシャルモンスター",
-    "name_ko": "스페셜 몬스터",
-    "series_id": 87
+    "name_en": "Number Dragons",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 87,
+    "series_type": "default"
   },
   {
     "name_en": "Three Kingdoms",
     "name_ja": "三国の神",
     "name_ko": "삼국지신",
-    "series_id": 88
+    "series_id": 88,
+    "series_type": "default"
   },
   {
     "name_en": "PAD Battle Tournament Collab",
     "name_ja": "パズバト コラボ",
     "name_ko": "퍼드 배틀토너먼트 콜라보",
-    "series_id": 89
+    "series_id": 89,
+    "series_type": "collab"
   },
   {
     "name_en": "Ragnarok Online Collab",
     "name_ja": "ＲＯコラボ",
     "name_ko": "라그나로크 온라인 콜라보",
-    "series_id": 90
+    "series_id": 90,
+    "series_type": "collab"
   },
   {
     "name_en": "BEAMS Collab",
     "name_ja": "BEAMS コラボ",
     "name_ko": "BEAMS 콜라보",
-    "series_id": 91
+    "series_id": 91,
+    "series_type": "collab"
   },
   {
     "name_en": "Dragon Ball Collab",
     "name_ja": "ドラゴンボールコラボ",
     "name_ko": "드래곤볼 콜라보",
-    "series_id": 92
+    "series_id": 92,
+    "series_type": "collab"
   },
   {
     "name_en": "Dragon Rider Girl",
     "name_ja": "龍騎姫",
     "name_ko": "용기희",
-    "series_id": 93
+    "series_id": 93,
+    "series_type": "default"
   },
   {
     "name_en": "Chaser",
     "name_ja": "チェイサー",
     "name_ko": "체이서",
-    "series_id": 94
+    "series_id": 94,
+    "series_type": "default"
   },
   {
     "name_en": "Saint Seiya Collab",
     "name_ja": "聖闘士星矢 コラボ",
     "name_ko": "세인트 세이야 콜라보",
-    "series_id": 95
+    "series_id": 95,
+    "series_type": "collab"
   },
   {
     "name_en": "Fairy Tale",
     "name_ja": "童話",
     "name_ko": "동화",
-    "series_id": 96
+    "series_id": 96,
+    "series_type": "default"
   },
   {
     "name_en": "Indian God II",
     "name_ja": "東洋の神 II",
     "name_ko": "인도신 II",
-    "series_id": 97
+    "series_id": 97,
+    "series_type": "default"
   },
   {
     "name_en": "Dragon Swordman",
     "name_ja": "龍剣士",
     "name_ko": "용검사",
-    "series_id": 98
+    "series_id": 98,
+    "series_type": "default"
   },
   {
     "name_en": "Bikkuriman Collab",
     "name_ja": "ビックリマン コラボ",
     "name_ko": "빅쿠리맨 콜라보",
-    "series_id": 99
+    "series_id": 99,
+    "series_type": "collab"
   },
   {
     "name_en": "Awoken Material",
     "name_ja": "能力覚醒",
     "name_ko": "능력 각성",
-    "series_id": 100
+    "series_id": 100,
+    "series_type": "default"
   },
   {
     "name_en": "Skill Level Up",
     "name_ja": "スキルレベルアップ",
     "name_ko": "스킬 레벨 업",
-    "series_id": 101
+    "series_id": 101,
+    "series_type": "default"
   },
   {
     "name_en": "Insect Dragon",
     "name_ja": "蟲龍",
     "name_ko": "곤충룡",
-    "series_id": 102
+    "series_id": 102,
+    "series_type": "default"
   },
   {
     "name_en": "Magician",
     "name_ja": "マジシャン",
     "name_ko": "매지션",
-    "series_id": 103
+    "series_id": 103,
+    "series_type": "default"
   },
   {
     "name_en": "Armor Knight",
     "name_ja": "鎧騎士",
     "name_ko": "갑옷 기사",
-    "series_id": 104
+    "series_id": 104,
+    "series_type": "default"
   },
   {
     "name_en": "Egyptian God II",
     "name_ja": "エジプトの神 II",
     "name_ko": "이집트신 II",
-    "series_id": 105
+    "series_id": 105,
+    "series_type": "default"
   },
   {
     "name_en": "Justice League",
     "name_ja": "ジャスティス・リーグ",
     "name_ko": "저스티스 리그",
-    "series_id": 106
+    "series_id": 106,
+    "series_type": "collab"
   },
   {
     "name_en": "Three Kindoms Tenka Trigger",
     "name_ja": "三国テンカトリガー",
     "name_ko": "삼국천하 트리거",
-    "series_id": 107
+    "series_id": 107,
+    "series_type": "seasonal"
   },
   {
     "name_en": "Grimoire",
     "name_ja": "魔導書",
     "name_ko": "마도서",
-    "series_id": 108
+    "series_id": 108,
+    "series_type": "regular"
   },
   {
     "name_en": "Christmas REM (2014)",
     "name_ja": "クリスマスガチャ (2014)",
     "name_ko": "크리스마스 에그 (2014)",
-    "series_id": 109
+    "series_id": 109,
+    "series_type": "seasonal"
   },
   {
     "name_en": "Bowl Dragon",
     "name_ja": "丼龍",
     "name_ko": "덮밥용",
-    "series_id": 110
+    "series_id": 110,
+    "series_type": "default"
   },
   {
     "name_en": "Weapons/Braves",
     "name_ja": "勇士",
     "name_ko": "용사",
-    "series_id": 111
+    "series_id": 111,
+    "series_type": "default"
   },
   {
     "name_en": "Angel II",
     "name_ja": "天使 II",
     "name_ko": "천사 II",
-    "series_id": 112
+    "series_id": 112,
+    "series_type": "default"
   },
   {
     "name_en": "Fist of the North Star",
     "name_ja": "北斗の拳",
     "name_ko": "북두의권",
-    "series_id": 113
+    "series_id": 113,
+    "series_type": "collab"
   },
   {
     "name_en": "PAD Academy",
     "name_ja": "私立パズドラ学園",
     "name_ko": "사립 퍼드 학원",
-    "series_id": 114
+    "series_id": 114,
+    "series_type": "event"
   },
   {
     "name_en": "Cat Dragon",
     "name_ja": "猫龍",
     "name_ko": "고양이용",
-    "series_id": 115
+    "series_id": 115,
+    "series_type": "default"
   },
   {
     "collab_id": 45,
     "name_en": "Final Fantasy Collab",
     "name_ja": "ファイナルファンタジー コラボ",
     "name_ko": "파이널 판타지 콜라보",
-    "series_id": 116
+    "series_id": 116,
+    "series_type": "collab"
   },
   {
     "name_en": "GungHo Collab Pal Egg",
     "name_ja": "ガンホーコラボ友情ガチャ",
     "name_ko": "겅호 콜라보 우정 에그",
-    "series_id": 117
+    "series_id": 117,
+    "series_type": "ghcollab"
   },
   {
     "name_en": "Ghost in the Shell Collab",
     "name_ja": "攻殻機動隊コラボ",
     "name_ko": "공각기동대 콜라보",
-    "series_id": 118
+    "series_id": 118,
+    "series_type": "collab"
   },
   {
     "collab_id": 47,
     "name_en": "Duel Masters Collab",
     "name_ja": "デュエル・マスターズ コラボ",
     "name_ko": "듀얼 마스터즈 콜라보",
-    "series_id": 119
+    "series_id": 119,
+    "series_type": "collab"
   },
   {
     "name_en": "Cyber Dragon",
     "name_ja": "機導龍",
     "name_ko": "기도룡",
-    "series_id": 120
+    "series_id": 120,
+    "series_type": "default"
   },
   {
     "name_en": "Cyber Beast",
     "name_ja": "機導獣",
     "name_ko": "기도수",
-    "series_id": 121
+    "series_id": 121,
+    "series_type": "default"
   },
   {
     "name_en": "Latent Awoken",
     "name_ja": "潜在覚醒",
     "name_ko": "잠재각성",
-    "series_id": 122
+    "series_id": 122,
+    "series_type": "default"
   },
   {
     "name_en": "Samurai God",
     "name_ja": "戦国の神",
     "name_ko": "대장군",
-    "series_id": 123
+    "series_id": 123,
+    "series_type": "default"
   },
   {
     "name_en": "Monster Point",
     "name_ja": "モンスターポイント",
     "name_ko": "몬스터 포인트",
-    "series_id": 124
+    "series_id": 124,
+    "series_type": "default"
   },
   {
     "name_en": "PAD Island",
     "name_ja": "夏休み",
     "name_ko": "여름방학",
-    "series_id": 125
+    "series_id": 125,
+    "series_type": "event"
   },
   {
     "name_en": "Marionette",
     "name_ja": "人形使",
     "name_ko": "인형사",
-    "series_id": 126
+    "series_id": 126,
+    "series_type": "default"
   },
   {
     "name_en": "Armor Dragon",
     "name_ja": "機甲龍",
     "name_ko": "기갑룡",
-    "series_id": 127
+    "series_id": 127,
+    "series_type": "default"
   },
   {
     "collab_id": 48,
     "name_en": "Attack on Titan",
     "name_ja": "進撃の巨人",
     "name_ko": "진격의 거인",
-    "series_id": 128
+    "series_id": 128,
+    "series_type": "collab"
   },
   {
     "name_en": "Halloween",
     "name_ja": "ハロウィン",
     "name_ko": "할로윈",
-    "series_id": 130
+    "series_id": 130,
+    "series_type": "seasonal"
   },
   {
     "name_en": "Ex GodFest",
     "name_ja": "元フェス限シリーズ",
     "name_ko": "갓페스 제외",
-    "series_id": 131
+    "series_id": 131,
+    "series_type": "default"
   },
   {
     "name_en": "Constellation God",
     "name_ja": "星機の神",
     "name_ko": "성좌신",
-    "series_id": 132
+    "series_id": 132,
+    "series_type": "default"
   },
   {
     "name_en": "Dog Dragon",
     "name_ja": "犬龍",
     "name_ko": "강아지용",
-    "series_id": 133
+    "series_id": 133,
+    "series_type": "default"
   },
   {
     "name_en": "Ninja Hattori Collab",
     "name_ja": "忍者ハットリくん コラボ",
     "name_ko": "닌자 핫토리군 콜라보",
-    "series_id": 134
+    "series_id": 134,
+    "series_type": "collab"
   },
   {
     "name_en": "Sunday All Stars Collab",
     "name_ja": "サンデーオールスターズコラボ",
     "name_ko": "선데이 올스타즈 콜라보",
-    "series_id": 135
+    "series_id": 135,
+    "series_type": "collab"
   },
   {
     "name_en": "Christmas",
     "name_ja": "クリスマスガチャ",
     "name_ko": "크리스마스 에그",
-    "series_id": 136
+    "series_id": 136,
+    "series_type": "seasonal"
   },
   {
     "name_en": "Prehistoric Dragon",
     "name_ja": "古代龍",
     "name_ko": "고대룡",
-    "series_id": 138
+    "series_id": 138,
+    "series_type": "default"
   },
   {
     "name_en": "New Years",
     "name_ja": "お正月イベント",
     "name_ko": "설날 이벤트",
-    "series_id": 139
+    "series_id": 139,
+    "series_type": "seasonal"
   },
   {
     "name_en": "Crows x Worst Collab",
     "name_ja": "クローズ コラボ",
     "name_ko": "크로우즈 콜라보",
-    "series_id": 140
+    "series_id": 140,
+    "series_type": "collab"
   },
   {
     "name_en": "Constellation God II",
     "name_ja": "星機の神 II",
     "name_ko": "성좌신 II",
-    "series_id": 141
+    "series_id": 141,
+    "series_type": "default"
   },
   {
     "name_en": "Iron Star Dragon",
     "name_ja": "鉄星龍",
     "name_ko": "철성룡",
-    "series_id": 142
+    "series_id": 142,
+    "series_type": "default"
   },
   {
     "name_en": "Legendary Hero",
     "name_ja": "英雄神",
     "name_ko": "Legendary Hero",
-    "series_id": 143
+    "series_id": 143,
+    "series_type": "default"
   },
   {
     "name_en": "BLEACH Collab",
     "name_ja": "BLEACH コラボ",
     "name_ko": "블리치 콜라보",
-    "series_id": 144
+    "series_id": 144,
+    "series_type": "collab"
   },
   {
     "name_en": "Skill Transfer",
     "name_ja": "スキル継承",
     "name_ko": "스킬 계승",
-    "series_id": 145
+    "series_id": 145,
+    "series_type": "default"
   },
   {
     "name_en": "Contract Dragon",
     "name_ja": "契約龍",
     "name_ko": "계약용",
-    "series_id": 146
+    "series_id": 146,
+    "series_type": "default"
   },
   {
     "name_en": "Chibi Collection",
     "name_ja": "ぷぎゅコレガチャ",
     "name_ko": "뿌규 콜렉션 에그",
-    "series_id": 147
+    "series_id": 147,
+    "series_type": "seasonal"
   },
   {
     "name_en": "PAD Cross Collab",
     "name_ja": "パズドラクロスコラボ",
     "name_ko": "퍼드 크로스 콜라보",
-    "series_id": 148
+    "series_id": 148,
+    "series_type": "collab"
   },
   {
     "name_en": "June Bride",
     "name_ja": "ジューンブライド",
     "name_ko": "준 브라이드",
-    "series_id": 149
+    "series_id": 149,
+    "series_type": "seasonal"
   },
   {
     "name_en": "Ace Attorney 6 Collab",
     "name_ja": "逆転裁判6コラボ",
     "name_ko": "역전재판6 콜라보",
-    "series_id": 150
+    "series_id": 150,
+    "series_type": "collab"
   },
   {
     "name_en": "Dimension Dragon",
     "name_ja": "転界龍",
     "name_ko": "전계룡",
-    "series_id": 151
+    "series_id": 151,
+    "series_type": "default"
   },
   {
     "name_en": "Rurouni Kenshin Collab",
     "name_ja": "るろうに剣心 コラボ",
     "name_ko": "바람의 검심 콜라보",
-    "series_id": 152
+    "series_id": 152,
+    "series_type": "collab"
   },
   {
     "collab_id": 58,
     "name_en": "Kinnikuman Collab",
     "name_ja": "キン肉マン コラボ",
     "name_ko": "근육맨 콜라보",
-    "series_id": 153
+    "series_id": 153,
+    "series_type": "collab"
   },
   {
     "name_en": "PAD Radar",
     "name_ja": "パズドラレーダー連動",
     "name_ko": "퍼드 레이더",
-    "series_id": 154
+    "series_id": 154,
+    "series_type": "default"
   },
   {
     "name_en": "Wisdom Kings",
     "name_ja": "明王の神",
     "name_ko": "명왕신",
-    "series_id": 155
+    "series_id": 155,
+    "series_type": "default"
   },
   {
     "name_en": "Guardian Dragon",
     "name_ja": "護神龍",
     "name_ko": "호신용",
-    "series_id": 156
+    "series_id": 156,
+    "series_type": "default"
   },
   {
     "name_en": "Fes Heroine",
     "name_ja": "フェス限ヒロイン",
     "name_ko": "페스 한정 히로인",
-    "series_id": 157
+    "series_id": 157,
+    "series_type": "event"
   },
   {
     "name_en": "Nightmare Street",
     "name_ja": "ナイトメアストリート",
     "name_ko": "나이트메어 스트리트",
-    "series_id": 158
+    "series_id": 158,
+    "series_type": "event"
   },
   {
     "name_en": "Three Kingdoms II",
     "name_ja": "三国の神 II",
     "name_ko": "삼국지신 II",
-    "series_id": 159
+    "series_id": 159,
+    "series_type": "default"
   },
   {
     "name_en": "Weapons/Braves II",
     "name_ja": "勇士 II",
     "name_ko": "용사 II",
-    "series_id": 160
+    "series_id": 160,
+    "series_type": "default"
   },
   {
     "name_en": "Wisedragon",
     "name_ja": "大賢龍",
     "name_ko": "대현룡",
-    "series_id": 161
+    "series_id": 161,
+    "series_type": "default"
   },
   {
     "collab_id": 60,
     "name_en": "Magazine All Stars Collab",
     "name_ja": "マガジンオールスターズコラボ",
     "name_ko": "매거진 올스타즈 콜라보",
-    "series_id": 162
+    "series_id": 162,
+    "series_type": "collab"
   },
   {
     "name_en": "Samurai God II",
     "name_ja": "戦国の神 II",
     "name_ko": "대장군 II",
-    "series_id": 163
+    "series_id": 163,
+    "series_type": "default"
   },
   {
     "name_en": "Voltron Collab",
     "name_ja": "Voltronコラボ",
     "name_ko": "볼트론 콜라보",
-    "series_id": 164
+    "series_id": 164,
+    "series_type": "collab"
   },
   {
     "collab_id": 61,
     "name_en": "Monster Hunter Collab",
     "name_ja": "モンスターハンターコラボ",
     "name_ko": "몬스터 헌터 콜라보",
-    "series_id": 165
+    "series_id": 165,
+    "series_type": "collab"
   },
   {
     "name_en": "Orb Dragon",
     "name_ja": "宝珠龍",
     "name_ko": "보주용",
-    "series_id": 166
+    "series_id": 166,
+    "series_type": "default"
   },
   {
     "name_en": "Warchief Dragon",
     "name_ja": "戦武龍",
     "name_ko": "전무룡",
-    "series_id": 168
+    "series_id": 168,
+    "series_type": "default"
   },
   {
     "name_en": "Greco-Roman God III",
     "name_ja": "西洋神 第3弾",
     "name_ko": "그리스로마신 III",
-    "series_id": 169
+    "series_id": 169,
+    "series_type": "default"
   },
   {
     "name_en": "Awoken Assist",
     "name_ja": "覚醒アシスト",
     "name_ko": "각성 어시스트",
-    "series_id": 170
+    "series_id": 170,
+    "series_type": "default"
   },
   {
     "collab_id": 10001,
     "name_en": "Dragonbound & Dragoncaller",
     "name_ja": "龍契士&龍喚士",
     "name_ko": "용계사&용환사",
-    "series_id": 171
+    "series_id": 171,
+    "series_type": "event"
   },
   {
     "name_en": "Fullmetal Alchemist Collab",
     "name_ja": "鋼の錬金術師 コラボ",
     "name_ko": "강철의 연금술사 콜라보",
-    "series_id": 172
+    "series_id": 172,
+    "series_type": "collab"
   },
   {
     "name_en": "KOF Collab",
     "name_ja": "KOFコラボ",
     "name_ko": "KOF 콜라보",
-    "series_id": 173
+    "series_id": 173,
+    "series_type": "collab"
   },
   {
     "name_en": "Celtic God",
     "name_ja": "ケルトの神",
     "name_ko": "켈트신",
-    "series_id": 174
+    "series_id": 174,
+    "series_type": "default"
   },
   {
     "name_en": "Valentine's Day",
     "name_ja": "バレンタイン イベント",
     "name_ko": "발렌타인 이벤트",
-    "series_id": 175
+    "series_id": 175,
+    "series_type": "seasonal"
   },
   {
     "name_en": "Coloring Book",
     "name_ja": "レアキャラカーニバル友情ガチャ",
     "name_ko": "레어 캐릭터 카니발 우정 에그",
-    "series_id": 176
+    "series_id": 176,
+    "series_type": "ghcollab"
   },
   {
     "name_en": "Yu Yu Hakusho Collab",
     "name_ja": "幽☆遊☆白書 コラボ",
     "name_ko": "유유백서 콜라보",
-    "series_id": 177
+    "series_id": 177,
+    "series_type": "collab"
   },
   {
     "name_en": "Mesopotamian Gods",
     "name_ja": "メソポタミアの神",
     "name_ko": "메소포타미아 신",
-    "series_id": 178
+    "series_id": 178,
+    "series_type": "default"
   },
   {
     "name_en": "Persona Collab",
     "name_ja": "ペルソナ コラボ",
     "name_ko": "페르소나 콜라보",
-    "series_id": 179
+    "series_id": 179,
+    "series_type": "collab"
   },
   {
     "name_en": "Evolve Gem",
     "name_ja": "希石",
     "name_ko": "희석",
-    "series_id": 180
+    "series_id": 180,
+    "series_type": "default"
   },
   {
     "name_en": "Magic: The Gathering Collab",
     "name_ja": "マジック：ザ・ギャザリング",
     "name_ko": "Magic: The Gathering Collab",
-    "series_id": 181
+    "series_id": 181,
+    "series_type": "collab"
   },
   {
     "collab_id": 74,
     "name_en": "Power Pros Collab",
     "name_ja": "実況パワフルプロ野球",
     "name_ko": "Power Pros Collab",
-    "series_id": 182
+    "series_id": 182,
+    "series_type": "collab"
   },
   {
     "name_en": "Gungho Collab 2",
     "name_ja": "ガンホーコラボ２",
     "name_ko": "Gungho Collab 2",
-    "series_id": 183
+    "series_id": 183,
+    "series_type": "ghcollab"
   },
   {
     "name_en": "Gintama",
     "name_ja": "銀魂",
     "name_ko": "",
-    "series_id": 184
+    "series_id": 184,
+    "series_type": "collab"
   },
   {
     "collab_id": 76,
     "name_en": "Sword Art Online",
     "name_ja": "ソードアート・オンライン",
     "name_ko": "Sword Art Online",
-    "series_id": 185
+    "series_id": 185,
+    "series_type": "collab"
   },
   {
     "collab_id": 77,
     "name_en": "Kamen Rider",
     "name_ja": "仮面ライダー",
     "name_ko": "",
-    "series_id": 186
+    "series_id": 186,
+    "series_type": "collab"
   },
   {
     "name_en": "Samurai God III",
     "name_ja": "戦国の神 III",
     "name_ko": "대장군 III",
-    "series_id": 187
+    "series_id": 187,
+    "series_type": "default"
   },
   {
     "collab_id": 78,
     "name_en": "Yokai Watch",
     "name_ja": "妖怪ウォッチ",
     "name_ko": "",
-    "series_id": 188
+    "series_id": 188,
+    "series_type": "collab"
   },
   {
     "name_en": "Companion Dragon",
     "name_ja": "伴神龍",
     "name_ko": "",
-    "series_id": 189
+    "series_id": 189,
+    "series_type": "default"
   },
   {
     "name_en": "Fate/stay night Heaven's Feel",
     "name_ja": "Fate/stay night",
     "name_ko": "Fate/stay night Heaven's Feel",
-    "series_id": 190
+    "series_id": 190,
+    "series_type": "collab"
   },
   {
     "name_en": "Street Fighter V: Arcade Edition",
     "name_ja": "ストリートファイター ",
     "name_ko": "Street Fighter V: Arcade Edition",
-    "series_id": 191
+    "series_id": 191,
+    "series_type": "collab"
   },
   {
     "collab_id": 83,
     "name_en": "Shaman King Collab",
     "name_ja": "シャーマンキング",
     "name_ko": "Shaman King Collab",
-    "series_id": 192
+    "series_id": 192,
+    "series_type": "collab"
   },
   {
     "collab_id": 86,
     "name_en": "Power Rangers",
     "name_ja": "Power Rangers",
     "name_ko": "Power Rangers",
-    "series_id": 193
+    "series_id": 193,
+    "series_type": "collab"
   },
   {
     "collab_id": 87,
     "name_en": "Shinkalion",
     "name_ja": "シンカリオン",
     "name_ko": "Shinkalion",
-    "series_id": 194
+    "series_id": 194,
+    "series_type": "collab"
   },
   {
     "collab_id": 88,
     "name_en": "Fujimi Fantasia Collab",
     "name_ja": "富士見ファンタジア文庫",
     "name_ko": "Fujimi Fantasia Collab",
-    "series_id": 195
+    "series_id": 195,
+    "series_type": "collab"
   },
   {
     "name_en": "Story Mode",
     "name_ja": "ストーリーダンジョン",
     "name_ko": "Story Mode",
-    "series_id": 196
+    "series_id": 196,
+    "series_type": "default"
   },
   {
     "name_en": "Super GodFest Exclusive",
     "name_ja": "ゴッドフェス限定",
     "name_ko": "Super GodFest Exclusive",
-    "series_id": 197
+    "series_id": 197,
+    "series_type": "default"
   },
   {
     "collab_id": 85,
     "name_en": "Samurai Shodown",
     "name_ja": "サムライスピリッツ",
     "name_ko": "Samurai Shodown",
-    "series_id": 198
+    "series_id": 198,
+    "series_type": "collab"
   },
   {
     "name_en": "Draconic Orchestra",
     "name_ja": "龍楽士",
     "name_ko": "Draconic Orchestra",
-    "series_id": 199
+    "series_id": 199,
+    "series_type": "event"
   },
   {
     "name_en": "McDonalds Collab",
     "name_ja": "マクドナルド",
     "name_ko": "McDonalds Collab",
-    "series_id": 200
+    "series_id": 200,
+    "series_type": "collab"
   },
   {
     "name_en": "Shonen Champion",
     "name_ja": "Shonen Champion",
     "name_ko": "Shonen Champion",
-    "series_id": 201
+    "series_id": 201,
+    "series_type": "collab"
   },
   {
     "name_en": "Pepper Collab",
     "name_ja": "ペッパー",
     "name_ko": "Pepper Collab",
-    "series_id": 202
+    "series_id": 202,
+    "series_type": "collab"
   },
   {
     "name_en": "Gemstone Princess",
     "name_ja": "宝石姫",
     "name_ko": "Gemstone Princess",
-    "series_id": 203
+    "series_id": 203,
+    "series_type": "default"
   },
   {
     "name_en": "Special Descended",
     "name_ja": "壊滅降臨",
     "name_ko": "Special Descended",
-    "series_id": 204
+    "series_id": 204,
+    "series_type": "default"
   },
   {
     "name_en": "Yu-Gi-Oh! Duel Monsters Collab",
     "name_ja": "遊戯王",
     "name_ko": "Yu-Gi-Oh! Duel Monsters Collab",
-    "series_id": 205
+    "series_id": 205,
+    "series_type": "collab"
   },
   {
     "name_en": "Miscellaneous",
     "name_ja": "その他",
     "name_ko": "Miscellaneous",
-    "series_id": 206
+    "series_id": 206,
+    "series_type": "default"
   },
   {
     "name_en": "Special PEM",
     "name_ja": "その他",
     "name_ko": "Special PEM",
-    "series_id": 207
+    "series_id": 207,
+    "series_type": "default"
   },
   {
     "name_en": "Descended Loot",
     "name_ja": "常設ダンジョンドロップ",
     "name_ko": "Descended Loot",
-    "series_id": 208
+    "series_id": 208,
+    "series_type": "default"
   },
   {
     "name_en": "Redeemable",
     "name_ja": "売却用",
     "name_ko": "Redeemable",
-    "series_id": 209
+    "series_id": 209,
+    "series_type": "default"
   },
   {
     "name_en": "Design Contest Monsters",
     "name_ja": "デザインコンテストモンスター",
     "name_ko": "Design Contest Monsters",
-    "series_id": 210
+    "series_id": 210,
+    "series_type": "default"
   },
   {
     "name_en": "Tales of Artifact Dragons",
     "name_ja": "神器龍物語",
     "name_ko": "Tales of Artifact Dragons",
-    "series_id": 211
+    "series_id": 211,
+    "series_type": "event"
   },
   {
     "collab_id": 90,
     "name_en": "Mickey Mouse & Friends",
     "name_ja": "ミッキー＆フレンズ",
     "name_ko": "Mickey Mouse & Friends",
-    "series_id": 212
+    "series_id": 212,
+    "series_type": "collab"
   },
   {
     "name_en": "Devil May Cry",
     "name_ja": "デビル メイ クライ",
     "name_ko": "Devil May Cry",
-    "series_id": 213
+    "series_id": 213,
+    "series_type": "collab"
   },
   {
     "name_en": "PAD W",
     "name_ja": "P&D W",
     "name_ko": "P&D W",
-    "series_id": 214
+    "series_id": 214,
+    "series_type": "ghcollab"
   },
   {
     "name_en": "Arena Invade Equip Material",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
-    "series_id": 216
+    "series_id": 216,
+    "series_type": "default"
   },
   {
     "name_en": "My Hero Academia",
     "name_ja": "僕のヒーローアカデミア",
     "name_ko": "나의 히어로 아카데미아",
-    "series_id": 217
+    "series_id": 217,
+    "series_type": "collab"
   },
   {
     "name_en": "Deadly Sin Dragons & Key Heroes",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
-    "series_id": 218
+    "series_id": 218,
+    "series_type": "event"
   },
   {
     "name_en": "Demon Slayer",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
-    "series_id": 219
+    "series_id": 219,
+    "series_type": "collab"
   },
   {
-    "name_en": "Shikigami Tsukai & Ayakashi",
+    "name_en": "Mystics & Spectres",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
-    "series_id": 220
+    "series_id": 220,
+    "series_type": "event"
   },
   {
     "name_en": "Ninjala",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
-    "series_id": 221
+    "series_id": 221,
+    "series_type": "collab"
+  },
+  {
+    "name_en": "Monogatari",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 222,
+    "series_type": "collab"
   }
 ]
