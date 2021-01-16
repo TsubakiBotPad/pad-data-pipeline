@@ -94,7 +94,6 @@ class CardEntry(pad_util.Printable):
 class FriendEntry(pad_util.Printable):
     def __init__(self, row_values):
         BASE_SIZE = 17 if row_values[0] == 12 else 12 if row_values[0] == 13 else 999
-        print(BASE_SIZE)
         self.base_values = row_values[0:BASE_SIZE]
         self.user_intid = row_values[1]
         self.leader_1 = FriendLeader(
