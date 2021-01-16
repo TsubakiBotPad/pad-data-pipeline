@@ -95,7 +95,7 @@ class FriendEntry(pad_util.Printable):
     BASE_SIZE = 17
 
     def __init__(self, row_values):
-        self.base_values = row_values[0:FriendEntry.BASE_SIZE]
+        self.base_values = row_values[0:BASE_SIZE]
         self.user_intid = row_values[1]
         self.leader_1 = FriendLeader(
             row_values[FriendEntry.BASE_SIZE + 0 * FriendLeader.SIZE: FriendEntry.BASE_SIZE + 1 * FriendLeader.SIZE])
