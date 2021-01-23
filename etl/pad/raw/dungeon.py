@@ -51,7 +51,7 @@ class SubDungeon(pad_util.Printable):
 
         for field in self.remaining_fields:
             if 'hp:' in field or 'at:' in field or 'df:' in field:
-                for k, v in re.findall(r'(\w{2}):(\d+)', m):
+                for k, v in re.findall(r'(\w{2}):(\d+)', field):
                     if k == 'hp':
                         self.hp_mult = float(v) / 10000
                     elif k == 'at':
