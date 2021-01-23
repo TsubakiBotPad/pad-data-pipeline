@@ -3,11 +3,11 @@ Parses Dungeon and DungeonFloor data.
 """
 
 import csv
+import re
 from io import StringIO
 from typing import List, Any
 
 from pad.common import pad_util, dungeon_types
-
 # The typical JSON file name for this data.
 from pad.common.shared_types import DungeonId, SubDungeonId
 
@@ -51,13 +51,13 @@ class SubDungeon(pad_util.Printable):
 
         for field in self.remaining_fields:
             if 'hp:' in field or 'at:' in field or 'df:' in field:
-                for mod in field.split('|'):
-                    if mod.startswith('hp:'):
-                        self.hp_mult = float(mod[3:]) / 10000
-                    elif mod.startswith('at:'):
-                        self.atk_mult = float(mod[3:]) / 10000
-                    elif mod.startswith('df:'):
-                        self.def_mult = float(mod[3:]) / 10000
+                for k, v in re.findall(r'(\w{2}):(\d+)', m):
+                    if k == 'hp':
+                        self.hp_mult = float(v) / 10000
+                    elif k == 'at':
+                        self.atk_mult = float(v) / 10000
+                    elif k == 'df':
+                        self.def_mult = float(v) / 10000
                 break
 
         # Modifiers parsing also seems to skip fixed teams sometimes.
