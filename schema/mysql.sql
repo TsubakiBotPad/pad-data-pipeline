@@ -453,6 +453,7 @@ DROP TABLE IF EXISTS `evolutions`;
 CREATE TABLE `evolutions` (
   `evolution_id` int(11) NOT NULL AUTO_INCREMENT,
   `evolution_type` int(11) NOT NULL,
+  `reversible` tinyint(1) NOT NULL,
   `from_id` int(11) NOT NULL,
   `to_id` int(11) NOT NULL,
   `mat_1_id` int(11) NOT NULL,
@@ -623,6 +624,7 @@ CREATE TABLE `monsters` (
   `type_2_id` int(11) DEFAULT NULL,
   `type_3_id` int(11) DEFAULT NULL,
   `inheritable` tinyint(1) NOT NULL,
+  `stackable` tinyint(1) NOT NULL,
   `fodder_exp` int(11) NOT NULL,
   `sell_gold` int(11) NOT NULL,
   `sell_mp` int(11) NOT NULL,
