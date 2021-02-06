@@ -140,7 +140,7 @@
     "series_type": "regular"
   },
   {
-    "name_en": "Devil",
+    "name_en": "Devil Mob",
     "name_ja": "デーモン",
     "name_ko": "데몬",
     "series_id": 23,
@@ -818,7 +818,7 @@
     "name_ja": "夏休み",
     "name_ko": "여름방학",
     "series_id": 125,
-    "series_type": "event"
+    "series_type": "seasonal"
   },
   {
     "name_en": "Marionette",
@@ -1466,7 +1466,7 @@
     "series_type": "collab"
   },
   {
-    "name_en": "Shikigami Tsukai & Ayakashi",
+    "name_en": "Mystics & Spectres",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
     "series_id": 220,
@@ -1485,5 +1485,201 @@
     "name_ko": "Untranslated",
     "series_id": 222,
     "series_type": "collab"
+  },
+  {
+    "name_en": "Ninja Mob",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 223,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Dracoblades",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 224,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Great Witch I",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 225,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Great Witch II",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 226,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Odin",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 227,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Sonia",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 228,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Norn",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 229,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Metatron",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 230,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Kali",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 231,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Picture Book Exclusive",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 232,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Fest Three Kingdoms",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 233,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Dimension Dragon Caller",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 234,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Contract Dragonbound",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 235,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Phantom Demon",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 236,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Steel Star God",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 237,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Fenrir",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 238,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Sherias",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 239,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Mechdragon God",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 240,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Demon Lord",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 241,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Japanese Storm God",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 242,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Japanese Genesis God",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 243,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Irish Morrigan",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 244,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Lovecraft",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 245,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Kings & Queens",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 246,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Spring Fest Exchange",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 247,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "PAD Appreciation Exchange",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 248,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "PAD Appreciation 2019 Exchange",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 249,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Sprint Forward Exchange",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 250,
+    "series_type": "regular"
   }
 ]
