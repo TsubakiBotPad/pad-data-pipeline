@@ -32,7 +32,7 @@ class LeaderSkill(object):
         self._hp = round(hp, 2)
         self._atk = round(atk, 2)
         self._rcv = round(rcv, 2)
-        self._shield = round(shield, 2)
+        self._shield = round(shield, 4)
         self._extra_combos = extra_combos
         self._bonus_damage = bonus_damage
         self._mult_bonus_damage = mult_bonus_damage
@@ -1134,7 +1134,7 @@ class LSMultiPartSkill(LeaderSkill):
         v = 0
         for x in self.child_skills:
             v = 1 - (1 - v) * (1 - x.shield)
-        return round(v, 2)
+        return round(v, 4)
 
     @property
     def extra_combos(self):
