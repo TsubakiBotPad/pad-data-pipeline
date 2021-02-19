@@ -138,7 +138,8 @@ emoji_dict = {
     'do_nothing': '💤',
     'awoken_bind': '❌👁️',
     'no_skyfall': 'No🌧',
-    'bind': "❌"
+    'bind': "❌",
+    'skyfall': '🌧'
 }
 
 Attributes = {
@@ -237,14 +238,14 @@ TARGET_NAMES = {
     TargetType.unset: '<targets unset>',
 
     # Specific Subs
-    TargetType.random: 'random card',
+    TargetType.random: 'random',
     TargetType.self_leader: 'player leader',
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
     TargetType.subs: 'random sub',
     TargetType.attrs: 'attributes',
     TargetType.types: 'type',
-    TargetType.card: 'card',
+    TargetType.card: '',
 
     # Specific Players/Enemies (For Recovery)
     TargetType.player: 'player',
@@ -270,10 +271,10 @@ ORB_SHAPES = {
 }
 
 STATUSES = {
-    Status.movetime: 'movetime',
-    Status.atk: 'ATK',
+    Status.movetime: '☝',
+    Status.atk: '🗡',
     Status.hp: 'HP',
-    Status.rcv: 'RCV',
+    Status.rcv: '🩹',
 }
 
 UNITS = {
@@ -294,13 +295,14 @@ def ordinal(n):
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
 
 
-class EmojiESTextConverter(EmojiBaseTextConverter):
+class EnEmojiESTextConverter(EmojiBaseTextConverter):
     def not_set(self):
         return '(N/A)'
 
     def default_attack(self):
         return '({})'.format(generic_symbols['attack'])
 
+    #don't really care right now
     def condition(self, chance, hp=None, one_time=False):
         output = []
         if 0 < chance < 100 and not one_time:
@@ -315,18 +317,19 @@ class EmojiESTextConverter(EmojiBaseTextConverter):
         return capitalize_first(' '.join(output)) if len(output) > 0 else None
 
     def attack(self, mult, min_hit=1, max_hit=1):
-        #have to process this in the bot
-        if mult is None:
+        #have to process this in the bot in order to get full damage numbers
+        return ''
+        """if mult is None:
             return None
         output = 'Deal {:s}% damage'. \
             format(minmax(int(min_hit) * int(mult), int(max_hit) * int(mult)))
         if min_hit and max_hit != 1:
             output += ' ({:s}, {:,}% each)'. \
                 format(pluralize2("hit", minmax(min_hit, max_hit)), mult)
-        return output
+        return output"""
 
     def skip(self):
-        return 'Do nothing'
+        return '({})'.format(emoji_dict['do_nothing'])
 
     def bind(self, min_turns, max_turns, target_count=None, target_types=TargetType.card, source: Source = None):
         if isinstance(target_types, TargetType):
@@ -334,79 +337,78 @@ class EmojiESTextConverter(EmojiBaseTextConverter):
         elif source is not None:
             target_types = SOURCE_FUNCS[source]([target_types]) + ' cards'
         targets = targets_to_str(target_types)
-        output = '{} {} '.format(generic_symbols['bind'], pluralize2(targets, target_count))
-        output += 'for ' + minmax(min_turns, max_turns)
+        output = '({} {} '.format(generic_symbols['bind'], pluralize2(targets, target_count))
+        output += 'for ' + minmax(min_turns, max_turns) + ')'
         return output
 
     def orb_change(self, orb_from, orb_to, random_count=None, random_type_count=None, exclude_hearts=False):
         if not isinstance(orb_from, list):
             orb_from = [orb_from]
-        orb_from = self.attributes_to_str(orb_from)
+        orb_from = self.attributes_to_emoji(orb_from)
 
         if not isinstance(orb_to, list):
             orb_to = [orb_to]
-        orb_to = self.attributes_to_str(orb_to)
+        orb_to = self.attributes_to_emoji(orb_to)
 
-        output = 'Change '
+        output = ''
         if random_count is not None:
             orbs_text = pluralize('orb', random_count)
             if orb_from == 'Random':
-                output += '{} random {:s}'.format(random_count, orbs_text)
+                output += '({} random'.format(random_count)
             else:
-                output += '{} random {} {}'.format(random_count, orb_from, orbs_text)
+                output += '({} random {}'.format(random_count, orb_from)
             if exclude_hearts:
-                output += ' (excluding hearts)'
+                output += ' [ignore {}]'.format(Attributes[5])
         elif random_type_count is not None:
             types_text = pluralize('type', random_type_count)
-            output += '{} random orb {}'.format(random_type_count, types_text)
+            output += '({} random orb {}'.format(random_type_count, types_text)
         else:
             if 'Random' in orb_from:
-                output += 'a random attribute'
+                output += '(1 Att'
             else:
-                output += 'all {} orbs'.format(orb_from)
-        output += ' to '
+                output += '({}'.format(orb_from)
+        output += generic_symbols['to']
         if 'Random' in orb_to:
-            output += 'a random attribute'
+            output += 'random att)'
         else:
-            output += '{} {}'.format(orb_to, 'orbs')
+            output += '{})'.format(orb_to)
         return output
 
     def blind(self):
-        return 'Blind all orbs on the board'
+        return '({})'.format(generic_symbols['blind'])
 
     def blind_sticky_random(self, turns, min_count, max_count):
         if min_count == 42:
-            return 'Blind all orbs for {:s}'.format(pluralize2('turn', turns))
+            return '({} for {})'.format(generic_symbols['super_blind'], turns)
         else:
-            return 'Blind random {:s} orbs for {:s}' \
-                .format(minmax(min_count, max_count), pluralize2('turn', turns))
+            return '({} {} for {})' \
+                .format(minmax(min_count, max_count), generic_symbols['super_blind'], turns)
 
     def blind_sticky_fixed(self, turns):
-        return 'Blind orbs in specific positions for {:s}'.format(pluralize2('turn', turns))
+        return '({} for {} [Fixed Position])'.format(generic_symbols['super_blind'], turns)
 
     def blind_sticky_skyfall(self, turns, chance, b_turns):
-        return 'For {:s}, {}% chance for skyfall orbs to be blinded for {:s}'.format(
-            pluralize2('turn', turns), chance, pluralize2('turn', b_turns))
+        return '([{} for {}] +{}%{} for {})'.format(generic_symbols['super_blind'], b_turns, chance,
+                                                    emoji_dict['skyfall'], turns)
 
     def dispel_buffs(self):
-        return 'Voids player buff effects'
+        return '(Dispel)'
 
     def recover(self, min_amount, max_amount, target_type, player_threshold=None):
         target = targets_to_str([target_type])
         if player_threshold and player_threshold != 100:
-            return capitalize_first(
-                '{:s} recover {:s} HP when below {}% HP'.format(
-                    target, minmax(min_amount, max_amount, True), player_threshold))
+            return "({}{}%HP{}{})".format(skills_dict['recover'], minmax(min_amount, max_amount), generic_symbols['to'],
+                                          capitalize_first(target))
         else:
-            return capitalize_first('{:s} recover {:s} HP'.format(target, minmax(min_amount, max_amount, True)))
+            return "({}{}%HP{}{})".format(skills_dict['recover'], minmax(min_amount, max_amount), generic_symbols['to'],
+                                          capitalize_first(target))
 
     def enrage(self, mult, turns):
-        output = 'Increase damage to {:,}% for the next '.format(mult)
-        output += pluralize2('turn', turns) if turns else 'attack'
-        return output
+        turns = turns or 1
+        return "({}{}% for {})".format(emoji_dict['enrage'], mult, turns)
 
     def status_shield(self, turns):
-        return 'Voids status ailments for {:s}'.format(pluralize2('turn', turns))
+        return "({} for {})".format(emoji_dict['status_shield'], turns)
 
     def debuff(self, d_type, amount, unit, turns):
         amount = amount or 0
@@ -415,35 +417,31 @@ class EmojiESTextConverter(EmojiBaseTextConverter):
         unit = UNITS[unit]
         turns = turns or 0
         type_text = capitalize_first(STATUSES[d_type] or '')
-        turn_text = pluralize2('turn', turns)
-        return '{:s} {:.0f}{:s} for {:s}'.format(type_text, amount, unit, turn_text)
+        return '({:s} {:.0f}{:s} for {})'.format(type_text, amount, unit, turns)
 
     def end_battle(self):
-        return 'Reduce self HP to 0'
+        return '(End Battle)'
 
     def change_attribute(self, attributes):
         if len(attributes) == 1:
-            return 'Change own attribute to {}'.format(self.ATTRIBUTES[attributes[0]])
+            return "({}{}{})".format(generic_symbols['self'], generic_symbols['to'], self.ATTRIBUTES[attributes[0]])
         else:
-            return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
+            return "({}{} random {})".format(generic_symbols['self'], generic_symbols['to'], self.attributes_to_emoji(attributes))
+           # return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
 
     def gravity(self, percent):
-        return 'Player -{:,}% HP'.format(percent)
+        return "(-{}%{})".format(percent, emoji_dict['gravity'])
 
     def absorb(self, abs_type: Absorb, condition, min_turns, max_turns=None):
         if abs_type == Absorb.attr:
-            source = self.attributes_to_str(condition)
-            return 'Absorb {:s} damage for {:s}' \
-                .format(source, pluralize2("turn", min_turns, max_turns))
+            source = self.attributes_to_emoji(condition)
+            return "({}:{} for {})".format(emoji_dict['absorb'], source, minmax(min_turns, max_turns))
         elif abs_type == Absorb.combo:
-            source = 'combos <= {:d}'.format(condition)
+            return "({}Combo{} for {})".format(emoji_dict['combo'], condition, minmax(min_turns, max_turns))
         elif abs_type == Absorb.damage:
-            source = 'damage >= {:,d}'.format(condition)
+            return "({}{} for {})".format(emoji_dict['damage_absorb'], f'{condition:,}', minmax(min_turns, max_turns))
         else:
             raise ValueError("unknown absorb type: {}".format(abs_type))
-
-        return 'Absorb damage when {:s} for {:s}' \
-            .format(source, pluralize2("turn", min_turns, max_turns))
 
     def skyfall(self, attributes, chance, min_turns, max_turns=None, locked=False):
         lock = 'Locked ' if locked else ''
@@ -451,135 +449,117 @@ class EmojiESTextConverter(EmojiBaseTextConverter):
         # TODO: tieout
         if lock and orbs == 'Random':
             orbs = orbs.lower()
-        return '{:s}{:s} skyfall +{:d}% for {:s}' \
-            .format(lock, orbs, chance, pluralize2('turn', min_turns, max_turns))
+        if not locked:
+            return "([{}:{}]+{}% for {})".format(emoji_dict['skyfall'] ,self.attributes_to_emoji(attributes), chance,
+                                         minmax(min_turns, max_turns))
+        if locked:
+            return "([{}{}:{}]+{}% for {})".format(emoji_dict['locked'], emoji_dict['skyfall'],
+                                                  self.attributes_to_emoji(attributes), chance,
+                                                  minmax(min_turns, max_turns))
 
     def void(self, threshold, turns):
-        return 'Void damage >= {:,} for {:s}'.format(threshold, pluralize2('turn', turns))
+        return "({}{} for {})".format(emoji_dict['void'], f'{threshold:,}', turns)
 
     def damage_reduction(self, source_type: Source, source=None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)
-        if source_type != Source.all_sources:
-            source += ' ' + source_type.name
         if percent is None:
-            return 'Immune to damage from {:s} for {:s}' \
-                .format(source, pluralize2('turn', turns))
+            return '({})'.format(emoji_dict['invincible'])
         else:
             if turns:
-                return 'Reduce damage from {:s} by {:d}% for {:s}' \
-                    .format(source, percent, pluralize2('turn', turns))
+                return "({}{} for {})".format(emoji_dict['defense'], percent, turns)
             else:
-                return 'Reduce damage from {:s} by {:d}%' \
-                    .format(source, percent)
+                return '({}-{}%)'.format(source, percent)
 
     def invuln_off(self):
-        return 'Remove damage immunity effect'
+        return '({})'.format(emoji_dict['invincible_off'])
 
     def resolve(self, percent):
-        return 'Survive attacks with 1 HP when HP > {:d}%'.format(percent)
+        return "({}{}%)".format(emoji_dict['resolve'], percent)
 
     def superresolve(self, percent, remaining):
-        return 'Damage which would reduce HP from above {:d}% to below {:d}% is nullified'.format(percent, remaining)
+        return "({}{})".format(emoji_dict['super_resolve'], percent)
 
     def leadswap(self, turns):
-        return 'Leader changes to random sub for {:s}'.format(pluralize2('turn', turns))
+        return "({} for {})".format(emoji_dict['swap'], turns)
 
     def row_col_spawn(self, position_type, positions, attributes):
-        return 'Change the {:s} {:s} to {:s} orbs'.format(
-            self.concat_list_and([ordinal(x) for x in positions]),
+        return '([{:s}: {:s}]{}{:s})'.format(
             pluralize(ORB_SHAPES[position_type], len(positions)),
-            self.attributes_to_str(attributes))
+            self.concat_list_and([ordinal(x) for x in positions]),
+            generic_symbols['to'],
+            self.attributes_to_emoji(attributes))
 
     def row_col_multi(self, desc_arr):
-        return 'Change ' + self.concat_list_and(map(lambda x: x[7:], desc_arr))
+        return ''.join(desc_arr)
 
     def board_change(self, attributes):
-        return 'Change all orbs to {:s}'.format(self.attributes_to_str(attributes))
+        return '(All{}{})'.format(generic_symbols['to'],self.attributes_to_emoji(attributes))
 
     def random_orb_spawn(self, count, attributes):
         if count == 42:
             return self.board_change(attributes)
         else:
-            return 'Spawn {:d} random {:s} {:s}'.format(
-                count, self.attributes_to_str(attributes, 'and'), pluralize('orb', count))
+            return '(Any {}{}{})'.format(count, generic_symbols['to'], self.attributes_to_emoji(attributes))
 
     def fixed_orb_spawn(self, attributes):
-        return 'Spawn {:s} orbs in the specified positions'.format(self.attributes_to_str(attributes))
+        return '(Specific Positions{}{})'.format(generic_symbols['to'], self.attributes_to_emoji(attributes))
 
     def skill_delay(self, min_turns, max_turns):
-        return 'Delay active skills by {:s}' \
-            .format(pluralize2('turn', minmax(min_turns, max_turns)))
+        return "({}-[{}])".format(emoji_dict['skill_delay'], minmax(min_turns, max_turns))
 
     def orb_lock(self, count, attributes):
         if count == 42 and attributes == self.ATTRS_EXCEPT_BOMBS:
-            return 'Lock all orbs'
+            return '({}:All)'.format(emoji_dict['locked'])
         elif count == 42:
-            return 'Lock all {:s} orbs'.format(self.attributes_to_str(attributes))
+            return '({}:{})'.format(emoji_dict['locked'], self.attributes_to_emoji(attributes))
         elif attributes == self.ATTRS_EXCEPT_BOMBS:
-            return 'Lock {:d} random {:s}'.format(count, pluralize('orb', count))
+            return '({}:{} Any)'.format(emoji_dict['locked'], count)
         else:
-            return 'Lock {:d} random {:s} {:s}'.format(count, self.attributes_to_str(attributes),
-                                                       pluralize('orb', count))
+            return '({}:{} {})'.format(emoji_dict['locked'], count, self.attributes_to_emoji(attributes))
 
     def orb_seal(self, turns, position_type, positions):
-        return 'Seal the {:s} {:s} for {:s}' \
-            .format(self.concat_list_and([ordinal(x) for x in positions]),
+        return '({}[{:s}:{:s}] for {})' \
+            .format(emoji_dict['tape'],
                     pluralize(ORB_SHAPES[position_type], len(positions)),
-                    pluralize2('turn', turns))
+                    self.concat_list_and([ordinal(x) for x in positions]),
+                    turns)
 
     def cloud(self, turns, width, height, x, y):
-        if width == 6 and height == 1:
-            shape = 'row'
-        elif width == 1 and height == 5:
-            shape = 'column'
-        else:
-            shape = '{:d}×{:d}'.format(width, height)
-            shape += ' square' if width == height else ' rectangle'
-        pos = []
-        if x is not None and shape != 'Row of':
-            pos.append('{:s} row'.format(ordinal(x)))
-        if y is not None and shape != 'Column of':
-            pos.append('{:s} column'.format(ordinal(y)))
-        if len(pos) == 0:
-            pos.append('a random location')
-        return 'A {:s} of clouds appears for {:s} at {:s}' \
-            .format(shape, pluralize2('turn', turns), ', '.join(pos))
+        if x is None and y is None:
+            return "({}{}x{} for {})".format(emoji_dict['cloud'], width, height, turns)
+        row = x or 'Random'
+        col = y or 'Random'
+        return "({}{}x{} at [{},{}] for {})".format(emoji_dict['cloud'], width, height, row, col, turns)
 
     def fixed_start(self):
-        return 'Fix orb movement starting point to random position on the board'
+        return '({})'.format(emoji_dict['starting_position'])
 
     def turn_change(self, turn_counter, threshold=None):
         if threshold:
-            return 'Enemy turn counter change to {:d} when HP <= {:d}%'.format(turn_counter, threshold)
+            return '(Turn{}{})'.format(generic_symbols['to'], turn_counter)
         else:
-            return 'Enemy turn counter change to {:d}'.format(turn_counter)
+            return '(Turn{}{})'.format(generic_symbols['to'], turn_counter)
 
     def attribute_block(self, turns, attributes):
-        return 'Unable to match {:s} orbs for {:s}' \
-            .format(self.attributes_to_str(attributes), pluralize2('turn', turns))
+        return '({} for {})'.format(self.attributes_to_emoji(attributes, UnmatchableAttributes), turns)
 
     def spinners(self, turns, speed, random_num=None):
         if random_num is None:
-            return 'Specific orbs change every {:.1f}s for {:s}' \
-                .format(speed / 100, pluralize2('turn', turns))
+            return '(Specific {}{} for {})'.format(emoji_dict['roulette'], speed, turns)
         else:
-            return 'Random {:d} orbs change every {:.1f}s for {:s}' \
-                .format(random_num, speed / 100, pluralize2('turn', turns))
+            return "({}{}Random {} for {})".format(emoji_dict['roulette'], random_num, speed, turns)
 
     def max_hp_change(self, turns, max_hp, percent):
         if percent:
-            return 'Change player HP to {:,}% for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return "({}= {}% for {})".format(generic_symbols['health'], max_hp, turns)
         else:
-            return 'Change player HP to {:,} for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return "({}= {} for {})".format(generic_symbols['health'], max_hp, turns)
 
     def fixed_target(self, turns):
-        return 'Forces attacks to hit this enemy for {:s}'.format(pluralize2('turn', turns))
+        return "({} for {})".format(emoji_dict['force_target'], turns)
 
     def death_cry(self, message):
-        if message is None:
-            return 'Show death effect'
-        else:
-            return 'Show message: {:s}'.format(message)
+        return '(Waste your turn dying)'
 
     def attribute_exists(self, atts):
         return 'when {:s} orbs are on the board'.format(self.attributes_to_str(atts, 'or'))
@@ -594,20 +574,20 @@ class EmojiESTextConverter(EmojiBaseTextConverter):
         return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, self.ATTRIBUTES[attribute], pluralize('orb', orb_req))
 
     def lead_alter(self, turns, target):
-        return 'Change leader to [{:d}] for {:s}'.format(target, pluralize2('turn', turns))
+        return "({}[{}] for {})".format(emoji_dict['leader_alter'], target, turns)
 
     def force_board_size(self, turns: int, size_param: int):
         size = {1: '7x6', 2: '5x4', 3: '6x5'}.get(size_param, 'unknown')
-        return 'Change board size to {} for {:s}'.format(size, pluralize2('turn', turns))
+        return "({}{} for {})".format(size, emoji_dict['board_size'], turns)
 
     def no_skyfall(self, turns):
-        return 'No skyfall for {:s}'.format(pluralize2('turn', turns))
+        return '({} for {})'.format(emoji_dict['no_skyfall'], turns)
 
     def combo_skyfall(self, turns, chance):
-        return 'For {:s}, {}% chance for combo orb skyfall.'.format(pluralize2('turn', turns), chance)
+        return '({}{}% for {})'.format(skyfall_symbols['combo'], chance, turns)
 
     def debuff_atk(self, turns, amount):
-        return 'ATK -{}% for {:s}'.format(amount, pluralize2('turn', turns))
+        return "({}{}% for {})".format(emoji_dict['atk_debuff'], amount, turns)
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
@@ -616,4 +596,4 @@ class EmojiESTextConverter(EmojiBaseTextConverter):
         return ' + '.join(descs)
 
 
-__all__ = ['EmojiESTextConverter']
+__all__ = ['EnEmojiESTextConverter']

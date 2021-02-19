@@ -56,6 +56,10 @@ def pluralize(noun, number):
 
 @public
 def pluralize2(noun, number, max_number=None):
+    if isinstance(number, int) or max_number is not None:
+        number = minmax(number, max_number)
+    if number is None:
+        return noun
     return "{} {}".format(number, noun)
 
 
@@ -65,7 +69,7 @@ class EmojiBaseTextConverter(BaseTextConverter):
 
     _ATTRS = {
         -9: '🔒💣',
-        -1: 'Random Att',
+        -1: 'Random',
         None: '🔥',
         0: '🔥',
         1: '🌊',
@@ -111,6 +115,17 @@ class EmojiBaseTextConverter(BaseTextConverter):
 
     def all_stats(self, multiplier):
         return '{}x all stats'.format(multiplier)
+
+    @classmethod
+    def attributes_to_emoji(cls, atts, emoji_map=_ATTRS):
+        if not isinstance(atts, list):
+            atts = [atts]
+        emoji = ''
+        if len(atts) >= 6:
+            return 'All'
+        for a in atts:
+            emoji += emoji_map[a]
+        return emoji
 
     def hp(self):
         return 'HP'

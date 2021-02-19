@@ -10,7 +10,7 @@ import padtools
 from pad.common import pad_util
 from pad.common.shared_types import Server
 from pad.raw.skills import skill_text_typing
-from pad.raw.skills.emoji_en.enemy_skill_text import EmojiESTextConverter
+from pad.raw.skills.emoji_en.enemy_skill_text import EnEmojiESTextConverter
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
@@ -24,7 +24,7 @@ from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerEnemy
 
 AS_CONVERTERS = (JpASTextConverter(), EnASTextConverter(), EnASTextConverter())
 LS_CONVERTERS = (JpLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
-ES_CONVERTERS = (JpESTextConverter(), EnESTextConverter(), EnESTextConverter(), EmojiESTextConverter())
+ES_CONVERTERS = (JpESTextConverter(), EnESTextConverter(), EnESTextConverter(), EnEmojiESTextConverter())
 
 
 def parse_args():
