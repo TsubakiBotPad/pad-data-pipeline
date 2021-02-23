@@ -546,9 +546,9 @@
     "series_type": "regular"
   },
   {
-    "name_en": "CoroCoro Monster",
-    "name_ja": "スペシャルモンスター",
-    "name_ko": "스페셜 몬스터",
+    "name_en": "Number Dragons",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
     "series_id": 87,
     "series_type": "regular"
   },
@@ -1009,7 +1009,7 @@
     "name_ja": "パズドラレーダー連動",
     "name_ko": "퍼드 레이더",
     "series_id": 154,
-    "series_type": "regular"
+    "series_type": "collab"
   },
   {
     "name_en": "Wisdom Kings",
@@ -1676,10 +1676,52 @@
     "series_type": "regular"
   },
   {
-    "name_en": "Sprint Forward Exchange",
+    "name_en": "Spring Forward Exchange",
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
     "series_id": 250,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Radar 1",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 251,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Radar 2",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 252,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Radar 3",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 253,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Radar 4",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 254,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Radar 5",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 255,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Technical Machine Boss",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 256,
     "series_type": "regular"
   }
 ]
