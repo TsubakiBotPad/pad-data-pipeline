@@ -1,6 +1,7 @@
 [
   {
     "enemy_skill_id": -1,
+    "enemy_skill_type": -1,
     "name_ja": "カウントダウン",
     "name_en": "Countdown",
     "name_ko": "Countdown",
@@ -14,6 +15,7 @@
   },
   {
     "enemy_skill_id": -2,
+    "enemy_skill_type": -1,
     "name_ja": "一回攻撃",
     "name_en": "Single hit attack",
     "name_ko": "Single hit attack",
@@ -27,6 +29,7 @@
   },
   {
     "enemy_skill_id": -3,
+    "enemy_skill_type": -1,
     "name_ja": "Supplementary Info",
     "name_en": "Supplementary Info",
     "name_ko": "Supplementary Info",
@@ -40,6 +43,7 @@
   },
   {
     "enemy_skill_id": -10,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -53,6 +57,7 @@
   },
   {
     "enemy_skill_id": -11,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -66,6 +71,7 @@
   },
   {
     "enemy_skill_id": -12,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -79,6 +85,7 @@
   },
   {
     "enemy_skill_id": -13,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -92,6 +99,7 @@
   },
   {
     "enemy_skill_id": -14,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -105,6 +113,7 @@
   },
   {
     "enemy_skill_id": -15,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -118,6 +127,7 @@
   },
   {
     "enemy_skill_id": -16,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -131,6 +141,7 @@
   },
   {
     "enemy_skill_id": -17,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -144,6 +155,7 @@
   },
   {
     "enemy_skill_id": -18,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
@@ -157,6 +169,7 @@
   },
   {
     "enemy_skill_id": -19,
+    "enemy_skill_type": -1,
     "name_ja": "Use Skill Set",
     "name_en": "Use Skill Set",
     "name_ko": "Use Skill Set",
