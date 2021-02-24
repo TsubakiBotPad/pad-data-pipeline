@@ -14,7 +14,6 @@ class EnemySkill(SimpleSqlItem):
     @staticmethod
     def from_json(o):
         return EnemySkill(enemy_skill_id=o['enemy_skill_id'],
-                          enemy_skill_type=o['enemy_skill_type'],
                           name_ja=o['name_ja'],
                           name_en=o['name_en'],
                           name_ko=o['name_ko'],
@@ -42,7 +41,6 @@ class EnemySkill(SimpleSqlItem):
         
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,
-            enemy_skill_type=o.na_skill.behavior.type,
             name_ja=o.jp_skill.name,
             name_en=o.na_skill.name,
             name_ko=o.kr_skill.name,
@@ -56,7 +54,6 @@ class EnemySkill(SimpleSqlItem):
 
     def __init__(self,
                  enemy_skill_id: int = None,
-                 enemy_skill_type: int = None,
                  name_ja: str = None,
                  name_en: str = None,
                  name_ko: str = None,
@@ -69,7 +66,6 @@ class EnemySkill(SimpleSqlItem):
                  atk_mult: int = None,
                  tstamp: int = None):
         self.enemy_skill_id = enemy_skill_id
-        self.enemy_skill_type = enemy_skill_type
         self.name_ja = name_ja
         self.name_en = name_en
         self.name_ko = name_ko

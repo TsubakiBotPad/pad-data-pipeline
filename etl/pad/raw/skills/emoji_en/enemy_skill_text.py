@@ -3,235 +3,144 @@ from pad.raw.skills.emoji_en.skill_common import *
 import logging
 
 human_fix_logger = logging.getLogger('human_fix')
-generic_symbols = {
-    'bind': "❌",
-    'blind': "😎",
-    'super_blind': "😎😎",
-    'to': "➡",
-    'attack': '🤜',
-    'multi_attack': '🤜🤜',
-    'self': '👹',
-    'health': '❤',
-}
-
-skyfall_symbols = {
-    'super_blind': "😎🌧️",
-    'no': "🛑🌧",
-    'fire': "🔥🌧",
-    'water': "🌊🌧",
-    'wood': "🌿🌧",
-    'dark': "🌙🌧",
-    'light': "💡🌧",
-    'heal': "🩹🌧",
-    'poison': "☠🌧",
-    'mortal poison': "☠☠🌧",
-    'jammer': "🗑️🌧",
-    'locked fire': "🔒🔥🌧",
-    'locked water': "🔒🌊🌧",
-    'locked wood': "🔒🌿🌧",
-    'locked dark': "🔒🌙🌧",
-    'locked light': "🔒💡🌧",
-    'locked heal': "🔒🩹🌧",
-    'locked poison': "🔒☠🌧",
-    'locked mortal poison': "🔒☠☠🌧",
-    'locked jammer': "🔒🗑️🌧",
-    'locked bomb': '🔒💣🌧',
-    'locked random': '🔒Random🌧',
-    'combo': 'Combo'
-}
-
-skills_dict = {
-    'awoken': "👁️",
-    'active': "🪄",
-    'recover': "🏥",
-    'roulette': "🎰",
-}
-
+# This is 1/4 dictionaries that need to be replaced. 3 and 4 are in EmojiBaseTextConverter
 emoji_dict = {
-    'awoken': "👁️",
-    'active': "🪄",
-    'recover': "🏥",
-    'roulette': "🎰",
-    'dragon': "🐉",
-    'balanced': "⚖",
-    'physical': "🛡️",
-    'healer': "❤",
-    'attacker': "⚔",
-    'god': "😇",
-    'devil': "😈",
-    'machine': "⚙",
-    'fire': "🔥",
-    'water': "🌊",
-    'wood': "🌿",
-    'dark': "🌙",
-    'light': "💡",
-    'heal': "🩹",
-    'poison': "☠",
-    'mortal poison': "☠☠",
-    'jammer': "🗑️",
-    'locked fire': "🔒🔥",
-    'locked water': "🔒🌊",
-    'locked wood': "🔒🌿",
-    'locked dark': "🔒🌙",
-    'locked light': "🔒💡",
-    'locked heal': "🔒🩹",
-    'locked poison': "🔒☠",
-    'locked mortal poison': "🔒☠☠",
-    'locked jammer': "🔒🗑️",
-    'locked bomb': '🔒💣',
-    'locked random': '🔒Random',
-    'bomb': '💣',
-    'unknown': "❓",
-    'blocked fire': "🚫🔥",
-    'blocked water': "🚫🌊",
-    'blocked wood': "🚫🌿",
-    'blocked dark': "🚫🌙",
-    'blocked light': "🚫💡",
-    'blocked heal': "🚫🩹",
-    'blocked poison': "🚫☠",
-    'blocked mortal poison': "🚫☠☠",
-    'blocked jammer': "🚫🗑️",
-    'blocked bomb': '🚫💣',
-    'blocked random': '🚫Random',
-    'attack': "🗡️",
-    'defense': "🛡️",
-    'defense25': "🛡️25%",
-    'defense50': "🛡️50%",
-    'defense75': "🛡️75%",
-    'defense80': "🛡️80%",
-    'defense90': "🛡️90%",
-    'defense95': "🛡️95%",
-    'defense99': "🛡️99%",
-    'combo': "🌪️",
-    'absorb': "🌪️",
-    'damage_absorb': "🗡️🌪️",
-    'void': "🧱",
-    'status_shield': "🛡️Status",
-    'fire_absorb': "🔥🌪️",
-    'water_absorb': "🌊🌪️",
-    'wood_absorb': "🌿🌪️",
-    'dark_absorb': "🌙🌪️",
-    'light_absorb': "💡🌪️",
-    'resolve': "👌",
-    'rcv_buff': "🩹⬆️",
-    'atk_debuff': "🗡️⬇️",
-    'rcv_debuff': "🩹⬇️",
-    'time_buff': "☝⬆",
-    'time_debuff': "☝⬇",
-    'dispel': "(Dispel)",
-    'swap': "♔🔀",
-    'skill_delay': '🔋',
-    'locked': '🔒',
-    'tape': '🧻',
-    'starting_position': '☝🎯',
-    'cloud': '☁',
-    'gravity': '💔',
-    'invincible': '<:invincible:809579233746616320>',
-    'invincible_off': '🛡️🛡️🛡️❌',
-    'force_target': '🎯',
-    'leader_alter': '♔➡',
-    'board_size': '🌎',
-    'super_resolve': '👌👌',
-    'turn_change': '⌛',
-    'enrage': '🗡️⬆',
-    'skill_bind': '❌🪄',
-    'do_nothing': '💤',
-    'awoken_bind': '❌👁️',
-    'no_skyfall': 'No🌧',
-    'bind': "❌",
-    'skyfall': '🌧'
+    'recover': "{recover_health}",
+    'roulette': "{roulette}",
+    'unknown': "{unknown_type}",
+    'defense': "{defense_status}",
+    'defense25': "{defense25_status}",
+    'defense50': "{defense50_status}",
+    'defense75': "{defense75_status}",
+    'defense80': "{defense80_status}",
+    'defense90': "{defense90_status}",
+    'defense95': "{defense95_status}",
+    'defense99': "{defense99_status}",
+    'combo_absorb': "{combo_absorb_status}️",
+    'absorb': "{absorb_status}",
+    'damage_absorb': "{damage_absorb_status}",
+    'void': "{damage_void_status}",
+    'status_shield': "{status_shield_status}",
+    'resolve': "{resolve_status}",
+    'rcv_buff': "{recover_buff_status}️",
+    'atk_debuff': "{attack_debuff_status}",
+    'rcv_debuff': "{recover_debuff_status}",
+    'movetime_buff': "{movetime_buff_status}",
+    'movetime_debuff': "{movetime_debuff_status}",
+    'dispel': "{dispel_status}",
+    'swap': "{leader_swap_status}",
+    'skill_delay': '{skill_delay}',
+    'locked': '{lock_orbs}',
+    'tape': '{tape_status}',
+    'starting_position': '{fixed_start}',
+    'cloud': '{cloud_status}',
+    'gravity': '{gravity}',
+    'invincible': '{invincible_status}',
+    'invincible_off': '{invincible_off_status}',
+    'force_target': '{force_target_status}',
+    'leader_alter': '{leader_alter_status}',
+    'board_size': '{board_size_status}',
+    'super_resolve': '{super_resolve_status}',
+    'turn_change': '{turn_change}',
+    'enrage': '{enrage_status}',
+    'skill_bind': '{skill_bind}',
+    'do_nothing': '{do_nothing}',
+    'awoken_bind': '{awoken_bind}',
+    'no_skyfall': '{no_skyfall_status}',
+    'bind': "{bind}",
+    'skyfall': '{skyfall_status}',
+    'blind': "{blind}",
+    'super_blind': "{super_blind}",
+    'to': "{to}",
+    'attack': '{attack}',
+    'multi_attack': '{multi_attack}',
+    'self': '{target_self}',
+    'health': '{health}',
+    'combo': '{combo_orb}'
 }
 
-Attributes = {
-    -9: '🔒💣',
-    -1: 'Random Att',
-    None: '🔥',
-    0: '🔥',
-    1: '🌊',
-    2: '🌿',
-    3: '💡',
-    4: '🌙',
-    5: '🩹',
-    6: '🗑️',
-    7: '☠',
-    8: '☠☠',
-    9: '💣',
-}
-
+# This is unused because in discord the skyfall orbs are really hard to see, if I can make a better appearing symbol I
+# can bring this back
 SkyfallAttributes = {
-    -9: '🔒💣🌧',
-    -1: 'Random Att🌧',
-    None: '🔥🌧',
-    0: '🔥🌧',
-    1: '🌊🌧',
-    2: '🌿🌧',
-    3: '💡🌧',
-    4: '🌙🌧',
-    5: '🩹🌧',
-    6: '🗑️🌧',
-    7: '☠🌧',
-    8: '☠☠🌧',
-    9: '💣🌧',
+    -9: '{locked_bomb_skyfall}',
+    -1: '{random_type_skyfall}',
+    None: '{fire_skyfall}',
+    0: '{fire_skyfall}',
+    1: '{water_skyfall}',
+    2: '{wood_skyfall}',
+    3: '{light_skyfall}',
+    4: '{dark_skyfall}',
+    5: '{heal_skyfall}',
+    6: '{jammer_skyfall}',
+    7: '{poison_skyfall}',
+    8: '{mortal_poison_skyfall}',
+    9: '{bomb_skyfall}',
 }
 
+# This is used (2/4)
 UnmatchableAttributes = {
-    None: "🚫🔥",
-    0: "🚫🔥",
-    1: "🚫🌊",
-    2: "🚫🌿",
-    4: "🚫🌙",
-    3: "🚫💡",
-    5: "🚫🩹",
-    6: '🚫🗑',
-    7: '🚫☠',
-    8: '🚫☠☠',
-    9: '🚫💣',
+    -1: '{no_match_random}',
+    None: "{no_match_fire}",
+    0: "{no_match_fire}",
+    1: "{no_match_water}",
+    2: "{no_match_wood}",
+    4: "{no_match_dark}",
+    3: "{no_match_light}",
+    5: "{no_match_heal}",
+    6: '{no_match_jammer}',
+    7: '{no_match_poison}',
+    8: '{no_match_mortal_poison}',
+    9: '{no_match_bomb}',
+}
+# This is unused, see SkyfallAttributes
+LockedSkyfallAttributes = {
+    -9: '{locked_bomb_skyfall}',
+    -1: '{locked_random_skyfall}',
+    None: '{locked_fire_skyfall}',
+    0: '{locked_fire_skyfall}',
+    1: '{locked_water_skyfall}',
+    2: '{locked_wood_skyfall}',
+    3: '{locked_light_skyfall}',
+    4: '{locked_dark_skyfall}',
+    5: '{locked_heal_skyfall}',
+    6: '{locked_jammer_skyfall}',
+    7: '{locked_poison_skyfall}',
+    8: '{locked_mortal_poison_skyfall}',
+    9: '{locked_bomb_skyfall}',
 }
 
-LockedSkyfallAttributes = {
-    -9: '🔒💣🌧',
-    -1: 'Random Att🔒🌧',
-    None: '🔒🔥🌧',
-    0: '🔒🔥🌧',
-    1: '🔒🌊🌧',
-    2: '🔒🌿🌧',
-    3: '🔒💡🌧',
-    4: '🔒🌙🌧',
-    5: '🔒🩹🌧',
-    6: '🔒🗑️🌧',
-    7: '🔒☠🌧',
-    8: '🔒☠☠🌧',
-    9: '🔒💣🌧',
-}
+# This is unused, see SkyfallAttributes
 AbsorbAttributes = {
-    -9: '💣🌪️',
-    -1: 'Random Att🌪️',
-    None: '🔥🌪️',
-    0: '🔥🌪️',
-    1: '🌊🌪️',
-    2: '🌿🌪️',
-    3: '💡🌪️',
-    4: '🌙🌪️',
-    5: '🩹🌪️',
-    6: '🗑️🌪️',
-    7: '☠🌪️',
-    8: '☠☠🌪️',
-    9: '💣🌪️',
+    -9: '{locked_bomb_absorb}',
+    -1: '{random_absorb}',
+    None: '{fire_absorb}',
+    0: '{fire_absorb}',
+    1: '{water_absorb}',
+    2: '{wood_absorb}',
+    3: '{light_absorb}',
+    4: '{dark_absorb}',
+    5: '{heal_absorb}',
+    6: '{jammer_absorb}',
+    7: '{poison_absorb}',
+    8: '{mortal_poison_absorb}',
+    9: '{bomb_absorb}',
 }
+
+# This is unused, not enough emoji slots.
 LockedAttributes = {
-    -9: '🔒💣🌧',
-    -1: 'Random Att',
-    None: '🔒🔥',
-    0: '🔒🔥',
-    1: '🔒🌊',
-    2: '🔒🌿',
-    3: '🔒💡',
-    4: '🔒🌙',
-    5: '🔒🩹',
-    6: '🔒🗑️',
-    7: '🔒☠',
-    8: '🔒☠☠',
-    9: '🔒💣',
+    -9: '{locked_bomb}',
+    -1: '{locked_random}',
+    None: '{locked_fire}',
+    0: '{locked_fire}',
+    1: '{locked_water}',
+    2: '{{locked_wood}',
+    3: '{locked_light}',
+    4: '{locked_dark}',
+    5: '{locked_heal}',
+    6: '{locked_jammer}',
+    7: '{locked_poison}',
+    8: '{locked_mortal_poison}',
+    9: '{locked_bomb}',
 }
 
 TARGET_NAMES = {
@@ -253,8 +162,8 @@ TARGET_NAMES = {
     TargetType.enemy_ally: 'enemy ally',
 
     # Full Team Aspect
-    TargetType.awokens: 'awoken skills',
-    TargetType.actives: 'active skills',
+    TargetType.awokens: '{awoken_skill_bind}',
+    TargetType.actives: '{active_skill_bind}',
 }
 
 
@@ -271,10 +180,10 @@ ORB_SHAPES = {
 }
 
 STATUSES = {
-    Status.movetime: '☝',
-    Status.atk: '🗡',
-    Status.hp: 'HP',
-    Status.rcv: '🩹',
+    Status.movetime: '{movetime_debuff_status}',
+    Status.atk: '{attack_debuff_status}',
+    Status.hp: '{set_hp_status}',
+    Status.rcv: '{recover_debuff_status}',
 }
 
 UNITS = {
@@ -300,7 +209,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         return '(N/A)'
 
     def default_attack(self):
-        return '({})'.format(generic_symbols['attack'])
+        return '({})'.format(emoji_dict['attack'])
 
     #don't really care right now
     def condition(self, chance, hp=None, one_time=False):
@@ -337,7 +246,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         elif source is not None:
             target_types = SOURCE_FUNCS[source]([target_types]) + ' cards'
         targets = targets_to_str(target_types)
-        output = '({} {} '.format(generic_symbols['bind'], pluralize2(targets, target_count))
+        output = '({} {} '.format(emoji_dict['bind'], pluralize2(targets, target_count))
         output += 'for ' + minmax(min_turns, max_turns) + ')'
         return output
 
@@ -358,7 +267,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
             else:
                 output += '({} random {}'.format(random_count, orb_from)
             if exclude_hearts:
-                output += ' [ignore {}]'.format(Attributes[5])
+                output += ' [ignore {}]'.format(self._ATTRS[5])
         elif random_type_count is not None:
             types_text = pluralize('type', random_type_count)
             output += '({} random orb {}'.format(random_type_count, types_text)
@@ -367,7 +276,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
                 output += '(1 Att'
             else:
                 output += '({}'.format(orb_from)
-        output += generic_symbols['to']
+        output += emoji_dict['to']
         if 'Random' in orb_to:
             output += 'random att)'
         else:
@@ -375,20 +284,20 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         return output
 
     def blind(self):
-        return '({})'.format(generic_symbols['blind'])
+        return '({})'.format(emoji_dict['blind'])
 
     def blind_sticky_random(self, turns, min_count, max_count):
         if min_count == 42:
-            return '({} for {})'.format(generic_symbols['super_blind'], turns)
+            return '({} for {})'.format(emoji_dict['super_blind'], turns)
         else:
             return '({} {} for {})' \
-                .format(minmax(min_count, max_count), generic_symbols['super_blind'], turns)
+                .format(minmax(min_count, max_count), emoji_dict['super_blind'], turns)
 
     def blind_sticky_fixed(self, turns):
-        return '({} for {} [Fixed Position])'.format(generic_symbols['super_blind'], turns)
+        return '({} for {} [Fixed Position])'.format(emoji_dict['super_blind'], turns)
 
     def blind_sticky_skyfall(self, turns, chance, b_turns):
-        return '([{} for {}] +{}%{} for {})'.format(generic_symbols['super_blind'], b_turns, chance,
+        return '([{} for {}] +{}%{} for {})'.format(emoji_dict['super_blind'], b_turns, chance,
                                                     emoji_dict['skyfall'], turns)
 
     def dispel_buffs(self):
@@ -397,10 +306,10 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
     def recover(self, min_amount, max_amount, target_type, player_threshold=None):
         target = targets_to_str([target_type])
         if player_threshold and player_threshold != 100:
-            return "({}{}%HP{}{})".format(skills_dict['recover'], minmax(min_amount, max_amount), generic_symbols['to'],
+            return "({}{}%HP{}{})".format(emoji_dict['recover'], minmax(min_amount, max_amount), emoji_dict['to'],
                                           capitalize_first(target))
         else:
-            return "({}{}%HP{}{})".format(skills_dict['recover'], minmax(min_amount, max_amount), generic_symbols['to'],
+            return "({}{}%HP{}{})".format(emoji_dict['recover'], minmax(min_amount, max_amount), emoji_dict['to'],
                                           capitalize_first(target))
 
     def enrage(self, mult, turns):
@@ -417,6 +326,12 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         unit = UNITS[unit]
         turns = turns or 0
         type_text = capitalize_first(STATUSES[d_type] or '')
+        if d_type == Status.movetime:
+            if amount > 100:
+                type_text = emoji_dict['movetime_buff']
+        elif d_type == Status.rcv:
+            if amount > 100:
+                type_text = emoji_dict['rcv_buff']
         return '({:s} {:.0f}{:s} for {})'.format(type_text, amount, unit, turns)
 
     def end_battle(self):
@@ -424,9 +339,9 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def change_attribute(self, attributes):
         if len(attributes) == 1:
-            return "({}{}{})".format(generic_symbols['self'], generic_symbols['to'], self.ATTRIBUTES[attributes[0]])
+            return "({}{}{})".format(emoji_dict['self'], emoji_dict['to'], self._ATTRS[attributes[0]])
         else:
-            return "({}{} random {})".format(generic_symbols['self'], generic_symbols['to'], self.attributes_to_emoji(attributes))
+            return "({}{} random {})".format(emoji_dict['self'], emoji_dict['to'], self.attributes_to_emoji(attributes))
            # return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
 
     def gravity(self, percent):
@@ -437,7 +352,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
             source = self.attributes_to_emoji(condition)
             return "({}:{} for {})".format(emoji_dict['absorb'], source, minmax(min_turns, max_turns))
         elif abs_type == Absorb.combo:
-            return "({}Combo{} for {})".format(emoji_dict['combo'], condition, minmax(min_turns, max_turns))
+            return "({}{} for {})".format(emoji_dict['combo_absorb'], condition, minmax(min_turns, max_turns))
         elif abs_type == Absorb.damage:
             return "({}{} for {})".format(emoji_dict['damage_absorb'], f'{condition:,}', minmax(min_turns, max_turns))
         else:
@@ -486,23 +401,23 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         return '([{:s}: {:s}]{}{:s})'.format(
             pluralize(ORB_SHAPES[position_type], len(positions)),
             self.concat_list_and([ordinal(x) for x in positions]),
-            generic_symbols['to'],
+            emoji_dict['to'],
             self.attributes_to_emoji(attributes))
 
     def row_col_multi(self, desc_arr):
         return ''.join(desc_arr)
 
     def board_change(self, attributes):
-        return '(All{}{})'.format(generic_symbols['to'],self.attributes_to_emoji(attributes))
+        return '(All{}{})'.format(emoji_dict['to'],self.attributes_to_emoji(attributes))
 
     def random_orb_spawn(self, count, attributes):
         if count == 42:
             return self.board_change(attributes)
         else:
-            return '(Any {}{}{})'.format(count, generic_symbols['to'], self.attributes_to_emoji(attributes))
+            return '(Any {}{}{})'.format(count, emoji_dict['to'], self.attributes_to_emoji(attributes))
 
     def fixed_orb_spawn(self, attributes):
-        return '(Specific Positions{}{})'.format(generic_symbols['to'], self.attributes_to_emoji(attributes))
+        return '(Specific Positions{}{})'.format(emoji_dict['to'], self.attributes_to_emoji(attributes))
 
     def skill_delay(self, min_turns, max_turns):
         return "({}-[{}])".format(emoji_dict['skill_delay'], minmax(min_turns, max_turns))
@@ -536,9 +451,9 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def turn_change(self, turn_counter, threshold=None):
         if threshold:
-            return '(Turn{}{})'.format(generic_symbols['to'], turn_counter)
+            return '(Turn{}{})'.format(emoji_dict['to'], turn_counter)
         else:
-            return '(Turn{}{})'.format(generic_symbols['to'], turn_counter)
+            return '(Turn{}{})'.format(emoji_dict['to'], turn_counter)
 
     def attribute_block(self, turns, attributes):
         return '({} for {})'.format(self.attributes_to_emoji(attributes, UnmatchableAttributes), turns)
@@ -551,9 +466,9 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def max_hp_change(self, turns, max_hp, percent):
         if percent:
-            return "({}= {}% for {})".format(generic_symbols['health'], max_hp, turns)
+            return "({}= {}% for {})".format(emoji_dict['health'], max_hp, turns)
         else:
-            return "({}= {} for {})".format(generic_symbols['health'], max_hp, turns)
+            return "({}= {} for {})".format(emoji_dict['health'], max_hp, turns)
 
     def fixed_target(self, turns):
         return "({} for {})".format(emoji_dict['force_target'], turns)
@@ -571,7 +486,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         return 'Use skill set #{}'.format(skill_set_id)
 
     def gacha_fever(self, attribute, orb_req):
-        return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, self.ATTRIBUTES[attribute], pluralize('orb', orb_req))
+        return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, self._ATTRS[attribute], pluralize('orb', orb_req))
 
     def lead_alter(self, turns, target):
         return "({}[{}] for {})".format(emoji_dict['leader_alter'], target, turns)
@@ -584,7 +499,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         return '({} for {})'.format(emoji_dict['no_skyfall'], turns)
 
     def combo_skyfall(self, turns, chance):
-        return '({}{}% for {})'.format(skyfall_symbols['combo'], chance, turns)
+        return '({}{}{}% for {})'.format(emoji_dict['skyfall'], emoji_dict['combo'], chance, turns)
 
     def debuff_atk(self, turns, amount):
         return "({}{}% for {})".format(emoji_dict['atk_debuff'], amount, turns)

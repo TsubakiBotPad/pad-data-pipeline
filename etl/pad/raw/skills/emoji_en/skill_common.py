@@ -67,35 +67,36 @@ def pluralize2(noun, number, max_number=None):
 class EmojiBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
+    # This is the 3rd dictionary
     _ATTRS = {
-        -9: '🔒💣',
-        -1: 'Random',
-        None: '🔥',
-        0: '🔥',
-        1: '🌊',
-        2: '🌿',
-        3: '💡',
-        4: '🌙',
-        5: '🩹',
-        6: '🗑️',
-        7: '☠',
-        8: '☠☠',
-        9: '💣',
+        -9: '{locked_bomb_orb}',
+        -1: '{random_attribute}',
+        None: '{fire_orb}',
+        0: '{fire_orb}',
+        1: '{water_orb}',
+        2: '{wood_orb}',
+        3: '{light_orb}',
+        4: '{dark_orb}',
+        5: '{healer_orb}',
+        6: '{jammer_orb}',
+        7: '{poison_orb}',
+        8: '{mortal_poison_orb}',
+        9: '{bomb_orb}',
     }
-
+    # This is the 4th
     _TYPES = {
-        0: 'Evo Material',
-        1: '⚖',
-        2: '🛡️',
-        3: '❤',
-        4: '🐉',
-        5: '😇',
-        6: '⚔',
-        7: '😈',
-        8: '⚙',
-        12: 'Awaken Material',
-        14: 'Enhance Material',
-        15: 'Redeemable Material',
+        0: '{evo_material_type}',
+        1: '{balanced_type}',
+        2: '{physical_type}',
+        3: '{healer_type}',
+        4: '{dragon_type}',
+        5: '{god_type}',
+        6: '{attacker_type}',
+        7: '{devil_type}',
+        8: '{machine_type}',
+        12: '{awakening_material_type}',
+        14: '{enhance_material_type}',
+        15: '{redeemable_material_type}',
     }
 
     _AWAKENING_MAP = {x['pad_awakening_id']: x['name_en'] for x in AWOSKILLS}
