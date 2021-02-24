@@ -2,6 +2,6 @@
   "host": "localhost",
   "user": "root",
   "password": "password",
-  "charset": "utf8",
+  "charset": "utf8mb4",
   "db": "dadguide"
 }
