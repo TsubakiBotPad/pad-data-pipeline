@@ -1677,6 +1677,7 @@ class ESBranchEraseAttr(ESBranch):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = '=='
+        self.branch_value = skill.params[1]
 
 
 class ESBranchRemainingEnemies(ESBranch):

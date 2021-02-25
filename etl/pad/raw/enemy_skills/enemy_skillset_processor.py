@@ -128,6 +128,8 @@ class Context(object):
         self.cards = set()
         # Combos made in previous round.
         self.combos = 0
+        # Attributes erased in the previous round
+        self.attributes_erased = 0
         # Turns of enrage, initial:None -> (enrage cooldown period:int<0 ->) enrage:int>0 -> expire:int=0
         self.enraged = None
         # Turns of damage shield, initial:int=0 -> shield up:int>0 -> expire:int=0
@@ -648,6 +650,11 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                 idx = b.target_round
             else:
                 idx += 1
+            continue
+
+        if isinstance(b, ESBranchEraseAttr):
+            # Branch if we erased the appropriate attributes last round
+            idx = b.target_round if ctx.attributes_erased == b.branch_value else idx + 1
             continue
 
         raise ValueError('unsupported operation:', type(b), b)
