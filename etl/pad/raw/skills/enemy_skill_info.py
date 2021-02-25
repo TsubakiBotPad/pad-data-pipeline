@@ -134,6 +134,9 @@ class ESCondition(object):
         # Only executes if a certain combo count was met
         self.combos_made = None
 
+        # Only executes if these attributes are cleared
+        self.attributes_erased = None
+
     def use_chance(self, hp: int = 100):
         """Returns the likelihood that this condition will be used.
 
@@ -172,9 +175,15 @@ class ESCondition(object):
             else:
                 desc = converter.attribute_exists(self.condition_attributes).capitalize()
 
+        if self.attributes_erased:
+            if desc:
+                desc += " & " + converter.attributes_to_str(self.attributes_erased) + " are erased"
+            else:
+                desc = converter.attributes_to_str(self.attributes_erased) + " are erased"
+
+
             # TODO: tieout
             # desc = desc.capitalize()
-
         return desc
 
 
@@ -1677,7 +1686,7 @@ class ESBranchEraseAttr(ESBranch):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = '=='
-        self.branch_value = skill.params[1]
+        self.branch_attrs_erased = skill.params[1]
 
 
 class ESBranchRemainingEnemies(ESBranch):

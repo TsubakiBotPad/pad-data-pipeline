@@ -174,4 +174,7 @@ message Condition {
     // If set on a group, this indicates that the group represents a skillset.
     // If set on a behavior, this indicates that the behavior triggers a skillset.
     int32 skill_set = 16;
+
+    // Execute if the following attributes were erased the previous turn
+    int32 erased_attributes = 17;
 }
