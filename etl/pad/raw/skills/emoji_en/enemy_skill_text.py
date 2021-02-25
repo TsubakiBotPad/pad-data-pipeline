@@ -227,7 +227,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def attack(self, mult, min_hit=1, max_hit=1):
         #have to process this in the bot in order to get full damage numbers
-        return ''
+        return '(Attack:{}-{}, {})'.format(min_hit, max_hit, mult)
         """if mult is None:
             return None
         output = 'Deal {:s}% damage'. \
