@@ -1,11 +1,11 @@
-Acquire protoc:
+Acquire protoc: (Note: if you have snap installed, sudo snap install protoc --classic)
 
 ```
 wget https://github.com/protocolbuffers/protobuf/releases/download/v3.10.1/protoc-3.10.1-linux-x86_64.zip
 unzip protoc-3.10.1-linux-x86_64.zip
 ```
 
-Install the protoc plugin for dart:
+Install the protoc plugin for dart: (NOTE: You can skip to compiling if only working on the pipeline)
 
 ```
 flutter pub global activate protoc_plugin

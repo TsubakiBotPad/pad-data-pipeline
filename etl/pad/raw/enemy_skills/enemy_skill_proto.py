@@ -33,6 +33,7 @@ def behavior_to_proto(instance: ESInstance, is_timed_group=True, cur_hp=100) -> 
         item_condition.if_attributes_available = len(cond.condition_attributes) > 0
         item_condition.trigger_monsters[:] = cond.cards_on_team
         item_condition.trigger_combos = cond.combos_made or 0
+        item_condition.erased_attributes.extend(cond.attributes_erased)
 
         is_optional = use_chance < 100
         has_flag = (cond.one_time or 0) > 0

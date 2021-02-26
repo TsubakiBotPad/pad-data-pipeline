@@ -176,5 +176,5 @@ message Condition {
     int32 skill_set = 16;
 
     // Execute if the following attributes were erased the previous turn
-    int32 erased_attributes = 17;
+    repeated int32 erased_attributes = 17;
 }
