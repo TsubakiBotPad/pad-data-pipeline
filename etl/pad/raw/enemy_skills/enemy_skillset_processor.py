@@ -537,7 +537,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
     combo_branches = []  # type: List[int]
     # If any BranchEraseAttribute instructions were spotted
     erase_attribute_branches = []  # type: List[int]
-    # If nay BranchDamage instructions were spotted
+    # If any BranchDamage instructions were spotted
     damage_branches = []  # type: List[int]
     # If any BranchDamageAttribute instructions were spotted
     attributes_attacked_branches = []  # type: List[int]
