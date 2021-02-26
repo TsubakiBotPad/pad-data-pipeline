@@ -582,7 +582,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             behaviors[idx] = None
             ctx.is_preemptive = True
             results.append(instance)
-            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skills_used_branches
+            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+                   attributes_attacked_branches, skills_used_branches
 
         if isinstance(b, ESAttackUpStatus):
             # This is a special case; it's not a terminal action unlike other enrages.
@@ -613,7 +614,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                     if b.is_conditional():
                         idx += 1
                         continue
-                    return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skills_used_branches
+                    return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+                           attributes_attacked_branches, skills_used_branches
                 else:
                     # Not a terminal action, so accumulate it and continue.
                     if ctx.check_skill_use(cond) and ctx.check_no_apply_skill_effects(b):
@@ -625,7 +627,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                 if not ctx.apply_skill_effects(b):
                     idx += 1
                     continue
-                return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skills_used_branches
+                return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+                       attributes_attacked_branches, skills_used_branches
 
         if isinstance(b, ESBranchFlag):
             if b.branch_value == b.branch_value & ctx.flags:
@@ -642,7 +645,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             # if len(results) == 0:
             #     # if the result set is empty, add something
             #     results.append(default_attack())
-            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skills_used_branches
+            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+                   attributes_attacked_branches, skills_used_branches
 
         if isinstance(b, ESFlagOperation):
             # Operations which change flag state, we always move to the next behavior after.
@@ -699,7 +703,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             ctx.counter -= 1
             if ctx.counter > 0:
                 results.append(countdown_message())
-                return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skills_used_branches
+                return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+                       attributes_attacked_branches, skills_used_branches
             else:
                 idx += 1
                 continue
@@ -766,7 +771,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
     if iter_count == 1000:
         print('error, iter count exceeded 1000')
-    return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skills_used_branches
+    return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+           attributes_attacked_branches, skills_used_branches
 
 
 def info_from_behaviors(behaviors: List[ESInstance]):
