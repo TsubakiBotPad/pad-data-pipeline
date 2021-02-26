@@ -395,7 +395,8 @@ def default_attack():
 
 def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]:
     original_ctx = ctx.clone()
-    results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skill_use_branches = loop_through_inner(ctx, behaviors)
+    results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skill_use_branches = loop_through_inner(
+        ctx, behaviors)
     # Handle extracting alternate actions based on card values
     card_extra_actions = []
     for card_ids in sorted(card_branches):
@@ -421,7 +422,7 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
     for combo_count in sorted(combo_branches):
         combo_ctx = original_ctx.clone()
         combo_ctx.combos = combo_count
-        combo_loop, _, _, _, _, _, _  = loop_through_inner(combo_ctx, behaviors)
+        combo_loop, _, _, _, _, _, _ = loop_through_inner(combo_ctx, behaviors)
         new_behaviors = [x for x in combo_loop if x not in results]
 
         # Update the description to distinguish
@@ -439,7 +440,7 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
     for erase_attribute in erase_attribute_branches:
         erased_attribute_ctx = original_ctx.clone()
         erased_attribute_ctx.attributes_erased = erase_attribute
-        erased_loop, _, _, _, _, _, _  = loop_through_inner(erased_attribute_ctx, behaviors)
+        erased_loop, _, _, _, _, _, _ = loop_through_inner(erased_attribute_ctx, behaviors)
         new_behaviors = [x for x in erased_loop if x not in results]
 
         # Update the description to distinguish
@@ -447,7 +448,6 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
             nb.condition.attributes_erased = attribute_bitmap(erase_attribute)
 
         erased_attribute_extra_actions.extend(new_behaviors)
-
 
     # Add any alternate preempts
     for nb in erased_attribute_extra_actions:
@@ -458,7 +458,7 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
     for damage in damage_branches:
         damage_ctx = original_ctx.clone()
         damage_ctx.damage_done = damage
-        damage_loop, _, _, _, _, _, _  = loop_through_inner(damage_ctx, behaviors)
+        damage_loop, _, _, _, _, _, _ = loop_through_inner(damage_ctx, behaviors)
         new_behaviors = [x for x in damage_loop if x not in results]
 
         # Update the description to distinguish
@@ -476,7 +476,7 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
     for attribute_attacked in attributes_attacked_branches:
         attribute_attacked_ctx = original_ctx.clone()
         attribute_attacked_ctx.attributes_attacked = attribute_attacked
-        attacked_loop, _, _, _, _, _, _  = loop_through_inner(attribute_attacked_ctx, behaviors)
+        attacked_loop, _, _, _, _, _, _ = loop_through_inner(attribute_attacked_ctx, behaviors)
         new_behaviors = [x for x in attacked_loop if x not in results]
 
         # Update the description to distinguish
@@ -536,13 +536,13 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
     # If any BranchCombo instructions were spotted
     combo_branches = []  # type: List[int]
     # If any BranchEraseAttribute instructions were spotted
-    erase_attribute_branches = [] # type: List[int]
+    erase_attribute_branches = []  # type: List[int]
     # If nay BranchDamage instructions were spotted
-    damage_branches = [] # type: List[int]
+    damage_branches = []  # type: List[int]
     # If any BranchDamageAttribute instructions were spotted
-    attributes_attacked_branches = [] # type: List[int]
+    attributes_attacked_branches = []  # type: List[int]
     # If any BranchSkillUse instructions were spotted
-    skills_used_branches = [] # type: List[int]
+    skills_used_branches = []  # type: List[int]
 
     # The current spot in the behavior array.
     idx = 0
@@ -557,7 +557,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             # if len(results) == 0:
             #     # if the result set is empty, add something
             #     results.append(default_attack())
-            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skills_used_branches
+            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+                   attributes_attacked_branches, skills_used_branches
         traversed.append(idx)
 
         # Extract the current behavior and its type.
@@ -760,7 +761,6 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             idx = b.target_round if ctx.skills_used >= b.branch_value else idx + 1
             skills_used_branches.append(b.branch_value)
             continue
-
 
         raise ValueError('unsupported operation:', type(b), b)
 
