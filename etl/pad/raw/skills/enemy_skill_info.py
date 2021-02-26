@@ -137,6 +137,15 @@ class ESCondition(object):
         # Only executes if these attributes are cleared
         self.attributes_erased = None
 
+        # Only executs if this much damage is done
+        self.damage_done = None
+
+        # Only executes if these attributes attacked
+        self.attributes_attacked = None
+
+        # Only executes if the number of skills are used
+        self.skills_used = None
+
     def use_chance(self, hp: int = 100):
         """Returns the likelihood that this condition will be used.
 
@@ -180,6 +189,24 @@ class ESCondition(object):
                 desc += " & " + converter.attributes_to_str(self.attributes_erased) + " are erased"
             else:
                 desc = converter.attributes_to_str(self.attributes_erased) + " are erased"
+
+        if self.damage_done:
+            if desc:
+                desc += " & damage done in previous turn is >= {}".format(self.damage_done)
+            else:
+                desc = "damage done in previous turn is >= {}".format(self.damage_done)
+
+        if self.attributes_attacked:
+            if desc:
+                desc += " & when " + converter.attributes_to_str(self.attributes_attacked) + " are used to attack"
+            else:
+                desc = converter.attributes_to_str(self.attributes_attacked) + " are used to attack"
+
+        if self.skills_used:
+            if desc:
+                desc += " & " + "# of skills used >= {}".format(self.skills_used)
+            else:
+                desc = "# of skills used >= {}".format(self.skills_used)
 
 
             # TODO: tieout
@@ -1659,6 +1686,7 @@ class ESBranchDamageAttribute(ESBranch):
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
         self.operation = '=='
+        self.attributes = skill.params[1]
 
 
 class ESBranchSkillUse(ESBranch):
@@ -1676,6 +1704,7 @@ class ESBranchDamage(ESBranch):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
+        self.branch_damage = skill.params[1]
         self.operation = '>='
 
 

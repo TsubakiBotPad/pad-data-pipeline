@@ -88,6 +88,13 @@ def format_condition(cond: Condition):
             converter.attributes_to_str(cond.erased_attributes)))
     if cond.if_nothing_matched:
         parts.append('if no other skills matched')
+    if cond.damage_done:
+        parts.append("when damage done last turn >= {}".format(cond.damage_done))
+    if len(cond.attributes_attacked) != 0:
+        parts.append(
+            "when {} attributes are used to attack".format(converter.attributes_to_str(cond.attributes_attacked)))
+    if cond.skills_used:
+        parts.append("when {} or more skills are used".format(cond.skills_used))
     if cond.repeats_every:
         if cond.trigger_turn:
             if cond.trigger_turn_end:
