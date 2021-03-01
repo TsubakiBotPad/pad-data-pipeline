@@ -76,7 +76,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'Freely move orbs for {:s}'.format(pluralize2('second', act.duration))
 
     def gravity_convert(self, act):
-        return 'Reduce enemies\' HP by ' + fmt_mult(act.percentage_hp * 100) + '%'
+        return 'Reduce enemies\' remaining HP by ' + fmt_mult(act.percentage_hp * 100) + '%'
 
     def heal_active_convert(self, act):
         hp = getattr(act, 'hp', 0)
