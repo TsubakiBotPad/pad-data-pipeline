@@ -1723,5 +1723,20 @@
     "name_ko": "Untranslated",
     "series_id": 256,
     "series_type": "regular"
+  },
+  {
+    "collab_id": 96,
+    "name_en": "Marvel Collab",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 257,
+    "series_type": "collab"
+  },
+  {
+    "name_en": "9th Anniversary Memorial Exchange",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 258,
+    "series_type": "regular"
   }
 ]
