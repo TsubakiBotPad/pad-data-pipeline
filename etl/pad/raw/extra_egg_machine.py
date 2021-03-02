@@ -130,9 +130,11 @@ def scrape_machine_contents(page: str, egg_machine: ExtraEggMachine):
             continue
 
         if has_rate:
-            # Some rows can be size 3 (left header)
-            name_chunk = cols[-2].a['href']
-            rate_chunk = cols[-1].text.replace('%', '')
+            # Some rows can be size 3 (left header) or size 4 (right remdra sublist)
+            remdra = bool(cols[-1].a)
+
+            name_chunk = cols[-2 - remdra].a['href']
+            rate_chunk = cols[-1 - remdra].text.replace('%', '')
             rate = round(float(rate_chunk) / 100, 4)
         else:
             # Some rows can be size 2 (left header)
