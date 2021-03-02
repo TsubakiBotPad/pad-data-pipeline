@@ -8,7 +8,7 @@ source ./secrets.sh
 
 function hook_error {
     echo "$1"
-    data="{\"username\": \"pipeline\", \"content\": \"$1\"}"
+    data="{\"content\": \"$1\"}"
     curl -H "Content-Type: application/json" \
         -X POST \
         -d "$data" $PRIVATE_ERROR_WEBHOOK_URL
@@ -16,7 +16,7 @@ function hook_error {
 
 function hook_warn {
     echo "$1"
-    data="{\"username\": \"pipeline\", \"content\": \"$1\"}"
+    data="{\"content\": \"$1\"}"
     curl -H "Content-Type: application/json" \
         -X POST \
         -d "$data" $PRIVATE_WARN_WEBHOOK_URL
@@ -24,7 +24,7 @@ function hook_warn {
 
 function hook_info {
     echo "$1"
-    data="{\"username\": \"pipeline\", \"content\": \"$1\"}"
+    data="{\"content\": \"$1\"}"
     curl -H "Content-Type: application/json" \
         -X POST \
         -d "$data" $PRIVATE_INFO_WEBHOOK_URL
