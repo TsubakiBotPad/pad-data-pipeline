@@ -1,7 +1,8 @@
 from typing import List
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Condition, Behavior
-from pad.raw.skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack
+from pad.raw.skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack, \
+    attribute_bitmap
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset, ESUseSkillset
 from pad.raw_processor.crossed_data import CrossServerCard
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
@@ -62,6 +63,7 @@ def format_behavior_group(indent_str, group: BehaviorGroup, library):
 
 
 def format_condition(cond: Condition):
+    converter = EnESTextConverter()
     parts = []
     if cond.skill_set:
         parts.append('SkillSet {}'.format(cond.skill_set))
@@ -81,8 +83,18 @@ def format_condition(cond: Condition):
         parts.append('when {} on team'.format(', '.join(map(str, cond.trigger_monsters))))
     if cond.trigger_combos:
         parts.append('when {} combos last turn'.format(cond.trigger_combos))
+    if len(cond.erased_attributes) != 0:
+        parts.append('when all {} orbs are matched last turn'.format(
+            converter.attributes_to_str(cond.erased_attributes)))
     if cond.if_nothing_matched:
         parts.append('if no other skills matched')
+    if cond.damage_done:
+        parts.append("when damage done last turn >= {}".format(cond.damage_done))
+    if len(cond.attributes_attacked) != 0:
+        parts.append(
+            "when {} attributes are used to attack".format(converter.attributes_to_str(cond.attributes_attacked)))
+    if cond.skills_used:
+        parts.append("when {} or more skills are used".format(cond.skills_used))
     if cond.repeats_every:
         if cond.trigger_turn:
             if cond.trigger_turn_end:
