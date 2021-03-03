@@ -45,7 +45,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         elif len(attr) > n_attr and is_range:
             skill_text += '{} of {}'.format(str(n_attr), self.attributes_to_str(attr))
         elif len(attr) > n_attr:
-            skill_text += '{}+ of {} at once'.format(str(n_attr), self.attributes_to_str(attr))
+            skill_text += '{}+ of {} at once'.format(str(n_attr), self.attributes_to_str(attr, concat='or'))
         else:
             skill_text += '{} at once'.format(self.attributes_to_str(attr))
         return skill_text
@@ -131,7 +131,7 @@ class EnLSTextConverter(EnBaseTextConverter):
                     skill_text += '{} colors ({}+heal)'.format(ls.max_attr, ls.max_attr - 1)
                 elif len(ls.match_attributes) > ls.max_attr:
                     skill_text += '{}+ of {} at once'.format(str(ls.max_attr),
-                                                             self.attributes_to_str(ls.match_attributes))
+                                                             self.attributes_to_str(ls.match_attributes, concat='or'))
                 else:
                     skill_text += '{} at once'.format(self.attributes_to_str(ls.match_attributes))
         return skill_text
