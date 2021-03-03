@@ -45,7 +45,7 @@ class JpLSTextConverter(JpBaseTextConverter):
         elif len(attr) > n_attr and is_range:
             skill_text += '{}を{}個つなげて'.format(self.attributes_to_str(attr), n_attr)
         elif len(attr) > n_attr:
-            skill_text += '{}を{}個以上つなげて'.format(self.attributes_to_str(attr), n_attr)
+            skill_text += '{}から{}色以上同時攻撃'.format(self.attributes_to_str(attr), n_attr)
         else:
             skill_text += '{}同時攻撃'.format(self.attributes_to_str(attr, concat='、'))
         return skill_text
@@ -131,7 +131,7 @@ class JpLSTextConverter(JpBaseTextConverter):
                 elif ls.match_attributes == [0, 1, 2, 3, 4, 5]:
                     skill_text += '最大{}色({}色+回復)で{}倍'.format(ls.max_attr, ls.max_attr - 1, fmt_mult(ls.max_atk))
                 elif len(ls.match_attributes) > ls.max_attr:
-                    skill_text += '{}個ところまで{}倍'.format(str(ls.max_attr), fmt_mult(ls.max_atk))
+                    skill_text += '{}から{}色以上同時攻撃'.format(str(ls.max_attr), fmt_mult(ls.max_atk))
                 else:
                     skill_text += '同時攻撃で{}倍'.format(self.attributes_to_str(ls.match_attributes))
         return skill_text + '。'
