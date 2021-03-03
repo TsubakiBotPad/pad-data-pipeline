@@ -134,3 +134,5 @@ bin/
 
 pad-resources/*
 pad-game-data-slim/*
+/venv3/
+/venv38/

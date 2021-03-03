@@ -434,6 +434,7 @@ CREATE TABLE `enemy_skills` (
   `desc_ja` text NOT NULL,
   `desc_en` text NOT NULL,
   `desc_ko` text NOT NULL,
+  `desc_en_emoji` text NOT NULL,
   `min_hits` int(11) NOT NULL,
   `max_hits` int(11) NOT NULL,
   `atk_mult` int(11) NOT NULL,
