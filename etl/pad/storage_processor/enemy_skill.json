@@ -7,6 +7,7 @@
     "desc_ja": "カウントを表示、ターンスキップ",
     "desc_en": "Display counter and skip turn",
     "desc_ko": "Display counter and skip turn",
+    "desc_en_emoji": "Display counter and skip turn",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -19,6 +20,7 @@
     "desc_ja": "一回攻撃",
     "desc_en": "Attack one time",
     "desc_ko": "Attack one time",
+    "desc_en_emoji": "Attack one time",
     "min_hits": 1,
     "max_hits": 1,
     "atk_mult": 100
@@ -31,6 +33,7 @@
     "desc_ja": "Each time this action is reached the next skill in the list is used",
     "desc_en": "Each time this action is reached the next skill in the list is used",
     "desc_ko": "Each time this action is reached the next skill in the list is used",
+    "desc_en_emoji": "Each time this action is reached the next skill in the list is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -43,6 +46,7 @@
     "desc_ja": "Action from skill set #1 is used",
     "desc_en": "Action from skill set #1 is used",
     "desc_ko": "Action from skill set #1 is used",
+    "desc_en_emoji": "Action from skill set #1 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -55,6 +59,7 @@
     "desc_ja": "Action from skill set #2 is used",
     "desc_en": "Action from skill set #2 is used",
     "desc_ko": "Action from skill set #2 is used",
+    "desc_en_emoji": "Action from skill set #2 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -67,6 +72,7 @@
     "desc_ja": "Action from skill set #3 is used",
     "desc_en": "Action from skill set #3 is used",
     "desc_ko": "Action from skill set #3 is used",
+    "desc_en_emoji": "Action from skill set #3 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -79,6 +85,7 @@
     "desc_ja": "Action from skill set #4 is used",
     "desc_en": "Action from skill set #4 is used",
     "desc_ko": "Action from skill set #4 is used",
+    "desc_en_emoji": "Action from skill set #4 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -91,6 +98,7 @@
     "desc_ja": "Action from skill set #5 is used",
     "desc_en": "Action from skill set #5 is used",
     "desc_ko": "Action from skill set #5 is used",
+    "desc_en_emoji": "Action from skill set #5 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -103,6 +111,7 @@
     "desc_ja": "Action from skill set #6 is used",
     "desc_en": "Action from skill set #6 is used",
     "desc_ko": "Action from skill set #6 is used",
+    "desc_en_emoji": "Action from skill set #6 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -115,6 +124,7 @@
     "desc_ja": "Action from skill set #7 is used",
     "desc_en": "Action from skill set #7 is used",
     "desc_ko": "Action from skill set #7 is used",
+    "desc_en_emoji": "Action from skill set #7 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -127,6 +137,7 @@
     "desc_ja": "Action from skill set #8 is used",
     "desc_en": "Action from skill set #8 is used",
     "desc_ko": "Action from skill set #8 is used",
+    "desc_en_emoji": "Action from skill set #8 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -139,6 +150,7 @@
     "desc_ja": "Action from skill set #9 is used",
     "desc_en": "Action from skill set #9 is used",
     "desc_ko": "Action from skill set #9 is used",
+    "desc_en_emoji": "Action from skill set #9 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0
@@ -151,6 +163,7 @@
     "desc_ja": "Action from skill set #10 is used",
     "desc_en": "Action from skill set #10 is used",
     "desc_ko": "Action from skill set #10 is used",
+    "desc_en_emoji": "Action from skill set #10 is used",
     "min_hits": 0,
     "max_hits": 0,
     "atk_mult": 0

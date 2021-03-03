@@ -3,6 +3,7 @@ from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerESInstance
 from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+from pad.raw.skills.emoji_en.enemy_skill_text import EnEmojiESTextConverter
 #from pad.raw.skills.kr.enemy_skill_text import KrESTextConverter
 
 class EnemySkill(SimpleSqlItem):
@@ -19,6 +20,7 @@ class EnemySkill(SimpleSqlItem):
                           desc_ja=o['desc_ja'],
                           desc_en=o['desc_en'],
                           desc_ko=o['desc_ko'],
+                          desc_en_emoji=o['desc_en_emoji'],
                           min_hits=o['min_hits'],
                           max_hits=o['max_hits'],
                           atk_mult=o['atk_mult'])
@@ -35,6 +37,7 @@ class EnemySkill(SimpleSqlItem):
         ja_desc = exemplar.full_description(JpESTextConverter())
         en_desc = exemplar.full_description(EnESTextConverter())
        #ko_desc = exemplar.full_description(KrESTextConverter())
+        en_emoji_desc = exemplar.full_description(EnEmojiESTextConverter())
         
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,
@@ -44,6 +47,7 @@ class EnemySkill(SimpleSqlItem):
             desc_ja=ja_desc,
             desc_en=en_desc,
             desc_ko=en_desc,
+            desc_en_emoji=en_emoji_desc,
             min_hits=min_hits,
             max_hits=max_hits,
             atk_mult=atk_mult)
@@ -56,6 +60,7 @@ class EnemySkill(SimpleSqlItem):
                  desc_ja: str = None,
                  desc_en: str = None,
                  desc_ko: str = None,
+                 desc_en_emoji: str = None,
                  min_hits: int = None,
                  max_hits: int = None,
                  atk_mult: int = None,
@@ -67,6 +72,7 @@ class EnemySkill(SimpleSqlItem):
         self.desc_ja = desc_ja
         self.desc_en = desc_en
         self.desc_ko = desc_ko
+        self.desc_en_emoji = desc_en_emoji
         self.min_hits = min_hits
         self.max_hits = max_hits
         self.atk_mult = atk_mult
