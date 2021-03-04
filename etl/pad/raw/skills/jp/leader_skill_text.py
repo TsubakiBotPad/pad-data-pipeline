@@ -45,7 +45,7 @@ class JpLSTextConverter(JpBaseTextConverter):
         elif len(attr) > n_attr and is_range:
             skill_text += '{}を{}個つなげて'.format(self.attributes_to_str(attr), n_attr)
         elif len(attr) > n_attr:
-            skill_text += '{}を{}個以上つなげて'.format(self.attributes_to_str(attr), n_attr)
+            skill_text += '{}から{}色以上同時攻撃'.format(self.attributes_to_str(attr), n_attr)
         else:
             skill_text += '{}同時攻撃'.format(self.attributes_to_str(attr, concat='、'))
         return skill_text

@@ -174,4 +174,18 @@ message Condition {
     // If set on a group, this indicates that the group represents a skillset.
     // If set on a behavior, this indicates that the behavior triggers a skillset.
     int32 skill_set = 16;
+
+    // Execute if the following attributes were erased the previous turn
+    repeated int32 erased_attributes = 17;
+
+    //execute if we did >= damage
+    int32 damage_done = 18;
+
+    // execute if we attacked with the following attributes
+    repeated int32 attributes_attacked = 19;
+
+    // execute if we use >= active skills
+    int32 skills_used = 20;
+
+    //Execute if the f
 }
