@@ -28,7 +28,7 @@ class EggMachineProcessor(object):
                 #process contents of the eggmachines
                 id_mapper = server_monster_id_fn(server)
                 monsters = [EggMachinesMonster(
-                    emm_id=None,
+                    egg_machine_monster_id=None,
                     monster_id=id_mapper(k),
                     roll_chance=v,
                     egg_machine_id=egg_machine_id
