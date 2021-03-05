@@ -34,8 +34,8 @@ class CrossServerCard(object):
         self.kr_card = kr_card
 
         # These are optional loaded separately later
-        self.has_hqimage = None
-        self.has_animation = None
+        self.has_hqimage = False
+        self.has_animation = False
 
         # This is an initial pass; the more 'correct' versions override later
         self.leader_skill = make_cross_server_skill(jp_card.leader_skill, na_card.leader_skill, kr_card.leader_skill)
