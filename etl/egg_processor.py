@@ -28,6 +28,8 @@ def parse_args():
 
     input_group = parser.add_argument_group("Input")
     input_group.add_argument("--db_config", required=True, help="JSON database info")
+    input_group.add_argument("--doupdates", default=False,
+                             action="store_true", help="Enables actions")
 
     help_group = parser.add_argument_group("Help")
     help_group.add_argument("-h", "--help", action="help",
@@ -38,8 +40,8 @@ def load_data(args):
     logger.info('Connecting to database')
     with open(args.db_config) as f:
         db_config = json.load(f)
-
-    db_wrapper = DbWrapper(False)
+    dry_run = not args.doupdates
+    db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
     data = db_wrapper.fetch_data("SELECT * FROM dadguide.egg_machines")
     for machine_sql in data:
