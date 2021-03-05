@@ -112,6 +112,8 @@ class Monster(SimpleSqlItem):
             diff_leader_skill=diff_leader_skill,
             diff_active_skill=diff_active_skill,
             series_id=Series.UNSORTED_SERIES_ID,
+            has_animation=o.has_animation,
+            has_hqimage=o.has_hqimage,
             orb_skin_id=orb_skin_id,
             voice_id_jp=voice_id_jp,
             voice_id_na=voice_id_na,
@@ -165,6 +167,8 @@ class Monster(SimpleSqlItem):
                  diff_leader_skill: bool = None,
                  diff_active_skill: bool = None,
                  series_id: int = None,
+                 has_animation: bool = None,
+                 has_hqimage: bool = None,
                  orb_skin_id: int = None,
                  voice_id_jp: int = None,
                  voice_id_na: int = None,
@@ -217,8 +221,8 @@ class Monster(SimpleSqlItem):
         self.diff_leader_skill = diff_leader_skill
         self.diff_active_skill = diff_active_skill
         self.series_id = series_id
-        self.has_animation = False
-        self.has_hqimage = False
+        self.has_animation = has_animation
+        self.has_hqimage = has_hqimage
         self.orb_skin_id = orb_skin_id
         self.voice_id_jp = voice_id_jp
         self.voice_id_na = voice_id_na
