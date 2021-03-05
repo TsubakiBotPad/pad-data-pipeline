@@ -217,8 +217,8 @@ class Monster(SimpleSqlItem):
         self.diff_leader_skill = diff_leader_skill
         self.diff_active_skill = diff_active_skill
         self.series_id = series_id
-        self.has_animation = None
-        self.has_hqimage = None
+        self.has_animation = False
+        self.has_hqimage = False
         self.orb_skin_id = orb_skin_id
         self.voice_id_jp = voice_id_jp
         self.voice_id_na = voice_id_na
