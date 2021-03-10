@@ -86,7 +86,7 @@ def pull_data(args):
                 db_wrapper.insert_item(wave_item.insert_sql())
 
         if server != 'NA':
-            time.sleep(.2)
+            time.sleep(.5)
 
 
 if __name__ == '__main__':
