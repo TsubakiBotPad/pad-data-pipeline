@@ -85,7 +85,8 @@ def pull_data(args):
                                      leader_id=leaders[0], friend_id=leaders[1])
                 db_wrapper.insert_item(wave_item.insert_sql())
 
-        time.sleep(2)
+        if server != 'NA':
+            time.sleep(.2)
 
 
 if __name__ == '__main__':
