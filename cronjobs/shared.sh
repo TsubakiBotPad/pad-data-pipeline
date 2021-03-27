@@ -20,6 +20,7 @@ declare -rx DADGUIDE_PROCESSED_DATA_DIR="${DADGUIDE_DATA_DIR}/processed"
 declare -rx DADGUIDE_MEDIA_DIR="${DADGUIDE_DATA_DIR}/media"
 declare -rx DADGUIDE_EXTRA_DIR="${DADGUIDE_DATA_DIR}/extra"
 declare -rx DADGUIDE_GAME_DB_DIR="${DADGUIDE_DATA_DIR}/db"
+declare -rx DADGUIDE_ILMINA_DIR="${DADGUIDE_DATA_DIR}/ilmina"
 declare -rx GAME_DATA_DIR="/home/bot/pad-game-data-slim"
 
 declare -rx DB_CONFIG="${REPO_ROOT}/cronjobs/db_config.json"
