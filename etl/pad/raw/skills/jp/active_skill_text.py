@@ -509,6 +509,9 @@ class JpASTextConverter(JpBaseTextConverter):
     def self_active_skill_disable(self, turns: int):
         return '{}ターンの間、スキル使用不可。'.format(turns)
 
+    def ally_active_delay(self, turns: int):
+        return '味方スキルが{}ターン減少。'.format(turns)
+
     def two_part_active(self, strs):
         return '。'.join(strs)
 

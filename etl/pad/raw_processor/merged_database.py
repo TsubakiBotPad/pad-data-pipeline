@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from pad.common import pad_util
 from pad.common.monster_id_mapping import server_monster_id_fn
@@ -48,8 +48,8 @@ def _clean_cards(server: Server,
 
     merged_cards = []
     for card in cards:
-        active_skill = None  # type: ActiveSkill
-        leader_skill = None  # type: LeaderSkill
+        active_skill = None  # type: Optional[ActiveSkill]
+        leader_skill = None  # type: Optional[LeaderSkill]
 
         if card.active_skill_id:
             active_skill = db.active_skill_by_id(card.active_skill_id)
