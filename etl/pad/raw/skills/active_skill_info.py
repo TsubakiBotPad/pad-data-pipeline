@@ -46,7 +46,7 @@ def merge_defaults(inp, defaults):
 
 
 class ActiveSkill(object):
-    skill_type = None
+    skill_type = -1
 
     def __init__(self, ms: MonsterSkill):
         if self.skill_type != ms.skill_type:

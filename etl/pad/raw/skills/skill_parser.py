@@ -35,3 +35,12 @@ class SkillParser(object):
             if self.active(skill_id) is None and self.leader(skill_id) is None:
                 human_fix_logger.error('Skill not parsed into active/leader: %d %d %s',
                                        skill.skill_id, skill.skill_type, skill.data)
+
+                skill.skill_type = -1
+                active = ActiveSkill(skill)
+                self.active_skills.append(active)
+                self.as_by_id[skill_id] = active
+
+                leader = LeaderSkill(-1, skill)
+                self.leader_skills.append(leader)
+                self.ls_by_id[skill_id] = leader
