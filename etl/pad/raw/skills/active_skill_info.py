@@ -1130,7 +1130,7 @@ class ASRandomLocationDoubleOrbSpawn(ActiveSkill):
         return converter.double_spawn_orb_convert(self)
 
 
-class ASDisableActiveSkill(ActiveSkill):
+class ASDisableAllySkills(ActiveSkill):
     skill_type = 214
 
     def __init__(self, ms: MonsterSkill):
@@ -1139,7 +1139,19 @@ class ASDisableActiveSkill(ActiveSkill):
         super().__init__(ms)
 
     def text(self, converter) -> str:
-        return converter.self_active_skill_disable(self.turns)
+        return converter.ally_active_disable(self.turns)
+
+
+class ASDelayAllySkills(ActiveSkill):
+    skill_type = 218
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.turns = data[0]
+        super().__init__(ms)
+
+    def text(self, converter) -> str:
+        return converter.ally_active_delay(self.turns)
 
 
 def convert(skill_list: List[MonsterSkill]):
@@ -1262,5 +1274,6 @@ ALL_ACTIVE_SKILLS = [
     ASChangeMonster,
     ASSkyfallLock,
     ASSpawnSpinner,
-    ASDisableActiveSkill,
+    ASDisableAllySkills,
+    ASDelayAllySkills,
 ]

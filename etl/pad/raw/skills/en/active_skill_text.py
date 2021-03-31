@@ -536,8 +536,11 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'Random {:d} orbs change every {:.1f}s for {:s}' \
             .format(count, speed, pluralize2('turn', turns))
 
-    def self_active_skill_disable(self, turns: int):
+    def ally_active_disable(self, turns: int):
         return 'Disable active skills for {:s}'.format(pluralize2('turn', turns))
+
+    def ally_active_delay(self, turns: int):
+        return 'Delay ally skills for {:s}'.format(pluralize2('turn', turns))
 
     def two_part_active(self, strs):
         return '; '.join(strs)
