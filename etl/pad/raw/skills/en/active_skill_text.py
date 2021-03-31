@@ -537,10 +537,10 @@ class EnASTextConverter(EnBaseTextConverter):
             .format(count, speed, pluralize2('turn', turns))
 
     def ally_active_disable(self, turns: int):
-        return 'Disable active skills for {:s}'.format(pluralize2('turn', turns))
+        return 'Disable ally active skills for {:s}'.format(pluralize2('turn', turns))
 
     def ally_active_delay(self, turns: int):
-        return 'Delay ally skills for {:s}'.format(pluralize2('turn', turns))
+        return 'Delay ally active skills by {:s}'.format(pluralize2('turn', turns))
 
     def two_part_active(self, strs):
         return '; '.join(strs)
