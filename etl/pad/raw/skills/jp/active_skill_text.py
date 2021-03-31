@@ -506,7 +506,7 @@ class JpASTextConverter(JpBaseTextConverter):
         return '{}ターンの間、ランダムで{}箇所のマスがが{}秒毎に変化する' \
             .format(turns, count, speed)
 
-    def self_active_skill_disable(self, turns: int):
+    def ally_active_disable(self, turns: int):
         return '{}ターンの間、スキル使用不可。'.format(turns)
 
     def ally_active_delay(self, turns: int):
