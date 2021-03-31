@@ -364,7 +364,9 @@ class TextureReader(object):
                     if encoding == R4G4B4A4 and len(binaryBlob) >= offset + 16:
                         # 8 bytes of idk perhaps image size | img width | img height | # of frames | idk maybe palette related
                         _,givenWidth,givenHeight,_,_ = struct.unpack('<8sHHHH',binaryBlob[offset:offset+16])
-
+                    if not givenWidth or not givenHeight:
+                        # if either dimension is 0, use the full image size instead
+                        givenWidth, givenHeight = width, height
                     yield Texture(width, height, name, binaryBlob[imageDataStart:imageDataEnd], encoding, min(width, givenWidth), min(height, givenHeight))
 
             offset += cls.textureBlockHeaderAlignment
