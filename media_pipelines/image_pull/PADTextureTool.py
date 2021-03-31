@@ -365,7 +365,7 @@ class TextureReader(object):
                         # 8 bytes of idk perhaps image size | img width | img height | # of frames | idk maybe palette related
                         _,givenWidth,givenHeight,_,_ = struct.unpack('<8sHHHH',binaryBlob[offset:offset+16])
 
-                    yield Texture(width, height, name, binaryBlob[imageDataStart:imageDataEnd], encoding, givenWidth, givenHeight)
+                    yield Texture(width, height, name, binaryBlob[imageDataStart:imageDataEnd], encoding, min(width, givenWidth), min(height, givenHeight))
 
             offset += cls.textureBlockHeaderAlignment
 
