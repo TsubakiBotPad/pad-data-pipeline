@@ -1542,23 +1542,19 @@ class LSFixedMovementTime(LeaderSkill):
     skill_type = 178
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, 0, 0, 100, 100, 100])
+        data = merge_defaults(ms.data, [0, 0, 0, 100, 100, 100, 0, 0])
         self.time = data[0]
-        self.tags = []
+        self.tags = [(Tag.FIXED_TIME, self.time)]
         self.attributes = binary_con(data[1])
         self.types = binary_con(data[2])
-
-        # TODO: this needs to be overhauled, just accept the value here if it != 0.
-        if self.time == 0:
-            # Ignore this case; bad skill
-            pass
-
-        self.tags.append((Tag.FIXED_TIME, self.time))
 
         hp = multi_floor(data[3])
         atk = multi_floor(data[4])
         rcv = multi_floor(data[5])
-        super().__init__(178, ms, hp=hp, atk=atk, rcv=rcv)
+        self.reduction_attributes = binary_con(data[6])
+        shield = mult(data[7])
+
+        super().__init__(178, ms, hp=hp, atk=atk, rcv=rcv, shield=shield)
 
     def text(self, converter) -> str:
         return converter.passive_stats_text(self)
