@@ -304,10 +304,10 @@ class EnLSTextConverter(EnBaseTextConverter):
             skill_text = self.fmt_multiplier_text(1, ls.atk, 1)
             if ls.bonus_combo:
                 skill_text += ' and increase combo by {}'.format(ls.bonus_combo)
-        elif ls.bonus_combo:
+        else:
             skill_text = 'Increase combo by {}'.format(ls.bonus_combo)
         skill_text += ' when matching {} or more connected '.format(ls.min_match)
-        skill_text += self.fmt_multi_attr(ls.attributes, conj='and') + ' orbs at once'
+        skill_text += self.fmt_multi_attr(ls.attributes, conj='and' if ls.conj_and else 'or') + ' orbs at once'
         return skill_text
 
     def l_match_text(self, ls):
