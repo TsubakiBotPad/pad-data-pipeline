@@ -1649,6 +1649,7 @@ class LSBlobMatchBonusCombo(LeaderSkill):
         self.min_match = data[1]
         self.bonus_combo = data[3]
         atk = multi_floor(data[2])
+        self.conj_and = True
         super().__init__(192, ms, atk=atk, extra_combos=self.bonus_combo)
 
     def text(self, converter) -> str:
@@ -1801,6 +1802,22 @@ class LSColorCrossCombo(LeaderSkill):
     def text(self, converter) -> str:
         return converter.color_cross_combo_text(self)
 
+
+class LSBlobMatchMultiAttrBonusCombo(LeaderSkill):
+    skill_type = 219
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0])
+        self.attributes = binary_con(data[0])
+        self.min_match = data[1]
+        self.bonus_combo = data[2]
+        self.conj_and = False
+        super().__init__(219, ms, extra_combos=self.bonus_combo)
+
+    def text(self, converter) -> str:
+        return converter.multi_mass_match_text(self)
+
+
 def convert(skill_list: List[MonsterSkill]):
     results = {}
     for s in skill_list:
@@ -1950,4 +1967,5 @@ ALL_LEADER_SKILLS = [
     LSColorComboBonusCombo,
     LSHeartCrossCombo,
     LSColorCrossCombo,
+    LSBlobMatchMultiAttrBonusCombo,
 ]
