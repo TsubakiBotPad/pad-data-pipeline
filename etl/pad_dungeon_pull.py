@@ -1,5 +1,3 @@
-"""
-"""
 import argparse
 import json
 import logging
@@ -69,7 +67,7 @@ def pull_data(args):
     dry_run = False
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
-    entry_id = db_wrapper.get_single_or_no_row("MAX(entry_id)")
+    entry_id = int(db_wrapper.get_single_value("SELECT MAX(entry_id) FROM wave_data;"))
 
     print('entering dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
     for e_idx in range(loop_count):
