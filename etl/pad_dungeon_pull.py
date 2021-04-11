@@ -69,11 +69,12 @@ def pull_data(args):
     dry_run = False
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
+    entry_id = db_wrapper.get_single_or_no_row("MAX(entry_id)")
 
     print('entering dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
-    for entry_id in range(loop_count):
-        print('entering', entry_id)
-        entry_id = int(time.time())
+    for e_idx in range(loop_count):
+        print('entering', e_idx)
+        entry_id += 1
         entry_json = api_client.enter_dungeon(dungeon_id, floor_id, self_card=friend_card)
         wave_response = pad_api.extract_wave_response_from_entry(entry_json)
         leaders = entry_json['entry_leads']
