@@ -293,11 +293,12 @@ class JpLSTextConverter(JpBaseTextConverter):
         stat_text = self.fmt_multiplier_text(1, ls.atk, 1)
         if ls.atk in [0, 1]:
             stat_text = ''
-        skill_text = '{}を{}個以上{}つなげて消しと{}、{}コンボ加算。'.format(self.fmt_multi_attr(ls.attributes, conj='と'),
-                                                           ls.min_match,
-                                                           '同時に' if len(ls.attributes) > 1 else '',
-                                                           stat_text,
-                                                           ls.bonus_combo)
+        skill_text = '{}を{}個以上{}つなげて消しと{}、{}コンボ加算。'.format(
+            self.fmt_multi_attr(ls.attributes, conj='と' if ls.conj_and else 'か'),
+            ls.min_match,
+            '同時に' if len(ls.attributes) > 1 and ls.conj_and else '',
+            stat_text,
+            ls.bonus_combo)
         return skill_text
 
     def l_match_text(self, ls):
@@ -345,7 +346,7 @@ class JpLSTextConverter(JpBaseTextConverter):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
             if ls.min_combo == 1:
                 skill_text = '{}ドロップを消すと固定{}ダメージ'.format(self.fmt_multi_attr(list(set(ls.attributes)), conj='が'),
-                                                      ls.bonus_damage)
+                                                         ls.bonus_damage)
             else:
                 skill_text = '{}同時攻撃で固定{}ダメージ'.format(self.fmt_multi_attr(list(set(ls.attributes)), conj=''),
                                                       ls.bonus_damage)
