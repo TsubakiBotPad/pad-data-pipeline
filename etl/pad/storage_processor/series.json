@@ -1477,7 +1477,7 @@
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
     "series_id": 221,
-    "series_type": "collab"
+    "series_type": "ghcollab"
   },
   {
     "name_en": "Monogatari",
@@ -1758,6 +1758,13 @@
     "name_ja": "Untranslated",
     "name_ko": "Untranslated",
     "series_id": 261,
+    "series_type": "regular"
+  },
+  {
+    "name_en": "Submarine",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 262,
     "series_type": "regular"
   }
 ]
