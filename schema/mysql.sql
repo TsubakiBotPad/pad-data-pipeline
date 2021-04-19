@@ -349,6 +349,22 @@ CREATE TABLE `egg_machines` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `egg_machines_monsters`
+--
+
+DROP TABLE IF EXISTS `egg_machines_monsters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `egg_machines_monsters` (
+  `egg_machine_monster_id` int(11) NOT NULL AUTO_INCREMENT,
+  `monster_id` int(11) NOT NULL,
+  `roll_chance` float NOT NULL,
+  `egg_machine_id` int(11) NOT NULL,
+  PRIMARY KEY (`egg_machine_monster_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `encounters`
 --
 
