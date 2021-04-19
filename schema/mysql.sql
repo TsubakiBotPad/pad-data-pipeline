@@ -361,7 +361,7 @@ CREATE TABLE `egg_machines_monsters` (
   `roll_chance` float NOT NULL,
   `egg_machine_id` int(11) NOT NULL,
   PRIMARY KEY (`egg_machine_monster_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=448 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
