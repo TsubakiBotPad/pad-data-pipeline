@@ -2,7 +2,6 @@ import argparse
 import os
 import tempfile
 
-
 parser = argparse.ArgumentParser(
     description="Generates animated for pad monsters.", add_help=False)
 
@@ -86,6 +85,5 @@ for file_name in sorted(os.listdir(raw_dir)):
             tmp_gif_path = os.path.join(temp_dir, gif_name)
             run_cmd(GENERATE_GIF_CMD, video_path, tmp_gif_path)
             run_cmd(OPTIMIZE_GIF_CMD, tmp_gif_path, gif_path)
-
 
 print('done')

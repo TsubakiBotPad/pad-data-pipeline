@@ -12,10 +12,10 @@ flutter pub global activate protoc_plugin
 ```
 
 You must have 3 items on your path now:
+
 * protoc
 * dart (this will be installed in your flutter/bin/cache/dart-sdk)
 * your flutter pub bin (flutter/.pub-cache/bin)
-
 
 To compile:
 

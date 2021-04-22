@@ -1,8 +1,7 @@
 # Voice file assets
 
-This directory contains scripts to pull/extract voice files. It requires my patched
-version of the padtools library, which allows you to download extras. It also requires
-having the 'sox' application installed.
+This directory contains scripts to pull/extract voice files. It requires my patched version of the padtools library,
+which allows you to download extras. It also requires having the 'sox' application installed.
 
 ## Hosted assets
 

@@ -1,9 +1,7 @@
-from pad.raw.skills.kr.skill_common import *
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as BaseESTextConverter
-
-from enum import Enum
-
 import logging
+
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as BaseESTextConverter
+from pad.raw.skills.kr.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
 

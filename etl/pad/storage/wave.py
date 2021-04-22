@@ -1,4 +1,3 @@
-from pad.common import monster_id_mapping
 from pad.common.monster_id_mapping import server_monster_id_fn
 from pad.common.shared_types import Server
 from pad.db.sql_item import SqlItem
