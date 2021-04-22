@@ -55,6 +55,7 @@ class BonusType(Enum):
     stone_purchase_text = 44
     story_category_text = 47
     special_dungeon_info_link = 50
+    dungeon_unavailable_popup = 52
 
 
 class BonusTypeEntry(object):
@@ -145,6 +146,9 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.story_category_text),
     # An infobox that links to a webpage appears at the top of the special dungeons
     BonusTypeEntry(BonusType.special_dungeon_info_link),
+    # An infobox that links to a webpage appears at the top of the special dungeons
+    BonusTypeEntry(BonusType.dungeon_unavailable_popup),
+    # An popup that says a dungeon is currently unavailable.  Used when JP 8p was 
 ]
 
 TYPES_MAP = {bte.bonus_type.value: bte for bte in ALL_TYPES}
