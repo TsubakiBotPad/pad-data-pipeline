@@ -11,6 +11,7 @@ class RawDungeonType(Enum):
     UNUSED_6 = 6
     MULTIPLAYER = 7
     STORY = 9
+    EIGHT_PLAYER = 10
 
 
 class RawRepeatDay(Enum):
