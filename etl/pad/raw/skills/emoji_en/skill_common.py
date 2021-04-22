@@ -1,10 +1,8 @@
 import json
 import os
-from typing import Dict, List
-from enum import Enum
 
-from pad.raw.skills.skill_common import *
 import pad.raw.skills.skill_common as base_skill_common
+from pad.raw.skills.skill_common import *
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))

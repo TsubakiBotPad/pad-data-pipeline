@@ -2,8 +2,6 @@
 Parses monster purchase data.
 """
 
-import json
-import os
 from typing import List
 
 from pad.common import pad_util

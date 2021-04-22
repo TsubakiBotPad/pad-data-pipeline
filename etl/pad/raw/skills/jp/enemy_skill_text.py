@@ -1,6 +1,6 @@
-from pad.raw.skills.jp.skill_common import *
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as BaseESTextConverter
 import logging
+
+from pad.raw.skills.jp.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
 

@@ -1,8 +1,6 @@
-import json
 import logging
-from typing import List
-
 from datetime import timedelta
+from typing import List
 
 from pad.db.db_util import DbWrapper
 from pad.raw.bonus import BonusType

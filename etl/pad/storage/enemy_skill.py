@@ -1,10 +1,12 @@
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.db.sql_item import SimpleSqlItem
-from pad.raw_processor.crossed_data import CrossServerESInstance
-from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.emoji_en.enemy_skill_text import EnEmojiESTextConverter
-#from pad.raw.skills.kr.enemy_skill_text import KrESTextConverter
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
+from pad.raw_processor.crossed_data import CrossServerESInstance
+
+
+# from pad.raw.skills.kr.enemy_skill_text import KrESTextConverter
 
 class EnemySkill(SimpleSqlItem):
     """Enemy skill data."""
@@ -36,9 +38,9 @@ class EnemySkill(SimpleSqlItem):
 
         ja_desc = exemplar.full_description(JpESTextConverter())
         en_desc = exemplar.full_description(EnESTextConverter())
-       #ko_desc = exemplar.full_description(KrESTextConverter())
+        # ko_desc = exemplar.full_description(KrESTextConverter())
         en_emoji_desc = exemplar.full_description(EnEmojiESTextConverter())
-        
+
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,
             name_ja=o.jp_skill.name,

@@ -1,6 +1,6 @@
+import binascii
 import decimal
 import time
-import binascii
 from datetime import datetime, date
 from enum import Enum
 
