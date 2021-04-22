@@ -7,7 +7,6 @@ from typing import List, Optional
 from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import ESRef, Card
-from pad.raw.skills.en.enemy_skill_text import *
 from pad.raw.skills.en.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -207,7 +206,6 @@ class ESCondition(object):
                 desc += " & " + "# of skills used >= {}".format(self.skills_used)
             else:
                 desc = "# of skills used >= {}".format(self.skills_used)
-
 
             # TODO: tieout
             # desc = desc.capitalize()

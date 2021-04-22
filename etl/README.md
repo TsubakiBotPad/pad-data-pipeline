@@ -1,13 +1,12 @@
 # PAD Data Processing
 
-This folder contains the ETL pipeline that downloads raw PAD data (and saves it),
-converts it to a more useful format (and saves it), and then applies updates to
-the DadGuide database.
+This folder contains the ETL pipeline that downloads raw PAD data (and saves it), converts it to a more useful format (
+and saves it), and then applies updates to the DadGuide database.
 
 If you're looking to do your own processing, start with `etl/pad/raw`.
 
-If you're interested in duplicating this whole process, you should probably
-contact tactical_retreat, it's somewhat involved.
+If you're interested in duplicating this whole process, you should probably contact tactical_retreat, it's somewhat
+involved.
 
 I use shell scripts triggered via cron to execute the various scripts.
 
@@ -23,11 +22,11 @@ The scripts here do all the data updating, and also some misc utility stuff.
 | data_processor.py           | Updates PadGuide database, writes processed files     |
 | default_db_config.json      | Dummy file for DG database connection                 |
 
-You don't need to run `pad_data_pull.py`; all the results of calling the API are
-published, see the `utils` directory for information on how to access them.
+You don't need to run `pad_data_pull.py`; all the results of calling the API are published, see the `utils` directory
+for information on how to access them.
 
-`data_processor.py` is only neccessary if you want to maintain your own copy of the
-DadGuide database. The database is published after each update, see the `utils` directory.
+`data_processor.py` is only neccessary if you want to maintain your own copy of the DadGuide database. The database is
+published after each update, see the `utils` directory.
 
 ### Secondary data pull stuff
 
@@ -43,7 +42,6 @@ DadGuide database. The database is published after each update, see the `utils` 
 | ---                         | ---                                                   |
 | rebuild_enemy_skills.py     | Rebuilds the enemy skill flat file database           |
 
-
 # Testing/Utility
 
 | Script                      | Purpose                                               |
@@ -51,11 +49,9 @@ DadGuide database. The database is published after each update, see the `utils` 
 
 ## etl
 
-Contains all the library code that the scripts in this directory rely on. It
-does the data pulling, processing, formatting, and database updating. There's
-a lot of stuff in here.
+Contains all the library code that the scripts in this directory rely on. It does the data pulling, processing,
+formatting, and database updating. There's a lot of stuff in here.
 
 ## dadguide_proto
 
-Contains the Python bindings for the DadGuide protocol buffers. Currently only
-used for enemy skills. 
+Contains the Python bindings for the DadGuide protocol buffers. Currently only used for enemy skills. 

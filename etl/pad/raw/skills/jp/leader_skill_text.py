@@ -1,8 +1,5 @@
 import logging
-import json
-import os
 
-from pad.raw.skills.skill_common import *
 from pad.raw.skills.jp.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
