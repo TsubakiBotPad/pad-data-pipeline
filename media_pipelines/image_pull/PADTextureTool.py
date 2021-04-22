@@ -21,11 +21,11 @@ import argparse
 import io
 import itertools
 import os
-from pathlib import Path
 import re
 import struct
 import zipfile
 import zlib
+from pathlib import Path
 
 import png
 
@@ -53,6 +53,7 @@ L8 = Encoding([8])
 RAW = Encoding()
 PVRTC4BPP = Encoding([4])
 PVRTC2BPP = Encoding([2])
+
 
 # This class represents an instance of a texture.
 
@@ -90,6 +91,7 @@ class Texture(object):
                         self.packedPixels.append(
                             (byte >> (self.encoding.strideInBits * (pixelsPerByte - i - 1))) & bitMask)
 
+
 # This class writes Texture objects to disk.
 
 
@@ -102,8 +104,12 @@ class TextureWriter(object):
                 bitDepthConversionTable[currentBitDepth][newBitDepth][value] = int(
                     round(value * (float((2 ** newBitDepth) - 1) / float((2 ** currentBitDepth) - 1))))
 
-    penultimateChunk = struct.pack("<H32L", 0x0, 0x45747600, 0x6F537458, 0x61777466, 0x45006572, 0x726F7078, 0x20646574, 0x6E697375, 0x68742067, 0x75502065, 0x656C7A7A, 0x44202620, 0x6F676172, 0x5420736E, 0x75747865,
-                                   0x54206572, 0x206C6F6F, 0x77777728, 0x646F632E, 0x74617779, 0x632E7374, 0x702F6D6F, 0x656A6F72, 0x2F737463, 0x7A7A7570, 0x612D656C, 0x642D646E, 0x6F676172, 0x742D736E, 0x75747865, 0x742D6572, 0x296C6F6F, 0x3391286F)
+    penultimateChunk = struct.pack("<H32L", 0x0, 0x45747600, 0x6F537458, 0x61777466, 0x45006572, 0x726F7078, 0x20646574,
+                                   0x6E697375, 0x68742067, 0x75502065, 0x656C7A7A, 0x44202620, 0x6F676172, 0x5420736E,
+                                   0x75747865,
+                                   0x54206572, 0x206C6F6F, 0x77777728, 0x646F632E, 0x74617779, 0x632E7374, 0x702F6D6F,
+                                   0x656A6F72, 0x2F737463, 0x7A7A7570, 0x612D656C, 0x642D646E, 0x6F676172, 0x742D736E,
+                                   0x75747865, 0x742D6572, 0x296C6F6F, 0x3391286F)
 
     trimmingEnabled = True
     blackeningEnabled = True
@@ -124,7 +130,7 @@ class TextureWriter(object):
         alphaChannel = flatPixelArray[(channelsPerPixel - 1)::channelsPerPixel]
 
         getRow = (lambda rowIndex, pixelArray,
-                  rowStride: pixelArray[rowIndex * rowStride:(rowIndex + 1) * rowStride])
+                         rowStride: pixelArray[rowIndex * rowStride:(rowIndex + 1) * rowStride])
         getColumn = (lambda columnIndex, pixelArray, rowStride: pixelArray[columnIndex::rowStride])
         isTransparent = (lambda rowOrColumn: sum(rowOrColumn) == 0)
 
@@ -174,7 +180,8 @@ class TextureWriter(object):
                             [targetBitDepth] for currentBitCount in bitsPerChannel]
         zippedChannelInfo = list(zip(bitShifts, bitMasks, conversionTables))
 
-        return [conversionTable[(packedPixelValue & bitMask) >> bitShift] for packedPixelValue in texture.packedPixels for bitShift, bitMask, conversionTable in zippedChannelInfo]
+        return [conversionTable[(packedPixelValue & bitMask) >> bitShift] for packedPixelValue in texture.packedPixels
+                for bitShift, bitMask, conversionTable in zippedChannelInfo]
 
     @classmethod
     def exportToImageFile(cls, texture, outputFilePath):
@@ -190,7 +197,8 @@ class TextureWriter(object):
             if texture.encoding.hasAlpha:
                 if cls.trimmingEnabled:
                     width, height, flatPixelArray = cls.trimTransparentEdges(
-                        flatPixelArray, width, height, texture.encoding.channels, texture.givenWidth, texture.givenHeight)
+                        flatPixelArray, width, height, texture.encoding.channels, texture.givenWidth,
+                        texture.givenHeight)
                 if cls.blackeningEnabled:
                     flatPixelArray = cls.blackenTransparentPixels(
                         flatPixelArray, width, height, texture.encoding.channels)
@@ -208,7 +216,9 @@ class TextureWriter(object):
                 # Palettes cannot contain more than 256 colors. Also, using palettes for
                 # greyscale images typically takes more memory, not less.
                 if len(palette) <= (2 ** 8) and not texture.encoding.isGreyscale:
-                    def getAlphaValue(color): return color[channelsPerPixel - 1]
+                    def getAlphaValue(color):
+                        return color[channelsPerPixel - 1]
+
                     palette.sort(key=getAlphaValue)
                     colorToIndex = dict((color, paletteIndex)
                                         for paletteIndex, color in enumerate(palette))
@@ -227,7 +237,8 @@ class TextureWriter(object):
 
                 else:
                     # Write the png data to the stream.
-                    pngWriter = png.Writer(width, height, alpha=texture.encoding.hasAlpha, greyscale=texture.encoding.isGreyscale,
+                    pngWriter = png.Writer(width, height, alpha=texture.encoding.hasAlpha,
+                                           greyscale=texture.encoding.isGreyscale,
                                            bitdepth=targetBitDepth, planes=len(texture.encoding.channels))
                     pngWriter.write_array(pngStream, flatPixelArray)
 
@@ -235,7 +246,8 @@ class TextureWriter(object):
                 finalChunkSize = 12
                 pngFileByteArray = bytearray(pngStream.getvalue())
                 binaryFileData = bytes(
-                    pngFileByteArray[:-finalChunkSize]) + cls.penultimateChunk + bytes(pngFileByteArray[-finalChunkSize:])
+                    pngFileByteArray[:-finalChunkSize]) + cls.penultimateChunk + bytes(
+                    pngFileByteArray[-finalChunkSize:])
 
         if any(binaryFileData):
             outputDirectory = os.path.dirname(outputFilePath)
@@ -243,6 +255,7 @@ class TextureWriter(object):
                 os.makedirs(outputDirectory)
             with open(outputFilePath, 'wb') as outputFileHandle:
                 outputFileHandle.write(binaryFileData)
+
 
 # This class translates binary data into Texture objects.
 
@@ -317,7 +330,7 @@ class TextureReader(object):
 
                 for textureManifestIndex in range(0, numberOfTexturesInBlock):
                     textureManifestStart = textureBlockHeaderEnd + \
-                        (cls.textureManifestSize * textureManifestIndex)
+                                           (cls.textureManifestSize * textureManifestIndex)
                     textureManifestEnd = textureManifestStart + cls.textureManifestSize
 
                     startingOffset, width, height, name = struct.unpack(
@@ -333,7 +346,8 @@ class TextureReader(object):
                         encoding = RAW
                         if encodingIdentifier not in cls.encodings:
                             print("{name} is encoded with unrecognized encoding \"{encoding}\".".format(
-                                name=name, encoding=re.sub(r'^(-?0X)', lambda x: x.group(1).lower(), hex(encodingIdentifier).upper())))
+                                name=name, encoding=re.sub(r'^(-?0X)', lambda x: x.group(1).lower(),
+                                                           hex(encodingIdentifier).upper())))
 
                     byteCount = 0
                     if (encoding != RAW):
@@ -360,16 +374,18 @@ class TextureReader(object):
                         offset += 12
 
                     # MONS images mostly have size data in their footer, use this for trimming
-                    givenWidth, givenHeight = 0,0
+                    givenWidth, givenHeight = 0, 0
                     if encoding == R4G4B4A4 and len(binaryBlob) >= offset + 16:
                         # 8 bytes of idk perhaps image size | img width | img height | # of frames | idk maybe palette related
-                        _,givenWidth,givenHeight,_,_ = struct.unpack('<8sHHHH',binaryBlob[offset:offset+16])
+                        _, givenWidth, givenHeight, _, _ = struct.unpack('<8sHHHH', binaryBlob[offset:offset + 16])
                     if not givenWidth or not givenHeight:
                         # if either dimension is 0, use the full image size instead
                         givenWidth, givenHeight = width, height
-                    yield Texture(width, height, name, binaryBlob[imageDataStart:imageDataEnd], encoding, min(width, givenWidth), min(height, givenHeight))
+                    yield Texture(width, height, name, binaryBlob[imageDataStart:imageDataEnd], encoding,
+                                  min(width, givenWidth), min(height, givenHeight))
 
             offset += cls.textureBlockHeaderAlignment
+
 
 # This class represents a group of user-configurable settings which control how the script operates.
 
@@ -435,25 +451,33 @@ def getSettingsFromCommandLine():
         class ActionWrapper(argparse.Action):
             def __call__(self, parser, namespace, values, option_string=None):
                 function(parameter or values)
+
         return ActionWrapper
 
     parser = argparse.ArgumentParser(
-        description="This script extracts texture images from the binary data of the popular iOS & Android game \"Puzzle & Dragons\".", add_help=False)
+        description="This script extracts texture images from the binary data of the popular iOS & Android game \"Puzzle & Dragons\".",
+        add_help=False)
     inputGroup = parser.add_argument_group("Input")
     group = inputGroup.add_mutually_exclusive_group(required=True)
     group.add_argument("inputPath", metavar="IN_FILE", nargs="?",
-                       help="A path to a file containing Puzzle & Dragons texture data. Typically, these files end in \".bc\" however this script is also capable of extracting textures from a Puzzle & Dragons \".apk\" file.", action=call(settings.setInputPath))
+                       help="A path to a file containing Puzzle & Dragons texture data. Typically, these files end in \".bc\" however this script is also capable of extracting textures from a Puzzle & Dragons \".apk\" file.",
+                       action=call(settings.setInputPath))
     group.add_argument("inputFolder", metavar="IN_DIR", nargs="?",
-                       help="A path to a folder containing one or more Puzzle & Dragons texture files. Each file in this folder and its sub-folders will be processed and have their textures extracted.", action=call(settings.setInputPath))
+                       help="A path to a folder containing one or more Puzzle & Dragons texture files. Each file in this folder and its sub-folders will be processed and have their textures extracted.",
+                       action=call(settings.setInputPath))
 
     outputGroup = parser.add_argument_group("Output")
     outputGroup.add_argument("-o", "--outdir", metavar="OUT_DIR",
-                             help="A path to a folder where extracted textures should be saved. This property is optional; by default, any extracted texture files will be saved in the same directory as the file from which they were extracted.", action=call(settings.setOutputDirectory))
+                             help="A path to a folder where extracted textures should be saved. This property is optional; by default, any extracted texture files will be saved in the same directory as the file from which they were extracted.",
+                             action=call(settings.setOutputDirectory))
 
     featuresGroup = parser.add_argument_group("Optional Features")
-    featuresGroup.add_argument("-nt", "--notrim", nargs=0, help="Puzzle & Dragons' textures are padded with empty space, which this script automatically removes before writing the texture to disk. Use this flag to disable automatic trimming.",
+    featuresGroup.add_argument("-nt", "--notrim", nargs=0,
+                               help="Puzzle & Dragons' textures are padded with empty space, which this script automatically removes before writing the texture to disk. Use this flag to disable automatic trimming.",
                                action=call(settings.setTrimmingEnabled, False))
-    featuresGroup.add_argument("-nb", "--noblacken", nargs=0, help="By default, this script will \"blacken\" (i.e. set the red, green and blue channels to zero) any fully-transparent pixels of an image before exporting it. This reduces file size in a way that does not affect the quality of the image. Use this flag to disable automatic blackening.", action=call(settings.setBlackeningEnabled, False))
+    featuresGroup.add_argument("-nb", "--noblacken", nargs=0,
+                               help="By default, this script will \"blacken\" (i.e. set the red, green and blue channels to zero) any fully-transparent pixels of an image before exporting it. This reduces file size in a way that does not affect the quality of the image. Use this flag to disable automatic blackening.",
+                               action=call(settings.setBlackeningEnabled, False))
     featuresGroup.add_argument("--subtextures", nargs=0, help="Enables extracting monsters with multiple textures",
                                action=call(settings.setSubtexturesEnabled, True))
 
@@ -530,8 +554,9 @@ def main():
 
             print("  Writing {} ({} x {})...".format(outputFileName, texture.width, texture.height))
             if texture.encoding in [PVRTC2BPP, PVRTC4BPP]:
-                print("  Warning: {} is encoded using PVR texture compression. This format is not yet supported by the Puzzle & Dragons Texture Tool.".format(
-                    outputFileName))
+                print(
+                    "  Warning: {} is encoded using PVR texture compression. This format is not yet supported by the Puzzle & Dragons Texture Tool.".format(
+                        outputFileName))
             print("")
             outputFilePath = os.path.join(outputDirectoryPath, outputFileName)
             TextureWriter.exportToImageFile(texture, outputFilePath)

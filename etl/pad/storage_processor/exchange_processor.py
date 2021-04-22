@@ -1,12 +1,12 @@
 import logging
-import os
 
-from pad.db.db_util import DbWrapper
 from pad.common.shared_types import Server
-from pad.storage.exchange import Exchange
+from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
- 
+from pad.storage.exchange import Exchange
+
 logger = logging.getLogger('processor')
+
 
 class ExchangeProcessor(object):
     def __init__(self, data: crossed_data.CrossServerDatabase):

@@ -38,14 +38,12 @@ delete from d_types;
 
 ## Deleting records
 
-Tables with computed IDs will generally be autocreated and shouldn't be deleted,
-instead they should have a column added to hide them from display.
+Tables with computed IDs will generally be autocreated and shouldn't be deleted, instead they should have a column added
+to hide them from display.
 
-For tables that are autoincrement ID keyed, we may need to delete records (e.g.
-for `encounters`).
+For tables that are autoincrement ID keyed, we may need to delete records (e.g. for `encounters`).
 
-This is done by automatically inserting a row into the `deleted_rows` table via
-a trigger on the table, created like:
+This is done by automatically inserting a row into the `deleted_rows` table via a trigger on the table, created like:
 
 ```sql
 delimiter #
