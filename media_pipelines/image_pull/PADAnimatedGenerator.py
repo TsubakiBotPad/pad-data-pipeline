@@ -4,7 +4,6 @@ import tempfile
 
 from PIL import Image
 
-
 parser = argparse.ArgumentParser(
     description="Generates static frames for animated images.", add_help=False)
 
@@ -19,7 +18,6 @@ outputGroup.add_argument("--output_dir", required=True,
 helpGroup = parser.add_argument_group("Help")
 helpGroup.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
 args = parser.parse_args()
-
 
 # The final padded image size (matches the rest of the miru images)
 IMAGE_SIZE = (640, 388)

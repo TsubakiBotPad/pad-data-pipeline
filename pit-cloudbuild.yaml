@@ -2,22 +2,22 @@ steps:
   - name: python:3.6
     id: INSTALL
     entrypoint: python3
-    args: ['-m', 'pip', 'install', '-t', '.', '-r', 'requirements.txt']
+    args: [ '-m', 'pip', 'install', '-t', '.', '-r', 'requirements.txt' ]
 
   - name: alpine
     id: MAKE-DIRS
-    args: ['mkdir', '-p', 'pad_data/raw', 'pad_data/integration/golden']
+    args: [ 'mkdir', '-p', 'pad_data/raw', 'pad_data/integration/golden' ]
 
   - name: gcr.io/cloud-builders/gsutil
     id: COPY-RAW-DATA
-    args: ['-m', 'rsync', '-r', '-c', 'gs://dadguide-integration/parser/raw', 'pad_data/raw']
+    args: [ '-m', 'rsync', '-r', '-c', 'gs://dadguide-integration/parser/raw', 'pad_data/raw' ]
 
   - name: gcr.io/cloud-builders/gsutil
     id: COPY-GOLDEN-DATA
-    args: ['-m', 'rsync', '-r', '-c', 'gs://dadguide-integration/parser/golden', 'pad_data/integration/golden']
+    args: [ '-m', 'rsync', '-r', '-c', 'gs://dadguide-integration/parser/golden', 'pad_data/integration/golden' ]
 
   - name: python:3.6-slim-buster
     entrypoint: python3
     id: RUN-UNIT-TESTS
-    args: ['tests/parser_integration_test.py', '--input_dir', 'pad_data/raw', '--output_dir', 'pad_data/integration']
-    env: ["PYTHONPATH=etl:."]
+    args: [ 'tests/parser_integration_test.py', '--input_dir', 'pad_data/raw', '--output_dir', 'pad_data/integration' ]
+    env: [ "PYTHONPATH=etl:." ]

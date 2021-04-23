@@ -3,7 +3,6 @@
 set -e
 set -x
 
-
 declare -rx REPO_ROOT="/home/bot/pad-data-pipeline"
 declare -rx PAD_RESOURCES_ROOT="/home/bot/pad-resources"
 declare -rx PAD_DATA_DIR="${REPO_ROOT}/pad_data"

@@ -208,7 +208,6 @@ class ESCondition(object):
             else:
                 desc = "# of skills used >= {}".format(self.skills_used)
 
-
             # TODO: tieout
             # desc = desc.capitalize()
         return desc

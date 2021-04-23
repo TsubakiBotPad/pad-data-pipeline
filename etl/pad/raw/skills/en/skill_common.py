@@ -61,7 +61,7 @@ def pluralize2(noun, number, max_number=None):
     if number is None:
         return noun
     if number != '1':
-        noun = irregulars.get(noun, noun+'s')
+        noun = irregulars.get(noun, noun + 's')
     return "{} {}".format(number, noun)
 
 

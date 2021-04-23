@@ -25,7 +25,7 @@ class EggMachineProcessor(object):
                 item = EggMachine.from_eem(egg_machine, server)
                 egg_machine_id = db.insert_or_update(item)
 
-                #process contents of the eggmachines
+                # process contents of the eggmachines
                 id_mapper = server_monster_id_fn(server)
                 monsters = [EggMachinesMonster(
                     egg_machine_monster_id=None,

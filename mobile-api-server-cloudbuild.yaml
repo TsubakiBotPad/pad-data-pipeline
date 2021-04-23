@@ -21,11 +21,11 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     dir: 'output'
     args: [
-      'build',
-      '--build-arg', 'SCRIPT_NAME=mobile_api_server.py',
-      '--build-arg', 'PORT=8001',
-      '-t', 'gcr.io/$PROJECT_ID/mobile-api-server',
-      '.'
+        'build',
+        '--build-arg', 'SCRIPT_NAME=mobile_api_server.py',
+        '--build-arg', 'PORT=8001',
+        '-t', 'gcr.io/$PROJECT_ID/mobile-api-server',
+        '.'
     ]
 
-images: ['gcr.io/$PROJECT_ID/mobile-api-server']
+images: [ 'gcr.io/$PROJECT_ID/mobile-api-server' ]

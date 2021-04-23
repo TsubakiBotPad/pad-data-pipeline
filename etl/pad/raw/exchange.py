@@ -14,6 +14,7 @@ from pad.common.shared_types import Server
 
 FILE_NAME = 'mdatadl.json'
 
+
 class Exchange(Printable):
     """Exchangeable monsters, options to exhange, and any event text."""
 
@@ -78,7 +79,7 @@ class Exchange(Printable):
 
     def __str__(self):
         return 'Exchange({} {} - {} - {}/{})'.format(self.server, self.monster_id, len(self.required_monsters),
-                                                  self.start_time_str, self.end_time_str)
+                                                     self.start_time_str, self.end_time_str)
 
 
 def load_data(server: Server, data_dir: str = None, json_file: str = None) -> List[Exchange]:
