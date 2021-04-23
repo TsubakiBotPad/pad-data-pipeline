@@ -1,5 +1,6 @@
 from pad.db.db_util import DbWrapper
 from pad.dungeon import wave_converter
+from pad.raw.dungeon import Dungeon
 from pad.raw_processor import crossed_data
 
 # Finds any dungeon with no encounters set up that has an entry
@@ -18,7 +19,6 @@ AND dungeon_id IN (
 )
 ORDER BY dungeon_id ASC
 """
-
 
 # TODO: Consider renaming subdungeon to floor for consistency
 

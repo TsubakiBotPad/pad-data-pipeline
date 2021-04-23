@@ -1,10 +1,11 @@
 from typing import List
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, BehaviorGroup, Condition, Behavior
+from pad.raw.skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack, \
+    attribute_bitmap
 from pad.raw.enemy_skills.enemy_skillset_processor import ProcessedSkillset, StandardSkillGroup, Moveset, ESUseSkillset
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
-from pad.raw.skills.enemy_skill_info import ESSkillSet, ESInstance, ESCountdownMessage, ESDefaultAttack
 from pad.raw_processor.crossed_data import CrossServerCard
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 
 ESTextConverter = EnESTextConverter()
 

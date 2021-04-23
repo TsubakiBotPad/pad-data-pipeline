@@ -13,7 +13,6 @@ WHERE dungeon_id IN (select dungeon_id  from encounters group by 1)
 AND visible = false
 """
 
-
 class DungeonProcessor(object):
     def __init__(self, data: crossed_data.CrossServerDatabase):
         self.data = data
