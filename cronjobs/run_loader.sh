@@ -17,13 +17,13 @@ source ./shared.sh
 echo "Processing"
 IFS=","
 
-function error_exit {
-    hook_error "DadGuide Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
-    hook_file "/tmp/dg_update_log.txt"
+function error_exit() {
+  hook_error "DadGuide Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
+  hook_file "/tmp/dg_update_log.txt"
 }
 
-function success_exit {
-    echo "Pipeline finished"
+function success_exit() {
+  echo "Pipeline finished"
 }
 
 # Enable alerting to discord
@@ -64,5 +64,5 @@ echo "Exporting Data"
 
 echo "Syncing"
 ./sync_data.sh
-      
+
 hook_info "Pipeline completed successfully!"

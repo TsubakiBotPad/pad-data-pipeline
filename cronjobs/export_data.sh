@@ -15,8 +15,8 @@ ${SCHEMA_TOOLS_DIR}/mysql2sqlite.sh \
   -p${MYSQL_PASSWORD} \
   dadguide \
   --skip-triggers \
-  --ignore-table=dadguide.wave_data \
-    | sqlite3 "${DADGUIDE_DB_FILE_TMP}"
+  --ignore-table=dadguide.wave_data |
+  sqlite3 "${DADGUIDE_DB_FILE_TMP}"
 mv "${DADGUIDE_DB_FILE_TMP}" "${DADGUIDE_DB_FILE}"
 
 echo "Zipping/copying DB dump"
@@ -35,7 +35,7 @@ mysqldump --default-character-set=utf8 \
   -p${MYSQL_PASSWORD} \
   dadguide \
   --ignore-table=dadguide.wave_data \
-    > "${DADGUIDE_MYSQL_FILE}"
+  >"${DADGUIDE_MYSQL_FILE}"
 zip -j "${DADGUIDE_MYSQL_ZIP_FILE}" "${DADGUIDE_MYSQL_FILE}"
 
 echo "Exporting zipped full DG+WAVES to mysql"
@@ -46,7 +46,7 @@ mysqldump --default-character-set=utf8 \
   -u ${MYSQL_USER} \
   -p${MYSQL_PASSWORD} \
   dadguide \
-    > "${DADGUIDE_MYSQL_WAVE_DATA_FILE}"
+  >"${DADGUIDE_MYSQL_WAVE_DATA_FILE}"
 zip -j "${DADGUIDE_MYSQL_WAVE_DATA_ZIP_FILE}" "${DADGUIDE_MYSQL_WAVE_DATA_FILE}"
 rm -f "${DADGUIDE_MYSQL_WAVE_DATA_FILE}"
 
@@ -58,8 +58,8 @@ ${SCHEMA_TOOLS_DIR}/mysql2sqlite.sh \
   -u ${MYSQL_USER} \
   -p${MYSQL_PASSWORD} \
   dadguide \
-  --skip-triggers \
-    | sqlite3 "${DADGUIDE_WAVE_DATA_FILE}"
+  --skip-triggers |
+  sqlite3 "${DADGUIDE_WAVE_DATA_FILE}"
 zip -j "${DADGUIDE_WAVE_DATA_ZIP_FILE}" "${DADGUIDE_WAVE_DATA_FILE}"
 rm -f "${DADGUIDE_WAVE_DATA_FILE}"
 
@@ -67,8 +67,8 @@ echo "Creating icon zip"
 rm -f /tmp/icons.zip
 # Spammy command
 set +x
-(cd "${DADGUIDE_MEDIA_DIR}" && zip -q -r -0 - icons/*.png awakenings/*.png latents/*/*.png types/*.png badges/*.png) > /tmp/icons.zip
+(cd "${DADGUIDE_MEDIA_DIR}" && zip -q -r -0 - icons/*.png awakenings/*.png latents/*/*.png types/*.png badges/*.png) >/tmp/icons.zip
 set -x
 mv /tmp/icons.zip "${DADGUIDE_GAME_DB_DIR}/icons.zip"
 
-echo "{\"last_edited\": $(date +%s)}" > ${DADGUIDE_GAME_DB_DIR}/version.json
+echo "{\"last_edited\": $(date +%s)}" >${DADGUIDE_GAME_DB_DIR}/version.json

@@ -25,4 +25,3 @@ flock -xn /tmp/dg_scraper_jp.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py
   --group=${JP_PAD_USER_COLOR_GROUP} \
   --user_uuid=${JP_PAD_USER_UUID} \
   --user_intid=${JP_PAD_USER_INTID}
-

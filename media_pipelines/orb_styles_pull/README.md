@@ -1,7 +1,7 @@
 # Orb skin image assets
 
-This directory contains scripts to pull/extract orb skins. It requires my patched
-version of the padtools library, which allows you to download extras.
+This directory contains scripts to pull/extract orb skins. It requires my patched version of the padtools library, which
+allows you to download extras.
 
 ## Hosted assets
 
