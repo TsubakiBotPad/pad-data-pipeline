@@ -572,3 +572,38 @@ class Evolution(SimpleSqlItem):
 
     def __str__(self):
         return 'Evo ({}): {} -> {}, type={}'.format(self.key_value(), self.from_id, self.to_id, self.evolution_type)
+
+
+class AltMonster(SimpleSqlItem):
+    """Alt. monster data."""
+    TABLE = 'alt_monsters'
+    KEY_COL = 'alt_monster_id'
+
+    @staticmethod
+    def from_csm(o: CrossServerCard) -> 'AltMonster':
+        return AltMonster(
+            alt_monster_id=o.monster_id,
+            canonical_id=o.monster_id % 1000000,
+            active_skill_id=o.jp_card.card.active_skill_id,
+            reg_date=date.today().isoformat(),
+            is_alt=20000 <= o.monster_id)
+
+    def __init__(self,
+                 alt_monster_id: int = None,
+                 canonical_id: int = None,
+                 active_skill_id: int = None,
+                 reg_date: str = None,
+                 is_alt: bool = None,
+                 tstamp: int = None):
+        self.alt_monster_id = alt_monster_id
+        self.canonical_id = canonical_id
+        self.active_skill_id = active_skill_id
+        self.reg_date = reg_date
+        self.is_alt = is_alt
+        self.tstamp = tstamp
+
+    def _non_auto_update_cols(self):
+        return ['reg_date']
+
+    def __str__(self):
+        return 'AltMonster({})'.format(self.key_value())

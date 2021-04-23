@@ -677,6 +677,25 @@ CREATE TABLE `monsters` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `alt_monsters`
+--
+
+DROP TABLE IF EXISTS `alt_monsters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alt_monsters` (
+  `alt_monster_id` int(11) NOT NULL,
+  `canonical_id` int(11) NOT NULL,
+  `active_skill_id` int(11) DEFAULT NULL,
+  `reg_date` date NOT NULL,
+  `is_alt` int(1) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`alt_monster_id`),
+  KEY `tstamp_idx` (`tstamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `news`
 --
 

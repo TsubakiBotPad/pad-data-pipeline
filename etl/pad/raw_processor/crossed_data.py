@@ -188,8 +188,8 @@ def make_cross_server_enemy_behavior(jp_skills: List[ESInstance],
             return left
 
         # Occasionally the monster has the same ES count but some of them are ESNone.
-        def count_useful_skills(l: List[ESInstance]) -> int:
-            return sum(map(lambda y: 0 if isinstance(y.behavior, ESNone) else 1, l))
+        def count_useful_skills(ess: List[ESInstance]) -> int:
+            return sum(map(lambda y: 0 if isinstance(y.behavior, ESNone) else 1, ess))
 
         return left if count_useful_skills(left) > count_useful_skills(right) else right
 
@@ -427,8 +427,7 @@ class CrossServerDatabase(object):
         self.all_cards = build_cross_server_cards(jp_database,
                                                   na_database,
                                                   kr_database)  # type: List[CrossServerCard]
-        self.ownable_cards = list(
-            filter(lambda c: 0 < c.monster_id < 19999, self.all_cards))  # type: List[CrossServerCard]
+        self.ownable_cards = [c for c in self.all_cards if 0 < c.monster_id < 19999]  # type: List[CrossServerCard]
 
         self.leader_skills = build_cross_server_skills(jp_database.leader_skills,
                                                        na_database.leader_skills,

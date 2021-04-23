@@ -4,7 +4,8 @@ from pad.common import pad_util
 from pad.common.utils import remove_diacritics
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
-from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution, MonsterWithExtraImageInfo
+from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution, MonsterWithExtraImageInfo, \
+    AltMonster
 
 logger = logging.getLogger('processor')
 human_fix_logger = logging.getLogger('human_fix')
@@ -42,8 +43,11 @@ class MonsterProcessor(object):
 
     def _process_monsters(self, db):
         logger.info('loading %s monsters', len(self.data.ownable_cards))
-        for m in self.data.ownable_cards:
-            item = Monster.from_csm(m)
+        for m in self.data.all_cards:
+            if 0 < m.monster_id < 19999:
+                item = Monster.from_csm(m)
+                db.insert_or_update(item)
+            item = AltMonster.from_csm(m)
             db.insert_or_update(item)
 
     def _process_auto_override(self, db: DbWrapper):
