@@ -1,14 +1,16 @@
 import argparse
-import logging
+import json
 import os
 
 from PIL import Image
 
-from pad.common.shared_types import Server
 from pad.raw_processor import merged_database
+from pad.common.shared_types import Server
 
+import logging
 fail_logger = logging.getLogger('human_fix')
 fail_logger.disabled = True
+
 
 parser = argparse.ArgumentParser(description="Generates P&D portraits.", add_help=False)
 

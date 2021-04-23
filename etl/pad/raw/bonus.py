@@ -6,8 +6,8 @@ each other to get the full list.
 """
 
 import time
-from enum import Enum
 from typing import Dict, List, Optional, Union
+from enum import Enum
 
 from pad.common import pad_util
 from pad.common.pad_util import ghmult_plain, ghchance_plain, Printable

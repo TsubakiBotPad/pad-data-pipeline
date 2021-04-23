@@ -1,6 +1,5 @@
-import logging
-
 from pad.raw.skills.en.skill_common import *
+import logging
 
 human_fix_logger = logging.getLogger('human_fix')
 
