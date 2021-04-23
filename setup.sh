@@ -16,4 +16,3 @@ sudo apt install ./gifsicle_1.92-2_amd64.deb
 
 git clone https://github.com/TsubakiBotPad/pad-data-pipeline.git
 git clone https://github.com/kiootic/pad-resources.git
-

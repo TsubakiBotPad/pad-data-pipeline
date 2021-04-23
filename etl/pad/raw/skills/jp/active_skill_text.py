@@ -276,7 +276,7 @@ class JpASTextConverter(JpBaseTextConverter):
             return s_text.format(to_orbs, act.amount)
 
     def double_spawn_orb_convert(self, act):
-        s_text = self.spawn_orb_convert(act)+"。"
+        s_text = self.spawn_orb_convert(act) + "。"
         to_orbs = self.attributes_to_str(act.orbs2)
         excl_orbs = self.attributes_to_str(set(act.excluding_orbs2) - set(act.orbs2))
         if act.orbs2 != act.excluding_orbs2 and act.excluding_orbs2 != []:

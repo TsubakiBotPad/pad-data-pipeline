@@ -1779,6 +1779,7 @@ class LSColorComboBonusCombo(LeaderSkill):
     def text(self, converter) -> str:
         return converter.color_combo_bonus_combo_text(self)
 
+
 class LSHeartCrossCombo(LeaderSkill):
     skill_type = 209
 
@@ -1789,6 +1790,7 @@ class LSHeartCrossCombo(LeaderSkill):
 
     def text(self, converter) -> str:
         return converter.heart_cross_combo_text(self)
+
 
 class LSColorCrossCombo(LeaderSkill):
     skill_type = 210

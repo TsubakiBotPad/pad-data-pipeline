@@ -397,7 +397,8 @@ class PadApiClient(object):
         result_json = r.json()
         response_code = result_json.get('res', 0)
         if response_code != 0:
-            raise Exception('Bad server response: {} ({})'.format(response_code, RESPONSE_CODES.get(response_code, '???')))
+            raise Exception(
+                'Bad server response: {} ({})'.format(response_code, RESPONSE_CODES.get(response_code, '???')))
         return result_json
 
     def get_egg_machine_page(self, gtype, grow):

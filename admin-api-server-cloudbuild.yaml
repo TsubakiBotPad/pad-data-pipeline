@@ -17,7 +17,7 @@ steps:
 
   - name: 'gcr.io/cloud-builders/git'
     dir: 'dadguide-flutter'
-    args: ['clone', 'https://github.com/nachoapps/dadguide-flutter', '.']
+    args: [ 'clone', 'https://github.com/nachoapps/dadguide-flutter', '.' ]
 
   - name: 'gcr.io/${PROJECT_ID}/flutter:beta'
     id: 'setup-dadguide-flutter'
@@ -31,7 +31,7 @@ steps:
 
   - name: 'gcr.io/cloud-builders/git'
     dir: 'dadguide-admin'
-    args: ['clone', 'https://github.com/nachoapps/dadguide-admin', '.']
+    args: [ 'clone', 'https://github.com/nachoapps/dadguide-admin', '.' ]
 
   - name: 'gcr.io/${PROJECT_ID}/flutter:beta'
     id: 'setup-dadguide-admin'
@@ -47,27 +47,27 @@ steps:
   - name: 'gcr.io/${PROJECT_ID}/flutter:beta'
     id: 'compile-flutter-web'
     dir: 'dadguide-admin'
-    args: ['build', 'web']
+    args: [ 'build', 'web' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'move-web-folder'
     entrypoint: 'bash'
-    args: ['-c', 'mv dadguide-admin/build/web output/']
+    args: [ '-c', 'mv dadguide-admin/build/web output/' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'download-db-config'
     entrypoint: 'bash'
-    args: ['-c', 'gcloud secrets versions access latest --secret=prod_db_config > output/db_config.json']
+    args: [ '-c', 'gcloud secrets versions access latest --secret=prod_db_config > output/db_config.json' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     dir: 'output'
     args: [
-      'build',
-      '--build-arg', 'SCRIPT_NAME=admin_api_server.py',
-      '--build-arg', 'PORT=8000',
-      '--build-arg', 'EXTRA_ARG=--web_dir=/server/web --es_dir=/server/es',
-      '-t', 'gcr.io/$PROJECT_ID/admin-api-server',
-      '.'
+        'build',
+        '--build-arg', 'SCRIPT_NAME=admin_api_server.py',
+        '--build-arg', 'PORT=8000',
+        '--build-arg', 'EXTRA_ARG=--web_dir=/server/web --es_dir=/server/es',
+        '-t', 'gcr.io/$PROJECT_ID/admin-api-server',
+        '.'
     ]
 
-images: ['gcr.io/$PROJECT_ID/admin-api-server']
+images: [ 'gcr.io/$PROJECT_ID/admin-api-server' ]
