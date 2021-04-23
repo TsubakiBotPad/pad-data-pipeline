@@ -20,6 +20,7 @@ AND dungeon_id IN (
 ORDER BY dungeon_id ASC
 """
 
+
 # TODO: Consider renaming subdungeon to floor for consistency
 
 class WaveProcessor(object):

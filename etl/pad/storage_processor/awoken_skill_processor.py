@@ -3,7 +3,7 @@ import os
 
 from pad.db.db_util import DbWrapper
 from pad.storage.awoken_skill import AwokenSkill
- 
+
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 

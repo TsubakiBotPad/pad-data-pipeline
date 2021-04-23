@@ -361,8 +361,10 @@ class EnLSTextConverter(EnBaseTextConverter):
     def color_combo_bonus_damage_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
             skill_text = '{:,} additional true damage when matching {}'.format(ls.bonus_damage,
-                                                                    self.fmt_multi_attr(list(set(ls.attributes)),
-                                                                    conj='or' if ls.min_combo < len(ls.attributes) else 'and'))
+                                                                               self.fmt_multi_attr(
+                                                                                   list(set(ls.attributes)),
+                                                                                   conj='or' if ls.min_combo < len(
+                                                                                       ls.attributes) else 'and'))
         else:
             skill_text = '{:,} additional true damage when matching {} or more'.format(ls.bonus_damage, ls.min_combo)
             if ls.attributes:
@@ -374,8 +376,9 @@ class EnLSTextConverter(EnBaseTextConverter):
     def color_combo_bonus_combo_text(self, ls):
         if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
             skill_text = 'Increase combo by {} when matching {}'.format(ls.bonus_combos,
-                                                                    self.fmt_multi_attr(list(set(ls.attributes)),
-                                                                    conj='or' if ls.min_combo < len(ls.attributes) else 'and'))
+                                                                        self.fmt_multi_attr(list(set(ls.attributes)),
+                                                                                            conj='or' if ls.min_combo < len(
+                                                                                                ls.attributes) else 'and'))
         else:
             skill_text = 'Increase combo by {} when matching {} or more'.format(ls.bonus_combos, ls.min_combo)
             if ls.attributes:

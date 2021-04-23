@@ -17,15 +17,17 @@ def public(x):
     __all__.append(x.__name__)
     return x
 
-@public 
-def minmax(nmin, nmax, p = False, fmt = False):
+
+@public
+def minmax(nmin, nmax, p=False, fmt=False):
     fmt = fmt_mult if fmt else (lambda x: x)
     if None in [nmin, nmax] or nmin == nmax:
-        return str(fmt(nmin or nmax))+("％" if p else '')
+        return str(fmt(nmin or nmax)) + ("％" if p else '')
     elif p:
         return "{}％〜{}％".format(fmt(int(nmin)), fmt(int(nmax)))
     else:
         return "{}〜{}".format(fmt(int(nmin)), fmt(int(nmax)))
+
 
 @public
 class JpBaseTextConverter(BaseTextConverter):
@@ -116,29 +118,31 @@ class JpBaseTextConverter(BaseTextConverter):
 
     @staticmethod
     def big_number(n):
-        if float(n) % 1 != 0: return str(n)
-        else: n = int(n)
+        if float(n) % 1 != 0:
+            return str(n)
+        else:
+            n = int(n)
 
         if n == 0:
-            return str(int(n // 1e0))  + ''
-       #elif n % 1e11 == 0:
-       #    return str(int(n // 1e11)) + '千億'
-       #elif n % 1e10 == 0:
-       #    return str(int(n // 1e10)) + '百億'
-       #elif n % 1e9 == 0:
-       #    return str(int(n // 1e9))  + '十億'
+            return str(int(n // 1e0)) + ''
+        # elif n % 1e11 == 0:
+        #    return str(int(n // 1e11)) + '千億'
+        # elif n % 1e10 == 0:
+        #    return str(int(n // 1e10)) + '百億'
+        # elif n % 1e9 == 0:
+        #    return str(int(n // 1e9))  + '十億'
         elif n % 1e8 == 0:
-            return str(int(n // 1e8))  + '億'
-       #elif n % 1e7 == 0:
-       #    return str(int(n // 1e7))  + '千万'
-       #elif n % 1e6 == 0:
-       #    return str(int(n // 1e6))  + '百万'
-       #elif n % 1e5 == 0:
-       #    return str(int(n // 1e5))  + '十万'
+            return str(int(n // 1e8)) + '億'
+        # elif n % 1e7 == 0:
+        #    return str(int(n // 1e7))  + '千万'
+        # elif n % 1e6 == 0:
+        #    return str(int(n // 1e6))  + '百万'
+        # elif n % 1e5 == 0:
+        #    return str(int(n // 1e5))  + '十万'
         elif n % 1e4 == 0:
-            return str(int(n // 1e4))  + '万'
-       #elif n % 1e3 == 0:
-       #    return str(int(n // 1e3))  + '千'
+            return str(int(n // 1e4)) + '万'
+        # elif n % 1e3 == 0:
+        #    return str(int(n // 1e3))  + '千'
 
         elif n < 1e4:
             return str(n)
@@ -257,4 +261,3 @@ class JpBaseTextConverter(BaseTextConverter):
         else:
             color_text = self.attributes_to_str(reduct_att)
             return self.reduce_attr_pct(color_text, shield_text)
-

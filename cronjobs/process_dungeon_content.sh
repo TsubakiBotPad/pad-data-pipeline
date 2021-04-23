@@ -6,15 +6,14 @@ cd "$(dirname "$0")" || exit
 source ./shared.sh
 source ./discord.sh
 
-function human_fixes_check {
-    human_fixes_path="/tmp/dadguide_pipeline_human_fixes.txt"
-    if [[ -s ${human_fixes_path} ]]
-    then
-        echo "Alerting for human fixes"
-        hook_warn ${human_fixes_path}
-    else
-        echo "No fixes required"
-    fi
+function human_fixes_check() {
+  human_fixes_path="/tmp/dadguide_pipeline_human_fixes.txt"
+  if [[ -s ${human_fixes_path} ]]; then
+    echo "Alerting for human fixes"
+    hook_warn ${human_fixes_path}
+  else
+    echo "No fixes required"
+  fi
 }
 
 flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \
@@ -26,6 +25,5 @@ flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \
   --doupdates \
   --processor="DungeonContentProcessor" \
   --skipintermediate
-
 
 human_fixes_check

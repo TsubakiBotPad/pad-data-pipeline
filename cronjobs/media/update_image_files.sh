@@ -6,19 +6,19 @@ cd "$(dirname "$0")" || exit
 source /home/bot/pad-data-pipeline/bin/activate
 source ../shared.sh
 
-function error_exit {
-    hook_error "Image Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
-    hook_file "/tmp/dg_image_log.txt"
-}  
-
-function success_exit { 
-    echo "Image pipeline finished"  
-    hook_info "Image pipeline finished"
+function error_exit() {
+  hook_error "Image Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
+  hook_file "/tmp/dg_image_log.txt"
 }
 
-# Enable alerting to discord 
+function success_exit() {
+  echo "Image pipeline finished"
+  hook_info "Image pipeline finished"
+}
+
+# Enable alerting to discord
 trap error_exit ERR
-trap success_exit EXIT          
+trap success_exit EXIT
 
 RUN_DIR="${MEDIA_ETL_DIR}/image_pull"
 

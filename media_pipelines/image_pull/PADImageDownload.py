@@ -4,7 +4,6 @@ import os
 from PIL import Image
 import requests
 
-
 parser = argparse.ArgumentParser(
     description="Downloads P&D images from the GungHo site.", add_help=False)
 
@@ -64,7 +63,6 @@ if args.alt_input_dir:
 else:
     raw_dir = os.path.join(output_dir, 'raw_data')
     corrected_dir = os.path.join(output_dir, 'corrected_data')
-
 
 for file_name in os.listdir(raw_dir):
     if 'mons' not in file_name or 'isanimated' in file_name:

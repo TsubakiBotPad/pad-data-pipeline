@@ -55,8 +55,10 @@ def parse_args():
 
     return parser.parse_args()
 
+
 class Arg:
     pass
+
 
 def do_dungeon_load(args, dungeon_id, floor_id):
     if not args.doupdates:
@@ -73,6 +75,7 @@ def do_dungeon_load(args, dungeon_id, floor_id):
     dg_pull_arg.loop_count = 20
     dg_pull_arg.logsql = False
     pull_data(dg_pull_arg)
+
 
 CHECK_AGE_SQL = '''
 SELECT

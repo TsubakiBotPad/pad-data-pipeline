@@ -211,7 +211,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
     def default_attack(self):
         return '({})'.format(emoji_dict['attack'])
 
-    #don't really care right now
+    # don't really care right now
     def condition(self, chance, hp=None, one_time=False):
         output = []
         if 0 < chance < 100 and not one_time:
@@ -226,7 +226,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         return capitalize_first(' '.join(output)) if len(output) > 0 else None
 
     def attack(self, mult, min_hit=1, max_hit=1):
-        #have to process this in the bot in order to get full damage numbers
+        # have to process this in the bot in order to get full damage numbers
         return '(Attack:{}-{}, {})'.format(min_hit, max_hit, mult)
         """if mult is None:
             return None
@@ -342,7 +342,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
             return "({}{}{})".format(emoji_dict['self'], emoji_dict['to'], self._ATTRS[attributes[0]])
         else:
             return "({}{} random {})".format(emoji_dict['self'], emoji_dict['to'], self.attributes_to_emoji(attributes))
-           # return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
+        # return 'Change own attribute to random one of ' + self.attributes_to_str(attributes, 'or')
 
     def gravity(self, percent):
         return "(-{}%{})".format(percent, emoji_dict['gravity'])
@@ -365,12 +365,12 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         if lock and orbs == 'Random':
             orbs = orbs.lower()
         if not locked:
-            return "([{}:{}]+{}% for {})".format(emoji_dict['skyfall'] ,self.attributes_to_emoji(attributes), chance,
-                                         minmax(min_turns, max_turns))
+            return "([{}:{}]+{}% for {})".format(emoji_dict['skyfall'], self.attributes_to_emoji(attributes), chance,
+                                                 minmax(min_turns, max_turns))
         if locked:
             return "([{}{}:{}]+{}% for {})".format(emoji_dict['locked'], emoji_dict['skyfall'],
-                                                  self.attributes_to_emoji(attributes), chance,
-                                                  minmax(min_turns, max_turns))
+                                                   self.attributes_to_emoji(attributes), chance,
+                                                   minmax(min_turns, max_turns))
 
     def void(self, threshold, turns):
         return "({}{} for {})".format(emoji_dict['void'], f'{threshold:,}', turns)
@@ -408,7 +408,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         return ''.join(desc_arr)
 
     def board_change(self, attributes):
-        return '(All{}{})'.format(emoji_dict['to'],self.attributes_to_emoji(attributes))
+        return '(All{}{})'.format(emoji_dict['to'], self.attributes_to_emoji(attributes))
 
     def random_orb_spawn(self, count, attributes):
         if count == 42:
