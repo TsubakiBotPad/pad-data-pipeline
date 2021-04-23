@@ -12,7 +12,6 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 
 logger = logging.getLogger('processor')
 
-
 class SeriesProcessor(object):
     def __init__(self, data: crossed_data.CrossServerDatabase):
         with open(os.path.join(__location__, 'series.json')) as f:

@@ -1,8 +1,10 @@
 import json
 import os
+from typing import Dict, List
+from enum import Enum
 
-import pad.raw.skills.skill_common as base_skill_common
 from pad.raw.skills.skill_common import *
+import pad.raw.skills.skill_common as base_skill_common
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))
@@ -21,9 +23,9 @@ class KrBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
     _ATTRS = {
-        -9: '잠금폭탄',
-        -1: '랜덤',
-        None: '불',
+       -9: '잠금폭탄',
+       -1: '랜덤',
+     None: '불',
         0: '불',
         1: '물',
         2: '나무',
@@ -36,7 +38,7 @@ class KrBaseTextConverter(BaseTextConverter):
         9: '폭탄'}
 
     def attributes_to_str(self, attributes, conj='and'):
-        return self.concat_list_and([self.ATTRIBUTES[x] for x in attributes], conj)
+      return self.concat_list_and([self.ATTRIBUTES[x] for x in attributes],conj)
 
     _TYPES = {
         0: '진화용',
@@ -48,9 +50,9 @@ class KrBaseTextConverter(BaseTextConverter):
         6: '공격',
         7: '악마',
         8: '머신',
-        12: '능력각성용',
-        14: '강화합성용',
-        15: '매각용'}
+       12: '능력각성용',
+       14: '강화합성용',
+       15: '매각용'}
 
     def typing_to_str(self, types):
         return self.concat_list_and([self.TYPES[x] for x in types])
@@ -96,7 +98,7 @@ class KrBaseTextConverter(BaseTextConverter):
     def concat_list_and(iterable, conj=''):
         array = [str(i) for i in iterable if i]
         if not conj:
-            return "、".join(array)
+          return "、".join(array)
         conj += " "
         if len(array) == 0:
             return ""
@@ -126,6 +128,8 @@ class KrBaseTextConverter(BaseTextConverter):
             return str(n)[:-4] + '만 ' + str(n)[-4:]
         else:
             return str(n)[:-8] + '억 ' + str(n)[-8:-4] + '만 ' + str(n)[-4:]
+
+
 
     ################################################
     #               Format Functions               #
@@ -238,3 +242,5 @@ class KrBaseTextConverter(BaseTextConverter):
         else:
             color_text = self.attributes_to_str(reduct_att)
             return self.reduce_attr_pct(color_text, shield_text)
+
+
