@@ -10,7 +10,9 @@ function human_fixes_check() {
   human_fixes_path="/tmp/dadguide_pipeline_human_fixes.txt"
   if [[ -s ${human_fixes_path} ]]; then
     echo "Alerting for human fixes"
-    hook_warn ${human_fixes_path}
+    hook_warn "\`\`\`\n$(cat /tmp/dadguide_pipeline_human_fixes.txt \
+                       | sed ':a;N;$!ba;s/\n/\\n/g' \
+                       | head -c 1990)\n\`\`\`"
   else
     echo "No fixes required"
   fi
