@@ -1469,12 +1469,13 @@ class LSRainbowMultPlusShield(LeaderSkill):
     skill_type = 170
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, 0, 100, 0])
+        data = merge_defaults(ms.data, [0, 0, 100, 0, 0, 5])
         self.match_attributes = binary_con(data[0])
         self.min_attr = data[1]
-        self.max_attr = self.min_attr
+        self.max_attr = 5
         self.min_atk = mult(data[2])
-        self.max_atk = self.min_atk
+        self.atk_step = mult(data[4])
+        self.max_atk = self.min_atk + self.atk_step * (5 - data[5])
         self.min_rcv = 1
         self.max_rcv = 1
         shield = mult(data[3])
