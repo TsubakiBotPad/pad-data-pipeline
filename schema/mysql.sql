@@ -918,6 +918,24 @@ CREATE TABLE `sub_dungeons` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `fixed_team_monster`
+--
+
+DROP TABLE IF EXISTS `fixed_team_monster`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fixed_team_monster` (
+  `fixed_team_monster_id` int(11) NOT NULL AUTO_INCREMENT,
+  `monster_id` int(11) NOT NULL,
+  `sub_dungeon_id` int(11) NOT NULL,
+  PRIMARY KEY (`fixed_team_monster_id`),
+  KEY `fixed_team_monster_id_idx` (`fixed_team_monster_id`),
+  CONSTRAINT `ftm_fk_alt_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `alt_monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ftm_fk_subdungeon_id` FOREIGN KEY (`sub_dungeon_id`) REFERENCES `sub_dungeons` (`sub_dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `timestamps`
 --
 
