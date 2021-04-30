@@ -161,6 +161,7 @@ class EnBaseTextConverter(BaseTextConverter):
                                   reduce_join_txt='; ',
                                   skip_attr_all=True,
                                   atk=None,
+                                  force_atk=False,
                                   rcv=None,
                                   types=None,
                                   attributes=None,
@@ -169,13 +170,13 @@ class EnBaseTextConverter(BaseTextConverter):
                                   reduction_attributes=None):
         types = types or getattr(ls, 'types', [])
         attributes = attributes or getattr(ls, 'attributes', [])
-        hp_mult = hp or getattr(ls, 'hp', 1)
+        hp_mult = getattr(ls, 'hp', 1) if hp is None else hp
         # TODO: maybe we can just move min_atk and min_rcv in here
         # TODO: had to add all these getattr because this is being used in the active
         #       skill parser as well, is this right?
-        atk_mult = atk or getattr(ls, 'atk', 1)
-        rcv_mult = rcv or getattr(ls, 'rcv', 1)
-        damage_reduct = shield or getattr(ls, 'shield', 0)
+        atk_mult = getattr(ls, 'atk', 1) if atk is None else atk
+        rcv_mult = getattr(ls, 'rcv', 1) if rcv is None else rcv
+        damage_reduct = getattr(ls, 'shield', 0) if shield is None else shield
         reduct_att = reduction_attributes or getattr(ls, 'reduction_attributes', [])
 
         skill_text = self.fmt_multiplier_text(hp_mult, atk_mult, rcv_mult)

@@ -1482,7 +1482,7 @@ class LSRainbowMultPlusShield(LeaderSkill):
         super().__init__(170, ms, atk=self.min_atk, shield=shield)
 
     def text(self, converter) -> str:
-        return converter.attribute_match_text(self)
+        return converter.scaling_attribute_match_text(self)
 
 
 class LSMatchAttrPlusShield(LeaderSkill):
