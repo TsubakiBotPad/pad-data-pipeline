@@ -136,6 +136,43 @@ class JpLSTextConverter(JpBaseTextConverter):
                     skill_text += '同時攻撃で{}倍'.format(self.attributes_to_str(ls.match_attributes))
         return skill_text + '。'
 
+    def scaling_attribute_match_text(self, ls):
+        min_atk = ls.min_atk
+        min_attr = ls.min_attr
+
+        if min_atk < ls.max_atk:
+            if ls.min_atk == 1:
+                min_atk = 1 + (ls.max_atk - ls.min_atk) / (ls.max_attr - ls.min_attr)
+                min_attr += 1
+        else:
+            return self.attribute_match_text(ls)
+
+        skill_text = self.matching_n_or_more_attr(ls.match_attributes, ls.min_attr)
+        skill_text += 'で' + self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True,
+                                                            atk=1, rcv=1) + '。'
+
+        skill_text += self.matching_n_or_more_attr(ls.match_attributes, min_attr, is_range=ls.max_attr > min_attr)
+        skill_text += 'で' + self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True,
+                                                           atk=min_atk, shield=0)
+
+        if ls.max_atk > ls.min_atk:
+            skill_text += '、'
+            if ls.match_attributes == [0, 1, 2, 3, 4, 5]:
+                skill_text += '最大5色+回復で{}倍'.format(fmt_mult(ls.max_atk))
+            elif ls.max_attr < 5 and (len(ls.match_attributes) < 5 or 5 in ls.match_attributes):
+                skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.max_atk))
+            else:
+                if ls.match_attributes == [0, 1, 2, 3, 4]:
+                    skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.max_atk))
+                elif ls.match_attributes == [0, 1, 2, 3, 4, 5]:
+                    skill_text += '最大{}色({}色+回復)で{}倍'.format(ls.max_attr, ls.max_attr - 1, fmt_mult(ls.max_atk))
+                elif len(ls.match_attributes) > ls.max_attr:
+                    skill_text += '{}個ところまで{}倍'.format(str(ls.max_attr), fmt_mult(ls.max_atk))
+                else:
+                    skill_text += '同時攻撃で{}倍'.format(self.attributes_to_str(ls.match_attributes))
+        return skill_text + '。'
+
+
     def multi_attribute_match_text(self, ls):
         if not ls.match_attributes:
             return ''
