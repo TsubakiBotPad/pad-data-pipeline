@@ -50,20 +50,6 @@ class MonsterProcessor(object):
             item = AltMonster.from_csm(m)
             db.insert_or_update(item)
 
-    def _process_auto_override(self, db: DbWrapper):
-        logger.info('checking for auto name overrides')
-        for m in self.data.ownable_cards:
-            name = m.na_card.card.name
-            name_clean = remove_diacritics(name)
-            if name != name_clean:
-                existing_name = db.get_single_value(
-                    'select name_en_override from monsters where monster_id = {}'.format(m.monster_id),
-                    fail_on_empty=False)
-                if not existing_name:
-                    logger.info('applying name override (%s): %s -> %s', m.monster_id, name, name_clean)
-                    db.update_item('update monsters set name_en_override = "{}" where monster_id = {}'.format(
-                        name_clean, m.monster_id))
-
     def _process_monster_images(self, db):
         logger.info('monster images, hq_count=%s, anim_count=%s',
                     len(self.data.hq_image_monster_ids),
