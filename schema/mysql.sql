@@ -76,15 +76,12 @@ CREATE TABLE `active_skills` (
   PRIMARY KEY (`active_skill_id`),
   KEY `tstamp_idx` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `awakenings`
 --
 
 DROP TABLE IF EXISTS `awakenings`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `awakenings` (
   `awakening_id` int(11) NOT NULL AUTO_INCREMENT,
   `monster_id` int(11) NOT NULL,
@@ -143,85 +140,67 @@ CREATE TABLE `awoken_skills` (
   PRIMARY KEY (`awoken_skill_id`),
   KEY `tstamp_idx` (`tstamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `d_attributes`
 --
 
 DROP TABLE IF EXISTS `d_attributes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `d_attributes` (
   `attribute_id` int(11) NOT NULL,
   `name` varchar(30) NOT NULL,
   PRIMARY KEY (`attribute_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `d_egg_machine_types`
 --
 
 DROP TABLE IF EXISTS `d_egg_machine_types`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `d_egg_machine_types` (
   `egg_machine_type_id` int(11) NOT NULL,
   `name` text NOT NULL,
   PRIMARY KEY (`egg_machine_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `d_event_types`
 --
 
 DROP TABLE IF EXISTS `d_event_types`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `d_event_types` (
   `event_type_id` int(11) NOT NULL,
   `name` text NOT NULL,
   PRIMARY KEY (`event_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `d_servers`
 --
 
 DROP TABLE IF EXISTS `d_servers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `d_servers` (
   `server_id` int(11) NOT NULL,
   `name` text NOT NULL,
   PRIMARY KEY (`server_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `d_types`
 --
 
 DROP TABLE IF EXISTS `d_types`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `d_types` (
   `type_id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `deleted_rows`
 --
 
 DROP TABLE IF EXISTS `deleted_rows`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `deleted_rows` (
   `deleted_row_id` int(11) NOT NULL AUTO_INCREMENT,
   `table_name` text NOT NULL,
@@ -230,15 +209,12 @@ CREATE TABLE `deleted_rows` (
   PRIMARY KEY (`deleted_row_id`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `drops`
 --
 
 DROP TABLE IF EXISTS `drops`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `drops` (
   `drop_id` int(11) NOT NULL AUTO_INCREMENT,
   `encounter_id` int(11) NOT NULL,
@@ -290,15 +266,12 @@ CREATE TABLE `dungeon_type` (
   PRIMARY KEY (`tdt_seq`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `dungeons`
 --
 
 DROP TABLE IF EXISTS `dungeons`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dungeons` (
   `dungeon_id` int(11) NOT NULL,
   `name_ja` text NOT NULL,
@@ -318,15 +291,12 @@ CREATE TABLE `dungeons` (
   KEY `tdt_seq` (`series_id`),
   KEY `icon_seq` (`icon_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `egg_machines`
 --
 
 DROP TABLE IF EXISTS `egg_machines`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `egg_machines` (
   `egg_machine_id` int(11) NOT NULL AUTO_INCREMENT,
   `server_id` int(11) NOT NULL,
@@ -346,15 +316,12 @@ CREATE TABLE `egg_machines` (
   CONSTRAINT `egg_machine_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `egg_machines_ibfk_1` FOREIGN KEY (`egg_machine_type_id`) REFERENCES `d_egg_machine_types` (`egg_machine_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=131 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `egg_machines_monsters`
 --
 
 DROP TABLE IF EXISTS `egg_machines_monsters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `egg_machines_monsters` (
   `egg_machine_monster_id` int(11) NOT NULL AUTO_INCREMENT,
   `monster_id` int(11) NOT NULL,
@@ -362,15 +329,12 @@ CREATE TABLE `egg_machines_monsters` (
   `egg_machine_id` int(11) NOT NULL,
   PRIMARY KEY (`egg_machine_monster_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `encounters`
 --
 
 DROP TABLE IF EXISTS `encounters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `encounters` (
   `encounter_id` int(11) NOT NULL AUTO_INCREMENT,
   `dungeon_id` int(11) NOT NULL,
@@ -433,15 +397,12 @@ CREATE TABLE `enemy_data` (
   PRIMARY KEY (`enemy_id`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `enemy_skills`
 --
 
 DROP TABLE IF EXISTS `enemy_skills`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enemy_skills` (
   `enemy_skill_id` int(11) NOT NULL,
   `name_ja` text NOT NULL,
@@ -458,15 +419,12 @@ CREATE TABLE `enemy_skills` (
   PRIMARY KEY (`enemy_skill_id`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `evolutions`
 --
 
 DROP TABLE IF EXISTS `evolutions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `evolutions` (
   `evolution_id` int(11) NOT NULL AUTO_INCREMENT,
   `evolution_type` int(11) NOT NULL,
@@ -496,15 +454,12 @@ CREATE TABLE `evolutions` (
   CONSTRAINT `evolutions_fk_mat_5_id` FOREIGN KEY (`mat_5_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `evolutions_fk_to_id` FOREIGN KEY (`to_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=30791 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `exchanges`
 --
 
 DROP TABLE IF EXISTS `exchanges`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `exchanges` (
   `exchange_id` int(11) NOT NULL AUTO_INCREMENT,
   `trade_id` int(11) NOT NULL,
@@ -527,15 +482,12 @@ CREATE TABLE `exchanges` (
   CONSTRAINT `exchanges_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `exchanges_fk_target_monster_id` FOREIGN KEY (`target_monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1949 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `leader_skill_tags`
 --
 
 DROP TABLE IF EXISTS `leader_skill_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `leader_skill_tags` (
   `leader_skill_tag_id` int(11) NOT NULL AUTO_INCREMENT,
   `name_ja` text NOT NULL,
@@ -596,15 +548,12 @@ CREATE TABLE `leader_skills` (
   PRIMARY KEY (`leader_skill_id`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `monsters`
 --
 
 DROP TABLE IF EXISTS `monsters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `monsters` (
   `monster_id` int(11) NOT NULL,
   `monster_no_jp` int(11) NOT NULL,
@@ -675,15 +624,25 @@ CREATE TABLE `monsters` (
   CONSTRAINT `monsters_fk_type_2_id` FOREIGN KEY (`type_2_id`) REFERENCES `d_types` (`type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `monsters_fk_type_3_id` FOREIGN KEY (`type_3_id`) REFERENCES `d_types` (`type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `monster_name_overrides`
+--
+
+DROP TABLE IF EXISTS `monster_name_overrides`;
+CREATE TABLE `monster_name_overrides` (
+  `monster_id` int(11) NOT NULL,
+  `name_en` text NOT NULL,
+  `is_translation` tinyint(1) NOT NULL DEFAULT '1',
+  `tstamp` int(11) NOT NULL,
+  CONSTRAINT `monster_name_overrides_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table `alt_monsters`
 --
 
 DROP TABLE IF EXISTS `alt_monsters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `alt_monsters` (
   `alt_monster_id` int(11) NOT NULL,
   `canonical_id` int(11) NOT NULL,
@@ -694,15 +653,12 @@ CREATE TABLE `alt_monsters` (
   PRIMARY KEY (`alt_monster_id`),
   KEY `tstamp_idx` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `news`
 --
 
 DROP TABLE IF EXISTS `news`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `news` (
   `news_id` int(11) NOT NULL,
   `server` varchar(2) NOT NULL,
@@ -713,15 +669,12 @@ CREATE TABLE `news` (
   PRIMARY KEY (`news_id`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `purchases`
 --
 
 DROP TABLE IF EXISTS `purchases`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `purchases` (
   `purchase_id` int(11) NOT NULL AUTO_INCREMENT,
   `server_id` int(11) NOT NULL,
@@ -740,15 +693,12 @@ CREATE TABLE `purchases` (
   CONSTRAINT `purchases_fk_server_id` FOREIGN KEY (`server_id`) REFERENCES `d_servers` (`server_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `purchases_fk_target_monster_id` FOREIGN KEY (`target_monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3610 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `rank_rewards`
 --
 
 DROP TABLE IF EXISTS `rank_rewards`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rank_rewards` (
   `rank` int(11) NOT NULL,
   `exp` bigint(20) NOT NULL,
@@ -762,15 +712,12 @@ CREATE TABLE `rank_rewards` (
   PRIMARY KEY (`rank`),
   KEY `tstamp` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `schedule`
 --
 
 DROP TABLE IF EXISTS `schedule`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `schedule` (
   `event_id` int(11) NOT NULL AUTO_INCREMENT,
   `server_id` int(11) NOT NULL,
@@ -875,15 +822,12 @@ CREATE TABLE `skill_condition` (
   PRIMARY KEY (`condition_id`),
   KEY `t_condition` (`condition_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `sub_dungeons`
 --
 
 DROP TABLE IF EXISTS `sub_dungeons`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sub_dungeons` (
   `sub_dungeon_id` int(11) NOT NULL,
   `dungeon_id` int(11) NOT NULL,
@@ -916,30 +860,24 @@ CREATE TABLE `sub_dungeons` (
   KEY `dungeon_id_idx` (`dungeon_id`),
   CONSTRAINT `subdungeon_fk_dungeon_id` FOREIGN KEY (`dungeon_id`) REFERENCES `dungeons` (`dungeon_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `timestamps`
 --
 
 DROP TABLE IF EXISTS `timestamps`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `timestamps` (
   `name` varchar(40) NOT NULL,
   `tstamp` int(11) NOT NULL,
   PRIMARY KEY (`name`),
   KEY `tstamp_idx` (`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `wave_data`
 --
 
 DROP TABLE IF EXISTS `wave_data`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `wave_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server` varchar(2) NOT NULL,
