@@ -629,6 +629,7 @@ CREATE TABLE `monsters` (
   `diff_awakenings` tinyint(1) NOT NULL DEFAULT '0',
   `diff_leader_skill` tinyint(1) NOT NULL DEFAULT '0',
   `diff_stats` tinyint(1) NOT NULL DEFAULT '0',
+  `base_id` int(11) NOT NULL,
   `exp` int(11) NOT NULL,
   `level` int(11) NOT NULL,
   `rarity` int(11) NOT NULL,

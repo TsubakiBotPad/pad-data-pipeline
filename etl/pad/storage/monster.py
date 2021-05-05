@@ -111,6 +111,7 @@ class Monster(SimpleSqlItem):
             diff_awakenings=diff_awakenings,
             diff_leader_skill=diff_leader_skill,
             diff_active_skill=diff_active_skill,
+            base_id=jp_card.base_id,
             series_id=Series.UNSORTED_SERIES_ID,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
@@ -166,6 +167,7 @@ class Monster(SimpleSqlItem):
                  diff_awakenings: bool = None,
                  diff_leader_skill: bool = None,
                  diff_active_skill: bool = None,
+                 base_id: int = None,
                  series_id: int = None,
                  has_animation: bool = None,
                  has_hqimage: bool = None,
@@ -220,6 +222,7 @@ class Monster(SimpleSqlItem):
         self.diff_awakenings = diff_awakenings
         self.diff_leader_skill = diff_leader_skill
         self.diff_active_skill = diff_active_skill
+        self.base_id = base_id
         self.series_id = series_id
         self.has_animation = has_animation
         self.has_hqimage = has_hqimage
