@@ -111,7 +111,7 @@ class Monster(SimpleSqlItem):
             diff_awakenings=diff_awakenings,
             diff_leader_skill=diff_leader_skill,
             diff_active_skill=diff_active_skill,
-            base_id=o.no_to_id(jp_card.base_id),
+            base_id=o.jp_card.no_to_id(jp_card.base_id),
             series_id=Series.UNSORTED_SERIES_ID,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
