@@ -24,20 +24,21 @@ class Monster(SimpleSqlItem):
         jp_card = o.jp_card.card
         na_card = o.na_card.card
         kr_card = o.kr_card.card
+        cur_card = o.cur_card.card
 
-        max_level = jp_card.max_level
+        max_level = cur_card.max_level
         if max_level == 1:
             exp = 0
         else:
-            exp = round(jp_card.xp_curve().value_at(max_level))
+            exp = round(cur_card.xp_curve().value_at(max_level))
 
-        awakenings = format_int_list(jp_card.awakenings)
-        super_awakenings = format_int_list(jp_card.super_awakenings)
-        orb_skin_id = jp_card.orb_skin_id or None
-        voice_id_jp = jp_card.voice_id or None if o.jp_card.server == Server.jp else None
-        voice_id_na = na_card.voice_id or None if o.na_card.server == Server.na else None
-        linked_monster_id = o.jp_card.linked_monster_id or o.na_card.linked_monster_id
-        latent_slots = 8 if jp_card.latent_slot_unlock_flag else 6
+        awakenings = format_int_list(cur_card.awakenings)
+        super_awakenings = format_int_list(cur_card.super_awakenings)
+        orb_skin_id = cur_card.orb_skin_id or None
+        voice_id_jp = cur_card.voice_id or None if o.jp_card.server == Server.jp else None
+        voice_id_na = cur_card.voice_id or None if o.na_card.server == Server.na else None
+        linked_monster_id = o.cur_card.linked_monster_id or o.jp_card.linked_monster_id or o.na_card.linked_monster_id
+        latent_slots = 8 if cur_card.latent_slot_unlock_flag else 6
 
         def none_or(value: int):
             return value if value > -1 else None
@@ -53,10 +54,10 @@ class Monster(SimpleSqlItem):
                 return s
             return s.raw_data
 
-        diff_stats = diff_possible and (jp_card.max_hp != na_card.max_hp or
-                                        jp_card.max_atk != na_card.max_atk or
-                                        jp_card.max_rcv != na_card.max_rcv or
-                                        jp_card.max_level != na_card.max_level or
+        diff_stats = diff_possible and (jp_card.max_hp != na_card.max_hp or         # This whole block is only
+                                        jp_card.max_atk != na_card.max_atk or       #  applicable when dealing with
+                                        jp_card.max_rcv != na_card.max_rcv or       #  JP cards.  Ignore when building
+                                        jp_card.max_level != na_card.max_level or   #  a NA database.
                                         jp_card.limit_mult != na_card.limit_mult)
         diff_awakenings = diff_possible and (jp_card.awakenings != na_card.awakenings or
                                              jp_card.super_awakenings != na_card.super_awakenings)
@@ -74,34 +75,34 @@ class Monster(SimpleSqlItem):
             name_en=na_card.name,
             name_ko=kr_card.name,
             pronunciation_ja=jp_card.furigana,
-            hp_min=jp_card.min_hp,
-            hp_max=jp_card.max_hp,
-            hp_scale=jp_card.hp_scale,
-            atk_min=jp_card.min_atk,
-            atk_max=jp_card.max_atk,
-            atk_scale=jp_card.atk_scale,
-            rcv_min=jp_card.min_rcv,
-            rcv_max=jp_card.max_rcv,
-            rcv_scale=jp_card.rcv_scale,
-            cost=jp_card.cost,
+            hp_min=cur_card.min_hp,
+            hp_max=cur_card.max_hp,
+            hp_scale=cur_card.hp_scale,
+            atk_min=cur_card.min_atk,
+            atk_max=cur_card.max_atk,
+            atk_scale=cur_card.atk_scale,
+            rcv_min=cur_card.min_rcv,
+            rcv_max=cur_card.max_rcv,
+            rcv_scale=cur_card.rcv_scale,
+            cost=cur_card.cost,
             exp=exp,
             level=max_level,
-            rarity=jp_card.rarity,
-            limit_mult=jp_card.limit_mult,
-            attribute_1_id=jp_card.attr_id,
-            attribute_2_id=none_or(jp_card.sub_attr_id),
+            rarity=cur_card.rarity,
+            limit_mult=cur_card.limit_mult,
+            attribute_1_id=cur_card.attr_id,
+            attribute_2_id=none_or(cur_card.sub_attr_id),
             leader_skill_id=jp_card.leader_skill_id,
             active_skill_id=jp_card.active_skill_id,
-            type_1_id=jp_card.type_1_id,
-            type_2_id=none_or(jp_card.type_2_id),
-            type_3_id=none_or(jp_card.type_3_id),
+            type_1_id=cur_card.type_1_id,
+            type_2_id=none_or(cur_card.type_2_id),
+            type_3_id=none_or(cur_card.type_3_id),
             awakenings=awakenings,
             super_awakenings=super_awakenings,
-            inheritable=jp_card.inheritable,
-            stackable=jp_card.is_stackable,
-            fodder_exp=int(jp_card.feed_xp_curve().value_at(max_level)),
-            sell_gold=int(jp_card.sell_gold_curve().value_at(max_level)),
-            sell_mp=jp_card.sell_mp,
+            inheritable=cur_card.inheritable,
+            stackable=cur_card.is_stackable,
+            fodder_exp=int(cur_card.feed_xp_curve().value_at(max_level)),
+            sell_gold=int(cur_card.sell_gold_curve().value_at(max_level)),
+            sell_mp=cur_card.sell_mp,
             buy_mp=None,
             reg_date=date.today().isoformat(),
             on_jp=on_jp,
@@ -111,7 +112,7 @@ class Monster(SimpleSqlItem):
             diff_awakenings=diff_awakenings,
             diff_leader_skill=diff_leader_skill,
             diff_active_skill=diff_active_skill,
-            base_id=o.jp_card.no_to_id(jp_card.base_id),
+            base_id=o.cur_card.no_to_id(cur_card.base_id),
             series_id=Series.UNSORTED_SERIES_ID,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
@@ -309,30 +310,31 @@ class ActiveSkill(SimpleSqlItem):
         jp_skill = css.jp_skill
         na_skill = css.na_skill
         kr_skill = css.kr_skill
+        cur_skill = css.cur_skill
 
         jp_as_converter = JpASTextConverter()
-        ja_description = jp_skill.full_text(jp_as_converter)
+        ja_description = cur_skill.full_text(jp_as_converter)
 
         en_as_converter = EnASTextConverter()
-        en_description = jp_skill.full_text(en_as_converter)
+        en_description = cur_skill.full_text(en_as_converter)
 
         skill_type_tags = skill_text_typing.parse_as_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
-        kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
-        ko_desc = kr_skill.raw_description if jp_skill != kr_skill else en_description
+        kr_name = kr_skill.name if cur_skill != kr_skill else na_skill.name
+        ko_desc = kr_skill.raw_description if cur_skill != kr_skill else en_description
 
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
-            name_ja=jp_skill.name,
+            name_ja=cur_skill.name,
             name_en=na_skill.name,
             name_ko=kr_name,
             desc_ja=ja_description,
             desc_en=en_description,
             desc_ko=ko_desc,
-            turn_max=jp_skill.turn_max,
-            turn_min=jp_skill.turn_min,
+            turn_max=cur_skill.turn_max,
+            turn_min=cur_skill.turn_min,
             tags=tags)
 
     def __init__(self,
@@ -373,17 +375,18 @@ class LeaderSkill(SimpleSqlItem):
         jp_skill = css.jp_skill
         na_skill = css.na_skill
         kr_skill = css.kr_skill
+        cur_skill = css.cur_skill
 
         en_ls_converter = EnLSTextConverter()
         jp_ls_converter = JpLSTextConverter()
-        en_description = jp_skill.full_text(en_ls_converter) or na_skill.raw_description
-        ja_description = jp_skill.full_text(jp_ls_converter) or jp_skill.raw_description
+        en_description = cur_skill.full_text(en_ls_converter) or na_skill.raw_description
+        ja_description = cur_skill.full_text(jp_ls_converter) or jp_skill.raw_description
         skill_type_tags = skill_text_typing.parse_ls_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
-        kr_name = kr_skill.name if jp_skill != kr_skill else na_skill.name
-        ko_desc = kr_skill.raw_description if jp_skill != kr_skill else en_description
+        kr_name = kr_skill.name if cur_skill != kr_skill else na_skill.name
+        ko_desc = kr_skill.raw_description if cur_skill != kr_skill else en_description
 
         return LeaderSkill(
             leader_skill_id=jp_skill.skill_id,
@@ -393,14 +396,14 @@ class LeaderSkill(SimpleSqlItem):
             desc_ja=ja_description,
             desc_en=en_description,
             desc_ko=ko_desc,
-            max_hp=jp_skill.hp,
-            max_atk=jp_skill.atk,
-            max_rcv=jp_skill.rcv,
-            max_shield=jp_skill.shield,
-            max_combos=jp_skill.extra_combos,
-            mult_bonus_damage=jp_skill.mult_bonus_damage,
-            bonus_damage=jp_skill.bonus_damage,
-            extra_time=jp_skill.extra_time,
+            max_hp=cur_skill.hp,
+            max_atk=cur_skill.atk,
+            max_rcv=cur_skill.rcv,
+            max_shield=cur_skill.shield,
+            max_combos=cur_skill.extra_combos,
+            mult_bonus_damage=cur_skill.mult_bonus_damage,
+            bonus_damage=cur_skill.bonus_damage,
+            extra_time=cur_skill.extra_time,
             tags=tags)
 
     def __init__(self,
@@ -450,8 +453,8 @@ class Awakening(SimpleSqlItem):
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> List['Awakening']:
-        awakenings = [(a_id, False) for a_id in o.jp_card.card.awakenings]
-        awakenings.extend([(sa_id, True) for sa_id in o.jp_card.card.super_awakenings])
+        awakenings = [(a_id, False) for a_id in o.cur_card.card.awakenings]
+        awakenings.extend([(sa_id, True) for sa_id in o.cur_card.card.super_awakenings])
         results = []
         for i, v in enumerate(awakenings):
             results.append(Awakening(
@@ -503,11 +506,11 @@ class Evolution(SimpleSqlItem):
     KEY_COL = 'evolution_id'
 
     @staticmethod
-    def from_csm(o: CrossServerCard, ancestor: CrossServerCard) -> Optional['Evolution']:
-        card = o.jp_card.card
+    def from_csm(o: CrossServerCard) -> Optional['Evolution']:
+        card = o.cur_card.card
 
         def convert(x: MonsterNo) -> MonsterId:
-            return o.jp_card.no_to_id(x)
+            return o.cur_card.no_to_id(x)
 
         def safe_convert(x: MonsterNo) -> MonsterId:
             return convert(x) if x else None
@@ -518,16 +521,9 @@ class Evolution(SimpleSqlItem):
         elif 49 in card.awakenings:
             reversible = True
 
-        if not ancestor.jp_card.card.ancestor_id:
-            evolution_type = EvolutionType.evo.value  # Evo
-        elif reversible:
-            evolution_type = EvolutionType.reversible.value  # Ult/Awoken/Assist
-        else:
-            evolution_type = EvolutionType.non_reversible.value  # Reincarn/SuperReincarn
-
         return Evolution(
             evolution_id=None,  # Key that is looked up or inserted
-            evolution_type=evolution_type,
+            evolution_type=0,  # Eventually remove this.  evolution_type is deprecated and barely works as is
             reversible=reversible,
             from_id=convert(card.ancestor_id),
             to_id=convert(card.monster_no),
@@ -587,7 +583,7 @@ class AltMonster(SimpleSqlItem):
         return AltMonster(
             alt_monster_id=o.monster_id,
             canonical_id=o.monster_id % 1000000,
-            active_skill_id=o.jp_card.card.active_skill_id,
+            active_skill_id=o.cur_card.card.active_skill_id,
             reg_date=date.today().isoformat(),
             is_alt=20000 <= o.monster_id)
 

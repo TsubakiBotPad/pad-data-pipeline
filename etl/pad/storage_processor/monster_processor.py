@@ -1,7 +1,6 @@
 import logging
 
 from pad.common import pad_util
-from pad.common.utils import remove_diacritics
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
 from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution, MonsterWithExtraImageInfo, \
@@ -72,7 +71,7 @@ class MonsterProcessor(object):
                     db.insert_or_update(item)
                 except (KeyboardInterrupt, SystemExit):
                     raise
-                except:
+                except Exception:
                     human_fix_logger.fatal('Failed to insert item (probably new awakening): %s',
                                            pad_util.json_string_dump(item, pretty=True))
 
@@ -85,11 +84,9 @@ class MonsterProcessor(object):
     def _process_evolutions(self, db):
         logger.info('loading evolutions')
         for m in self.data.ownable_cards:
-            if not m.jp_card.card.ancestor_id:
+            if not m.cur_card.card.ancestor_id:
                 continue
 
-            ancestor_id = m.jp_card.no_to_id(m.jp_card.card.ancestor_id)
-            ancestor = self.data.card_by_monster_id(ancestor_id)
-            item = Evolution.from_csm(m, ancestor)
+            item = Evolution.from_csm(m)
             if item:
                 db.insert_or_update(item)

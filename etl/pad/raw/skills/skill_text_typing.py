@@ -100,7 +100,7 @@ def format_conditions(skill_conditions):
 def parse_as_conditions(skill, child=False) -> List[ASCondition]:
     """Takes the processor-generated active skill text and produces a list of conditions."""
     if not child:
-        skill = skill.jp_skill
+        skill = skill.cur_skill
     results = set()
 
     if isinstance(skill, ASMultiPartSkill):
@@ -285,7 +285,7 @@ def parse_as_conditions(skill, child=False) -> List[ASCondition]:
 def parse_ls_conditions(skill, child=False) -> List[LSCondition]:
     """Takes the processor-generated leader skill text and produces a list of conditions."""
     if not child:
-        skill = skill.jp_skill
+        skill = skill.cur_skill
     results = set()
 
     if isinstance(skill, LSMultiPartSkill):

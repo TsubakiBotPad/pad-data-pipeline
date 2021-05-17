@@ -62,9 +62,9 @@ class DungeonContentProcessor(object):
         if not wave_items:
             return None
 
-        normal_or_tech = dungeon.jp_dungeon.full_dungeon_type in [RawDungeonType.NORMAL,
-                                                                  RawDungeonType.TECHNICAL]
-        try_common_monsters = normal_or_tech and dungeon.jp_dungeon.dungeon_id < 1000
+        normal_or_tech = dungeon.cur_dungeon.full_dungeon_type in [RawDungeonType.NORMAL,
+                                                                   RawDungeonType.TECHNICAL]
+        try_common_monsters = normal_or_tech and dungeon.cur_dungeon.dungeon_id < 1000
 
         return self.converter.convert(wave_items, try_common_monsters)
 
@@ -77,15 +77,15 @@ class DungeonContentProcessor(object):
             seen_enemies = set()
             for slot in stage.slots:
                 csc = self.data.card_by_monster_id(slot.monster_id)
-                card = csc.jp_card.card
+                card = csc.cur_card.card
                 enemy = card.enemy()
                 seen_enemies.add(slot.monster_id)
 
                 turns = card.enemy_turns
-                if dungeon.jp_dungeon.full_dungeon_type == RawDungeonType.TECHNICAL and card.enemy_turns_alt:
+                if dungeon.cur_dungeon.full_dungeon_type == RawDungeonType.TECHNICAL and card.enemy_turns_alt:
                     turns = card.enemy_turns_alt
 
-                sd = sub_dungeon.jp_sub_dungeon
+                sd = sub_dungeon.cur_sub_dungeon
                 hp = int(round(sd.hp_mult * enemy.hp.value_at(slot.monster_level)))
                 atk = int(round(sd.atk_mult * enemy.atk.value_at(slot.monster_level)))
                 defence = int(round(sd.def_mult * enemy.defense.value_at(slot.monster_level)))
