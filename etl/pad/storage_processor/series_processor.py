@@ -68,7 +68,7 @@ class SeriesProcessor(object):
                 # No useful data from this card
                 continue
 
-            group_id = csc.jp_card.card.group_id
+            group_id = csc.cur_card.card.group_id
             group_id_to_series_ids[group_id].add(series_id)
 
         # Now loop through again and see if we can apply any series via group mapping.
@@ -79,7 +79,7 @@ class SeriesProcessor(object):
                 # Series already set.
                 continue
 
-            group_id = csc.jp_card.card.group_id
+            group_id = csc.cur_card.card.group_id
             possible_series = group_id_to_series_ids[group_id]
             if len(possible_series) == 1:
                 group_series_id = list(possible_series)[0]

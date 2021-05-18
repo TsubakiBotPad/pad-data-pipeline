@@ -29,7 +29,7 @@ class EnemySkill(SimpleSqlItem):
 
     @staticmethod
     def from_cseb(o: CrossServerESInstance) -> 'EnemySkill':
-        exemplar = o.jp_skill.behavior
+        exemplar = o.cur_skill.behavior
 
         has_attack = hasattr(exemplar, 'attack') and exemplar.attack
         min_hits = exemplar.attack.min_hits if has_attack else 0

@@ -35,7 +35,7 @@ class EnemySkillProcessor(object):
         for csc in self.data.all_cards:
             for cseb in csc.enemy_behavior:
                 # Skip fake skills (loaded via the static import) and logic
-                if cseb.enemy_skill_id <= 0 or isinstance(cseb.jp_skill.behavior, ESLogic):
+                if cseb.enemy_skill_id <= 0 or isinstance(cseb.cur_skill.behavior, ESLogic):
                     continue
 
                 if cseb.enemy_skill_id in used_skills:

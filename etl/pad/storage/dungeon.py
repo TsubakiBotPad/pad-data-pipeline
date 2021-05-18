@@ -17,7 +17,7 @@ class Dungeon(SimpleSqlItem):
             name_ja=o.jp_dungeon.clean_name,
             name_en=o.na_dungeon.clean_name,
             name_ko=o.kr_dungeon.clean_name,
-            dungeon_type=o.jp_dungeon.full_dungeon_type.value,
+            dungeon_type=o.cur_dungeon.full_dungeon_type.value,
             visible=True)
 
     def __init__(self,
@@ -96,13 +96,13 @@ class SubDungeon(SimpleSqlItem):
                 name_ja=sd.jp_sub_dungeon.clean_name,
                 name_en=sd.na_sub_dungeon.clean_name,
                 name_ko=sd.kr_sub_dungeon.clean_name,
-                floors=sd.jp_sub_dungeon.floors,
-                stamina=sd.jp_sub_dungeon.stamina,
-                hp_mult=sd.jp_sub_dungeon.hp_mult,
-                atk_mult=sd.jp_sub_dungeon.atk_mult,
-                def_mult=sd.jp_sub_dungeon.def_mult,
-                s_rank=sd.jp_sub_dungeon.score,
-                technical=sd.jp_sub_dungeon.technical))
+                floors=sd.cur_sub_dungeon.floors,
+                stamina=sd.cur_sub_dungeon.stamina,
+                hp_mult=sd.cur_sub_dungeon.hp_mult,
+                atk_mult=sd.cur_sub_dungeon.atk_mult,
+                def_mult=sd.cur_sub_dungeon.def_mult,
+                s_rank=sd.cur_sub_dungeon.score,
+                technical=sd.cur_sub_dungeon.technical))
         return results
 
     def __init__(self,
