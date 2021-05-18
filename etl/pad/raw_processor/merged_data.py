@@ -1,7 +1,6 @@
 """
 Data from the different sources in the same server, merged together.
 """
-
 from datetime import datetime
 from typing import List, Optional
 
@@ -74,8 +73,11 @@ class MergedCard(pad_util.Printable):
         self.enemy_skills = enemy_skills
 
     def no_to_id(self, monster_no: MonsterNo) -> MonsterId:
-        return self.id_mapper(monster_no)
+        return server_monster_id_fn(self.server)(monster_no)
 
     def __str__(self):
         return 'MergedCard({} - {} - {} [es:{}])'.format(
             repr(self.card), repr(self.active_skill), repr(self.leader_skill), len(self.enemy_skills))
+
+    def __copy__(self):
+        return MergedCard(self.server, self.card, self.active_skill, self.leader_skill, self.enemy_skills[:])

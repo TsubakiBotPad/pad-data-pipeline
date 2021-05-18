@@ -12,7 +12,7 @@ ESTextConverter = EnESTextConverter()
 
 def save_monster_behavior(file_path: str, csc: CrossServerCard, mb: MonsterBehavior):
     output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)
-    card = csc.jp_card.card
+    card = csc.cur_card.card
     output += '\nmonster size: {}'.format(card.unknown_009)
     output += '\nnew AI: {}'.format(card.use_new_ai)
     output += '\nstart/max counter: {}'.format(card.enemy_skill_max_counter)
@@ -161,7 +161,7 @@ def format_behavior(indent_str, behavior: Behavior, library) -> str:
 
 def save_behavior_plain(file_path: str, csc: CrossServerCard, behavior: List[ESInstance]):
     output = '#{} - {}'.format(csc.monster_id, csc.na_card.card.name)
-    card = csc.jp_card.card
+    card = csc.cur_card.card
     output += '\nmonster size: {}'.format(card.unknown_009)
     output += '\nnew AI: {}'.format(card.use_new_ai)
     output += '\nstart/max counter: {}'.format(card.enemy_skill_max_counter)
