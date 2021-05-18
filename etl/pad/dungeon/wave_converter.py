@@ -37,7 +37,7 @@ class ProcessedFloor(object):
         entry_mp = 0
 
         for wave_card in entry_waves:
-            enemy_data = wave_card.card.jp_card.card.enemy()
+            enemy_data = wave_card.card.cur_card.card.enemy()
             enemy_level = wave_card.wave_item.monster_level
 
             entry_coins += wave_card.wave_item.get_coins()
@@ -45,7 +45,7 @@ class ProcessedFloor(object):
             xp += enemy_data.xp.value_at(enemy_level)
 
             if wave_card.drop_card:
-                entry_mp += wave_card.drop_card.jp_card.card.sell_mp
+                entry_mp += wave_card.drop_card.cur_card.card.sell_mp
 
         self.entry_count += 1
         self.coins.append(entry_coins)

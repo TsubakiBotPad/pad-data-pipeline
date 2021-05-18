@@ -20,7 +20,7 @@ class SubDungeon(pad_util.Printable):
     def __init__(self, dungeon_id: DungeonId, raw: List[Any]):
         self.sub_dungeon_id = SubDungeonId(dungeon_id * 1000 + int(raw[0]))
         self.simple_sub_dungeon_id = int(raw[0])
-        self.raw_name = raw[1]
+        self.raw_name = self.name = raw[1]
         self.clean_name = pad_util.strip_colors(self.raw_name)
         self.floors = int(raw[2])
         self.rflags1 = int(raw[3])

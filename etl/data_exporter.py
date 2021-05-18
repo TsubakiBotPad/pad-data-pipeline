@@ -38,6 +38,7 @@ def parse_args():
                               help="Path to a folder where output should be saved")
     input_group.add_argument("--image_data_only", default=False, action="store_true",
                              help="Should we only dump image availability")
+    input_group.add_argument("--server", default="JP", help="Server to build for")
 
     help_group = parser.add_argument_group("Help")
     help_group.add_argument("-h", "--help", action="help",
@@ -87,7 +88,16 @@ def dump_data(args):
     kr_db.load_database(skip_extra=True)
 
     print('Merging and saving')
-    cross_db = CrossServerDatabase(jp_db, na_db, kr_db)
+    if args.server.lower() == "jp":
+        server = Server.jp
+    elif args.server.lower() == "na":
+        server = Server.na
+    elif args.server.lower() == "kr":
+        server = Server.kr
+    else:
+        raise ValueError("Server must be JP, NA, or KR")
+
+    cross_db = CrossServerDatabase(jp_db, na_db, kr_db, server)
     save_cross_database(output_dir, cross_db)
 
 
@@ -124,7 +134,7 @@ def save_cross_database(output_dir: str, db: CrossServerDatabase):
 # Write top level info for the monster
 def dump_monster(f, c):
     f.write('#{} {}\n'.format(c.monster_id, c.na_card.card.name))
-    card_info = c.jp_card.card
+    card_info = c.cur_card.card
     f.write('HP: {} ATK: {} RCV: {} LB: {}\n'.format(card_info.max_hp,
                                                      card_info.max_atk,
                                                      card_info.max_rcv,
@@ -146,21 +156,22 @@ def dump_skill(f, css, converter, tag_extractor_fn):
     jp_skill = css.jp_skill
     na_skill = css.na_skill
     kr_skill = css.kr_skill
+    cur_skill = css.cur_skill
     skill_type_tags = tag_extractor_fn(css)
 
-    f.write('# {}/{} - {}\n'.format(jp_skill.skill_id, jp_skill.skill_type, na_skill.name))
+    f.write('# {}/{} - {}\n'.format(cur_skill.skill_id, cur_skill.skill_type, na_skill.name))
     f.write('Tags: {}\n'.format(','.join(map(lambda x: x.name, skill_type_tags))))
-    if isinstance(jp_skill, LeaderSkill):
-        if jp_skill.extra_combos:
+    if isinstance(cur_skill, LeaderSkill):
+        if cur_skill.extra_combos:
             f.write('Stats: [{}, {}, {}, {}, +{}]\n'.format(
-                jp_skill.hp, jp_skill.atk, jp_skill.rcv, jp_skill.shield, jp_skill.extra_combos))
+                cur_skill.hp, cur_skill.atk, cur_skill.rcv, cur_skill.shield, cur_skill.extra_combos))
         else:
-            f.write('Stats: [{}, {}, {}, {}]\n'.format(jp_skill.hp, jp_skill.atk, jp_skill.rcv, jp_skill.shield))
+            f.write('Stats: [{}, {}, {}, {}]\n'.format(cur_skill.hp, cur_skill.atk, cur_skill.rcv, cur_skill.shield))
 
     f.write('Game: {}\n'.format(na_skill.raw_description))
-    f.write('JP: {}\n'.format(jp_skill.full_text(converter[0]) or jp_skill.raw_description))
-    f.write('EN: {}\n'.format(jp_skill.full_text(converter[1]) or na_skill.raw_description))
-    f.write('KR: {}\n'.format(jp_skill.full_text(converter[2]) or kr_skill.raw_description))
+    f.write('JP: {}\n'.format(cur_skill.full_text(converter[0]) or jp_skill.raw_description))
+    f.write('EN: {}\n'.format(cur_skill.full_text(converter[1]) or na_skill.raw_description))
+    f.write('KR: {}\n'.format(cur_skill.full_text(converter[2]) or kr_skill.raw_description))
     f.write('\n')
 
 
@@ -168,11 +179,12 @@ def dump_enemy_skill(f, css: CrossServerEnemySkill, converter):
     jp_skill = css.jp_skill
     na_skill = css.na_skill
     kr_skill = css.kr_skill
-    f.write('# {}/{} - {}\n'.format(jp_skill.enemy_skill_id, jp_skill.type, na_skill.name))
-    if jp_skill.type not in BEHAVIOR_MAP:
+    cur_skill = css.cur_skill
+    f.write('# {}/{} - {}\n'.format(cur_skill.enemy_skill_id, cur_skill.type, na_skill.name))
+    if cur_skill.type not in BEHAVIOR_MAP:
         f.write('Error: Skill Type not in JP Skill Map\n')
         return
-    skill = BEHAVIOR_MAP[jp_skill.type](jp_skill)
+    skill = BEHAVIOR_MAP[cur_skill.type](cur_skill)
     f.write('JP: {}\n'.format(skill.description(converter[0])))
     f.write('EN: {}\n'.format(skill.description(converter[1])))
     f.write('KR: {}\n'.format(skill.description(converter[2])))
