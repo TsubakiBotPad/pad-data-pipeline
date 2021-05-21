@@ -89,5 +89,5 @@ def pull_data(args):
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    pull_data(args)
+    input_args = parse_args()
+    pull_data(input_args)
