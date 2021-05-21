@@ -44,7 +44,7 @@ def load_data(args):
     dry_run = not args.doupdates
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
-    data = db_wrapper.fetch_data("SELECT * FROM dadguide.egg_machines")
+    data = db_wrapper.fetch_data("SELECT * FROM egg_machines")
     for machine_sql in data:
         egg_machine_id = machine_sql['egg_machine_id']
         contents = ast.literal_eval(machine_sql['contents'])

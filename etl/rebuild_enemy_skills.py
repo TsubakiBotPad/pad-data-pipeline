@@ -6,7 +6,7 @@ Regenerates the flattened enemy skill list for all monsters.
 import argparse
 import logging
 import os
-from typing import List, Set
+from typing import List
 
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior, LevelBehavior
 from pad.common.shared_types import Server
@@ -193,7 +193,7 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
             is_death_action = isinstance(b.behavior, ESDeathAction)
             if is_action and is_used and already_in_unused and not is_death_action:
                 unused_actions.append(b)
-        except:
+        except Exception:  # HUH?
             print('oops')
 
     for level_behavior in skill_listings:
@@ -275,5 +275,5 @@ def run(args):
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    run(args)
+    input_args = parse_args()
+    run(input_args)

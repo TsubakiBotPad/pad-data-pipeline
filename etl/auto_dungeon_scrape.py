@@ -83,7 +83,7 @@ SELECT
   SUM(CASE WHEN DATEDIFF(NOW(), pull_time) < {age} THEN 1 ELSE 0 END) AS newer
 FROM (
     SELECT entry_id, pull_time
-    FROM dadguide.wave_data
+    FROM wave_data
     WHERE dungeon_id={dungeon_id} AND floor_id={floor_id}
     GROUP BY 1, 2
 ) AS entry_id_pull_time
@@ -91,12 +91,12 @@ FROM (
 
 MIGRATE_OLD_DATA_SQL = '''
 INSERT INTO dadguide_wave_backup.wave_data
-SELECT * FROM dadguide.wave_data
+SELECT * FROM wave_data
 WHERE dungeon_id={dungeon_id} AND floor_id={floor_id} AND DATEDIFF(NOW(), pull_time) >= {age};
 '''
 
 DELETE_OLD_DATA_SQL = '''
-DELETE FROM dadguide.wave_data
+DELETE FROM wave_data
 WHERE dungeon_id={dungeon_id} AND floor_id={floor_id} AND DATEDIFF(NOW(), pull_time) >= {age};
 '''
 
