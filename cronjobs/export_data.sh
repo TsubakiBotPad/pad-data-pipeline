@@ -15,6 +15,8 @@ case ${1^^} in
     DADGUIDE_MYSQL_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide.mysql.zip";
     DADGUIDE_MYSQL_WAVE_DATA_FILE="/tmp/dadguide_wave_data.mysql"
     DADGUIDE_MYSQL_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data.mysql.zip";
+    DADGUIDE_WAVE_DATA_FILE="/tmp/dadguide_wave_data.sqlite";
+    DADGUIDE_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data.sqlite.zip";
     ;;
   JP)
     DADGUIDE_DB_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_jp.sqlite";
@@ -23,6 +25,8 @@ case ${1^^} in
     DADGUIDE_MYSQL_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_jp.mysql.zip";
     DADGUIDE_MYSQL_WAVE_DATA_FILE="/tmp/dadguide_wave_data_jp.mysql"
     DADGUIDE_MYSQL_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data_jp.mysql.zip";
+    DADGUIDE_WAVE_DATA_FILE="/tmp/dadguide_wave_data_jp.sqlite";
+    DADGUIDE_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data_jp.sqlite.zip";
     ;;
   NA)
     DADGUIDE_DB_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_na.sqlite";
@@ -31,6 +35,8 @@ case ${1^^} in
     DADGUIDE_MYSQL_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_na.mysql.zip";
     DADGUIDE_MYSQL_WAVE_DATA_FILE="/tmp/dadguide_wave_data_na.mysql"
     DADGUIDE_MYSQL_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data_na.mysql.zip";
+    DADGUIDE_WAVE_DATA_FILE="/tmp/dadguide_wave_data_na.sqlite";
+    DADGUIDE_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data_na.sqlite.zip";
     ;;
   KR)
     DADGUIDE_DB_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_kr.sqlite";
@@ -39,6 +45,8 @@ case ${1^^} in
     DADGUIDE_MYSQL_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_kr.mysql.zip";
     DADGUIDE_MYSQL_WAVE_DATA_FILE="/tmp/dadguide_wave_data_kr.mysql"
     DADGUIDE_MYSQL_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data_kr.mysql.zip";
+    DADGUIDE_WAVE_DATA_FILE="/tmp/dadguide_wave_data_kr.sqlite";
+    DADGUIDE_WAVE_DATA_ZIP_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide_wave_data_kr.sqlite.zip";
     ;;
 
   *)
