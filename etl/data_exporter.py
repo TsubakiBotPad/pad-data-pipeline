@@ -49,15 +49,15 @@ def parse_args():
 def save_region_files(output_dir, server: Server, pad_server):
     output_dir = os.path.join(output_dir, server.name)
 
-    def clean_asset(input):
+    def clean_asset(asset):
         return {
-            'file_name': input.file_name,
-            'compressed_size': input.compressed_size,
+            'file_name': asset.file_name,
+            'compressed_size': asset.compressed_size,
         }
 
-    def clean_extra(input):
+    def clean_extra(asset):
         return {
-            'file_name': input.file_name,
+            'file_name': asset.file_name,
         }
 
     save_single_file(output_dir, 'assets', [clean_asset(x) for x in pad_server.assets])
@@ -230,5 +230,5 @@ def save_object(dir_path, file_name, obj):
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    dump_data(args)
+    input_args = parse_args()
+    dump_data(input_args)

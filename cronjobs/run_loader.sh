@@ -5,20 +5,29 @@
 #
 # Group ID and starter color are not used, just for documentation
 
-source /home/bot/pad-data-pipeline/bin/activate
-
 set -e
 set -x
 
 cd "$(dirname "$0")" || exit
 source ./discord.sh
 source ./shared.sh
+source "${VENV_ROOT}/bin/activate"
+
+case ${1^^} in
+  NA | JP | KR | '')
+  ;;
+
+  *)
+    echo "The first positional argument must be NA, JP, or KR."
+    exit 1
+  ;;
+esac
 
 echo "Processing"
 IFS=","
 
 function error_exit() {
-  hook_error "DadGuide Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
+  hook_error "DadGuide $1 Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
   hook_file "/tmp/dg_update_log.txt"
 }
 
@@ -57,7 +66,7 @@ function dl_data() {
 dl_data "${ACCOUNT_CONFIG}"
 
 echo "Updating DadGuide"
-./data_processor.sh
+./data_processor.sh $1
 
 echo "Exporting Data"
 ./export_data.sh
