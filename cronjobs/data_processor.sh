@@ -19,8 +19,7 @@ function human_fixes_check() {
 }
 
 case ${1^^} in
-  '') CUR_DB_CONFIG="${DB_CONFIG}"; ;;
-  JP) CUR_DB_CONFIG="${JP_DB_CONFIG}"; ;;
+  JP | '') CUR_DB_CONFIG="${JP_DB_CONFIG}"; ;;
   NA) CUR_DB_CONFIG="${NA_DB_CONFIG}"; ;;
   KR) CUR_DB_CONFIG="${KR_DB_CONFIG}"; ;;
 

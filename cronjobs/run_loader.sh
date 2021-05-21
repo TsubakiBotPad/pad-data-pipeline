@@ -14,8 +14,7 @@ source ./shared.sh
 source "${VENV_ROOT}/bin/activate"
 
 case ${1^^} in
-  # While all three are supported by code, only JP and NA are supported by the Tsubaki server
-  JP | NA | KR | '')
+  NA | JP | KR | '')
   ;;
 
   *)
@@ -70,7 +69,7 @@ echo "Updating DadGuide"
 ./data_processor.sh $1
 
 echo "Exporting Data"
-./export_data.sh $1
+./export_data.sh
 
 echo "Syncing"
 ./sync_data.sh
