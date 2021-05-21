@@ -18,12 +18,24 @@ function human_fixes_check() {
   fi
 }
 
+case ${1^^} in
+  JP | '') CUR_DB_CONFIG="${JP_DB_CONFIG}"; ;;
+  NA) CUR_DB_CONFIG="${NA_DB_CONFIG}"; ;;
+  KR) CUR_DB_CONFIG="${KR_DB_CONFIG}"; ;;
+
+  *)
+    echo "The first positional argument must be NA, JP, or KR."
+    exit 1
+  ;;
+esac
+
 flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \
   --input_dir="${RAW_DIR}" \
   --es_dir="${ES_DIR}" \
   --media_dir="${DADGUIDE_MEDIA_DIR}" \
   --output_dir="${DADGUIDE_DATA_DIR}/processed" \
-  --db_config="${DB_CONFIG}" \
+  --db_config="${CUR_DB_CONFIG}" \
+  --server=${1:-JP} \
   --doupdates \
   --skip_long
 
