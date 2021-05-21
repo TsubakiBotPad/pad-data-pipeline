@@ -69,7 +69,7 @@ echo "Updating DadGuide"
 ./data_processor.sh $1
 
 echo "Exporting Data"
-./export_data.sh
+./export_data.sh $1
 
 echo "Syncing"
 ./sync_data.sh
