@@ -14,8 +14,8 @@ source ./shared.sh
 source "${VENV_ROOT}/bin/activate"
 
 case ${1^^} in
-  NA | JP | KR | '')
-  ;;
+  JP | NA | KR | '')  # While all three are supported by code, only
+  ;;                  #  JP and NA are supported by the Tsubaki server
 
   *)
     echo "The first positional argument must be NA, JP, or KR."
