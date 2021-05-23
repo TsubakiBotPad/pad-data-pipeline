@@ -220,15 +220,20 @@ def load_data(args):
 
 
 if __name__ == '__main__':
-    input_args = parse_args()
+    try:
+        input_args = parse_args()
 
-    # This is a hack to make loading ES easier and more frequent.
-    # Remove this once we're done with most of the ES processing.
-    if input_args.es_dir and input_args.es_only:
-        load_es_quick_and_die(input_args)
+        os.environ['CURRENT_PIPELINE_SERVER'] = input_args.server.strip()
 
-    # This needs to be done after the es_quick check otherwise it will consistently overwrite the fixes file.
-    if os.name != 'nt':
-        human_fix_logger.addHandler(logging.FileHandler('/tmp/dadguide_pipeline_human_fixes.txt', mode='w'))
+        # This is a hack to make loading ES easier and more frequent.
+        # Remove this once we're done with most of the ES processing.
+        if input_args.es_dir and input_args.es_only:
+            load_es_quick_and_die(input_args)
 
-    load_data(input_args)
+        # This needs to be done after the es_quick check otherwise it will consistently overwrite the fixes file.
+        if os.name != 'nt':
+            human_fix_logger.addHandler(logging.FileHandler('/tmp/dadguide_pipeline_human_fixes.txt', mode='w'))
+
+        load_data(input_args)
+    finally:
+        del os.environ['CURRENT_PIPELINE_SERVER']
