@@ -24,9 +24,6 @@ declare -rx DADGUIDE_ILMINA_DIR="${DADGUIDE_DATA_DIR}/ilmina"
 declare -rx GAME_DATA_DIR="/home/bot/pad-game-data-slim"
 
 declare -rx DB_CONFIG="${REPO_ROOT}/cronjobs/db_config.json"
-declare -rx JP_DB_CONFIG="${DB_CONFIG}"
-declare -rx NA_DB_CONFIG="${REPO_ROOT}/cronjobs/na_db_config.json"
-declare -rx KR_DB_CONFIG="${REPO_ROOT}/cronjobs/kr_db_config.json"
 declare -rx ACCOUNT_CONFIG="${REPO_ROOT}/cronjobs/account_config.csv"
 declare -rx SECRETS_CONFIG="${REPO_ROOT}/cronjobs/secrets.sh"
 
