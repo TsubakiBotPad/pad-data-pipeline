@@ -22,3 +22,8 @@ def remove_diacritics(input: str) -> str:
 
 def format_int_list(values: List[int]) -> str:
     return ','.join(['({})'.format(x) for x in values])
+
+
+class classproperty(property):
+    def __get__(self, *args, **kwargs):
+        return classmethod(self.fget).__get__(None, args[1])()

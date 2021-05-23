@@ -7,7 +7,7 @@ from enum import Enum
 from pad.common.pad_util import Printable
 
 
-def _object_to_sql_params(obj):
+def object_to_sql_params(obj):
     d = obj if type(obj) == dict else obj.__dict__
     # Defensive copy since we're updating this dict
     d = dict(d)
@@ -60,7 +60,7 @@ def generate_insert_sql(table_name, cols, item):
     sql = 'INSERT INTO {}'.format(_tbl_name_ref(table_name))
     sql += ' (' + ', '.join(map(_col_name_ref, cols)) + ')'
     sql += ' VALUES (' + ', '.join(map(_col_value_ref, cols)) + ')'
-    return sql.format(**_object_to_sql_params(item))
+    return sql.format(**object_to_sql_params(item))
 
 
 # This could maybe move to a class method on SqlItem?
@@ -100,7 +100,7 @@ def _key_and_cols_compare(item: 'SqlItem', cols=None, include_key=True):
 
     sql = 'SELECT {} FROM {} WHERE'.format(item._key(), item._table())
     sql += ' ' + ' AND '.join(map(_col_compare, cols))
-    formatted_sql = sql.format(**_object_to_sql_params(item))
+    formatted_sql = sql.format(**object_to_sql_params(item))
     fixed_sql = formatted_sql.replace('= NULL', 'is NULL')
 
     return fixed_sql
@@ -149,7 +149,7 @@ class SqlItem(Printable):
         sql = 'UPDATE {}'.format(self._table())
         sql += ' SET ' + ', '.join(map(_col_compare, cols))
         sql += ' WHERE ' + _col_compare(self._key())
-        return sql.format(**_object_to_sql_params(self))
+        return sql.format(**object_to_sql_params(self))
 
     def insert_sql(self):
         cols = self._insert_columns()

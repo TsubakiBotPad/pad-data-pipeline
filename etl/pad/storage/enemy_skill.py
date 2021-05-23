@@ -1,4 +1,7 @@
+import os
+
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
+from pad.common.utils import classproperty
 from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerESInstance
 from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
@@ -10,8 +13,17 @@ from pad.raw.skills.emoji_en.enemy_skill_text import EnEmojiESTextConverter
 
 class EnemySkill(SimpleSqlItem):
     """Enemy skill data."""
-    TABLE = 'enemy_skills'
     KEY_COL = 'enemy_skill_id'
+
+    @classproperty
+    def TABLE(cls):
+        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
+        if server.upper() == "NA":
+            return 'enemy_skills_na'
+        # elif server.upper() == "KR":
+        #    return 'enemy_skills_kr'
+        else:
+            return 'enemy_skills'
 
     @staticmethod
     def from_json(o):
@@ -86,8 +98,17 @@ class EnemySkill(SimpleSqlItem):
 
 class EnemyData(SimpleSqlItem):
     """Enemy skill data."""
-    TABLE = 'enemy_data'
     KEY_COL = 'enemy_id'
+
+    @classproperty
+    def TABLE(cls):
+        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
+        if server.upper() == "NA":
+            return 'enemy_data_na'
+        # elif server.upper() == "KR":
+        #    return 'enemy_data_kr'
+        else:
+            return 'enemy_data'
 
     @staticmethod
     def from_mb(o: MonsterBehavior, status: int) -> 'EnemyData':
