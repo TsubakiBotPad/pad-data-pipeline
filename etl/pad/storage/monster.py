@@ -566,8 +566,19 @@ class Awakening(SimpleSqlItem):
 
 class Evolution(SimpleSqlItem):
     """Monster evolution entry."""
-    TABLE = 'evolutions'
     KEY_COL = 'evolution_id'
+
+    @classproperty
+    def TABLE(cls):
+        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
+        if server.upper() == "NA":
+            return 'evolutions_na'
+        # elif server.upper() == "JP":
+        #    return 'evolutions_jp'
+        # elif server.upper() == "KR":
+        #     return 'evolutions_kr'
+        else:
+            return 'evolutions'
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> Optional['Evolution']:
