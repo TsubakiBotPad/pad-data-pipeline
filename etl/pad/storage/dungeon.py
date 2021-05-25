@@ -16,6 +16,8 @@ class Dungeon(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'dungeons_na'
+        # elif server.upper() == "JP":
+        #     return 'dungeons_jp'
         # elif server.upper() == "KR":
         #    return 'dungeons_kr'
         else:
@@ -63,6 +65,8 @@ class DungeonWaveData(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'dungeons_na'
+        # elif server.upper() == "JP":
+        #     return 'dungeons_jp'
         # elif server.upper() == "KR":
         #    return 'dungeons_kr'
         else:
@@ -86,6 +90,8 @@ class DungeonRewardData(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'dungeons_na'
+        # elif server.upper() == "JP":
+        #     return 'dungeons_jp'
         # elif server.upper() == "KR":
         #    return 'dungeons_kr'
         else:
@@ -119,6 +125,8 @@ class SubDungeon(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'sub_dungeons_na'
+        # elif server.upper() == "JP":
+        #     return 'sub_dungeons_jp'
         # elif server.upper() == "KR":
         #    return 'sub_dungeons_kr'
         else:
@@ -184,6 +192,8 @@ class SubDungeonWaveData(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'sub_dungeons_na'
+        # elif server.upper() == "JP":
+        #     return 'sub_dungeons_jp'
         # elif server.upper() == "KR":
         #    return 'sub_dungeons_kr'
         else:
@@ -237,6 +247,8 @@ class SubDungeonRewardData(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'sub_dungeons_na'
+        # elif server.upper() == "JP":
+        #     return 'sub_dungeons_jp'
         # elif server.upper() == "KR":
         #    return 'sub_dungeons_kr'
         else:
