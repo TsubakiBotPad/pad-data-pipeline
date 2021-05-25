@@ -548,9 +548,9 @@ class Awakening(SimpleSqlItem):
 
     def value_exists_sql(self):
         sql = """
-        SELECT awakening_id FROM awakenings
+        SELECT awakening_id FROM {table}
         WHERE monster_id = {monster_id} and order_idx = {order_idx}
-        """.format(**sql_item.object_to_sql_params(self))
+        """.format(table=self._table(), **sql_item.object_to_sql_params(self))
         return sql
 
     def _non_auto_insert_cols(self):
