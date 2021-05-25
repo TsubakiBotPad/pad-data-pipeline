@@ -24,6 +24,8 @@ class Monster(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'monsters_na'
+        # elif server.upper() == "JP":
+        #    return 'monsters_jp'
         # elif server.upper() == "KR":
         #     return 'monsters_kr'
         else:
@@ -266,6 +268,8 @@ class MonsterWithSeries(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'monsters_na'
+        # elif server.upper() == "JP":
+        #    return 'monsters_jp'
         # elif server.upper() == "KR":
         #     return 'monsters_kr'
         else:
@@ -292,6 +296,8 @@ class MonsterWithExtraImageInfo(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'monsters_na'
+        # elif server.upper() == "JP":
+        #    return 'monsters_jp'
         # elif server.upper() == "KR":
         #     return 'monsters_kr'
         else:
@@ -320,6 +326,8 @@ class MonsterWithMPValue(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'monsters_na'
+        # elif server.upper() == "JP":
+        #    return 'monsters_jp'
         # elif server.upper() == "KR":
         #     return 'monsters_kr'
         else:
@@ -346,6 +354,8 @@ class ActiveSkill(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'active_skills_na'
+        # elif server.upper() == "JP":
+        #    return 'active_skills_jp'
         # elif server.upper() == "KR":
         #     return 'active_skills_kr'
         else:
@@ -420,6 +430,8 @@ class LeaderSkill(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'leader_skills_na'
+        # elif server.upper() == "JP":
+        #    return 'leader_skills_jp'
         # elif server.upper() == "KR":
         #     return 'leader_skills_kr'
         else:
@@ -510,6 +522,8 @@ class Awakening(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'awakenings_na'
+        # elif server.upper() == "JP":
+        #    return 'awakenings_jp'
         # elif server.upper() == "KR":
         #     return 'awakenings_kr'
         else:
@@ -646,6 +660,8 @@ class AltMonster(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'alt_monsters_na'
+        # elif server.upper() == "JP":
+        #    return 'alt_monsters_jp'
         # elif server.upper() == "KR":
         #     return 'alt_monsters_kr'
         else:

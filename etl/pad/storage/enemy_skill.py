@@ -20,6 +20,8 @@ class EnemySkill(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'enemy_skills_na'
+        # elif server.upper() == "JP":
+        #    return 'enemy_skills_jp'
         # elif server.upper() == "KR":
         #    return 'enemy_skills_kr'
         else:
@@ -105,6 +107,8 @@ class EnemyData(SimpleSqlItem):
         server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
         if server.upper() == "NA":
             return 'enemy_data_na'
+        # elif server.upper() == "JP":
+        #    return 'enemy_data_jp'
         # elif server.upper() == "KR":
         #    return 'enemy_data_kr'
         else:
