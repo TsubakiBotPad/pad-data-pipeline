@@ -75,7 +75,7 @@ def parse_args():
                              help="Path to the root folder containing images, voices, etc")
     input_group.add_argument("--processor", required=False,
                              help="Specific processor to run.")
-    input_group.add_argument("--server", default="JP", help="Server to build for")
+    input_group.add_argument("--server", default="", help="Server to build for")
 
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--output_dir", required=True,
@@ -110,15 +110,6 @@ def load_es_quick_and_die(args):
 
 
 def load_data(args):
-    if input_args.server.lower() == "jp":
-        server = Server.jp
-    elif input_args.server.lower() == "na":
-        server = Server.na
-    elif input_args.server.lower() == "kr":
-        server = Server.kr
-    else:
-        raise ValueError("Server must be JP, NA, or KR")
-
     if args.logsql:
         logging.getLogger('database').setLevel(logging.DEBUG)
     dry_run = not args.doupdates
@@ -133,7 +124,16 @@ def load_data(args):
     kr_database = merged_database.Database(Server.kr, args.input_dir)
     kr_database.load_database()
 
-    cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, kr_database, server)
+    if input_args.server == "":
+        cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, kr_database, Server.jp)
+    elif input_args.server.lower() == "jp":
+        cs_database = crossed_data.CrossServerDatabase(jp_database, jp_database, jp_database, Server.jp)
+    elif input_args.server.lower() == "na":
+        cs_database = crossed_data.CrossServerDatabase(na_database, na_database, na_database, Server.na)
+    elif input_args.server.lower() == "kr":
+        cs_database = crossed_data.CrossServerDatabase(kr_database, kr_database, kr_database, Server.kr)
+    else:
+        raise ValueError()
 
     if args.media_dir:
         cs_database.load_extra_image_info(args.media_dir)
@@ -224,6 +224,9 @@ if __name__ == '__main__':
         input_args = parse_args()
 
         os.environ['CURRENT_PIPELINE_SERVER'] = input_args.server.strip()
+
+        if input_args.server.lower() not in ("", "jp", "na", "kr"):
+            raise ValueError("Server must be JP, NA, or KR.")
 
         # This is a hack to make loading ES easier and more frequent.
         # Remove this once we're done with most of the ES processing.
