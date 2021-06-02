@@ -26,6 +26,7 @@ flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \
   --db_config="${DB_CONFIG}" \
   --server=${1:-JP} \
   --process=$2 \
+  --skipintermediate \
   --doupdates \
   --skip_long
 
