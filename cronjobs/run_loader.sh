@@ -8,7 +8,32 @@ source ./discord.sh
 source ./shared.sh
 source "${VENV_ROOT}/bin/activate"
 
-case ${1^^} in
+options=$(getopt --long server:,processor: -- "$@")
+eval set -- "$options"
+
+while true; do
+    case "$1" in
+    --server)
+        shift;
+        SERVER=${1^^}
+        [[ ! $COLOR =~ JP|NA|KR|COMBINED ]] && {
+            echo "Server must be JP/NA/KR"
+            exit 1
+        }
+        ;;
+    --processor)
+        shift;
+        PROCESSOR=$1
+        ;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
+done
+
+case $SERVER in
   NA | JP | KR | '')
   ;;
 
@@ -19,7 +44,7 @@ case ${1^^} in
 esac
 
 function error_exit() {
-  hook_error "DadGuide $1 Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
+  hook_error "DadGuide $SERVER Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
   hook_file "/tmp/dg_update_log.txt"
 }
 
@@ -35,10 +60,10 @@ echo "Pulling Data"
 ./pull_data.sh
 
 echo "Updating DadGuide"
-if [ -z "$2" ]; then
-  ./data_processor.sh $1
+if [ -z "$PROCESSOR" ]; then
+  ./data_processor.sh $SERVER
 else
-  ./do_single_process.sh $1 $2
+  ./do_single_process.sh $SERVER $PROCESSOR
 fi
 
 
