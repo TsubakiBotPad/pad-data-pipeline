@@ -1,9 +1,4 @@
 #!/bin/bash
-#
-# Expects a file called account_config.csv to exist, formatted as:
-# <[JP,NA]>,<[A,B,C,D,E]>,<uuid>,<int_id>,<RED,GREEN,BLUE>
-#
-# Group ID and starter color are not used, just for documentation
 
 set -e
 set -x
@@ -18,13 +13,10 @@ case ${1^^} in
   ;;
 
   *)
-    echo "The first positional argument must be NA, JP, or KR."
+    echo "The first positional argument must be NA/JP/KR or left unfilled."
     exit 1
   ;;
 esac
-
-echo "Processing"
-IFS=","
 
 function error_exit() {
   hook_error "DadGuide $1 Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
@@ -39,34 +31,16 @@ function success_exit() {
 trap error_exit ERR
 trap success_exit EXIT
 
-function dl_data() {
-  # shellcheck disable=SC2034
-  while read -r server group uuid intid scolor; do
-    do_only_bonus=""
-    if [ "${scolor^^}" != "RED" ]; then
-      do_only_bonus="--only_bonus"
-    fi
-
-    echo "Processing ${server}/${scolor}/${uuid}/${intid} ${do_only_bonus}"
-    EXIT_CODE=0
-    python3 "${ETL_DIR}/pad_data_pull.py" \
-      --output_dir="${PAD_DATA_DIR}/raw/${server,,}" \
-      --server="${server^^}" \
-      --user_uuid="${uuid}" \
-      --user_intid="${intid}" \
-      --user_group="${scolor}" \
-      ${do_only_bonus} || EXIT_CODE=$?
-
-    if [ $EXIT_CODE -ne 0 ]; then
-      hook_error "Processing ${server}/${scolor} failed with code ${EXIT_CODE}"
-    fi
-  done <$1
-}
-
-dl_data "${ACCOUNT_CONFIG}"
+echo "Pulling Data"
+./pull_data.sh
 
 echo "Updating DadGuide"
-./data_processor.sh $1
+if [ -z "$2" ]; then
+  ./data_processor.sh $1
+else
+  ./do_single_process.sh $1 $2
+fi
+
 
 echo "Exporting Data"
 ./export_data.sh

@@ -43,7 +43,8 @@ human_fix_logger = logging.getLogger('human_fix')
 human_fix_logger.setLevel(logging.INFO)
 
 type_name_to_processor = {
-    'DungeonContentProcessor': DungeonContentProcessor
+    'DungeonContentProcessor': DungeonContentProcessor,
+    'ScheduleProcessor': ScheduleProcessor,
 }
 
 
