@@ -76,7 +76,7 @@ def parse_args():
                              help="Path to the root folder containing images, voices, etc")
     input_group.add_argument("--processor", required=False,
                              help="Specific processor to run.")
-    input_group.add_argument("--server", default="", help="Server to build for")
+    input_group.add_argument("--server", default="COMBINED", help="Server to build for")
 
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--output_dir", required=True,
@@ -125,7 +125,7 @@ def load_data(args):
     kr_database = merged_database.Database(Server.kr, args.input_dir)
     kr_database.load_database()
 
-    if input_args.server == "":
+    if input_args.server == "combined":
         cs_database = crossed_data.CrossServerDatabase(jp_database, na_database, kr_database, Server.jp)
     elif input_args.server.lower() == "jp":
         cs_database = crossed_data.CrossServerDatabase(jp_database, jp_database, jp_database, Server.jp)
@@ -226,8 +226,8 @@ if __name__ == '__main__':
 
         os.environ['CURRENT_PIPELINE_SERVER'] = input_args.server.strip()
 
-        if input_args.server.lower() not in ("", "jp", "na", "kr"):
-            raise ValueError("Server must be JP, NA, or KR.")
+        if input_args.server.lower() not in ("combined", "jp", "na", "kr"):
+            raise ValueError("Server must be COMBINED, JP, NA, KR.")
 
         # This is a hack to make loading ES easier and more frequent.
         # Remove this once we're done with most of the ES processing.
