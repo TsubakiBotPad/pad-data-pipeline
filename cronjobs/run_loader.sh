@@ -8,9 +8,8 @@ source ./discord.sh
 source ./shared.sh
 source "${VENV_ROOT}/bin/activate"
 
-options=$(getopt --long server:,processor: -- "$@")
+options=$(getopt -o '' --long server:,processor: -- "$@")
 eval set -- "$options"
-
 while true; do
     case "$1" in
     --server)
@@ -32,16 +31,6 @@ while true; do
     esac
     shift
 done
-
-case $SERVER in
-  NA | JP | KR | '')
-  ;;
-
-  *)
-    echo "The first positional argument must be NA/JP/KR or left unfilled."
-    exit 1
-  ;;
-esac
 
 function error_exit() {
   hook_error "DadGuide $SERVER Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
@@ -65,7 +54,6 @@ if [ -z "$PROCESSOR" ]; then
 else
   ./do_single_process.sh $SERVER $PROCESSOR
 fi
-
 
 echo "Exporting Data"
 ./export_data.sh
