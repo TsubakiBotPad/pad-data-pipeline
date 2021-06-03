@@ -10,6 +10,8 @@ source "${VENV_ROOT}/bin/activate"
 
 options=$(getopt -o '' --long server:,processor: -- "$@")
 eval set -- "$options"
+SERVER=""
+PROCESSOR=""
 while true; do
     case "$1" in
     --server)
@@ -52,7 +54,7 @@ echo "Updating DadGuide"
 if [ -z "$PROCESSOR" ]; then
   ./data_processor.sh $SERVER
 else
-  ./do_single_process.sh $SERVER $PROCESSOR
+  ./do_single_process.sh "$SERVER" "$PROCESSOR"
 fi
 
 echo "Exporting Data"
