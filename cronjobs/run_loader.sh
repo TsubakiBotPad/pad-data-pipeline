@@ -8,6 +8,7 @@ source ./discord.sh
 source ./shared.sh
 source "${VENV_ROOT}/bin/activate"
 
+# This may not work on Mac
 options=$(getopt -o '' --long server:,processor: -- "$@")
 eval set -- "$options"
 SERVER=""
