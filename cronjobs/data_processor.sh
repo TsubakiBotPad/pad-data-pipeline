@@ -24,7 +24,7 @@ flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \
   --media_dir="${DADGUIDE_MEDIA_DIR}" \
   --output_dir="${DADGUIDE_DATA_DIR}/processed" \
   --db_config="${DB_CONFIG}" \
-  --server=${1:-JP} \
+  --server=$1 \
   --doupdates \
   --skip_long
 

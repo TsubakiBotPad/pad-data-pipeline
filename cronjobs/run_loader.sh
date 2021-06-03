@@ -11,7 +11,7 @@ source "${VENV_ROOT}/bin/activate"
 # This may not work on Mac
 options=$(getopt -o '' --long server:,processor: -- "$@")
 eval set -- "$options"
-SERVER=""
+SERVER="COMBINED"
 PROCESSOR=""
 while true; do
     case "$1" in
