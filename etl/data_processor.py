@@ -74,8 +74,8 @@ def parse_args():
                              help="If true, only load ES and then quit")
     input_group.add_argument("--media_dir", required=False,
                              help="Path to the root folder containing images, voices, etc")
-    input_group.add_argument("--processor", required=False,
-                             help="Specific processor to run.")
+    input_group.add_argument("--processors", required=False,
+                             help="Comma-separated specific processors to run.")
     input_group.add_argument("--server", default="COMBINED", help="Server to build for")
 
     output_group = parser.add_argument_group("Output")
@@ -153,11 +153,13 @@ def load_data(args):
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
 
-    if args.processor:
-        logger.info('Running specific processor {}'.format(args.processor))
-        class_type = type_name_to_processor[args.processor]
-        processor = class_type(cs_database)
-        processor.process(db_wrapper)
+    if args.processors:
+        for processor in args.processors.split(","):
+            processor = processor.strip()
+            logger.info('Running specific processor {}'.format(processor))
+            class_type = type_name_to_processor[processor]
+            processor = class_type(cs_database)
+            processor.process(db_wrapper)
         logger.info('done')
         return
 
