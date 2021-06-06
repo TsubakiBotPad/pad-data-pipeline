@@ -428,6 +428,12 @@ class EnLSTextConverter(EnBaseTextConverter):
     def combo_bonus_damage_text(self, ls):
         return '{:,} additional true damage when matching {} or more combos'.format(ls.bonus_damage, ls.min_combo)
 
+    def l_match_combo_text(self, ls):
+        skill_text = 'Add {} combos when matching 5'.format(ls.extra_combos)
+        if self.fmt_multi_attr(ls.attributes):
+            skill_text += ' {}'.format(self.fmt_multi_attr(ls.attributes))
+        return skill_text + ' orbs in an L shape'
+
     def full_text(self, text, tags=None):
         tags = tags or []
         if isinstance(text, (str, type(None))):

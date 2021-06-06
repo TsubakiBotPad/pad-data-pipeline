@@ -1821,6 +1821,18 @@ class LSBlobMatchMultiAttrBonusCombo(LeaderSkill):
         return converter.multi_mass_match_text(self)
 
 
+class LSLMatchComboBoost(LeaderSkill):
+    skill_type = 220
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.attributes = binary_con(data[0])
+        super().__init__(220, ms, extra_combos=data[1])
+
+    def text(self, converter) -> str:
+        return converter.l_match_combo_text(self)
+
+
 class LSComboBonusDamage(LeaderSkill):
     skill_type = 223
 
@@ -1983,4 +1995,6 @@ ALL_LEADER_SKILLS = [
     LSHeartCrossCombo,
     LSColorCrossCombo,
     LSBlobMatchMultiAttrBonusCombo,
+    LSLMatchComboBoost,
+    LSComboBonusDamage,
 ]
