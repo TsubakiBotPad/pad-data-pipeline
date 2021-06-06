@@ -1479,7 +1479,7 @@ class LSRainbowMultPlusShield(LeaderSkill):
         self.min_rcv = 1
         self.max_rcv = 1
         shield = mult(data[3])
-        super().__init__(170, ms, atk=self.min_atk, shield=shield)
+        super().__init__(170, ms, atk=self.max_atk, shield=shield)
 
     def text(self, converter) -> str:
         return converter.scaling_attribute_match_text(self)
