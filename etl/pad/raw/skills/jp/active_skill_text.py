@@ -1,6 +1,4 @@
 from pad.raw.skills.jp.skill_common import *
-from pad.raw.skills.en.active_skill_text import EnASTextConverter as BaseASTextConverter
-
 
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
@@ -341,6 +339,11 @@ class JpASTextConverter(JpBaseTextConverter):
                 skill_text += '{}が{}％の確率で落ちてくる'.format(self.attributes_to_str(act.orbs), rate)
         return skill_text
 
+    def no_orb_skyfall_convert(self, act):
+        skill_text = self.fmt_duration(act.duration)
+        skill_text += 'no {} orbs will appear'.format(self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs))
+        return skill_text
+
     def random_nuke_convert(self, act):
         return '{}に攻撃力ｘ{}倍の{}属性攻撃'.format(
             self.fmt_mass_atk(act.mass_attack),
@@ -417,6 +420,7 @@ class JpASTextConverter(JpBaseTextConverter):
             orb_count += len(x)
 
         skill_text = ''
+        shape = "<UNDEFINED>"
         if orb_count == 4:
             if len(board[0]) == len(board[4]) == 2:
                 skill_text += '盤面4隅に{}ドロップを1個ずつ生成。'.format(self.ATTRIBUTES[act.attribute])
