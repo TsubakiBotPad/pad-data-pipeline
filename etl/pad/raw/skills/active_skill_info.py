@@ -1142,6 +1142,19 @@ class ASDisableAllySkills(ActiveSkill):
         return converter.ally_active_disable(self.turns)
 
 
+class ASCreateUnmatchable(ActiveSkill):
+    skill_type = 215
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.duration = data[0]
+        self.orbs = binary_con(data[1])
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.create_unmatchable(self)
+
+
 class ASDelayAllySkills(ActiveSkill):
     skill_type = 218
 
