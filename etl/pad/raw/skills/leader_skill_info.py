@@ -1821,6 +1821,18 @@ class LSBlobMatchMultiAttrBonusCombo(LeaderSkill):
         return converter.multi_mass_match_text(self)
 
 
+class LSComboBonusDamage(LeaderSkill):
+    skill_type = 223
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.min_combos = data[0]
+        super().__init__(223, ms, bonus_damage=data[1])
+
+    def text(self, converter) -> str:
+        return converter.combo_bonus_damage_text(self)
+
+
 def convert(skill_list: List[MonsterSkill]):
     results = {}
     for s in skill_list:
