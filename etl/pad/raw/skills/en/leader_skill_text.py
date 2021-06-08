@@ -426,7 +426,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         return skill_text
 
     def combo_bonus_damage_text(self, ls):
-        return '{:,} additional true damage when matching {} or more combos'.format(ls.bonus_damage, ls.min_combo)
+        return '{:,} additional true damage when matching {} or more combos'.format(ls.bonus_damage, ls.min_combos)
 
     def l_match_combo_text(self, ls):
         skill_text = 'Add {} combos when matching 5'.format(ls.extra_combos)
