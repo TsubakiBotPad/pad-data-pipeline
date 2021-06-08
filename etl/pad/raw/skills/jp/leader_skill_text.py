@@ -407,7 +407,7 @@ class JpLSTextConverter(JpBaseTextConverter):
         return cond + "で{}コンボ加算。".format(ls.bonus_combos)
 
     def combo_bonus_damage_text(self, ls):
-        return 'ドロップを{}個以上つなげて消すと固定{:,}ダメージ'.format(ls.min_combo, ls.bonus_damage)
+        return 'ドロップを{}個以上つなげて消すと固定{:,}ダメージ'.format(ls.min_combos, ls.bonus_damage)
 
     def l_match_combo_text(self, ls):
         return '{}ドロップの5個L字消しで{}コンボ加算'.format(self.fmt_multi_attr(ls.attributes), ls.extra_combos)
