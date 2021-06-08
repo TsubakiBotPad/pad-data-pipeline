@@ -543,9 +543,10 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'Delay team active skills by {:s}'.format(pluralize2('turn', turns))
 
     def create_unmatchable(self, act):
-        skill_text = self.fmt_duration(act.duration) + self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs)
-        skill_text += 'ドロップが消せなくなる。'
-        return skill_text
+        skill_text = self.fmt_duration(act.duration)
+        if act.orbs:
+            skill_text += " " +self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs)
+        return skill_text + " orbs are unmatchable."
 
     def two_part_active(self, strs):
         return '; '.join(strs)
