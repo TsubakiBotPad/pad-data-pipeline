@@ -197,7 +197,8 @@ def load_data(args):
     EggMachineProcessor(cs_database).process(db_wrapper)
 
     # Load dungeon data
-    dungeon_processor = DungeonProcessor(cs_database).process(db_wrapper)
+    dungeon_processor = DungeonProcessor(cs_database)
+    dungeon_processor.process(db_wrapper)
     if not args.skip_long:
         # Load dungeon data derived from wave info
         DungeonContentProcessor(cs_database).process(db_wrapper)
