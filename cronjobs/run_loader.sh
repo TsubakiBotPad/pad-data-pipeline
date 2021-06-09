@@ -9,10 +9,10 @@ source ./shared.sh
 source "${VENV_ROOT}/bin/activate"
 
 # This may not work on Mac
-options=$(getopt -o '' --long server:,processor: -- "$@")
+options=$(getopt -o '' --long server:,processors: -- "$@")
 eval set -- "$options"
 SERVER="COMBINED"
-PROCESSOR=""
+PROCESSORS=""
 while true; do
     case "$1" in
     --server)
@@ -23,9 +23,9 @@ while true; do
             exit 1
         }
         ;;
-    --processor)
+    --processors)
         shift;
-        PROCESSOR=$1
+        PROCESSORS=$1
         ;;
     --)
         shift
@@ -52,10 +52,10 @@ echo "Pulling Data"
 ./pull_data.sh
 
 echo "Updating DadGuide"
-if [ -z "$PROCESSOR" ]; then
+if [ -z "$PROCESSORS" ]; then
   ./data_processor.sh $SERVER
 else
-  ./do_single_process.sh "$SERVER" "$PROCESSOR"
+  ./do_single_process.sh "$SERVER" "$PROCESSORS"
 fi
 
 echo "Exporting Data"
