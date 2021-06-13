@@ -31,3 +31,24 @@ class Series(SimpleSqlItem):
 
     def __str__(self):
         return 'Series ({}): {}'.format(self.key_value(), self.name_en)
+
+
+class MonsterSeries(SimpleSqlItem):
+    """A monster's association with a series."""
+    TABLE = 'monster_series'
+    KEY_COL = 'monster_series_id'
+
+    def __init__(self,
+                 monster_series_id = None,
+                 monster_id: int = None,
+                 series_id: int = None,
+                 tstamp: int = None,
+                 priority: bool = None):
+        self.monster_series_id = monster_series_id or hash((monster_id, series_id))
+        self.monster_id = monster_id
+        self.series_id = series_id
+        self.tstamp = tstamp
+        self.priority = priority
+
+    def __str__(self):
+        return 'MonsterSeries({}, {})'.format(self.key_value(), self.series_id)
