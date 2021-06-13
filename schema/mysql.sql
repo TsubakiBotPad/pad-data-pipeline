@@ -1043,16 +1043,16 @@ DROP TABLE IF EXISTS `monster_series`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `monster_series` (
-  `monster_series_id` int(11) NOT NULL,
+  `monster_series_id` int(11) NOT NULL AUTO_INCREMENT,
   `monster_id` int(11) NOT NULL,
   `series_id` int(11) NOT NULL,
   `priority` tinyint(1) NOT NULL,
   `tstamp` int(11) NOT NULL,
-  PRIMARY KEY (`monster_id`, `series_id`),
+  PRIMARY KEY (`monster_series_id`),
   KEY `tstamp` (`tstamp`),
   CONSTRAINT `monster_series_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `monster_series_fk_series_id` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table `skill_condition`

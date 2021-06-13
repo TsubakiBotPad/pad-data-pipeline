@@ -1,4 +1,5 @@
-from pad.db.sql_item import SimpleSqlItem
+from pad.db import sql_item
+from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
 
 
 class Series(SimpleSqlItem):
@@ -49,6 +50,22 @@ class MonsterSeries(SimpleSqlItem):
         self.series_id = series_id
         self.tstamp = tstamp
         self.priority = priority
+
+    def exists_strategy(self):
+        return ExistsStrategy.BY_VALUE
+
+    def value_exists_sql(self):
+        sql = """
+        SELECT monster_series_id FROM {table}
+        WHERE monster_id = {monster_id} AND series_id = {series_id}
+        """.format(table=self._table(), **sql_item.object_to_sql_params(self))
+        return sql
+
+    def _non_auto_insert_cols(self):
+        return [self._key()]
+
+    def _non_auto_update_cols(self):
+        return [self._key()]
 
     def __str__(self):
         return 'MonsterSeries({}, {})'.format(self.key_value(), self.series_id)

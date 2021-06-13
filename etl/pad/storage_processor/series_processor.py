@@ -45,7 +45,7 @@ class SeriesProcessor(object):
                 # Monster had no ancestor to look up the series of.
                 continue
 
-            ancestor_series_id = monster_id_to_series_id[ancestor_id]
+            ancestor_series_id = monster_id_to_series_id.get(ancestor_id, 0)
             if ancestor_series_id == 0:
                 # Ancestor also has no series.
                 continue
