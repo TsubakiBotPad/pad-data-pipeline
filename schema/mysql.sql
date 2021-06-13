@@ -1048,11 +1048,11 @@ CREATE TABLE `monster_series` (
   `series_id` int(11) NOT NULL,
   `priority` tinyint(1) NOT NULL,
   `tstamp` int(11) NOT NULL,
-  PRIMARY KEY (`monster_id`, `series_id`),
+  PRIMARY KEY (`monster_series_id`),
   KEY `tstamp` (`tstamp`),
   CONSTRAINT `monster_series_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `monster_series_fk_series_id` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table `skill_condition`
