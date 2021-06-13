@@ -1036,12 +1036,29 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
+-- Table structure for table `monster_series`
+--
+
+DROP TABLE IF EXISTS `monster_series`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `monster_series` (
+  `monster_series_id` int(11) NOT NULL,
+  `monster_id` int(11) NOT NULL,
+  `series_id` int(11) NOT NULL,
+  `priority` tinyint(1) NOT NULL,
+  `tstamp` int(11) NOT NULL,
+  PRIMARY KEY (`monster_id`, `series_id`),
+  KEY `tstamp` (`tstamp`),
+  CONSTRAINT `monster_series_fk_monster_id` FOREIGN KEY (`monster_id`) REFERENCES `monsters` (`monster_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `monster_series_fk_series_id` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table `skill_condition`
 --
 
 DROP TABLE IF EXISTS `skill_condition`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `skill_condition` (
   `condition_id` int(11) NOT NULL,
   `condition_type` int(11) NOT NULL,

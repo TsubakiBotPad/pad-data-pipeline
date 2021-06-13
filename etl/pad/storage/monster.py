@@ -125,7 +125,6 @@ class Monster(SimpleSqlItem):
             diff_leader_skill=diff_leader_skill,
             diff_active_skill=diff_active_skill,
             base_id=o.cur_card.no_to_id(cur_card.base_id),
-            series_id=Series.UNSORTED_SERIES_ID,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
             orb_skin_id=orb_skin_id,
@@ -181,7 +180,6 @@ class Monster(SimpleSqlItem):
                  diff_leader_skill: bool = None,
                  diff_active_skill: bool = None,
                  base_id: int = None,
-                 series_id: int = None,
                  has_animation: bool = None,
                  has_hqimage: bool = None,
                  orb_skin_id: int = None,
@@ -236,7 +234,6 @@ class Monster(SimpleSqlItem):
         self.diff_leader_skill = diff_leader_skill
         self.diff_active_skill = diff_active_skill
         self.base_id = base_id
-        self.series_id = series_id
         self.has_animation = has_animation
         self.has_hqimage = has_hqimage
         self.orb_skin_id = orb_skin_id
@@ -250,41 +247,12 @@ class Monster(SimpleSqlItem):
         return [
             'buy_mp',
             'reg_date',
-            'series_id',
             'has_animation',
             'has_hqimage',
         ]
 
     def __str__(self):
         return 'Monster({}): {}'.format(self.key_value(), self.name_en)
-
-
-class MonsterWithSeries(SimpleSqlItem):
-    """Monster helper for inserting series."""
-    KEY_COL = 'monster_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'monsters_na'
-        # elif server.upper() == "JP":
-        #    return 'monsters_jp'
-        # elif server.upper() == "KR":
-        #     return 'monsters_kr'
-        else:
-            return 'monsters'
-
-    def __init__(self,
-                 monster_id: int = None,
-                 series_id: int = None,
-                 tstamp: int = None):
-        self.monster_id = monster_id
-        self.series_id = series_id
-        self.tstamp = tstamp
-
-    def __str__(self):
-        return 'Monster({}): {}'.format(self.key_value(), self.series_id)
 
 
 class MonsterWithExtraImageInfo(SimpleSqlItem):
