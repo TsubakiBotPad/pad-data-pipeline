@@ -18,7 +18,7 @@ while true; do
     --server)
         shift;
         SERVER=${1^^}
-        [[ ! $COLOR =~ JP|NA|KR|COMBINED ]] && {
+        [[ ! $SERVER =~ JP|NA|KR|COMBINED ]] && {
             echo "Server must be JP/NA/KR"
             exit 1
         }
