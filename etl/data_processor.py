@@ -224,11 +224,10 @@ def load_data(args):
 
 
 if __name__ == '__main__':
+    input_args = parse_args()
+    os.environ['CURRENT_PIPELINE_SERVER'] = input_args.server.strip()
+
     try:
-        input_args = parse_args()
-
-        os.environ['CURRENT_PIPELINE_SERVER'] = input_args.server.strip()
-
         if input_args.server.lower() not in ("combined", "jp", "na", "kr"):
             raise ValueError("Server must be COMBINED, JP, NA, KR.")
 
