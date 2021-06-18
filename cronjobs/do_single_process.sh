@@ -27,7 +27,6 @@ flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \
   --server=$1 \
   --processors=$2 \
   --skipintermediate \
-  --doupdates \
-  --skip_long
+  --doupdates
 
 human_fixes_check
