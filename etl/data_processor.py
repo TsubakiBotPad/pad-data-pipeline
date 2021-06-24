@@ -199,7 +199,7 @@ def load_data(args):
     # Load dungeon data
     dungeon_processor = DungeonProcessor(cs_database)
     dungeon_processor.process(db_wrapper)
-    if not args.skip_long:
+    if not args.skip_long and input_args.server.lower() == "combined":
         # Load dungeon data derived from wave info
         DungeonContentProcessor(cs_database).process(db_wrapper)
 
