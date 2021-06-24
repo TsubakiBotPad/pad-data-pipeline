@@ -830,6 +830,7 @@ class ASEnemyAttrChange(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
+        self.turns = -1
         self.attribute = data[0]
         super().__init__(ms)
 
@@ -1167,6 +1168,19 @@ class ASDelayAllySkills(ActiveSkill):
         return converter.ally_active_delay(self.turns)
 
 
+class ASTimedEnemyAttrChange(ActiveSkill):
+    skill_type = 224
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [None])
+        self.turns = data[0]
+        self.attribute = 0
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.change_enemies_attribute_convert(self)
+
+
 def convert(skill_list: List[MonsterSkill]):
     skill_type_to_constructor = {}
     for skill in ALL_ACTIVE_SKILLS:
@@ -1290,4 +1304,5 @@ ALL_ACTIVE_SKILLS = [
     ASDisableAllySkills,
     ASCreateUnmatchable,
     ASDelayAllySkills,
+    ASTimedEnemyAttrChange,
 ]

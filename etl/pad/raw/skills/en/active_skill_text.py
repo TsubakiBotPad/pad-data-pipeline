@@ -241,7 +241,11 @@ class EnASTextConverter(EnBaseTextConverter):
         return skill_text
 
     def change_enemies_attribute_convert(self, act):
-        return 'Change all enemies to ' + self.ATTRIBUTES[act.attribute] + ' Att.'
+        if act.turns is not None:
+            skill_text = self.fmt_duration(act.turns) + 'change'
+        else:
+            skill_text = 'Change'
+        return skill_text + ' all enemies to ' + self.ATTRIBUTES[act.attribute] + ' Att.'
 
     def haste_convert(self, act):
         return 'Charge all allies\' skills by {:s}'.format(pluralize2('turn', act.turns, act.max_turns))
