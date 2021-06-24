@@ -235,7 +235,10 @@ class JpASTextConverter(JpBaseTextConverter):
         return skill_text
 
     def change_enemies_attribute_convert(self, act):
-        return '敵全体が{}属性に変化'.format(self.ATTRIBUTES[act.attribute])
+        skill_text = ""
+        if act.turns is not None:
+            skill_text += self.fmt_duration(act.turns)
+        return skill_text + '敵全体が{}属性に変化'.format(self.ATTRIBUTES[act.attribute])
 
     def haste_convert(self, act):
         return '自分以外の味方スキルが{}ターンの溜まる'.format(minmax(act.turns, act.max_turns))
