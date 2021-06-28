@@ -830,7 +830,7 @@ class ASEnemyAttrChange(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
-        self.turns = -1
+        self.turns = None
         self.attribute = data[0]
         super().__init__(ms)
 
