@@ -4,7 +4,7 @@ img = Image.open('BLOCK031.png')
 print(img.size)
 
 orb_width = 100
-spacer = 4
+spacer = 2
 
 x = 0
 y = 0
@@ -22,9 +22,8 @@ x += orb_width
 x += spacer
 light = img.crop(box=(x, y, x + orb_width, y + orb_width))
 
-y += orb_width
-y += spacer
-x = 0
+x += orb_width
+x += spacer
 dark = img.crop(box=(x, y, x + orb_width, y + orb_width))
 
 fire.save('fire.png')
