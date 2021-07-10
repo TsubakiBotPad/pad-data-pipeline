@@ -80,8 +80,9 @@ for file_name in os.listdir(raw_dir):
     print('processing', corrected_file_path)
     tmp_corrected_file_path = os.path.join(corrected_dir, 'tmp_' + final_image_name)
 
+    gungho_url = GUNGHO_TEMPLATE.format(pad_id)
+
     try:
-        gungho_url = GUNGHO_TEMPLATE.format(pad_id)
         download_file(gungho_url, tmp_corrected_file_path)
         generate_resized_image(tmp_corrected_file_path, corrected_file_path)
     except Exception as e:
