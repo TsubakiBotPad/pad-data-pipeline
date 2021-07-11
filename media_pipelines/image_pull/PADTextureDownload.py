@@ -85,15 +85,7 @@ for asset in assets:
 
     raw_file_path = os.path.join(raw_dir, raw_file_name)
 
-    should_always_process = False
-    if 'card' in raw_file_path.lower():
-        num = int(raw_file_name.rstrip('.bc').lstrip('cards_'))
-        if num >= 57:
-            # Arbitrary cutoff; all the slots below here have been filled, no need to
-            # keep downloading/processing
-            should_always_process = True
-
-    if os.path.exists(raw_file_path) and not should_always_process:
+    if os.path.exists(raw_file_path):
         # always redownload card files
         print('file exists', raw_file_path)
     else:
@@ -103,7 +95,7 @@ for asset in assets:
     extract_file_name = getOutputFileName(raw_file_name).upper().replace('BC', 'PNG')
     extract_file_path = os.path.join(extract_dir, extract_file_name)
 
-    if os.path.exists(extract_file_path) and not should_always_process:
+    if os.path.exists(extract_file_path):
         print('skipping existing file', extract_file_path)
     else:
         # Disable trimming for the card files; screws up portrait generation
