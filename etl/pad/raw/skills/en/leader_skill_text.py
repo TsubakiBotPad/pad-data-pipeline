@@ -208,7 +208,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         skill_text = ''
         min_atk = ls.min_atk
         min_rcv = ls.min_rcv
-        shield = ls.sheild
+        shield = ls.shield
         min_combos = ls.min_combos
         if (min_atk == 1 and ls.atk != 1) or (min_rcv == 1 and ls.rcv != 1):
             skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', atk=min_atk, rcv=min_rcv)
