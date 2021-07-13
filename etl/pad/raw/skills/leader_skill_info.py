@@ -1894,10 +1894,10 @@ def convert_skill(skill) -> Optional[LeaderSkill]:
         return LeaderSkill(0, skill)
 
     d = {}
-    for skill in ALL_LEADER_SKILLS:
-        if skill.skill_type in d:
-            raise ValueError('Unexpected duplicate skill_type: ' + str(skill.skill_type))
-        d[skill.skill_type] = skill
+    for ls_type in ALL_LEADER_SKILLS:
+        if ls_type.skill_type in d:
+            raise ValueError('Unexpected duplicate skill_type: ' + str(ls_type.skill_type))
+        d[ls_type.skill_type] = ls_type
     return d.get(skill.skill_type, lambda s: None)(skill)
 
 
