@@ -208,6 +208,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         skill_text = ''
         min_atk = ls.min_atk
         min_rcv = ls.min_rcv
+        shield = ls.sheild
         min_combos = ls.min_combos
         if (min_atk == 1 and ls.atk != 1) or (min_rcv == 1 and ls.rcv != 1):
             skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', atk=min_atk, rcv=min_rcv)
@@ -215,8 +216,10 @@ class EnLSTextConverter(EnBaseTextConverter):
             min_combos += 1
             min_atk += ls.atk_step
             min_rcv += ls.rcv_step
+            shield = 0
 
-        skill_text += self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', atk=min_atk, rcv=min_rcv)
+        skill_text += self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ',
+                                                     atk=min_atk, rcv=min_rcv, shield=shield)
         skill_text += ' when {} or more combos'.format(min_combos)
         if min_combos != ls.max_combos and ls.max_combos:
             skill_text += ' up to {}x at {} combos'.format(fmt_mult(ls.atk), ls.max_combos)
