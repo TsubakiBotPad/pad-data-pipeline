@@ -71,8 +71,7 @@ class JpLSTextConverter(JpBaseTextConverter):
         return 'HPが0になる攻撃を受けてもふんばることがある(HPが{}%以上)。'.format(fmt_mult(ls.threshold * 100))
 
     def bonus_time_text(self, ls):
-        skill_text = []
-        skill_text.append(self.fmt_stats_type_attr_bonus(ls))
+        skill_text = [self.fmt_stats_type_attr_bonus(ls)]
         if ls.time:
             skill_text.append('ドロップ操作時間を{}秒延長'.format(fmt_mult(ls.time)))
         return self.concat_list_semicolons(skill_text) + '。'
@@ -85,10 +84,10 @@ class JpLSTextConverter(JpBaseTextConverter):
 
     def counter_attack_text(self, ls):
         attribute = self.ATTRIBUTES[ls.attributes[0]]
-        mult = fmt_mult(ls.multiplier)
+        multiplier = fmt_mult(ls.multiplier)
         if ls.chance == 1:
-            return '攻撃力ｘ{}倍の{}属性で反撃。'.format(mult, attribute)
-        return '{}%の確率で攻撃力ｘ{}倍の{}属性で反撃。'.format(fmt_mult(ls.chance * 100), mult, attribute)
+            return '攻撃力ｘ{}倍の{}属性で反撃。'.format(multiplier, attribute)
+        return '{}%の確率で攻撃力ｘ{}倍の{}属性で反撃。'.format(fmt_mult(ls.chance * 100), multiplier, attribute)
 
     def random_shield_threshold_text(self, ls):
         threshold_text = self.fmt_stats_type_attr_bonus(ls, skip_attr_all=True)
@@ -119,19 +118,19 @@ class JpLSTextConverter(JpBaseTextConverter):
         skill_text += 'で' + self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True,
                                                            atk=ls.min_atk, rcv=ls.min_rcv)
 
-        if ls.max_atk > ls.min_atk:
+        if ls.atk > ls.min_atk:
             skill_text += '、'
             if ls.match_attributes == [0, 1, 2, 3, 4, 5]:
-                skill_text += '最大5色+回復で{}倍'.format(fmt_mult(ls.max_atk))
+                skill_text += '最大5色+回復で{}倍'.format(fmt_mult(ls.atk))
             elif ls.max_attr < 5 and (len(ls.match_attributes) < 5 or 5 in ls.match_attributes):
-                skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.max_atk))
+                skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.atk))
             else:
                 if ls.match_attributes == [0, 1, 2, 3, 4]:
-                    skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.max_atk))
+                    skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.atk))
                 elif ls.match_attributes == [0, 1, 2, 3, 4, 5]:
-                    skill_text += '最大{}色({}色+回復)で{}倍'.format(ls.max_attr, ls.max_attr - 1, fmt_mult(ls.max_atk))
+                    skill_text += '最大{}色({}色+回復)で{}倍'.format(ls.max_attr, ls.max_attr - 1, fmt_mult(ls.atk))
                 elif len(ls.match_attributes) > ls.max_attr:
-                    skill_text += '{}個ところまで{}倍'.format(str(ls.max_attr), fmt_mult(ls.max_atk))
+                    skill_text += '{}個ところまで{}倍'.format(str(ls.max_attr), fmt_mult(ls.atk))
                 else:
                     skill_text += '同時攻撃で{}倍'.format(self.attributes_to_str(ls.match_attributes))
         return skill_text + '。'
@@ -140,38 +139,35 @@ class JpLSTextConverter(JpBaseTextConverter):
         min_atk = ls.min_atk
         min_attr = ls.min_attr
 
-        if min_atk < ls.max_atk:
+        if min_atk < ls.atk:
             if ls.min_atk == 1:
-                min_atk = 1 + (ls.max_atk - ls.min_atk) / (ls.max_attr - ls.min_attr)
+                min_atk = 1 + (ls.atk - ls.min_atk) / (ls.max_attr - ls.min_attr)
                 min_attr += 1
         else:
             return self.attribute_match_text(ls)
 
         skill_text = self.matching_n_or_more_attr(ls.match_attributes, ls.min_attr)
-        skill_text += 'で' + self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True,
-                                                            atk=1, rcv=1) + '。'
+        skill_text += 'で' + self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', atk=1, rcv=1) + '。'
 
         skill_text += self.matching_n_or_more_attr(ls.match_attributes, min_attr, is_range=ls.max_attr > min_attr)
-        skill_text += 'で' + self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True,
-                                                           atk=min_atk, shield=0)
+        skill_text += 'で' + self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', atk=min_atk, shield=0)
 
-        if ls.max_atk > ls.min_atk:
+        if ls.atk > ls.min_atk:
             skill_text += '、'
             if ls.match_attributes == [0, 1, 2, 3, 4, 5]:
-                skill_text += '最大5色+回復で{}倍'.format(fmt_mult(ls.max_atk))
+                skill_text += '最大5色+回復で{}倍'.format(fmt_mult(ls.atk))
             elif ls.max_attr < 5 and (len(ls.match_attributes) < 5 or 5 in ls.match_attributes):
-                skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.max_atk))
+                skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.atk))
             else:
                 if ls.match_attributes == [0, 1, 2, 3, 4]:
-                    skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.max_atk))
+                    skill_text += '最大{}色で{}倍'.format(ls.max_attr, fmt_mult(ls.atk))
                 elif ls.match_attributes == [0, 1, 2, 3, 4, 5]:
-                    skill_text += '最大{}色({}色+回復)で{}倍'.format(ls.max_attr, ls.max_attr - 1, fmt_mult(ls.max_atk))
+                    skill_text += '最大{}色({}色+回復)で{}倍'.format(ls.max_attr, ls.max_attr - 1, fmt_mult(ls.atk))
                 elif len(ls.match_attributes) > ls.max_attr:
-                    skill_text += '{}個ところまで{}倍'.format(str(ls.max_attr), fmt_mult(ls.max_atk))
+                    skill_text += '{}個ところまで{}倍'.format(str(ls.max_attr), fmt_mult(ls.atk))
                 else:
                     skill_text += '同時攻撃で{}倍'.format(self.attributes_to_str(ls.match_attributes))
         return skill_text + '。'
-
 
     def multi_attribute_match_text(self, ls):
         if not ls.match_attributes:
@@ -187,7 +183,7 @@ class JpLSTextConverter(JpBaseTextConverter):
                 skill_text += '以上'
             skill_text += 'で{}'.format(stat_text)
             if len(ls.match_attributes) != ls.min_match:
-                skill_text += '、最大{}コンボで{}倍'.format(len(ls.match_attributes), fmt_mult(ls.max_atk))
+                skill_text += '、最大{}コンボで{}倍'.format(len(ls.match_attributes), fmt_mult(ls.atk))
         else:
             skill_text = '{}'.format(self.attributes_to_str(ls.match_attributes[:ls.min_match], concat='、'))
             if len(ls.match_attributes) > ls.min_match:
@@ -197,8 +193,8 @@ class JpLSTextConverter(JpBaseTextConverter):
                     skill_text += '({})のコンボ消すと{}'.format(self.attributes_to_str(ls.match_attributes[1:]), stat_text)
             else:
                 skill_text += 'の同時攻撃で{}'.format(stat_text)
-            if ls.max_atk > ls.min_atk:
-                skill_text += 'の、最大{}で{}倍'.format(self.attributes_to_str(ls.match_attributes), fmt_mult(ls.max_atk))
+            if ls.atk > ls.min_atk:
+                skill_text += 'の、最大{}で{}倍'.format(self.attributes_to_str(ls.match_attributes), fmt_mult(ls.atk))
         return skill_text + '。'
 
     def combo_match_text(self, ls):
@@ -234,20 +230,10 @@ class JpLSTextConverter(JpBaseTextConverter):
                                         self.fmt_stats_type_attr_bonus(ls))
 
     def dual_passive_stat_text(self, ls):
-        skill_text = []
-        skill_text.append(self.fmt_stats_type_attr_bonus(None,
-                                                         attributes=ls.attributes_1,
-                                                         types=ls.types_1,
-                                                         hp=ls.hp_1,
-                                                         atk=ls.atk_1,
-                                                         rcv=ls.rcv_1))
-
-        skill_text.append(self.fmt_stats_type_attr_bonus(None,
-                                                         attributes=ls.attributes_2,
-                                                         types=ls.types_2,
-                                                         hp=ls.hp_2,
-                                                         atk=ls.atk_2,
-                                                         rcv=ls.rcv_2))
+        skill_text = [self.fmt_stats_type_attr_bonus(None, attributes=ls.attributes_1, types=ls.types_1, hp=ls.hp_1,
+                                                     atk=ls.atk_1, rcv=ls.rcv_1),
+                      self.fmt_stats_type_attr_bonus(None, attributes=ls.attributes_2, types=ls.types_2, hp=ls.hp_2,
+                                                     atk=ls.atk_2, rcv=ls.rcv_2)]
 
         if ls.atk_1 != 1 and ls.atk_2 != 1 and ls.types_1 == ls.types_2 == []:
             skill_text.append('両方の属性を持つ場合、攻撃力が{}倍'.format(fmt_mult(ls.atk)))
