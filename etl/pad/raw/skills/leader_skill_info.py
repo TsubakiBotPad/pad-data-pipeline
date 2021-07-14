@@ -25,7 +25,7 @@ class LeaderSkill(object):
             raise ValueError('Expected {} but got {}'.format(skill_type, ms.skill_type))
         self.skill_id = ms.skill_id
         self.skill_type = ms.skill_type
-        if not hasattr(self, 'tags'): self.tags = []
+        self.tags = getattr(self, 'tags', [])
         self.name = ms.name
         self.raw_description = ms.clean_description
         self.raw_data = ms.data
@@ -463,7 +463,6 @@ class LSRainbow(LeaderSkill):
         self.atk_step = mult(data[3])
         self.max_attr = data[4] or len(self.match_attributes)
         self.min_rcv = 1
-        self.max_rcv = 1
 
         if self.atk_step == 0:
             self.max_attr = self.min_attr
@@ -472,9 +471,9 @@ class LSRainbow(LeaderSkill):
         elif (self.max_attr + self.min_attr) <= len(self.match_attributes):
             self.max_attr = self.min_attr + self.max_attr
 
-        self.max_atk = self.min_atk + self.atk_step * (self.max_attr - self.min_attr)
+        max_atk = self.min_atk + self.atk_step * (self.max_attr - self.min_attr)
 
-        super().__init__(61, ms, atk=self.max_atk)
+        super().__init__(61, ms, atk=max_atk)
 
     def text(self, converter) -> str:
         return converter.attribute_match_text(self)
@@ -538,9 +537,11 @@ class LSComboFlatMultiplier(LeaderSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 100])
         self.min_combos = data[0]
-        self.min_atk = mult(data[1])
         self.max_combos = self.min_combos
+        self.min_atk = mult(data[1])
+        self.atk_step = 0
         self.min_rcv = 1
+        self.rcv_step = 0
         super().__init__(66, ms, atk=self.min_atk)
 
     def text(self, converter) -> str:
@@ -713,11 +714,13 @@ class LSComboScaledMultiplier(LeaderSkill):
         data = merge_defaults(ms.data, [0, 100, 0, 0])
         self.min_combos = data[0]
         self.min_atk = mult(data[1])
-        self.min_rcv = 1
         self.atk_step = mult(data[2])
         self.max_combos = data[3] or self.min_combos
-        self.max_atk = self.min_atk + self.atk_step * (self.max_combos - self.min_combos)
-        super().__init__(98, ms, atk=self.max_atk)
+        self.min_rcv = 1
+        self.rcv_step = 0
+
+        max_atk = self.min_atk + self.atk_step * (self.max_combos - self.min_combos)
+        super().__init__(98, ms, atk=max_atk)
 
     def text(self, converter) -> str:
         return converter.combo_match_text(self)
@@ -755,7 +758,9 @@ class LSComboFlatAtkRcvBoost(LeaderSkill):
         data = ms.data
         self.min_combos = data[0]
         self.min_atk = atk_from_slice(data[1:4])
+        self.atk_step = 0
         self.min_rcv = rcv_from_slice(data[1:4])
+        self.rcv_step = 0
         self.max_combos = self.min_combos
         super().__init__(103, ms, atk=self.min_atk, rcv=self.min_rcv)
 
@@ -772,7 +777,9 @@ class LSComboFlatMultiplierAttrAtkBoost(LeaderSkill):
         self.max_combos = self.min_combos
         self.attributes = binary_con(data[1])
         self.min_atk = atk_from_slice(data[2:5])
+        self.atk_step = 0
         self.min_rcv = rcv_from_slice(data[2:5])
+        self.rcv_step = 0
         super().__init__(104, ms, atk=self.min_atk, rcv=self.min_rcv)
 
     def text(self, converter) -> str:
@@ -885,9 +892,10 @@ class LSBlobScalingAtkBoost(LeaderSkill):
         self.min_atk = mult(data[2])
         self.atk_step = mult(data[3])
         self.max_count = data[4]
-        self.max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
         self.min_rcv = 1
-        super().__init__(119, ms, atk=self.max_atk)
+
+        max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
+        super().__init__(119, ms, atk=max_atk)
 
     def text(self, converter) -> str:
         return converter.mass_match_text(self)
@@ -954,8 +962,9 @@ class LSAttrComboScalingAtkBoost(LeaderSkill):
         self.min_atk = mult(data[6])
         self.min_rcv = 1
         self.atk_step = mult(data[7])
-        self.max_atk = self.min_atk + self.atk_step * (self.max_match - self.min_match)
-        super().__init__(124, ms, atk=self.max_atk)
+
+        max_atk = self.min_atk + self.atk_step * (self.max_match - self.min_match)
+        super().__init__(124, ms, atk=max_atk)
 
     def text(self, converter) -> str:
         return converter.multi_attribute_match_text(self)
@@ -1111,53 +1120,53 @@ class LSMultiPartSkill(LeaderSkill):
     @property
     def hp(self):
         v = 1
-        for x in self.child_skills:
-            v = v * x.hp
+        for skill in self.child_skills:
+            v = v * skill.hp
         return round(v, 2)
 
     @property
     def atk(self):
         v = 1
-        for x in self.child_skills:
-            v = v * x.atk
+        for skill in self.child_skills:
+            v = v * skill.atk
         return round(v, 2)
 
     @property
     def rcv(self):
         v = 1
-        for x in self.child_skills:
-            v = v * x.rcv
+        for skill in self.child_skills:
+            v = v * skill.rcv
         return round(v, 2)
 
     @property
     def shield(self):
         v = 0
-        for x in self.child_skills:
-            v = 1 - (1 - v) * (1 - x.shield)
+        for skill in self.child_skills:
+            v = 1 - (1 - v) * (1 - skill.shield)
         return round(v, 4)
 
     @property
     def extra_combos(self):
-        return sum([x.extra_combos for x in self.child_skills])
+        return sum([s.extra_combos for s in self.child_skills])
 
     @property
     def bonus_damage(self):
-        return sum([x.bonus_damage for x in self.child_skills])
+        return sum([s.bonus_damage for s in self.child_skills])
 
     @property
     def mult_bonus_damage(self):
-        return sum([x.mult_bonus_damage for x in self.child_skills])
+        return sum([s.mult_bonus_damage for s in self.child_skills])
 
     @property
     def extra_time(self):
-        return sum([x.extra_time for x in self.child_skills])
+        return sum([s.extra_time for s in self.child_skills])
 
     @property
     def parts(self):
         return self.child_skills
 
     def text(self, converter) -> str:
-        parts = map(lambda x: x.text(converter), self.parts)
+        parts = map(lambda s: s.text(converter), self.parts)
         return converter.concat_list_semicolons(parts)
 
     def full_text(self, converter):
@@ -1315,9 +1324,10 @@ class LSAdvancedBlobMatch(LeaderSkill):
         self.min_atk = mult(data[2])
         self.atk_step = mult(data[3])
         self.max_count = data[4]
-        self.max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
         self.min_rcv = 1
-        super().__init__(159, ms, atk=self.max_atk)
+
+        max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
+        super().__init__(159, ms, atk=max_atk)
 
     def text(self, converter) -> str:
         return converter.mass_match_text(self)
@@ -1365,9 +1375,10 @@ class LSAttrComboConditionalAtkRcvBoost(LeaderSkill):
         self.atk_step = mult(data[7])
         self.rcv_step = self.atk_step
         self.max_match = len(self.match_attributes)
-        self.max_atk = self.min_atk + self.atk_step * (self.max_match - self.min_match)
-        self.max_rcv = self.min_rcv + self.rcv_step * (self.max_match - self.min_match)
-        super().__init__(164, ms, atk=self.max_atk, rcv=self.max_rcv)
+
+        max_atk = self.min_atk + self.atk_step * (self.max_match - self.min_match)
+        max_rcv = self.min_rcv + self.rcv_step * (self.max_match - self.min_match)
+        super().__init__(164, ms, atk=max_atk, rcv=max_rcv)
 
     def text(self, converter) -> str:
         return converter.multi_attribute_match_text(self)
@@ -1393,9 +1404,9 @@ class LSRainbowAtkRcv(LeaderSkill):
         elif (self.max_attr + self.min_attr) <= len(self.match_attributes):
             self.max_attr = self.min_attr + self.max_attr
 
-        self.max_atk = self.min_atk + self.atk_step * (self.max_attr - self.min_attr)
-        self.max_rcv = self.min_rcv + self.rcv_step * (self.max_attr - self.min_attr)
-        super().__init__(165, ms, atk=self.max_atk, rcv=self.max_rcv)
+        max_atk = self.min_atk + self.atk_step * (self.max_attr - self.min_attr)
+        max_rcv = self.min_rcv + self.rcv_step * (self.max_attr - self.min_attr)
+        super().__init__(165, ms, atk=max_atk, rcv=max_rcv)
 
     def text(self, converter) -> str:
         return converter.attribute_match_text(self)
@@ -1408,13 +1419,14 @@ class LSAtkRcvComboScale(LeaderSkill):
         data = merge_defaults(ms.data, [1, 100, 100, 0, 0, 0])
         self.min_combos = data[0]
         self.min_atk = mult(data[1])
-        self.min_rcv = mult(data[2])
         self.atk_step = mult(data[3])
+        self.min_rcv = mult(data[2])
         self.rcv_step = mult(data[4])
         self.max_combos = data[5]
-        self.max_atk = self.min_atk + self.atk_step * (self.max_combos - self.min_combos)
-        self.max_rcv = self.min_rcv + self.rcv_step * (self.max_combos - self.min_combos)
-        super().__init__(166, ms, atk=self.max_atk, rcv=self.max_rcv)
+
+        max_atk = self.min_atk + self.atk_step * (self.max_combos - self.min_combos)
+        max_rcv = self.min_rcv + self.rcv_step * (self.max_combos - self.min_combos)
+        super().__init__(166, ms, atk=max_atk, rcv=max_rcv)
 
     def text(self, converter) -> str:
         return converter.combo_match_text(self)
@@ -1432,18 +1444,19 @@ class LSBlobAtkRcvBoost(LeaderSkill):
         self.atk_step = mult(data[4])
         self.rcv_step = mult(data[5])
         self.max_count = data[6]
-        self.max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
-        self.max_rcv = self.min_rcv + self.rcv_step * (self.max_count - self.min_count)
+
+        max_atk = self.min_atk + self.atk_step * (self.max_count - self.min_count)
+        max_rcv = self.min_rcv + self.rcv_step * (self.max_count - self.min_count)
 
         # Overrides for optional atk/rcv
-        if self.min_atk == 0 and self.max_atk == 0:
+        if self.min_atk == 0 and max_atk == 0:
             self.min_atk = 1.0
-            self.max_atk = 1.0
-        if self.min_rcv == 0 and self.max_rcv == 0:
+            max_atk = 1.0
+        if self.min_rcv == 0 and max_rcv == 0:
             self.min_rcv = 1.0
-            self.max_rcv = 1.0
+            max_rcv = 1.0
 
-        super().__init__(167, ms, atk=self.max_atk, rcv=self.max_rcv)
+        super().__init__(167, ms, atk=max_atk, rcv=max_rcv)
 
     def text(self, converter) -> str:
         return converter.mass_match_text(self)
@@ -1453,13 +1466,17 @@ class LSComboMultPlusShield(LeaderSkill):
     skill_type = 169
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, 100, 0])
+        data = merge_defaults(ms.data, [0, 100, 0, 0, 0])
         self.min_combos = data[0]
-        self.max_combos = self.min_combos
+        self.max_combos = data[4] or self.min_combos
         self.min_atk = mult(data[1])
+        self.atk_step = mult(data[3])
         self.min_rcv = 1
+        self.rcv_step = 0
+
+        max_atk = self.min_atk + self.atk_step * (self.min_combos - self.max_combos)
         shield = mult(data[2])
-        super().__init__(169, ms, atk=self.min_atk, shield=shield)
+        super().__init__(169, ms, atk=max_atk, shield=shield)
 
     def text(self, converter) -> str:
         return converter.combo_match_text(self)
@@ -1475,11 +1492,12 @@ class LSRainbowMultPlusShield(LeaderSkill):
         self.max_attr = 5
         self.min_atk = mult(data[2])
         self.atk_step = mult(data[4])
-        self.max_atk = self.min_atk + self.atk_step * (5 - data[5])
         self.min_rcv = 1
-        self.max_rcv = 1
+        self.rcv_step = 0
+
+        max_atk = self.min_atk + self.atk_step * (5 - data[5])
         shield = mult(data[3])
-        super().__init__(170, ms, atk=self.max_atk, shield=shield)
+        super().__init__(170, ms, atk=max_atk, shield=shield)
 
     def text(self, converter) -> str:
         return converter.scaling_attribute_match_text(self)
@@ -1493,7 +1511,6 @@ class LSMatchAttrPlusShield(LeaderSkill):
         self.match_attributes = list_binary_con(data[0:4])
         self.min_match = data[4]
         self.min_atk = mult(data[5])
-        self.max_atk = self.min_atk
         self.min_rcv = 1
         shield = mult(data[6])
         super().__init__(171, ms, atk=self.min_atk, shield=shield)
@@ -1870,18 +1887,18 @@ def convert(skill_list: List[MonsterSkill]):
 
 # TODO: These ended up being 1:1, convert skill type to a class value, then
 # load this mapping dynamically via list of skill classes
-def convert_skill(s) -> Optional[LeaderSkill]:
-    if s.skill_id == 1538:
+def convert_skill(skill) -> Optional[LeaderSkill]:
+    if skill.skill_id == 1538:
         # This works around a bug in gungho's code for this specific skill.
         # Currently the skill data for 1538 is ['無し', '', 0, 0, 0, ''] but it's in use.
-        return LeaderSkill(0, s)
+        return LeaderSkill(0, skill)
 
     d = {}
-    for skill in ALL_LEADER_SKILLS:
-        if skill.skill_type in d:
-            raise ValueError('Unexpected duplicate skill_type: ' + str(skill.skill_type))
-        d[skill.skill_type] = skill
-    return d.get(s.skill_type, lambda s: None)(s)
+    for ls_type in ALL_LEADER_SKILLS:
+        if ls_type.skill_type in d:
+            raise ValueError('Unexpected duplicate skill_type: ' + str(ls_type.skill_type))
+        d[ls_type.skill_type] = ls_type
+    return d.get(skill.skill_type, lambda s: None)(skill)
 
 
 ALL_LEADER_SKILLS = [
