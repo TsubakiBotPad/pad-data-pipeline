@@ -1474,7 +1474,7 @@ class LSComboMultPlusShield(LeaderSkill):
         self.min_rcv = 1
         self.rcv_step = 0
 
-        max_atk = self.min_atk + self.atk_step * (self.min_combos - self.max_combos)
+        max_atk = self.min_atk + self.atk_step * (self.max_combos - self.min_combos)
         shield = mult(data[2])
         super().__init__(169, ms, atk=max_atk, shield=shield)
 
