@@ -200,10 +200,21 @@ class JpLSTextConverter(JpBaseTextConverter):
     def combo_match_text(self, ls):
         if ls.min_combos == 0:
             return ''
-        skill_text = '{}コンボ以上で'.format(ls.min_combos)
-        skill_text += self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', skip_attr_all=True, atk=ls.min_atk,
-                                                     rcv=ls.min_rcv)
-        if ls.min_combos != ls.max_combos and ls.max_combos:
+
+        skill_text = ''
+        min_atk = ls.min_atk
+        min_rcv = ls.min_rcv
+        min_combos = ls.min_combos
+        if (min_atk == 1 and ls.atk != 1) or (min_rcv == 1 and ls.rcv != 1):
+            skill_text = '{}コンボ以上で'.format(min_combos)
+            skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', atk=min_atk, rcv=min_rcv) + '。'
+            min_combos += 1
+            min_atk += ls.atk_scale
+            min_rcv += ls.rcv_scale
+
+        skill_text += '{}コンボ以上で'.format(min_combos)
+        skill_text += self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', atk=min_atk, rcv=min_rcv)
+        if min_combos != ls.max_combos and ls.max_combos:
             skill_text += '、最大{}コンボで{}倍'.format(ls.max_combos, fmt_mult(ls.atk))
         return skill_text + '。'
 
