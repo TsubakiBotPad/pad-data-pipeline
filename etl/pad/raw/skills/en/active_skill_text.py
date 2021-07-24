@@ -1,4 +1,4 @@
-from pad.raw.skills.active_skill_info import ActiveSkill, ASConditional
+from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
 from pad.raw.skills.en.skill_common import *
 import logging
 
@@ -575,11 +575,11 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text = "To some other players, "
         return skill_text + "do something mean (probably)"
 
-    def multi_part_active(self, skills: List[ActiveSkill]):
+    def multi_part_active(self, skills: List[PartWithTextAndCount]):
         skill_text = ""
-        for c, skill in enumerate(skills):
-            skill_text += skill.full_text(self)
-            if c != len(skills) - 1 and not isinstance(skill, ASConditional):
+        for c, skillpart in enumerate(skills):
+            skill_text += skillpart.full_text(self)
+            if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '; '
         return skill_text
 

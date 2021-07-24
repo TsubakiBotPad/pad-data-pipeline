@@ -1,4 +1,4 @@
-from pad.raw.skills.active_skill_info import ASConditional, ActiveSkill
+from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
 from pad.raw.skills.jp.skill_common import *
 
 
@@ -539,11 +539,11 @@ class JpASTextConverter(JpBaseTextConverter):
         return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"
                 "ックを送信して、アラディアが実際にここに何かを書き込むようにしてください")
 
-    def multi_part_active(self, skills: List[ActiveSkill]):
+    def multi_part_active(self, skills: List[PartWithTextAndCount]):
         skill_text = ""
-        for c, skill in enumerate(skills):
-            skill_text += skill.full_text(self)
-            if c != len(skills) - 1 and not isinstance(skill, ASConditional):
+        for c, skillpart in enumerate(skills):
+            skill_text += skillpart.full_text(self)
+            if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '。'
         return skill_text
 
