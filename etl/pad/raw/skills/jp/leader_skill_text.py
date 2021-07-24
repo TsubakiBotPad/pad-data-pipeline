@@ -209,8 +209,8 @@ class JpLSTextConverter(JpBaseTextConverter):
             skill_text = '{}コンボ以上で'.format(min_combos)
             skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', atk=min_atk, rcv=min_rcv) + '。'
             min_combos += 1
-            min_atk += ls.atk_scale
-            min_rcv += ls.rcv_scale
+            min_atk += ls.atk_step
+            min_rcv += ls.rcv_step
 
         skill_text += '{}コンボ以上で'.format(min_combos)
         skill_text += self.fmt_stats_type_attr_bonus(ls, reduce_join_txt='、', atk=min_atk, rcv=min_rcv)
