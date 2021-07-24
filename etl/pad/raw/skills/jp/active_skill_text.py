@@ -1,4 +1,6 @@
+from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
 from pad.raw.skills.jp.skill_common import *
+
 
 def fmt_mult(x):
     return str(round(float(x), 2)).rstrip('0').rstrip('.')
@@ -336,7 +338,7 @@ class JpASTextConverter(JpBaseTextConverter):
         if rate == '100':
             skill_text += '{}ドロップのみ落ちてくる'.format(self.attributes_to_str(act.orbs))
         else:
-            if all(map(lambda x: x in list(range(6)), act.orbs)):
+            if all(map(lambda x: x in range(6), act.orbs)):
                 skill_text += '{}ドロップが{}％落ちやすくなる'.format(self.attributes_to_str(act.orbs), rate)
             else:
                 skill_text += '{}が{}％の確率で落ちてくる'.format(self.attributes_to_str(act.orbs), rate)
@@ -524,8 +526,26 @@ class JpASTextConverter(JpBaseTextConverter):
         skill_text += 'ドロップが消せなくなる。'
         return skill_text
 
-    def two_part_active(self, strs):
-        return '。'.join(strs)
+    def conditional_hp_thresh(self, act):
+        return f"HP {act.threshold}%以{'上' if act.above else '下'}"
+
+    def nail_orb_skyfall(self, act):
+        return f'{self.fmt_duration(act.duration)}釘ドロップが{fmt_mult(act.chance * 100)}％落ちやすくなる'
+
+    def lead_swap_sub(self, act):
+        return f'リーダーと左から{act.sub_slot}番のサブを入れ替える'
+
+    def inflict_es(self, act):
+        return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"
+                "ックを送信して、アラディアが実際にここに何かを書き込むようにしてください")
+
+    def multi_part_active(self, skills: List[PartWithTextAndCount]):
+        skill_text = ""
+        for c, skillpart in enumerate(skills):
+            skill_text += skillpart.full_text(self)
+            if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
+                skill_text += '。'
+        return skill_text
 
 
 __all__ = ['JpASTextConverter']

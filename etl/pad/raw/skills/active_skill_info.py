@@ -1,11 +1,12 @@
 import logging
 from collections import OrderedDict, namedtuple
-from typing import List
+from typing import List, Any
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.en.active_skill_text import EnASTextConverter as ASTextConverter
 
 human_fix_logger = logging.getLogger('human_fix')
+
+ASTextConverter = Any
 
 
 def cc(x): return x
@@ -66,6 +67,10 @@ class ActiveSkill(object):
 
     def full_text(self, converter: ASTextConverter) -> str:
         return self.text(converter) or ''
+
+
+class ASConditional(ActiveSkill):
+    pass
 
 
 class ASMultiplierMultiTargetAttrNuke(ActiveSkill):
@@ -622,7 +627,7 @@ class ASMultiPartSkill(ActiveSkill):
             else:
                 text_to_item[p_text] = PartWithTextAndCount(p, p_text)
 
-        return converter.two_part_active(map(lambda x: x.full_text(converter), text_to_item.values()))
+        return converter.multi_part_active(text_to_item.values())
 
 
 class ASHpRecoveryandBindClear(ActiveSkill):
@@ -1181,6 +1186,58 @@ class ASTimedEnemyAttrChange(ActiveSkill):
         return converter.change_enemies_attribute_convert(self)
 
 
+class ASConditionalHPAbove(ASConditional):
+    skill_type = 225
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [100])
+        self.threshold = data[0]
+        self.above = True
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.conditional_hp_thresh(self)
+
+
+class ASNailOrbSkyfall(ActiveSkill):
+    skill_type = 226
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.duration = data[0]
+        self.chance = multi(data[1])
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.nail_orb_skyfall(self)
+
+
+class ASLeaderSwapRightSub(ActiveSkill):
+    skill_type = 227
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [])
+        self.sub_slot = 4
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.lead_swap_sub(self)
+
+
+class ASInflictES(ActiveSkill):
+    skill_type = 1000
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0])
+        self.selector_type = data[0]
+        self.players = binary_con(data[1])
+        self.es_ref = data[2]
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.inflict_es(self)
+
+
 def convert(skill_list: List[MonsterSkill]):
     skill_type_to_constructor = {}
     for skill in ALL_ACTIVE_SKILLS:
@@ -1305,4 +1362,8 @@ ALL_ACTIVE_SKILLS = [
     ASCreateUnmatchable,
     ASDelayAllySkills,
     ASTimedEnemyAttrChange,
+    ASConditionalHPAbove,
+    ASNailOrbSkyfall,
+    ASLeaderSwapRightSub,
+    ASInflictES,
 ]

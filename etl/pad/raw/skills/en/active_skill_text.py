@@ -1,3 +1,4 @@
+from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
 from pad.raw.skills.en.skill_common import *
 import logging
 
@@ -549,11 +550,38 @@ class EnASTextConverter(EnBaseTextConverter):
     def create_unmatchable(self, act):
         skill_text = self.fmt_duration(act.duration)
         if act.orbs:
-            skill_text += " " +self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs)
-        return skill_text + " orbs are unmatchable."
+            skill_text += " " + self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs)
+        return skill_text + " orbs are unmatchable"
 
-    def two_part_active(self, strs):
-        return '; '.join(strs)
+    def conditional_hp_thresh(self, act):
+        return f"If HP {'>' if act.above else '<'}= {act.threshold}: "
+
+    def nail_orb_skyfall(self, act):
+        return f"{self.fmt_duration(act.duration)}+{fmt_mult(act.chance * 100)}% chance for nail orb skyfall"
+
+    def lead_swap_sub(self, act):
+        return f'Swap team leader with the sub in the {ordinal(act.sub_slot)} position'
+
+    def inflict_es(self, act):
+        if act.selector_type == 2:
+            if len(act.players) == 1:
+                skill_text = f"To the player in the {ordinal(act.players[0])} place, "
+            else:
+                skill_text = f"To the players in the {self.concat_list_and(map(ordinal, act.players))} places, "
+        elif act.selector_type == 3:
+            skill_text = "To all players higher ranked than you, "
+        else:
+            human_fix_logger.warning(f"Invalid AS 1000 selector_type: {act.selector_type}")
+            skill_text = "To some other players, "
+        return skill_text + "do something mean (probably)"
+
+    def multi_part_active(self, skills: List[PartWithTextAndCount]):
+        skill_text = ""
+        for c, skillpart in enumerate(skills):
+            skill_text += skillpart.full_text(self)
+            if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
+                skill_text += '; '
+        return skill_text
 
 
 __all__ = ['EnASTextConverter']

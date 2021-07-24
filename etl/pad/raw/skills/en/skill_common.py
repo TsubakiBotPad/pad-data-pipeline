@@ -66,6 +66,12 @@ def pluralize2(noun, number, max_number=None):
 
 
 @public
+def ordinal(i):
+    """Bullshit magic to convert an integer to it's ordinal form (e.g. 1st, 2nd)"""
+    return str(i) + 'tsnrhtdd'[i % 5 * (i % 100 ^ 15 > 4 > i % 10)::4]
+
+
+@public
 class EnBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
