@@ -66,8 +66,11 @@ class BaseTextConverter(object):
         raise I13NotImplemented()
 
     @classmethod
-    def typing_to_str(cls, types):
-        return cls.concat_list_and([cls._TYPES[x] for x in types])
+    def typing_to_str(cls, types, conj=None):
+        if conj is not None:
+            return cls.concat_list_and([cls._TYPES[x] for x in types], conj)
+        else:
+            return cls.concat_list_and([cls._TYPES[x] for x in types])
 
     @property
     def AWAKENING_MAP(self) -> Dict[int, str]:
@@ -96,7 +99,7 @@ class BaseTextConverter(object):
         raise I13NotImplemented()
 
     @staticmethod
-    def concat_list_and(list_to_concat, conj):
+    def concat_list_and(list_to_concat, conj=None):
         raise I13NotImplemented()
 
     @staticmethod

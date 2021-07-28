@@ -1862,6 +1862,25 @@ class LSComboBonusDamage(LeaderSkill):
         return converter.combo_bonus_damage_text(self)
 
 
+class LSTeamCompositionBuff(LeaderSkill):
+    skill_type = 229
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0])
+        self.attributes = binary_con(data[0])
+        self.types = binary_con(data[1])
+        self.hp_boost = multi_floor(data[2])
+        self.atk_boost = multi_floor(data[3])
+        self.rcv_boost = multi_floor(data[4])
+
+        maximum = 6 * (max(len(self.types), 3) + max(len(self.attributes), 1))
+        super().__init__(229, ms, hp=1+self.hp_boost*maximum, atk=1+self.atk_boost*maximum,
+                         rcv=1+self.rcv_boost*maximum)
+
+    def text(self, converter) -> str:
+        return converter.composition_buff(self)
+
+
 def convert(skill_list: List[MonsterSkill]):
     results = {}
     for s in skill_list:
@@ -2014,4 +2033,5 @@ ALL_LEADER_SKILLS = [
     LSBlobMatchMultiAttrBonusCombo,
     LSLMatchComboBoost,
     LSComboBonusDamage,
+    LSTeamCompositionBuff,
 ]

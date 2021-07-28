@@ -437,6 +437,16 @@ class EnLSTextConverter(EnBaseTextConverter):
             skill_text += ' {}'.format(self.fmt_multi_attr(ls.attributes))
         return skill_text + ' orbs in an L shape'
 
+    def composition_buff(self, ls):
+        if ls.attributes and ls.types:
+            human_fix_logger.warning(f"Can't parse leader skill {ls.skill_id}, attributes and types.")
+            return ""
+        skill_text = self.fmt_multiplier_text(1, ls.atk_boost, ls.rcv_boost)
+        if ls.attributes:
+            return skill_text + f" for each {self.fmt_multi_attr(ls.attributes)} card in team"
+        else:
+            return skill_text + f" for each instance of {self.typing_to_str(ls.types, 'or')} in team"
+
     def full_text(self, text, tags=None):
         tags = tags or []
         if isinstance(text, (str, type(None))):
