@@ -1,8 +1,5 @@
 import logging
-import json
-import os
 
-from pad.raw.skills.skill_common import *
 from pad.raw.skills.jp.skill_common import *
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -408,6 +405,16 @@ class JpLSTextConverter(JpBaseTextConverter):
 
     def l_match_combo_text(self, ls):
         return '{}ドロップの5個L字消しで{}コンボ加算'.format(self.fmt_multi_attr(ls.attributes), ls.extra_combos)
+
+    def composition_buff(self, ls):
+        if ls.attributes and ls.types:
+            return ""
+        if ls.attributes:
+            return f"チーム内の{self.fmt_multi_attr(ls.attributes)}一体につき" \
+                   f"HPが{ls.hp_boost}%と攻撃力が{ls.atk_boost}%と回復力が{ls.rcv_boost}%上がる"
+        else:
+            return f"チーム内の{self.typing_to_str(ls.types, '、')}一つにつき" \
+                   f"HPが{ls.hp_boost}%と攻撃力が{ls.atk_boost}%と回復力が{ls.rcv_boost}%上がる"
 
     def full_text(self, text, tags=None):
         tags = tags or []
