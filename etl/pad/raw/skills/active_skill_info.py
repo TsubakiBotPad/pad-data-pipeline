@@ -1186,13 +1186,13 @@ class ASTimedEnemyAttrChange(ActiveSkill):
         return converter.change_enemies_attribute_convert(self)
 
 
-class ASConditionalHPAbove(ASConditional):
+class ASConditionalHPThreshold(ASConditional):
     skill_type = 225
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [100])
-        self.threshold = data[0]
-        self.above = True
+        data = merge_defaults(ms.data, [0, 0])
+        self.lower_limit = data[0]
+        self.upper_limit = data[1] or 100
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1222,6 +1222,22 @@ class ASLeaderSwapRightSub(ActiveSkill):
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.lead_swap_sub(self)
+
+
+class ASTeamCompositionBuff(ActiveSkill):
+    skill_type = 228
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0])
+        self.turns = data[0]
+        self.attributes = binary_con(data[1])
+        self.types = binary_con(data[2])
+        self.atk_boost = multi(data[3])
+        self.rcv_boost = multi(data[4])
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.composition_buff(self)
 
 
 class ASInflictES(ActiveSkill):
@@ -1362,8 +1378,9 @@ ALL_ACTIVE_SKILLS = [
     ASCreateUnmatchable,
     ASDelayAllySkills,
     ASTimedEnemyAttrChange,
-    ASConditionalHPAbove,
+    ASConditionalHPThreshold,
     ASNailOrbSkyfall,
     ASLeaderSwapRightSub,
+    ASTeamCompositionBuff,
     ASInflictES,
 ]

@@ -527,13 +527,28 @@ class JpASTextConverter(JpBaseTextConverter):
         return skill_text
 
     def conditional_hp_thresh(self, act):
-        return f"HP {act.threshold}%以{'上' if act.above else '下'}"
+        if act.lower_limit == 0:
+            return f"HP {act.upper_limit}%以下"
+        if act.upper_limit == 100:
+            return f"HP {act.lower_limit}%以上"
+        return f"HP{act.lower_limit}%～{act.upper_limit}%の場合："
 
     def nail_orb_skyfall(self, act):
         return f'{self.fmt_duration(act.duration)}釘ドロップが{fmt_mult(act.chance * 100)}％落ちやすくなる'
 
     def lead_swap_sub(self, act):
         return f'リーダーと左から{act.sub_slot}番のサブを入れ替える'
+
+    def composition_buff(self, act):
+        if act.attributes and act.types:
+            return ""
+        skill_text = self.fmt_duration(act.duration)
+        if act.attributes:
+            return skill_text + f"チーム内の{self.fmt_multi_attr(act.attributes)}一体につき" \
+                                f"攻撃力が{act.atk_boost}%と回復力が{act.rcv_boost}%上がる"
+        else:
+            return skill_text + f"チーム内の{self.typing_to_str(act.types, '、')}一つにつき" \
+                                f"攻撃力が{act.atk_boost}%と回復力が{act.rcv_boost}%上がる"
 
     def inflict_es(self, act):
         return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"

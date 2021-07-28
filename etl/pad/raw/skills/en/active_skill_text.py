@@ -554,13 +554,27 @@ class EnASTextConverter(EnBaseTextConverter):
         return skill_text + " orbs are unmatchable"
 
     def conditional_hp_thresh(self, act):
-        return f"If HP {'>' if act.above else '<'}= {act.threshold}: "
+        if act.lower_limit == 0:
+            return f"If HP <= {act.upper_limit}%: "
+        if act.upper_limit == 100:
+            return f"If HP >= {act.lower_limit}%: "
+        return f"If HP is bewteen {act.lower_limit}% and {act.upper_limit}%: "
 
     def nail_orb_skyfall(self, act):
         return f"{self.fmt_duration(act.duration)}+{fmt_mult(act.chance * 100)}% chance for nail orb skyfall"
 
     def lead_swap_sub(self, act):
-        return f'Swap team leader with the sub in the {ordinal(act.sub_slot)} position'
+        return f"Swap team leader with the sub in the {ordinal(act.sub_slot)} position"
+
+    def composition_buff(self, act):
+        if act.attributes and act.types:
+            human_fix_logger.warning(f"Can't parse active skill {act.skill_id}, attributes and types.")
+            return ""
+        skill_text = self.fmt_duration(act.duration) + self.fmt_multiplier_text(1, act.atk_boost, act.rcv_boost)
+        if act.attributes:
+            return skill_text + f" for each {self.fmt_multi_attr(act.attributes)} card in team"
+        else:
+            return skill_text + f" for each instance of {self.typing_to_str(act.types, 'or')} in team"
 
     def inflict_es(self, act):
         if act.selector_type == 2:
