@@ -1,48 +1,26 @@
-from typing import Dict, List
+from typing import Dict
 from enum import Enum
 
-__all__ = []
 
-
-def public(x):
-    global __all__
-    __all__.append(x.__name__)
-    return x
-
-
-@public
 class I13NotImplemented(NotImplementedError):
     pass
 
 
-@public
 def fmt_mult(x):
     return '{:,}'.format(round(float(x), 2)).rstrip('0').rstrip('.')
 
 
-@public
 def multi_getattr(o, *args):
     for a in args:
         v = getattr(o, a, None)
         if v is not None:
             return v
-    raise Exception('Attributs not found:' + str(args))
+    raise Exception('Attributes not found:' + str(args))
 
 
-@public
-def minmax(nmin, nmax, p=False, fmt=False):
-    fmt = fmt_mult if fmt else (lambda x: '{:,}'.format(x))
-    if None in [nmin, nmax] or nmin == nmax:
-        return "{}".format(fmt(nmin or nmax)) + ("%" if p else '')
-    elif p:
-        return "{}%~{}%".format(fmt(int(nmin)), fmt(int(nmax)))
-    else:
-        return "{}~{}".format(fmt(int(nmin)), fmt(int(nmax)))
-
-
-@public
 class BaseTextConverter(object):
     """Contains code shared across AS and LS converters."""
+    _ATTRS = _TYPES = {}
 
     #############################################################################
     # Items here must be implemented by language-specific subclasses
@@ -111,7 +89,6 @@ class BaseTextConverter(object):
 
 
 # ENUMS
-@public
 class TargetType(Enum):
     unset = -1
     # Selective Subs
@@ -134,7 +111,6 @@ class TargetType(Enum):
     actives = 11
 
 
-@public
 class OrbShape(Enum):
     l_shape = 0
     cross = 1
@@ -142,7 +118,6 @@ class OrbShape(Enum):
     row = 4
 
 
-@public
 class Status(Enum):
     movetime = 0
     atk = 1
@@ -150,7 +125,6 @@ class Status(Enum):
     rcv = 3
 
 
-@public
 class Unit(Enum):
     unknown = -1
     seconds = 0
@@ -158,7 +132,6 @@ class Unit(Enum):
     none = 2
 
 
-@public
 class Absorb(Enum):
     unknown = -1
     attr = 0
@@ -166,7 +139,6 @@ class Absorb(Enum):
     damage = 2
 
 
-@public
 class Source(Enum):
     all_sources = 0
     attrs = 5
@@ -174,13 +146,11 @@ class Source(Enum):
 
 
 # LS FUNCTIONS
-@public
 class ThresholdType(Enum):
     BELOW = '<'
     ABOVE = '>'
 
 
-@public
 class Tag(Enum):
     NO_SKYFALL = 0
     BOARD_7X6 = 1
@@ -189,12 +159,10 @@ class Tag(Enum):
     ERASE_P = 4
 
 
-@public
 def sort_tags(tags):
     return sorted(tags, key=lambda x: x.value)
 
 
-@public
 class AttributeDict(dict):
     def __getattr__(self, key):
         if key not in self:
@@ -204,42 +172,33 @@ class AttributeDict(dict):
     __setattr__ = dict.__setitem__
 
 
-@public
 def mult(x):
     return x / 100
 
 
-@public
 def multi_floor(x):
-    return x / 100 if x != 0 else 1.0
+    return mult(x) if x != 0 else 1.0
 
 
-# TODO: clean all these things up
-@public
 def atk_from_slice(x):
-    return x[2] / 100 if 1 in x[:2] else 1.0
+    return mult(x[2]) if 1 in x[:2] else 1.0
 
 
-@public
 def rcv_from_slice(x):
-    return x[2] / 100 if 2 in x[:2] else 1.0
+    return mult(x[2]) if 2 in x[:2] else 1.0
 
 
-@public
 def binary_con(x):
-    return [i for i, v in enumerate(str(bin(x))[:1:-1]) if v == '1']
+    return [] if x == -1 else [i for i, v in enumerate(str(bin(x))[:1:-1]) if v == '1']
 
 
-@public
 def list_binary_con(x):
     return [b for i in x for b in binary_con(i)]
 
 
-@public
 def list_con_pos(x):
     return [i for i in x if i > 0]
 
 
-@public
-def merge_defaults(input, defaults):
-    return list(input) + defaults[len(input):]
+def merge_defaults(data, defaults):
+    return list(data) + defaults[len(data):]

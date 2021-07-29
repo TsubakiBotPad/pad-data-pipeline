@@ -1,5 +1,7 @@
+from typing import List
+
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
-from pad.raw.skills.jp.skill_common import *
+from pad.raw.skills.jp.skill_common import JpBaseTextConverter, minmax
 
 
 def fmt_mult(x):
@@ -561,6 +563,3 @@ class JpASTextConverter(JpBaseTextConverter):
             if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '。'
         return skill_text
-
-
-__all__ = ['JpASTextConverter']
