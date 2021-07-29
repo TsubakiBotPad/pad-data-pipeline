@@ -249,6 +249,3 @@ class KrESTextConverter(KrBaseTextConverter, EnESTextConverter):
 
     def join_skill_descs(self, descs):
         return ' + '.join(descs)
-
-
-__all__ = ['KrESTextConverter']

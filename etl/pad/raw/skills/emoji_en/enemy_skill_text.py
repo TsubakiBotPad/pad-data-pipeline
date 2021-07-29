@@ -503,6 +503,3 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def join_skill_descs(self, descs):
         return ' + '.join(descs)
-
-
-__all__ = ['EnEmojiESTextConverter']

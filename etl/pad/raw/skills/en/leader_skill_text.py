@@ -458,6 +458,3 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def tag_only_text(self, ls):
         return ''
-
-
-__all__ = ['EnLSTextConverter']

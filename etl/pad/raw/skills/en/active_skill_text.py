@@ -601,6 +601,3 @@ class EnASTextConverter(EnBaseTextConverter):
             if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '; '
         return skill_text
-
-
-__all__ = ['EnASTextConverter']

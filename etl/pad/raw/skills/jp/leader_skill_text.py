@@ -430,6 +430,3 @@ class JpLSTextConverter(JpBaseTextConverter):
 
     def tag_only_text(self, ls):
         return ''
-
-
-__all__ = ['JpLSTextConverter']
