@@ -1193,7 +1193,7 @@ class ASTeamCompositionBuff(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0])
-        self.turns = data[0]
+        self.duration = data[0]
         self.attributes = binary_con(data[1])
         self.types = binary_con(data[2])
         self.atk_boost = mult(data[3])
