@@ -1,69 +1,15 @@
 import json
 import os
-from typing import Dict, List
-from enum import Enum
+from typing import Dict
 
-from pad.raw.skills.skill_common import *
-import pad.raw.skills.skill_common as base_skill_common
+from pad.raw.skills.en.skill_common import capitalize_first
+from pad.raw.skills.skill_common import BaseTextConverter, fmt_mult
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))
 
-__all__ = list(filter(lambda x: not x.startswith('__'), dir(base_skill_common)))
 
-
-def public(x):
-    global __all__
-    __all__.append(x.__name__)
-    return x
-
-
-@public
-def capitalize_first(x: str):
-    if not x:
-        return x
-    elif len(x) == 1:
-        return x.upper()
-    else:
-        return x[0].upper() + x[1:]
-
-
-article_irregulars = {
-    'L shape': 'an L shape',
-}
-
-
-@public
-def indef_article(noun):
-    return article_irregulars.get(noun, 'a{} {}'.format('n' if noun[0] in 'aeiou' else '', noun))
-
-
-irregulars = {
-    'status': 'statuses',
-    'both leaders': 'both leaders',
-    'active skills': 'active skills',
-    'awoken skills': 'awoken skills',
-}
-
-
-@public
-def pluralize(noun, number):
-    irregular_plural = irregulars.get(noun)
-    if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'
-    return noun
-
-
-@public
-def pluralize2(noun, number, max_number=None):
-    if isinstance(number, int) or max_number is not None:
-        number = minmax(number, max_number)
-    if number is None:
-        return noun
-    return "{} {}".format(number, noun)
-
-
-@public
 class EmojiBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
@@ -118,7 +64,9 @@ class EmojiBaseTextConverter(BaseTextConverter):
         return '{}x all stats'.format(multiplier)
 
     @classmethod
-    def attributes_to_emoji(cls, atts, emoji_map=_ATTRS):
+    def attributes_to_emoji(cls, atts, emoji_map=None):
+        if emoji_map is None:
+            emoji_map = cls._ATTRS
         if not isinstance(atts, list):
             atts = [atts]
         emoji = ''
@@ -241,8 +189,8 @@ class EmojiBaseTextConverter(BaseTextConverter):
             return self.all_stats(fmt_mult(hp_mult))
 
         mults = [('HP', hp_mult), ('ATK', atk_mult), ('RCV', rcv_mult)]
-        mults = list(filter(lambda x: x[1] != 1, mults))
-        mults.sort(key=lambda x: x[1], reverse=True)
+        mults = list(filter(lambda ml: ml[1] != 1, mults))
+        mults.sort(key=lambda ml: ml[1], reverse=True)
 
         chunks = []
         x = 0

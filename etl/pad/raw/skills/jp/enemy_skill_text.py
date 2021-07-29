@@ -1,6 +1,7 @@
-from pad.raw.skills.jp.skill_common import *
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as BaseESTextConverter
 import logging
+
+from pad.raw.skills.jp.skill_common import JpBaseTextConverter, minmax
+from pad.raw.skills.skill_common import TargetType, OrbShape, Source, Unit, Absorb, Status
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -353,6 +354,3 @@ class JpESTextConverter(JpBaseTextConverter):
 
     def join_skill_descs(self, descs):
         return '＋'.join(descs)
-
-
-__all__ = ['JpESTextConverter']

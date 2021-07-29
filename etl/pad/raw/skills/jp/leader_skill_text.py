@@ -1,6 +1,10 @@
+import json
 import logging
+import os
+from typing import List
 
-from pad.raw.skills.jp.skill_common import *
+from pad.raw.skills.jp.skill_common import JpBaseTextConverter, fmt_mult
+from pad.raw.skills.skill_common import Tag
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -426,6 +430,3 @@ class JpLSTextConverter(JpBaseTextConverter):
 
     def tag_only_text(self, ls):
         return ''
-
-
-__all__ = ['JpLSTextConverter']

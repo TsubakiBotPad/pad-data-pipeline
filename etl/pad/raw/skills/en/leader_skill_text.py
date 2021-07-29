@@ -1,9 +1,10 @@
 import logging
 import json
 import os
+from typing import List
 
-from pad.raw.skills.skill_common import *
-from pad.raw.skills.en.skill_common import *
+from pad.raw.skills.en.skill_common import EnBaseTextConverter
+from pad.raw.skills.skill_common import Tag, fmt_mult
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -457,6 +458,3 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def tag_only_text(self, ls):
         return ''
-
-
-__all__ = ['EnLSTextConverter']

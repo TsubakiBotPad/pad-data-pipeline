@@ -1,24 +1,14 @@
 import json
 import os
-from typing import Dict, List
-from enum import Enum
+from typing import Dict
 
-from pad.raw.skills.skill_common import *
-import pad.raw.skills.skill_common as base_skill_common
+from pad.raw.skills.skill_common import fmt_mult, BaseTextConverter
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))
 
-__all__ = list(filter(lambda x: not x.startswith('__'), dir(base_skill_common)))
 
-
-def public(x):
-    global __all__
-    __all__.append(x.__name__)
-    return x
-
-
-@public
 def capitalize_first(x: str):
     if not x:
         return x
@@ -33,7 +23,6 @@ article_irregulars = {
 }
 
 
-@public
 def indef_article(noun):
     return article_irregulars.get(noun, 'a{} {}'.format('n' if noun[0] in 'aeiou' else '', noun))
 
@@ -46,7 +35,6 @@ irregulars = {
 }
 
 
-@public
 def pluralize(noun, number):
     irregular_plural = irregulars.get(noun)
     if number not in (1, '1'):
@@ -54,7 +42,6 @@ def pluralize(noun, number):
     return noun
 
 
-@public
 def pluralize2(noun, number, max_number=None):
     if isinstance(number, int) or max_number is not None:
         number = minmax(number, max_number)
@@ -65,13 +52,20 @@ def pluralize2(noun, number, max_number=None):
     return "{} {}".format(number, noun)
 
 
-@public
-def ordinal(i):
-    """Bullshit magic to convert an integer to it's ordinal form (e.g. 1st, 2nd)"""
-    return str(i) + 'tsnrhtdd'[i % 5 * (i % 100 ^ 15 > 4 > i % 10)::4]
+def minmax(nmin, nmax, p=False, fmt=False):
+    fmt = fmt_mult if fmt else (lambda x: '{:,}'.format(x))
+    if None in [nmin, nmax] or nmin == nmax:
+        return "{}".format(fmt(nmin or nmax)) + ("%" if p else '')
+    elif p:
+        return "{}%~{}%".format(fmt(int(nmin)), fmt(int(nmax)))
+    else:
+        return "{}~{}".format(fmt(int(nmin)), fmt(int(nmax)))
 
 
-@public
+def ordinal(n):
+    return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
+
+
 class EnBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
@@ -238,8 +232,8 @@ class EnBaseTextConverter(BaseTextConverter):
             return self.all_stats(fmt_mult(hp_mult))
 
         mults = [('HP', hp_mult), ('ATK', atk_mult), ('RCV', rcv_mult)]
-        mults = list(filter(lambda x: x[1] != 1, mults))
-        mults.sort(key=lambda x: x[1], reverse=True)
+        mults = list(filter(lambda ml: ml[1] != 1, mults))
+        mults.sort(key=lambda ml: ml[1], reverse=True)
 
         chunks = []
         x = 0

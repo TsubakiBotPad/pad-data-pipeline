@@ -3,9 +3,18 @@ Contains code to convert a list of enemy behavior logic into a flattened structu
 called a ProcessedSkillset.
 """
 import collections
-from typing import Set, Tuple
+import copy
+from typing import Set, Tuple, List, Optional
 
-from pad.raw.skills.enemy_skill_info import *
+from pad.raw.card import Card, ESRef
+from pad.raw.skills.enemy_skill_info import ESInstance, ESBehavior, ESEnrageAttackUp, ESAttackUPRemainingEnemies, \
+    ESAttackUPCooldown, ESDamageShield, ESStatusShield, ESAbsorbCombo, ESAbsorbAttribute, ESAbsorbThreshold, \
+    ESDebuffMovetime, ESSkyfall, ESNoSkyfall, ESVoidShield, ESComboSkyfall, ESDebuffATK, ESDebuffRCV, ESCondition, \
+    ESCountdownMessage, ESDefaultAttack, attribute_bitmap, ESNone, ESPreemptive, ESAttackPreemptive, ESAttackUpStatus, \
+    ESUnknown, ESAction, ESDispel, ESBranchFlag, ESEndPath, ESFlagOperation, ESBranchHP, ESBranchLevel, ESSetCounter, \
+    ESSetCounterIf, ESCountdown, ESBranchCounter, ESBranchCard, ESBranchCombo, ESBranchRemainingEnemies, \
+    ESBranchEraseAttr, ESBranchDamage, ESBranchDamageAttribute, ESBranchSkillUse, ESPassive, ESDeathCry, \
+    ESSkillSetOnDeath, ESRecoverEnemyAlly
 
 
 class StandardSkillGroup(object):
@@ -381,7 +390,7 @@ def wrap_with_instance(behavior):
     FakeCard = collections.namedtuple('Card', 'use_new_ai enemy_skill_max_counter enemy_skill_counter_increment')
     fake_card = FakeCard(use_new_ai=False, enemy_skill_max_counter=0, enemy_skill_counter_increment=0)
     fake_ref = ESRef(behavior.enemy_skill_id, 100, 0)
-    return ESInstance(behavior, fake_ref, fake_card)
+    return ESInstance(behavior, fake_ref, fake_card)  # noqa
 
 
 def countdown_message():
@@ -395,7 +404,8 @@ def default_attack():
 
 def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]:
     original_ctx = ctx.clone()
-    results, card_branches, combo_branches, erase_attribute_branches, damage_branches, attributes_attacked_branches, skill_use_branches = loop_through_inner(
+    results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
+    attributes_attacked_branches, skill_use_branches = loop_through_inner(
         ctx, behaviors)
     # Handle extracting alternate actions based on card values
     card_extra_actions = []
@@ -519,7 +529,7 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
 
 
 def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
-        Tuple[List[ESInstance], List[int], List[int], List[int], List[int], List[int], List[int]]:
+        Tuple[List[ESInstance], List[List[int]], List[int], List[int], List[int], List[int], List[int]]:
     """Executes a single turn through the simulator.
 
     This is called multiple times with varying Context values to probe the action set
@@ -532,7 +542,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
     traversed = []
 
     # If any BranchCard instructions were spotted
-    card_branches = []  # type: List[int]
+    card_branches = []  # type: List[List[int]]
     # If any BranchCombo instructions were spotted
     combo_branches = []  # type: List[int]
     # If any BranchEraseAttribute instructions were spotted
@@ -582,8 +592,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             behaviors[idx] = None
             ctx.is_preemptive = True
             results.append(instance)
-            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
-                   attributes_attacked_branches, skills_used_branches
+            return (results, card_branches, combo_branches, erase_attribute_branches, damage_branches,
+                    attributes_attacked_branches, skills_used_branches)
 
         if isinstance(b, ESAttackUpStatus):
             # This is a special case; it's not a terminal action unlike other enrages.
@@ -614,8 +624,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                     if b.is_conditional():
                         idx += 1
                         continue
-                    return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
-                           attributes_attacked_branches, skills_used_branches
+                    return (results, card_branches, combo_branches, erase_attribute_branches, damage_branches,
+                            attributes_attacked_branches, skills_used_branches)
                 else:
                     # Not a terminal action, so accumulate it and continue.
                     if ctx.check_skill_use(cond) and ctx.check_no_apply_skill_effects(b):
@@ -627,8 +637,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                 if not ctx.apply_skill_effects(b):
                     idx += 1
                     continue
-                return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
-                       attributes_attacked_branches, skills_used_branches
+                return (results, card_branches, combo_branches, erase_attribute_branches, damage_branches,
+                        attributes_attacked_branches, skills_used_branches)
 
         if isinstance(b, ESBranchFlag):
             if b.branch_value == b.branch_value & ctx.flags:
@@ -645,8 +655,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             # if len(results) == 0:
             #     # if the result set is empty, add something
             #     results.append(default_attack())
-            return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
-                   attributes_attacked_branches, skills_used_branches
+            return (results, card_branches, combo_branches, erase_attribute_branches, damage_branches,
+                    attributes_attacked_branches, skills_used_branches)
 
         if isinstance(b, ESFlagOperation):
             # Operations which change flag state, we always move to the next behavior after.
@@ -703,8 +713,8 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             ctx.counter -= 1
             if ctx.counter > 0:
                 results.append(countdown_message())
-                return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
-                       attributes_attacked_branches, skills_used_branches
+                return (results, card_branches, combo_branches, erase_attribute_branches, damage_branches,
+                        attributes_attacked_branches, skills_used_branches)
             else:
                 idx += 1
                 continue
@@ -771,11 +781,11 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
     if iter_count == 1000:
         print('error, iter count exceeded 1000')
-    return results, card_branches, combo_branches, erase_attribute_branches, damage_branches, \
-           attributes_attacked_branches, skills_used_branches
+    return (results, card_branches, combo_branches, erase_attribute_branches, damage_branches,
+            attributes_attacked_branches, skills_used_branches)
 
 
-def info_from_behaviors(behaviors: List[ESInstance]):
+def info_from_behaviors(behaviors: List[Optional[ESInstance]]):
     """Extract some static info from the behavior list and clean it up where necessary."""
     base_abilities = []
     death_actions = []
@@ -975,7 +985,7 @@ def compute_enemy_actions(ctx: Context, behaviors: List[ESInstance], hp_checkpoi
                 # is also X.
                 break
 
-    return list(sorted(hp_to_actions.values(), key=lambda x: x.hp, reverse=True))
+    return list(sorted(hp_to_actions.values(), key=lambda act: act.hp, reverse=True))
 
 
 def make_repeating_comparable(hp: int, repeating: List[RepeatSkillGroup]):
@@ -998,7 +1008,8 @@ def convert(card: Card, enemy_behavior: List[ESInstance], level: int, long_loop:
 
     # Behavior is 1-indexed, so stick a fake row in to start
     # It's actually not, this is a lie. Most branches are just 1-indexed.
-    behaviors = [None] + list(enemy_behavior)  # type: List[ESInstance]
+    behaviors = [None]  # type: List[Optional[ESInstance]]
+    behaviors += list(enemy_behavior)
 
     (base_abilities, hp_checkpoints, card_checkpoints,
      has_enemy_remaining_branch, death_actions) = info_from_behaviors(behaviors)
