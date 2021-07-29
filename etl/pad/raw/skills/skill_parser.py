@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict
+from typing import Dict, List
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills import active_skill_info, leader_skill_info

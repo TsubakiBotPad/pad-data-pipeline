@@ -1,10 +1,9 @@
+import logging
 from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
-import logging
-
-from pad.raw.skills.en.skill_common import EnBaseTextConverter, pluralize2, pluralize, capitalize_first, minmax, \
-    indef_article, ordinal
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, ordinal, \
+    pluralize, pluralize2
 from pad.raw.skills.skill_common import fmt_mult
 
 human_fix_logger = logging.getLogger('human_fix')

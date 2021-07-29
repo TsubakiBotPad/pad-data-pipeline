@@ -1,9 +1,9 @@
 import logging
 from collections import OrderedDict, namedtuple
-from typing import List, Any
+from typing import Any, List
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.skill_common import merge_defaults, mult, binary_con
+from pad.raw.skills.skill_common import binary_con, merge_defaults, mult
 
 human_fix_logger = logging.getLogger('human_fix')
 

@@ -1,11 +1,11 @@
 import logging
 from collections import namedtuple
 from functools import reduce
-from typing import Optional, List
+from typing import List, Optional
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.skill_common import mult, merge_defaults, atk_from_slice, rcv_from_slice, binary_con, multi_floor, \
-    list_con_pos, Tag, list_binary_con
+from pad.raw.skills.skill_common import Tag, atk_from_slice, binary_con, list_binary_con, list_con_pos, merge_defaults, \
+    mult, multi_floor, rcv_from_slice
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -1875,8 +1875,8 @@ class LSTeamCompositionBuff(LeaderSkill):
         self.rcv_boost = multi_floor(data[4])
 
         maximum = 6 * (max(len(self.types), 3) + max(len(self.attributes), 1))
-        super().__init__(229, ms, hp=1+self.hp_boost*maximum, atk=1+self.atk_boost*maximum,
-                         rcv=1+self.rcv_boost*maximum)
+        super().__init__(229, ms, hp=1 + self.hp_boost * maximum, atk=1 + self.atk_boost * maximum,
+                         rcv=1 + self.rcv_boost * maximum)
 
     def text(self, converter) -> str:
         return converter.composition_buff(self)

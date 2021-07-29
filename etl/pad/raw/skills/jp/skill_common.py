@@ -2,7 +2,7 @@ import json
 import os
 from typing import Dict
 
-from pad.raw.skills.skill_common import fmt_mult, BaseTextConverter
+from pad.raw.skills.skill_common import BaseTextConverter, fmt_mult
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 

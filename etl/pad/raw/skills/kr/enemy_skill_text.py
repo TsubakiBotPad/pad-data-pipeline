@@ -1,9 +1,9 @@
 import logging
 
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
-from pad.raw.skills.en.skill_common import ordinal, minmax
+from pad.raw.skills.en.skill_common import minmax, ordinal
 from pad.raw.skills.kr.skill_common import KrBaseTextConverter
-from pad.raw.skills.skill_common import TargetType, OrbShape, Status, Unit, Source, Absorb
+from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
 
 human_fix_logger = logging.getLogger('human_fix')
 

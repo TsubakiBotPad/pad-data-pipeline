@@ -1,8 +1,8 @@
 import logging
 
 from pad.raw.skills.emoji_en.skill_common import EmojiBaseTextConverter
-from pad.raw.skills.en.skill_common import capitalize_first, minmax, pluralize2, pluralize
-from pad.raw.skills.skill_common import TargetType, Source, Unit, Status, OrbShape, Absorb
+from pad.raw.skills.en.skill_common import capitalize_first, minmax, pluralize, pluralize2
+from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
 
 human_fix_logger = logging.getLogger('human_fix')
 # This is 1/4 dictionaries that need to be replaced. 3 and 4 are in EmojiBaseTextConverter
