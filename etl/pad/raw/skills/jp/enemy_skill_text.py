@@ -1,7 +1,7 @@
 import logging
 
 from pad.raw.skills.jp.skill_common import JpBaseTextConverter, minmax
-from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
+from pad.raw.skills.skill_common import TargetType, OrbShape, Source, Unit, Absorb, Status
 
 human_fix_logger = logging.getLogger('human_fix')
 

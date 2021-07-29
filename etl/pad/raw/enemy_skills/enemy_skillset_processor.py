@@ -4,17 +4,17 @@ called a ProcessedSkillset.
 """
 import collections
 import copy
-from typing import List, Optional, Set, Tuple
+from typing import Set, Tuple, List, Optional
 
 from pad.raw.card import Card, ESRef
-from pad.raw.skills.enemy_skill_info import ESAbsorbAttribute, ESAbsorbCombo, ESAbsorbThreshold, ESAction, \
-    ESAttackPreemptive, ESAttackUPCooldown, ESAttackUPRemainingEnemies, ESAttackUpStatus, ESBehavior, ESBranchCard, \
-    ESBranchCombo, ESBranchCounter, ESBranchDamage, ESBranchDamageAttribute, ESBranchEraseAttr, ESBranchFlag, \
-    ESBranchHP, ESBranchLevel, ESBranchRemainingEnemies, ESBranchSkillUse, ESComboSkyfall, ESCondition, ESCountdown, \
-    ESCountdownMessage, ESDamageShield, ESDeathCry, ESDebuffATK, ESDebuffMovetime, ESDebuffRCV, ESDefaultAttack, \
-    ESDispel, ESEndPath, ESEnrageAttackUp, ESFlagOperation, ESInstance, ESNoSkyfall, ESNone, ESPassive, ESPreemptive, \
-    ESRecoverEnemyAlly, ESSetCounter, ESSetCounterIf, ESSkillSetOnDeath, ESSkyfall, ESStatusShield, ESUnknown, \
-    ESVoidShield, attribute_bitmap
+from pad.raw.skills.enemy_skill_info import ESInstance, ESBehavior, ESEnrageAttackUp, ESAttackUPRemainingEnemies, \
+    ESAttackUPCooldown, ESDamageShield, ESStatusShield, ESAbsorbCombo, ESAbsorbAttribute, ESAbsorbThreshold, \
+    ESDebuffMovetime, ESSkyfall, ESNoSkyfall, ESVoidShield, ESComboSkyfall, ESDebuffATK, ESDebuffRCV, ESCondition, \
+    ESCountdownMessage, ESDefaultAttack, attribute_bitmap, ESNone, ESPreemptive, ESAttackPreemptive, ESAttackUpStatus, \
+    ESUnknown, ESAction, ESDispel, ESBranchFlag, ESEndPath, ESFlagOperation, ESBranchHP, ESBranchLevel, ESSetCounter, \
+    ESSetCounterIf, ESCountdown, ESBranchCounter, ESBranchCard, ESBranchCombo, ESBranchRemainingEnemies, \
+    ESBranchEraseAttr, ESBranchDamage, ESBranchDamageAttribute, ESBranchSkillUse, ESPassive, ESDeathCry, \
+    ESSkillSetOnDeath, ESRecoverEnemyAlly
 
 
 class StandardSkillGroup(object):

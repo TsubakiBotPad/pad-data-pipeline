@@ -2,20 +2,20 @@ from enum import Enum
 from typing import List
 
 from pad.common.utils import format_int_list
-from pad.raw.skills.active_skill_info import ASAddAdditionalCombos, ASAtkBasedNuke, ASAttrBurst, ASAttrBurstMultiPart, \
-    ASAttrOnAttrNuke, ASAttributeChange, ASAutoHealConvert, ASAwokenSkillBurst, ASAwokenSkillBurst2, \
-    ASBicolorOrbEnhance, ASBoardChange, ASColumnOrbChange, ASCounterattack, ASDamageReduction, ASDamageVoid, \
-    ASDefenseBreak, ASDelay, ASEnemyAttrChange, ASFreeOrbMovement, ASGravity, ASHaste, ASHpConditionalMassNuke, \
-    ASHpConditionalTargetNuke, ASHpRecoverFromRcv, ASHpRecoverStatic, ASHpRecovery, ASHpRecoveryandBindClear, \
-    ASIncreasedOrbMovementTime, ASIncreasedSkyfallChance, ASLeaderSwap, ASLowHpConditionalAttrDamageBoost, ASMassAttack, \
-    ASMassNukeWithHpPenalty, ASMiniNukeandHpRecovery, ASMultiLaserConvert, ASMultiPartSkill, ASNoSkyfallForXTurns, \
-    ASOneAttrtoOneAttr, ASOrbEnhance, ASOrbEnhanceNew, ASOrbLock, ASOrbLockRemoval, ASOrbRefresh, ASPoisonEnemies, \
-    ASRandomSkill, ASReduceDisableMatch, ASReduceVoidDamage, ASRowOrbChange, ASShowComboPath, ASSuicide195, \
-    ASTargetNukeWithHpPenalty, ASThreeAttrtoOneAttr, ASTrueDamageNuke, ASTrueDamageNukeAll, ASTrueGravity, \
-    ASTwoAttrtoOneTwoAttr, ASTypeBurst, ASTypeBurstNew, ASVoidDamageAbsorption
-from pad.raw.skills.leader_skill_info import LSAutoheal, LSCoinDropBoost, LSCounterattack, LSEggDropRateBoost, \
-    LSMultiPartSkill, LSNoSkyfallBoost, LSOrbRemainingMultiplier, LSRankXpBoost, LSResolve, LSSevenBySix, \
-    LSSevenBySixStatBoost, LSTaikoDrum
+from pad.raw.skills.active_skill_info import ASRandomSkill, ASMultiPartSkill, ASOneAttrtoOneAttr, ASTwoAttrtoOneTwoAttr, \
+    ASThreeAttrtoOneAttr, ASOrbEnhance, ASBicolorOrbEnhance, ASOrbEnhanceNew, ASAttrBurstMultiPart, ASAttrBurst, \
+    ASTypeBurst, ASTypeBurstNew, ASDefenseBreak, ASGravity, ASDelay, ASFreeOrbMovement, ASDamageReduction, \
+    ASAwokenSkillBurst, ASPoisonEnemies, ASLowHpConditionalAttrDamageBoost, ASCounterattack, ASLeaderSwap, ASMassAttack, \
+    ASBoardChange, ASHpConditionalTargetNuke, ASHpConditionalMassNuke, ASMassNukeWithHpPenalty, \
+    ASTargetNukeWithHpPenalty, ASSuicide195, ASHpRecovery, ASHpRecoverStatic, ASHpRecoveryandBindClear, \
+    ASHpRecoverFromRcv, ASAutoHealConvert, ASIncreasedSkyfallChance, ASMiniNukeandHpRecovery, ASTrueDamageNuke, \
+    ASMultiLaserConvert, ASAtkBasedNuke, ASTrueDamageNukeAll, ASAttrOnAttrNuke, ASColumnOrbChange, \
+    ASIncreasedOrbMovementTime, ASAttributeChange, ASHaste, ASRowOrbChange, ASShowComboPath, ASDamageVoid, \
+    ASAwokenSkillBurst2, ASOrbRefresh, ASEnemyAttrChange, ASAddAdditionalCombos, ASTrueGravity, ASOrbLockRemoval, \
+    ASVoidDamageAbsorption, ASReduceVoidDamage, ASNoSkyfallForXTurns, ASOrbLock, ASReduceDisableMatch
+from pad.raw.skills.leader_skill_info import LSMultiPartSkill, LSAutoheal, LSCounterattack, LSResolve, LSCoinDropBoost, \
+    LSEggDropRateBoost, LSRankXpBoost, LSSevenBySix, LSNoSkyfallBoost, LSTaikoDrum, LSSevenBySixStatBoost, \
+    LSOrbRemainingMultiplier
 
 
 # Values here are used to compose the skill_data_list -> type_data field, which

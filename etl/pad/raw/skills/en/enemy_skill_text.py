@@ -1,7 +1,7 @@
 import logging
 
-from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, minmax, ordinal, pluralize, pluralize2
-from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, pluralize2, minmax, pluralize, ordinal
+from pad.raw.skills.skill_common import TargetType, Source, Unit, Status, OrbShape, Absorb
 
 human_fix_logger = logging.getLogger('human_fix')
 
