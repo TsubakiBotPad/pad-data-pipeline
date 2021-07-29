@@ -1,9 +1,9 @@
-from pad.raw.skills.kr.skill_common import *
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter as BaseESTextConverter
-
-from enum import Enum
-
 import logging
+
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+from pad.raw.skills.en.skill_common import ordinal, minmax
+from pad.raw.skills.kr.skill_common import KrBaseTextConverter
+from pad.raw.skills.skill_common import TargetType, OrbShape, Status, Unit, Source, Absorb
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -70,7 +70,7 @@ SOURCE_FUNCS = {
 }
 
 
-class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
+class KrESTextConverter(KrBaseTextConverter, EnESTextConverter):
     def not_set(self):
         return 'No description set'
 
@@ -87,7 +87,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
             output = []
         if one_time:
             output.append('반드시 1회 사용')
-        return capitalize_first('、'.join(output)) if len(output) > 0 else None
+        return '、'.join(output) if len(output) > 0 else None
 
     def attack(self, mult, min_hit=1, max_hit=1):
         if mult is None:
@@ -102,45 +102,6 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
     def skip(self):
         return '아무것도 하지않는다'
 
-    def bind(self, min_turns, max_turns, target_count=None, target_types=TargetType.card, source: Source = None):
-        if isinstance(target_types, TargetType):
-            target_types = [target_types]
-        elif source is not None:
-            target_types = SOURCE_FUNCS[source]([target_types]) + ' cards'
-        targets = targets_to_str(target_types)
-        output = 'Bind {:s} '.format(pluralize2(targets, target_count))
-        output += 'for ' + pluralize2('turn', minmax(min_turns, max_turns))
-        return output
-
-    def orb_change(self, orb_from, orb_to, random_count=None, random_type_count=None, exclude_hearts=False):
-        if not isinstance(orb_from, list):
-            orb_from = [orb_from]
-        orb_from = self.attributes_to_str(orb_from)
-
-        if not isinstance(orb_to, list):
-            orb_to = [orb_to]
-        orb_to = self.attributes_to_str(orb_to)
-
-        output = 'Change '
-        if random_count is not None:
-            if orb_from == 'Random':
-                output += '{} random {:s}'.format(random_count, pluralize('orb', random_count))
-            else:
-                output += '{} random {} {}'.format(random_count, orbs_from, pluralize('orb', random_count))
-            if exclude_hearts:
-                output += ' (excluding hearts)'
-        else:
-            if 'Random' in orb_from:
-                output += 'a random attribute'
-            else:
-                output += 'all {} orbs'.format(orb_from)
-        output += ' to '
-        if 'Random' in orb_to:
-            output += 'a random attribute'
-        else:
-            output += '{} {}'.format(orb_to, 'orbs')
-        return output
-
     def blind(self):
         return '모든 드롭을 암흑으로 가림'
 
@@ -151,15 +112,8 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
             return '{}턴동안 무작위 {}개의 드롭을 초암흑으로 가림' \
                 .format(turns, minmax(min_count, max_count))
 
-    def blind_sticky_fixed(self, turns):
-        return 'Blind orbs in specific positions for {:s}'.format(pluralize2('turn', turns))
-
     def dispel_buffs(self):
         return '플레이어의 강화 효과를 모두 제거'
-
-    def recover(self, min_amount, max_amount, target_type):
-        target = targets_to_str([target_type])
-        return capitalize_first('{:s} HP {}% 회복'.format(target, minmax(min_amount, max_amount, True)))
 
     def enrage(self, mult, turns):
         output = '{}턴동안 공격력 {}%로 상승' if turns else '다음 {}번 공격 {}% 데미지'
@@ -168,20 +122,9 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
     def status_shield(self, turns):
         return '{}턴 동안 상태이상 무효화 '.format(turns)
 
-    def debuff(self, d_type, amount, unit, turns):
-        amount = amount or 0
-        d_type = STATUSES[d_type] or ''
-        unit = UNITS[unit]
-        turns = turns or 0
-        return '{:s} {:+.0f}{:s} for {:s}' \
-            .format(capitalize_first(d_type), amount, unit, pluralize2('turn', turns))
-
-    def end_battle(self):
-        return 'Reduce self HP to 0'
-
     def change_attribute(self, attributes):
         if len(attributes) == 1:
-            return '적의 속성이 {} 속성으로 변환'.format(ATTRIBUTE_MAP[attributes[0]])
+            return '적의 속성이 {} 속성으로 변환'.format(self.ATTRIBUTES[attributes[0]])
         else:
             return '무작위로 적의 속성이 {}중 한속성으로 변환'.format(self.attributes_to_str(attributes))
 
@@ -196,7 +139,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
         elif abs_type == Absorb.combo:
             source = ' {}콤보 이하의'.format(condition)
         elif abs_type == Absorb.damage:
-            source = ' {} 이상'.format(self.bignumber(condition))
+            source = ' {} 이상'.format(condition)
         else:
             source = 'ㅇㅇ'
         return '{}턴동안 공격을 흡수'.format(minmax(min_turns, max_turns), source)
@@ -209,37 +152,15 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
         return '{}턴동안 {}%확률로 {}잠금 상태로 출현' \
             .format(minmax(min_turns, max_turns), chance, orbs)
 
-    def void(self, threshold, turns):
-        return 'Void damage >= {:d} for {:s}'.format(threshold, pluralize2('turn', turns))
-
-    def damage_reduction(self, source_type: Source, source=None, percent=None, turns=None):
-        source = (SOURCE_FUNCS[source_type])(source)
-        if source_type != Source.all_sources:
-            source += TARGET_NAMES[TargetType(source.value)] + '에게 받는'
-        else:
-            source = '모든'
-        if percent is None:
-            return source + ' 피해 {}턴동안 무효화'.format(turns)
-        else:
-            if turns:
-                return 'Reduce damage from {:s} by {:d}% for {:s}' \
-                    .format(source, percent, pluralize2('turn', turns))
-            else:
-                return 'Reduce damage from {:s} by {:d}%' \
-                    .format(source, percent)
-
     def invuln_off(self):
         return '피해를 입힐 수 있는 상태가 된다'
 
     def resolve(self, percent):
         return 'HP {}% 이상일 때 현재 HP 이상의 데미지를 받아도 HP 1이 남고 생존'.format(percent)
 
-    def leadswap(self, turns):
-        return 'Leader changes to random sub for {:s}'.format(pluralize2('turn', turns))
-
     def row_col_spawn(self, position_type, positions, attributes):
         return '{}을 {}드롭으로 변환'.format(
-            self.concat_list_and(map(lambda x: x + ORB_SHAPES[position_type])),
+            self.concat_list_and(map(lambda x: x + ORB_SHAPES[position_type], positions)),
             self.attributes_to_str(attributes))
 
     def row_col_multi(self, desc_arr):
@@ -250,7 +171,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
 
     def random_orb_spawn(self, count, attributes):
         if count == 42:
-            return KrESTextConverter.board_change(attributes)
+            return self.board_change(attributes)
         else:
             return '무작위 {}개 드롭을 {}드롭으로 변환' \
                 .format(count, self.attributes_to_str(attributes))
@@ -277,24 +198,6 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
                     self.concat_list_and([ordinal(x) for x in positions]),
                     ORB_SHAPES[position_type])
 
-    def cloud(self, turns, width, height, x, y):
-        if width == 6 and height == 1:
-            shape = 'row'
-        elif width == 1 and height == 5:
-            shape = 'column'
-        else:
-            shape = '{:d}×{:d}'.format(width, height)
-            shape += ' square' if width == height else ' rectangle'
-        pos = []
-        if x is not None and shape != 'Row of':
-            pos.append('{:s} row'.format(ordinal(x)))
-        if y is not None and shape != 'Column of':
-            pos.append('{:s} column'.format(ordinal(y)))
-        if len(pos) == 0:
-            pos.append('a random location')
-        return 'A {:s} of clouds appears for {:s} at {:s}' \
-            .format(shape, pluralize2('turn', turns), ', '.join(pos))
-
     def fixed_start(self):
         return '무작위로 조작할 드롭을 강제로 지정'
 
@@ -305,15 +208,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
             return '적 행동 턴 {}턴으로 변경'.format(turn_counter)
 
     def attribute_block(self, turns, attributes):
-        return '{}턴 동안 {attrs}드롭을 연결해도 지울 수 없음'.format(turns, self.attributes_to_str(attributes))
-
-    def spinners(self, turns, speed, random_num=None):
-        if random_num is None:
-            return 'Specific orbs change every {:.1f}s for {:s}' \
-                .format(speed / 100, pluralize2('turn', turns))
-        else:
-            return '{}턴동안 무작위 드롭 {}개를 {:.1f}초마다 변환' \
-                .format(turns, random_num, speed / 100)
+        return '{}턴 동안 {}드롭을 연결해도 지울 수 없음'.format(turns, self.attributes_to_str(attributes))
 
     def max_hp_change(self, turns, max_hp, percent):
         if percent:
@@ -326,12 +221,9 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
 
     def death_cry(self, message):
         if message is None:
-            return 'Show death effect'
+            return '죽음'
         else:
             return '메시지를 출력: 「{}」'.format(message)
-
-    def attribute_exists(self, atts):
-        return 'when {:s} orbs are on the board'.format(self.attributes_to_str(atts, 'or'))
 
     def countdown(self, counter):
         return '「{}」를 출력하고 턴을 건너뛴다'.format(counter)
@@ -340,7 +232,7 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
         return 'Use skill set #{}'.format(skill_set_id)
 
     def gacha_fever(self, attribute, orb_req):
-        return '피버 모드: {}드롭 {}개를 지우면 클리어'.format(ATTRIBUTE_MAP[attribute], orb_req)
+        return '피버 모드: {}드롭 {}개를 지우면 클리어'.format(self.ATTRIBUTES[attribute], orb_req)
 
     def lead_alter(self, turns, target):
         return '{}턴 동안 리더를 [{}]로 변경'.format(target, turns)
@@ -357,6 +249,3 @@ class KrESTextConverter(KrBaseTextConverter, BaseESTextConverter):
 
     def join_skill_descs(self, descs):
         return ' + '.join(descs)
-
-
-__all__ = ['KrESTextConverter']

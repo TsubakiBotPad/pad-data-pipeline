@@ -1,10 +1,11 @@
 import logging
 from collections import namedtuple
 from functools import reduce
-from typing import Optional
+from typing import Optional, List
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.en.skill_common import *
+from pad.raw.skills.skill_common import mult, merge_defaults, atk_from_slice, rcv_from_slice, binary_con, multi_floor, \
+    list_con_pos, Tag, list_binary_con
 
 human_fix_logger = logging.getLogger('human_fix')
 

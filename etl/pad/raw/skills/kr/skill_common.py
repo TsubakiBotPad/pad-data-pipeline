@@ -1,24 +1,14 @@
 import json
 import os
-from typing import Dict, List
-from enum import Enum
+from typing import Dict
 
-from pad.raw.skills.skill_common import *
-import pad.raw.skills.skill_common as base_skill_common
+from pad.raw.skills.skill_common import BaseTextConverter, fmt_mult
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))
 
-__all__ = list(filter(lambda x: not x.startswith('__'), dir(base_skill_common)))
 
-
-def public(x):
-    global __all__
-    __all__.append(x.__name__)
-    return x
-
-
-@public
 class KrBaseTextConverter(BaseTextConverter):
     """Contains code shared across AS and LS converters."""
 
@@ -37,9 +27,6 @@ class KrBaseTextConverter(BaseTextConverter):
         8: '맹독',
         9: '폭탄'}
 
-    def attributes_to_str(self, attributes, conj='and'):
-        return self.concat_list_and([self.ATTRIBUTES[x] for x in attributes], conj)
-
     _TYPES = {
         0: '진화용',
         1: '밸런스',
@@ -53,9 +40,6 @@ class KrBaseTextConverter(BaseTextConverter):
         12: '능력각성용',
         14: '강화합성용',
         15: '매각용'}
-
-    def typing_to_str(self, types):
-        return self.concat_list_and([self.TYPES[x] for x in types])
 
     _AWAKENING_MAP = {x['pad_awakening_id']: x['name_ko'] for x in AWOSKILLS}
     _AWAKENING_MAP[0] = ''
@@ -209,8 +193,8 @@ class KrBaseTextConverter(BaseTextConverter):
             return self.all_stats(fmt_mult(hp_mult))
 
         mults = [(self.hp(), hp_mult), (self.atk(), atk_mult), (self.rcv(), rcv_mult)]
-        mults = list(filter(lambda x: x[1] != 1, mults))
-        mults.sort(key=lambda x: x[1], reverse=True)
+        mults = list(filter(lambda ml: ml[1] != 1, mults))
+        mults.sort(key=lambda ml: ml[1], reverse=True)
 
         chunks = []
         x = 0

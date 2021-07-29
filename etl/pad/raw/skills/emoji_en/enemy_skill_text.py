@@ -1,6 +1,8 @@
-from pad.raw.skills.emoji_en.skill_common import *
-
 import logging
+
+from pad.raw.skills.emoji_en.skill_common import EmojiBaseTextConverter
+from pad.raw.skills.en.skill_common import capitalize_first, minmax, pluralize2, pluralize
+from pad.raw.skills.skill_common import TargetType, Source, Unit, Status, OrbShape, Absorb
 
 human_fix_logger = logging.getLogger('human_fix')
 # This is 1/4 dictionaries that need to be replaced. 3 and 4 are in EmojiBaseTextConverter
@@ -228,14 +230,6 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
     def attack(self, mult, min_hit=1, max_hit=1):
         # have to process this in the bot in order to get full damage numbers
         return '(Attack:{}-{}, {})'.format(min_hit, max_hit, mult)
-        """if mult is None:
-            return None
-        output = 'Deal {:s}% damage'. \
-            format(minmax(int(min_hit) * int(mult), int(max_hit) * int(mult)))
-        if min_hit and max_hit != 1:
-            output += ' ({:s}, {:,}% each)'. \
-                format(pluralize2("hit", minmax(min_hit, max_hit)), mult)
-        return output"""
 
     def skip(self):
         return '({})'.format(emoji_dict['do_nothing'])
@@ -509,6 +503,3 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def join_skill_descs(self, descs):
         return ' + '.join(descs)
-
-
-__all__ = ['EnEmojiESTextConverter']

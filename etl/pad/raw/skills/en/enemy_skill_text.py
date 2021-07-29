@@ -1,6 +1,7 @@
-from pad.raw.skills.en.skill_common import *
-
 import logging
+
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, pluralize2, minmax, pluralize, ordinal
+from pad.raw.skills.skill_common import TargetType, Source, Unit, Status, OrbShape, Absorb
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -59,10 +60,6 @@ SOURCE_FUNCS = {
     Source.types: EnBaseTextConverter().typing_to_str,
     Source.attrs: EnBaseTextConverter().attributes_to_str,
 }
-
-
-def ordinal(n):
-    return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(-1 if 10 < n < 19 else n % 10, 'th')
 
 
 class EnESTextConverter(EnBaseTextConverter):
@@ -384,6 +381,3 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def join_skill_descs(self, descs):
         return ' + '.join(descs)
-
-
-__all__ = ['EnESTextConverter']
