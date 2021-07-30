@@ -43,9 +43,12 @@ human_fix_logger = logging.getLogger('human_fix')
 human_fix_logger.setLevel(logging.INFO)
 
 type_name_to_processor = {
-    'DungeonProcessor': DungeonProcessor,
-    'DungeonContentProcessor': DungeonContentProcessor,
-    'ScheduleProcessor': ScheduleProcessor,
+    'DungeonProcessor': [DungeonProcessor],
+    'DungeonContentProcessor': [DungeonContentProcessor],
+    'ScheduleProcessor': [ScheduleProcessor],
+    'Events': [DungeonProcessor, ScheduleProcessor],
+    'Monsters': [AwakeningProcessor, SeriesProcessor, MonsterProcessor],
+    'None': [],
 }
 
 
@@ -158,9 +161,20 @@ def load_data(args):
         for processor in args.processors.split(","):
             processor = processor.strip()
             logger.info('Running specific processor {}'.format(processor))
-            class_type = type_name_to_processor[processor]
-            processor = class_type(cs_database)
-            processor.process(db_wrapper)
+            seriesproc = None
+
+            classes = type_name_to_processor[processor]
+            if SeriesProcessor in classes:
+                classes.remove(SeriesProcessor)
+                seriesproc = SeriesProcessor(cs_database)
+                seriesproc.pre_process(db_wrapper)
+
+            for class_type in classes:
+                processor = class_type(cs_database)
+                processor.process(db_wrapper)
+
+            if seriesproc is not None:
+                seriesproc.post_process(db_wrapper)
         logger.info('done')
         return
 
