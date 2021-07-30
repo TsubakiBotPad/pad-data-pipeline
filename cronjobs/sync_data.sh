@@ -13,8 +13,8 @@ set -x
 
 cd "$(dirname "$0")" || exit
 
-source ${CRONJOBS_DIR}/discord.sh
-source ${CRONJOBS_DIR}/shared.sh
+source ./discord.sh
+source ./shared.sh
 
 echo "Copying media"
 python3 "${ETL_DIR}/media_copy.py" \
@@ -32,5 +32,5 @@ rsync -t "${ETL_IMAGES_DIR}"/icons/* "${DADGUIDE_MEDIA_DIR}/icons"
 set -x
 
 echo "Syncing raw data to AWS s3"
-aws s3 sync --acl=private ${DADGUIDE_DATA_DIR} s3://tsubakibot-pad
-aws s3 sync --acl=private ${IMG_DIR} s3://tsubakibot-pad/padimages
+aws s3 sync --acl=private ${DADGUIDE_DATA_DIR} s3://tsubakibotpad
+aws s3 sync --acl=private ${IMG_DIR} s3://tsubakibotpad/padimages
