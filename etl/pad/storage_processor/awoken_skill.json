@@ -1011,7 +1011,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "ATK increases by 1.5x when HP is 80% or more",
+    "desc_en": "ATK increases by 1.5x when HP is 50% or more",
     "desc_en_official": "ATK increases when HP is 80% or more",
     "desc_ja": "HP80％以上で攻撃力が1.5倍",
     "desc_ja_official": "HP80%以上で攻撃力がアップする",
