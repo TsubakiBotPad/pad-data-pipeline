@@ -47,7 +47,8 @@ type_name_to_processor = {
     'DungeonContentProcessor': [DungeonContentProcessor],
     'ScheduleProcessor': [ScheduleProcessor],
     'Events': [DungeonProcessor, ScheduleProcessor],
-    'Monsters': [AwakeningProcessor, SeriesProcessor, MonsterProcessor]
+    'Monsters': [AwakeningProcessor, SeriesProcessor, MonsterProcessor],
+    'None': [],
 }
 
 
