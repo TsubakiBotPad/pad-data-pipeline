@@ -94,7 +94,7 @@ for asset in assets:
         # Unless a card is given a new subattribute or a portrait changes,
         #  all card files under 69 are static except for the 5 unfilled
         #  slots: 1708, 1892, 1893, 1894, 1895.
-        if num >= 69 or settingsGroup.reload_cards:
+        if num >= 69 or args.reload_cards:
             should_always_process = True
 
     if os.path.exists(raw_file_path) and not should_always_process:
