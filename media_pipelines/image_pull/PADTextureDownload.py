@@ -34,6 +34,9 @@ getOutputFileName.monsterFileNameRegex = re.compile(r'^(MONS_)(\d+)(\..+)$', fla
 
 parser = argparse.ArgumentParser(description="Downloads and extracts P&D textures.", add_help=False)
 
+settingsGroup = parser.add_argument_group("Settings")
+settingsGroup.add_argument("--reload_cards", action="store_true", help="Redownload all card files")
+
 outputGroup = parser.add_argument_group("Output")
 outputGroup.add_argument("--output_dir", help="Path to a folder where output should be saved")
 outputGroup.add_argument("--server", help="One of [NA, JP]")
@@ -85,7 +88,16 @@ for asset in assets:
 
     raw_file_path = os.path.join(raw_dir, raw_file_name)
 
-    if os.path.exists(raw_file_path):
+    should_always_process = False
+    if 'card' in raw_file_path.lower():
+        num = int(raw_file_name.rstrip('.bc').lstrip('cards_'))
+        # Unless a card is given a new subattribute or a portrait changes,
+        #  all card files under 69 are static except for the 5 unfilled
+        #  slots: 1708, 1892, 1893, 1894, 1895.
+        if num >= 69 or settingsGroup.reload_cards:
+            should_always_process = True
+
+    if os.path.exists(raw_file_path) and not should_always_process:
         # always redownload card files
         print('file exists', raw_file_path)
     else:
@@ -95,7 +107,7 @@ for asset in assets:
     extract_file_name = getOutputFileName(raw_file_name).upper().replace('BC', 'PNG')
     extract_file_path = os.path.join(extract_dir, extract_file_name)
 
-    if os.path.exists(extract_file_path):
+    if os.path.exists(extract_file_path) and not should_always_process:
         print('skipping existing file', extract_file_path)
     else:
         # Disable trimming for the card files; screws up portrait generation
