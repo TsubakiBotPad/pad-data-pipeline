@@ -5,4 +5,7 @@ set -x
 cd "$(dirname "$0")" || exit
 source ./shared.sh
 
-cp -r ${RAW_DIR}/na/. $DADGUIDE_ILMINA_DIR
+python3 "${ETL_DIR}/export_spawns.py" \
+  --db_config="${DB_CONFIG}" \
+  --output_dir="${DADGUIDE_ILMINA_DIR}"
+cp -r ${RAW_DIR}/na/. ${DADGUIDE_ILMINA_DIR}
