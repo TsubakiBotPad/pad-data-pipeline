@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data, merged_database
-from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
+from pad.storage_processor.awoken_skill_processor import AwokenSkillProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_content_processor import DungeonContentProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
@@ -48,7 +48,7 @@ type_name_to_processor: Dict[str, List[Any]] = {
     'DungeonContentProcessor': [DungeonContentProcessor],
     'ScheduleProcessor': [ScheduleProcessor],
     'Events': [DungeonProcessor, ScheduleProcessor],
-    'Monsters': [AwakeningProcessor, SeriesProcessor, MonsterProcessor],
+    'Monsters': [AwokenSkillProcessor, SeriesProcessor, MonsterProcessor],
     'None': [],
 }
 
@@ -171,7 +171,7 @@ def load_data(args):
                 seriesproc.pre_process(db_wrapper)
 
             for class_type in classes:
-                if class_type in (DimensionProcessor, RankRewardProcessor, AwakeningProcessor, SkillTagProcessor,
+                if class_type in (DimensionProcessor, RankRewardProcessor, AwokenSkillProcessor, SkillTagProcessor,
                                   TimestampProcessor, PurgeDataProcessor):
                     processor = class_type()
                     processor.process(db_wrapper)
@@ -197,7 +197,7 @@ def load_data(args):
     RankRewardProcessor().process(db_wrapper)
 
     # # Ensure awakenings
-    AwakeningProcessor().process(db_wrapper)
+    AwokenSkillProcessor().process(db_wrapper)
 
     # # Ensure tags
     SkillTagProcessor().process(db_wrapper)
