@@ -7,25 +7,26 @@ import argparse
 import json
 import logging
 import os
+from typing import Any, Dict, List
 
 from pad.common.shared_types import Server
 from pad.db.db_util import DbWrapper
-from pad.raw_processor import merged_database, crossed_data
+from pad.raw_processor import crossed_data, merged_database
 from pad.storage_processor.awoken_skill_processor import AwakeningProcessor
 from pad.storage_processor.dimension_processor import DimensionProcessor
 from pad.storage_processor.dungeon_content_processor import DungeonContentProcessor
 from pad.storage_processor.dungeon_processor import DungeonProcessor
+from pad.storage_processor.egg_machine_processor import EggMachineProcessor
 from pad.storage_processor.enemy_skill_processor import EnemySkillProcessor
 from pad.storage_processor.exchange_processor import ExchangeProcessor
-from pad.storage_processor.egg_machine_processor import EggMachineProcessor
-from pad.storage_processor.purchase_processor import PurchaseProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
+from pad.storage_processor.purchase_processor import PurchaseProcessor
+from pad.storage_processor.purge_data_processor import PurgeDataProcessor
 from pad.storage_processor.rank_reward_processor import RankRewardProcessor
 from pad.storage_processor.schedule_processor import ScheduleProcessor
 from pad.storage_processor.series_processor import SeriesProcessor
 from pad.storage_processor.skill_tag_processor import SkillTagProcessor
 from pad.storage_processor.timestamp_processor import TimestampProcessor
-from pad.storage_processor.purge_data_processor import PurgeDataProcessor
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
@@ -42,7 +43,7 @@ db_logger.setLevel(logging.INFO)
 human_fix_logger = logging.getLogger('human_fix')
 human_fix_logger.setLevel(logging.INFO)
 
-type_name_to_processor = {
+type_name_to_processor: Dict[str, List[Any]] = {
     'DungeonProcessor': [DungeonProcessor],
     'DungeonContentProcessor': [DungeonContentProcessor],
     'ScheduleProcessor': [ScheduleProcessor],
@@ -170,8 +171,19 @@ def load_data(args):
                 seriesproc.pre_process(db_wrapper)
 
             for class_type in classes:
-                processor = class_type(cs_database)
-                processor.process(db_wrapper)
+                if class_type in (DimensionProcessor, RankRewardProcessor, AwakeningProcessor, SkillTagProcessor,
+                                  TimestampProcessor, PurgeDataProcessor):
+                    processor = class_type()
+                    processor.process(db_wrapper)
+                elif class_type == EnemySkillProcessor:
+                    processor = class_type(db_wrapper, cs_database)
+                    processor.load_static()
+                    processor.load_enemy_skills()
+                    if args.es_dir:
+                        processor.load_enemy_data(args.es_dir)
+                else:
+                    processor = class_type(cs_database)
+                    processor.process(db_wrapper)
 
             if seriesproc is not None:
                 seriesproc.post_process(db_wrapper)
