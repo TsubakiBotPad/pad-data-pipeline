@@ -1,1 +1,1 @@
-Information on image use is on [our GitHub Wiki](https://github.com/TsubakiBotPad/pad-data-pipeline/wiki/Image-Use).
+For information on image use, see [our GitHub wiki](https://github.com/TsubakiBotPad/pad-data-pipeline/wiki/Image-Use).
