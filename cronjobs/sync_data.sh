@@ -33,4 +33,3 @@ set -x
 
 echo "Syncing raw data to AWS s3"
 aws s3 sync --acl=private ${DADGUIDE_DATA_DIR} s3://tsubakibotpad
-aws s3 sync --acl=private ${IMG_DIR} s3://tsubakibotpad/padimages

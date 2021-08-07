@@ -5,7 +5,7 @@ and saves it), and then applies updates to the DadGuide database.
 
 If you're looking to do your own processing, start with `etl/pad/raw`.
 
-If you're interested in duplicating this whole process, you should probably contact tactical_retreat, it's somewhat
+If you're interested in duplicating this whole process, you should probably contact the Tsubaki Team, it's somewhat
 involved.
 
 I use shell scripts triggered via cron to execute the various scripts.
