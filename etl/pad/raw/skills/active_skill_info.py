@@ -1141,9 +1141,9 @@ class ASTimedEnemyAttrChange(ActiveSkill):
     skill_type = 224
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [None])
+        data = merge_defaults(ms.data, [0, 0])
         self.turns = data[0]
-        self.attribute = 0
+        self.attribute = binary_con(data[1])
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1154,7 +1154,7 @@ class ASConditionalHPThreshold(ASConditional):
     skill_type = 225
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, 0])
+        data = merge_defaults(ms.data, [0, 100])
         self.lower_limit = data[0]
         self.upper_limit = data[1] or 100
         super().__init__(ms)
