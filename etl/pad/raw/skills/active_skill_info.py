@@ -1143,7 +1143,7 @@ class ASTimedEnemyAttrChange(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.turns = data[0]
-        self.attribute = binary_con(data[1])
+        self.attribute = data[1]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
