@@ -547,10 +547,10 @@ class JpASTextConverter(JpBaseTextConverter):
         skill_text = self.fmt_duration(act.duration)
         if act.attributes:
             return skill_text + f"チーム内の{self.fmt_multi_attr(act.attributes)}一体につき" \
-                                f"攻撃力が{act.atk_boost}%と回復力が{act.rcv_boost}%上がる"
+                                f"攻撃力が{int(act.atk_boost*100)}%と回復力が{int(act.rcv_boost*100)}%上がる"
         else:
             return skill_text + f"チーム内の{self.typing_to_str(act.types, '、')}一つにつき" \
-                                f"攻撃力が{act.atk_boost}%と回復力が{act.rcv_boost}%上がる"
+                                f"攻撃力が{int(act.atk_boost*100)}%と回復力が{int(act.rcv_boost*100)}%上がる"
 
     def inflict_es(self, act):
         return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"
