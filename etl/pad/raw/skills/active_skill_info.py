@@ -1197,7 +1197,7 @@ class ASTeamCompositionBuff(ActiveSkill):
         self.attributes = binary_con(data[1])
         self.types = binary_con(data[2])
         self.atk_boost = mult(data[3])
-        self.rcv_boost = mult(data[4])
+        self.hprcv_boost = mult(data[4])
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:

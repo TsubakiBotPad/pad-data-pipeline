@@ -575,7 +575,8 @@ class EnASTextConverter(EnBaseTextConverter):
         if act.attributes and act.types:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}, attributes and types.")
             return ""
-        skill_text = self.fmt_duration(act.duration) + self.fmt_multiplier_text(1, act.atk_boost, act.rcv_boost)
+        skill_text = self.fmt_duration(act.duration) + '+' + \
+                     self.fmt_multiplier_text(act.hprcv_boost, act.atk_boost, act.hprcv_boost)
         if act.attributes:
             return skill_text + f" for each {self.fmt_multi_attr(act.attributes)} card in team"
         else:
