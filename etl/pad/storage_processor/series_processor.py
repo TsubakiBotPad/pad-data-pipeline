@@ -33,23 +33,19 @@ class SeriesProcessor(object):
         monster_id_to_series_id = db.load_to_key_value('monster_id', 'series_id', 'monster_series', 'priority = 1')
         monster_id_to_ancestor_id = db.load_to_key_value('to_id', 'from_id', 'evolutions')
         for csc in self.data.ownable_cards:
-            print()
             monster_id = csc.monster_id
             series_id = monster_id_to_series_id.get(monster_id, 0)
-            print(monster_id, csc.cur_card.card.name, series_id)
 
             if series_id != 0:
                 # Series already set.
                 continue
 
             ancestor_id = monster_id_to_ancestor_id.get(monster_id)
-            print(ancestor_id)
             if ancestor_id is None:
                 # Monster had no ancestor to look up the series of.
                 continue
 
             ancestor_series_id = monster_id_to_series_id.get(ancestor_id, 0)
-            print(ancestor_series_id)
             if ancestor_series_id == 0:
                 # Ancestor also has no series.
                 continue

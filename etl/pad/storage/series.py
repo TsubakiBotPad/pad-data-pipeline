@@ -45,7 +45,8 @@ class MonsterSeries(SimpleSqlItem):
                  series_id: int = None,
                  tstamp: int = None,
                  priority: bool = None):
-        self.monster_series_id = monster_series_id or hash((monster_id, series_id))
+        msid = monster_id if priority else monster_id + series_id * 100000
+        self.monster_series_id = monster_series_id or msid
         self.monster_id = monster_id
         self.series_id = series_id
         self.tstamp = tstamp
