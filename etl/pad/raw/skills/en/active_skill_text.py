@@ -1,10 +1,9 @@
+import logging
 from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
-import logging
-
-from pad.raw.skills.en.skill_common import EnBaseTextConverter, pluralize2, pluralize, capitalize_first, minmax, \
-    indef_article, ordinal
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, ordinal, \
+    pluralize, pluralize2
 from pad.raw.skills.skill_common import fmt_mult
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -575,8 +574,8 @@ class EnASTextConverter(EnBaseTextConverter):
         if act.attributes and act.types:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}, attributes and types.")
             return ""
-        skill_text = self.fmt_duration(act.duration) + '+' + \
-                     self.fmt_multiplier_text(1, act.atk_boost, act.rcv_boost)
+        skill_text = (self.fmt_duration(act.duration) + '+' +
+                      self.fmt_multiplier_text(0, act.atk_boost, act.rcv_boost, default=0))
         if act.attributes:
             return skill_text + f" for each {self.fmt_multi_attr(act.attributes)} card in team"
         else:

@@ -225,14 +225,14 @@ class EnBaseTextConverter(BaseTextConverter):
 
         return prefix + self.concat_list_and(attr_list, conj)
 
-    def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult):
-        if hp_mult == atk_mult and atk_mult == rcv_mult:
-            if hp_mult == 1:
+    def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult, default=1):
+        if hp_mult == atk_mult == rcv_mult:
+            if hp_mult == default:
                 return ''
             return self.all_stats(fmt_mult(hp_mult))
 
         mults = [('HP', hp_mult), ('ATK', atk_mult), ('RCV', rcv_mult)]
-        mults = list(filter(lambda ml: ml[1] != 1, mults))
+        mults = list(filter(lambda ml: ml[1] != default, mults))
         mults.sort(key=lambda ml: ml[1], reverse=True)
 
         chunks = []
