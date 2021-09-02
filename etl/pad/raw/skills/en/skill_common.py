@@ -226,7 +226,7 @@ class EnBaseTextConverter(BaseTextConverter):
         return prefix + self.concat_list_and(attr_list, conj)
 
     def fmt_multiplier_text(self, hp_mult, atk_mult, rcv_mult):
-        if hp_mult == atk_mult and atk_mult == rcv_mult:
+        if hp_mult == atk_mult == rcv_mult:
             if hp_mult == 1:
                 return ''
             return self.all_stats(fmt_mult(hp_mult))
