@@ -1870,11 +1870,11 @@ class LSTeamCompositionBuff(LeaderSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0])
         self.attributes = binary_con(data[0])
         self.types = binary_con(data[1])
-        self.hp_boost = multi_floor(data[2])
-        self.atk_boost = multi_floor(data[3])
-        self.rcv_boost = multi_floor(data[4])
+        self.hp_boost = mult(data[2])
+        self.atk_boost = mult(data[3])
+        self.rcv_boost = mult(data[4])
 
-        maximum = 6 * (max(len(self.types), 3) + max(len(self.attributes), 1))
+        maximum = 6 * (min(len(self.types), 3) + min(len(self.attributes), 1))
         super().__init__(229, ms, hp=1+self.hp_boost*maximum, atk=1+self.atk_boost*maximum,
                          rcv=1+self.rcv_boost*maximum)
 
