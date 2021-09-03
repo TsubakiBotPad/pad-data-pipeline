@@ -442,7 +442,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         if ls.attributes and ls.types:
             human_fix_logger.warning(f"Can't parse leader skill {ls.skill_id}, attributes and types.")
             return ""
-        skill_text = '+' + self.fmt_multiplier_text(ls.hp_boost, ls.atk_boost, ls.rcv_boost)
+        skill_text = '+' + self.fmt_multiplier_text(ls.hp_boost, ls.atk_boost, ls.rcv_boost, default=0)
         if ls.attributes:
             return skill_text + f" for each {self.fmt_multi_attr(ls.attributes)} card in team"
         else:
