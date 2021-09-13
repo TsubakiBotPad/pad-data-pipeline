@@ -188,8 +188,8 @@ def identify_dungeons(database, group):
     # Identify special dungeons from bonuses
     current_time = int(time.time())
     for bonus in database.bonuses:
-        start_time = bonus.start_timestamp
-        end_time = bonus.end_timestamp
+        start_time = bonus.bonus.start_timestamp
+        end_time = bonus.bonus.end_timestamp
 
         if current_time < start_time or current_time > end_time:
             # Bonus not currently live

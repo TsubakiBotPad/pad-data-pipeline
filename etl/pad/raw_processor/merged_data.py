@@ -21,16 +21,14 @@ class MergedBonus(pad_util.Printable):
         self.bonus = bonus
         self.dungeon = dungeon
         self.group = group
-        self.start_timestamp = pad_util.gh_to_timestamp_2(bonus.start_time_str, server)
-        self.end_timestamp = pad_util.gh_to_timestamp_2(bonus.end_time_str, server)
 
     def __str__(self):
         return 'MergedBonus({} {} - {} - {})'.format(
             self.server, self.group, self.dungeon, self.bonus)
 
     def open_duration(self):
-        open_datetime_utc = datetime.fromtimestamp(self.start_timestamp, pytz.UTC)
-        close_datetime_utc = datetime.fromtimestamp(self.end_timestamp, pytz.UTC)
+        open_datetime_utc = datetime.fromtimestamp(self.bonus.start_timestamp, pytz.UTC)
+        close_datetime_utc = datetime.fromtimestamp(self.bonus.end_timestamp, pytz.UTC)
         return close_datetime_utc - open_datetime_utc
 
 
