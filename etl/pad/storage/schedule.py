@@ -18,44 +18,41 @@ class ScheduleEvent(SimpleSqlItem):
         return ScheduleEvent(
             event_id=None,  # Key that is looked up or inserted
             server_id=o.server.value,
-            event_type_id=0,  # TODO: fixme
-            start_timestamp=o.start_timestamp,
-            end_timestamp=o.end_timestamp,
-            icon_id=0,
             group_name=o.group.name if o.group else None,
-            dungeon_id=o.dungeon.dungeon_id if o.dungeon else None,
-            url=None,
-            info_ja=None,
-            info_en=None,
-            info_ko=None
+            event_type_id=o.bonus.bonus_id,
+            start_timestamp=o.bonus.start_timestamp,
+            end_timestamp=o.bonus.end_timestamp,
+            message=o.bonus.message,
+            url=o.bonus.url,
+            value=o.bonus.bonus_value,
+            dungeon_id=o.bonus.dungeon_id,
+            sub_dungeon_id=o.bonus.sub_dungeon_id,
         )
 
     def __init__(self,
                  event_id: int = None,
                  server_id: int = None,
+                 group_name: str = None,
                  event_type_id: int = None,
                  start_timestamp: int = None,
                  end_timestamp: int = None,
-                 icon_id: int = None,
-                 group_name: str = None,
-                 dungeon_id: int = None,
+                 message: str = None,
                  url: str = None,
-                 info_ja: str = None,
-                 info_en: str = None,
-                 info_ko: str = None,
+                 value: str = None,
+                 dungeon_id: int = None,
+                 sub_dungeon_id: int = None,
                  tstamp: int = None):
         self.event_id = event_id
         self.server_id = server_id
+        self.group_name = group_name
         self.event_type_id = event_type_id
         self.start_timestamp = start_timestamp
         self.end_timestamp = end_timestamp
-        self.icon_id = icon_id
-        self.group_name = group_name
-        self.dungeon_id = dungeon_id
+        self.message = message
         self.url = url
-        self.info_ja = info_ja
-        self.info_en = info_en
-        self.info_ko = info_ko
+        self.value = value
+        self.dungeon_id = dungeon_id
+        self.sub_dungeon_id = sub_dungeon_id
         self.tstamp = tstamp
 
     def exists_strategy(self):

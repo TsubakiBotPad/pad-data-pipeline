@@ -4,14 +4,14 @@ Parses limited time event data.
 Data files can be different depending on the account; all 3 starters need to be parsed and then deduped against
 each other to get the full list.
 """
-
+import re
 import time
-from typing import Dict, List, Optional, Union
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
 
 from pad.common import pad_util
-from pad.common.pad_util import ghmult_plain, ghchance_plain, Printable
-from pad.common.shared_types import DungeonId, SubDungeonId, Server, StarterGroup
+from pad.common.pad_util import Printable, ghchance_plain, ghmult_plain
+from pad.common.shared_types import DungeonId, Server, StarterGroup, SubDungeonId
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_limited_bonus_data_{}.json'
@@ -59,7 +59,7 @@ class BonusType(Enum):
 
 
 class BonusTypeEntry(object):
-    def __init__(self, bonus_type: BonusType, mod_fn=None):
+    def __init__(self, bonus_type: BonusType, mod_fn: Callable[[int], str] = str):
         self.bonus_type = bonus_type
         self.mod_fn = mod_fn
 
@@ -85,7 +85,7 @@ ALL_TYPES = [
     # REM text.
     BonusTypeEntry(BonusType.rem_event),
     # Current PEM pal point cost.
-    BonusTypeEntry(BonusType.pem_cost, int),
+    BonusTypeEntry(BonusType.pem_cost),
     # Feed XP modifier.
     BonusTypeEntry(BonusType.feed_xp_bonus_chance, ghmult_plain),
     # Increased plus rate 1?
@@ -159,9 +159,11 @@ class Bonus(Printable):
 
     keys = 'sebiadmf'
 
-    def __init__(self, raw: Dict[str, str], server: Server):
+    def __init__(self, raw: Dict[str, Any], server: Server):
         if not set(raw) <= set(Bonus.keys):
             raise ValueError('Unexpected keys: ' + str(set(raw) - set(Bonus.keys)))
+
+        self.raw = raw
 
         # Start time as gungho time string
         self.start_time_str = str(raw['s'])
@@ -191,27 +193,26 @@ class Bonus(Printable):
         self.message = None  # type: Optional[str]
         # Optional human-readable message (no formatting)
         self.clean_message = None  # type: Optional[str]
+        # Optional URL in message
+        self.url = None  # type: Optional[str]
         if 'm' in raw:
             self.message = str(raw['m'])
             self.clean_message = pad_util.strip_colors(self.message)
+            if (match := re.search(r'https?:.+?(?=\|)', self.message)):
+                self.url = match.group()
 
-        bonus_id = int(raw['b'])
-        self.bonus_info = TYPES_MAP.get(bonus_id, UNKNOWN_TYPE)
+        self.bonus_id = int(raw['b'])
+        self.bonus_info = TYPES_MAP.get(self.bonus_id, UNKNOWN_TYPE)
 
         # Bonus value, if provided, optionally processed
-        self.bonus_value = None  # type: Optional[Union[float, int]]
+        self.bonus_value = None  # type: Optional[str]
         if 'a' in raw:
-            self.bonus_value = raw['a']
-            if self.bonus_info.mod_fn:
-                self.bonus_value = self.bonus_info.mod_fn(self.bonus_value)
+            self.bonus_value = self.bonus_info.mod_fn(raw['a'])
 
         # Human readable name for the bonus
         self.bonus_name = self.bonus_info.bonus_type.name
         if self.bonus_info.bonus_type == BonusType.unknown:
-            self.bonus_name += '({})'.format(bonus_id)
-        self.bonus_id = bonus_id
-
-        self.raw = raw
+            self.bonus_name += '({})'.format(self.bonus_id)
 
     def is_open(self):
         current_time = int(time.time())
