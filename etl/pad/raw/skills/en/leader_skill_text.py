@@ -438,6 +438,12 @@ class EnLSTextConverter(EnBaseTextConverter):
             skill_text += ' {}'.format(self.fmt_multi_attr(ls.attributes))
         return skill_text + ' orbs in an L shape'
 
+    def l_match_bonus_damage_text(self, ls):
+        skill_text = 'Deal {:,} true damage when matching 5'.format(ls.bonus_damage)
+        if self.fmt_multi_attr(ls.attributes):
+            skill_text += ' {}'.format(self.fmt_multi_attr(ls.attributes))
+        return skill_text + ' orbs in an L shape'
+
     def composition_buff(self, ls):
         if ls.attributes and ls.types:
             human_fix_logger.warning(f"Can't parse leader skill {ls.skill_id}, attributes and types.")
