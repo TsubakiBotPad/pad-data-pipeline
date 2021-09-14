@@ -32,6 +32,7 @@ emoji_dict = {
     'dispel': "{dispel_status}",
     'swap': "{leader_swap_status}",
     'skill_delay': '{skill_delay}',
+    'skill_haste': '{skill_haste}',
     'locked': '{lock_orbs}',
     'tape': '{tape_status}',
     'starting_position': '{fixed_start}',
@@ -157,6 +158,7 @@ TARGET_NAMES = {
     TargetType.attrs: 'attributes',
     TargetType.types: 'type',
     TargetType.card: '',
+    TargetType.all: 'team',
 
     # Specific Players/Enemies (For Recovery)
     TargetType.player: 'player',
@@ -173,6 +175,10 @@ def targets_to_str(targets):
     return targets if isinstance(targets, str) \
         else ' and '.join([TARGET_NAMES[x] for x in targets])
 
+def possessive(s):
+    if s[-1] == 's':
+        return s+"'"
+    return s+"'s"
 
 ORB_SHAPES = {
     OrbShape.l_shape: 'L shape',
@@ -497,6 +503,14 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def debuff_atk(self, turns, amount):
         return "({}{}% for {})".format(emoji_dict['atk_debuff'], amount, turns)
+
+    def target_skill_haste(self, min_turns, max_turns, target):
+        return f'({emoji_dict["skill_haste"]} {possessive(TARGET_NAMES[target])}' \
+               f' skill by {pluralize2("turn", min_turns, max_turns)})'
+
+    def target_skill_delay(self, min_turns, max_turns, target):
+        return f'({emoji_dict["skill_delay"]} {possessive(TARGET_NAMES[target])}' \
+               f' skill by {pluralize2("turn", min_turns, max_turns)})'
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)

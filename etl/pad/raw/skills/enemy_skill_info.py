@@ -325,6 +325,10 @@ class ESInactivity66(ESInactivity):
     skill_types = [66]
 
 
+class ESInactivity70(ESInactivity):
+    skill_types = [70]
+
+
 class ESDeathCry(ESDeathAction, ESAction):
     skill_types = [69]
 
@@ -1431,6 +1435,48 @@ class ESComboSkyfall(ESAction):
         return converter.combo_skyfall(self.turns, self.chance)
 
 
+class ESTargetedSkillHaste(ESAction):
+    skill_types = [139]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.min_turns = self.params[1]
+        self.max_turns = self.params[2] or self.min_turns
+        mode = self.params[3] or 0
+        if mode == 0:
+            self.target = TargetType.all
+        elif mode == 1:
+            self.target = TargetType.both_leader
+        elif mode == 2:
+            self.target = TargetType.subs
+        else:
+            self.target = TargetType.unset
+
+    def description(self, converter):
+        return converter.target_skill_haste(self.min_turns, self.max_turns, self.target)
+
+
+class ESTargetedSkillDelay(ESAction):
+    skill_types = [140]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.min_turns = self.params[1]
+        self.max_turns = self.params[2] or self.min_turns
+        mode = self.params[3] or 0
+        if mode == 0:
+            self.target = TargetType.all
+        elif mode == 1:
+            self.target = TargetType.both_leader
+        elif mode == 2:
+            self.target = TargetType.subs
+        else:
+            self.target = TargetType.unset
+
+    def description(self, converter):
+        return converter.target_skill_delay(self.min_turns, self.max_turns, self.target)
+
+
 # Passive
 class ESPassive(ESBehavior):
     def __init__(self, skill: EnemySkill):
@@ -1725,6 +1771,16 @@ class ESBranchRemainingEnemies(ESBranch):
         self.operation = '<='
 
 
+class ESBranchAttrOnBoard(ESBranch):
+    skill_types = [133]
+    branch_condition = 'attributes on board'
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = 'HAS'
+        self.branch_attr = skill.params[1]
+
+
 class ESPreemptive(ESLogic):
     skill_types = [49]
 
@@ -1879,6 +1935,7 @@ ENEMY_SKILLS = [
     ESAttackMultihit,
     ESInactivity16,
     ESInactivity66,
+    ESInactivity70,
     ESAttackUPRemainingEnemies,
     ESAttackUpStatus,
     ESAttackUPCooldown,
@@ -1962,6 +2019,7 @@ ENEMY_SKILLS = [
     ESBranchCard,
     ESBranchCombo,
     ESBranchRemainingEnemies,
+    ESBranchAttrOnBoard,
     ESAttributeResist,
     ESResolve,
     ESTurnChangePassive,
@@ -1970,6 +2028,8 @@ ENEMY_SKILLS = [
     ESDebuffATK,
     ESSuperResolve,
     ESBlindStickySkyfall,
+    ESTargetedSkillHaste,
+    ESTargetedSkillDelay,
 ]
 
 BEHAVIOR_MAP = {t: s for s in ENEMY_SKILLS for t in s.skill_types}
