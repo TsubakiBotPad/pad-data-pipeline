@@ -2045,6 +2045,7 @@ ALL_LEADER_SKILLS = [
     LSColorCrossCombo,
     LSBlobMatchMultiAttrBonusCombo,
     LSLMatchComboBoost,
+    LSLMatchBonusDamage,
     LSComboBonusDamage,
     LSTeamCompositionBuff,
 ]

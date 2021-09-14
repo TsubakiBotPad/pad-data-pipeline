@@ -100,6 +100,7 @@ class TargetType(Enum):
     attrs = 5
     types = 6
     card = 6.5
+    all = 6.75
 
     # Specific Players/Enemies
     player = 7

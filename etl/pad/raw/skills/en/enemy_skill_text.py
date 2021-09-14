@@ -17,6 +17,7 @@ TARGET_NAMES = {
     TargetType.attrs: 'attributes',
     TargetType.types: 'type',
     TargetType.card: 'card',
+    TargetType.all: 'all cards',
 
     # Specific Players/Enemies (For Recovery)
     TargetType.player: 'player',
@@ -32,6 +33,12 @@ TARGET_NAMES = {
 def targets_to_str(targets):
     return targets if isinstance(targets, str) \
         else ' and '.join([TARGET_NAMES[x] for x in targets])
+
+
+def possessive(s):
+    if s[-1] == 's':
+        return s+"'"
+    return s+"'s"
 
 
 ORB_SHAPES = {
@@ -375,6 +382,12 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def debuff_atk(self, turns, amount):
         return 'ATK -{}% for {:s}'.format(amount, pluralize2('turn', turns))
+
+    def target_skill_haste(self, min_turns, max_turns, target):
+        return f'Haste {possessive(TARGET_NAMES[target])} skills by {pluralize2("turn", min_turns, max_turns)}'
+
+    def target_skill_delay(self, min_turns, max_turns, target):
+        return f'Delay {possessive(TARGET_NAMES[target])} skills by {pluralize2("turn", min_turns, max_turns)}'
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
