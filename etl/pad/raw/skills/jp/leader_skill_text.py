@@ -410,6 +410,9 @@ class JpLSTextConverter(JpBaseTextConverter):
     def l_match_combo_text(self, ls):
         return '{}ドロップの5個L字消しで{}コンボ加算'.format(self.fmt_multi_attr(ls.attributes), ls.extra_combos)
 
+    def l_match_bonus_damage_text(self, ls):
+        return '{}ドロップの5個L字消すと固定{:,}ダメージ'.format(self.fmt_multi_attr(ls.attributes), ls.bonus_damage)
+
     def composition_buff(self, ls):
         if ls.attributes and ls.types:
             return ""

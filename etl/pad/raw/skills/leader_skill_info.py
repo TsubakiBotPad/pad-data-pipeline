@@ -1851,6 +1851,18 @@ class LSLMatchComboBoost(LeaderSkill):
         return converter.l_match_combo_text(self)
 
 
+class LSLMatchBonusDamage(LeaderSkill):
+    skill_type = 221
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.attributes = binary_con(data[0])
+        super().__init__(221, ms, bonus_damage=data[1])
+
+    def text(self, converter) -> str:
+        return converter.l_match_bonus_damage_text(self)
+
+
 class LSComboBonusDamage(LeaderSkill):
     skill_type = 223
 
