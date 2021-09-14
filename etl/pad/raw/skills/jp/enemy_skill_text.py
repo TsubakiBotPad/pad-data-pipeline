@@ -17,6 +17,7 @@ TARGET_NAMES = {
     TargetType.attrs: '属性',
     TargetType.types: 'タイプ',
     TargetType.card: '{}体',
+    TargetType.all: '???',
 
     # Specific Players/Enemies (For Recovery)
     TargetType.player: 'プレイヤー',
@@ -348,6 +349,12 @@ class JpESTextConverter(JpBaseTextConverter):
 
     def debuff_atk(self, turns, amount):
         return '{}ターンの間、攻撃力が{}%減少'.format(turns, amount)
+
+    def target_skill_haste(self, min_turns, max_turns, target):
+        return f'Haste {TARGET_NAMES[target]} skills by {minmax(min_turns, max_turns)} turns'
+
+    def target_skill_delay(self, min_turns, max_turns, target):
+        return f'Delay {TARGET_NAMES[target]} skills by {minmax(min_turns, max_turns)} turns'
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
