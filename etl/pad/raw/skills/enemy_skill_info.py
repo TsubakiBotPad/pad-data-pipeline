@@ -6,8 +6,8 @@ from typing import List, Optional
 
 from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
-from pad.raw.card import ESRef, Card
-from pad.raw.skills.skill_common import TargetType, Status, Unit, Absorb, Source, OrbShape
+from pad.raw.card import Card, ESRef
+from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -937,6 +937,14 @@ class ESVoidShield(ESAction):
 
     def description(self, converter):
         return converter.void(self.void_threshold, self.turns)
+
+
+class ESVoidShieldBig(ESVoidShield):
+    skill_types = [137]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.turns *= 1_0000_0000
 
 
 class ESDamageShield(ESAction):
@@ -1962,6 +1970,7 @@ ENEMY_SKILLS = [
     ESSkyfallLocked,
     ESDeathCry,
     ESVoidShield,
+    ESVoidShieldBig,
     ESDamageShield,
     ESLeaderSwap,
     ESColumnSpawnMulti,
