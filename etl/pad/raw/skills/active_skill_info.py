@@ -1204,6 +1204,20 @@ class ASTeamCompositionBuff(ActiveSkill):
         return converter.composition_buff(self)
 
 
+class ASTeamTargetStatBuff(ActiveSkill):
+    skill_type = 230
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 1, 100])
+        self.duration = data[0]
+        self.target = data[1]
+        self.atk_mult = mult(data[2])
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.team_target_stat_change(self)
+
+
 class ASInflictES(ActiveSkill):
     skill_type = 1000
 
@@ -1346,5 +1360,6 @@ ALL_ACTIVE_SKILLS = [
     ASNailOrbSkyfall,
     ASLeaderSwapRightSub,
     ASTeamCompositionBuff,
+    ASTeamTargetStatBuff,
     ASInflictES,
 ]
