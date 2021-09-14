@@ -552,6 +552,9 @@ class JpASTextConverter(JpBaseTextConverter):
             return skill_text + f"チーム内の{self.typing_to_str(act.types, '、')}一つにつき" \
                                 f"攻撃力が{int(act.atk_boost*100)}%と回復力が{int(act.rcv_boost*100)}%上がる"
 
+    def team_target_stat_change(self, act):
+        return self.fmt_duration(act.duration) + f"自分の攻撃力を{fmt_mult(act.atk_mult)}倍"
+
     def inflict_es(self, act):
         return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"
                 "ックを送信して、アラディアが実際にここに何かを書き込むようにしてください")
