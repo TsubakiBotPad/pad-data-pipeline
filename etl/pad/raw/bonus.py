@@ -56,6 +56,7 @@ class BonusType(Enum):
     story_category_text = 47
     special_dungeon_info_link = 50
     dungeon_unavailable_popup = 52
+    reward_table_8p = 53
 
 
 class BonusTypeEntry(object):
@@ -148,7 +149,10 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.special_dungeon_info_link),
     # An infobox that links to a webpage appears at the top of the special dungeons
     BonusTypeEntry(BonusType.dungeon_unavailable_popup),
-    # An popup that says a dungeon is currently unavailable.  Used when JP 8p was 
+    # An popup that says a dungeon is currently unavailable.  Used when JP 8p was briefly shut down
+    BonusTypeEntry(BonusType.reward_table_8p),
+    # A link to the current 8p reward table
+
 ]
 
 TYPES_MAP = {bte.bonus_type.value: bte for bte in ALL_TYPES}
