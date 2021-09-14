@@ -3,6 +3,7 @@ import time
 import binascii
 from datetime import datetime, date
 from enum import Enum
+from typing import Any, Dict
 
 from pad.common.pad_util import Printable
 
@@ -114,6 +115,8 @@ class ExistsStrategy(Enum):
 
 
 class SqlItem(Printable):
+    __dict__: Dict[str, Any]
+
     def key_value(self):
         return getattr(self, self._key()) if self._key() else None
 
