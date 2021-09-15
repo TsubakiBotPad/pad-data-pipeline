@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Updates the local cache of full monster pics / portraits from the JP server.
 
