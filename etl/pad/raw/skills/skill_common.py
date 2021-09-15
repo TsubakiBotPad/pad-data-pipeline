@@ -1,5 +1,5 @@
 from typing import Dict
-from enum import Enum
+from enum import Enum, auto
 
 
 class I13NotImplemented(NotImplementedError):
@@ -90,60 +90,60 @@ class BaseTextConverter(object):
 
 # ENUMS
 class TargetType(Enum):
-    unset = -1
+    unset = auto()
     # Selective Subs
-    random = 0
-    self_leader = 1
-    both_leader = 2
-    friend_leader = 3
-    subs = 4
-    attrs = 5
-    types = 6
-    card = 6.5
-    all = 6.75
+    random = auto()
+    self_leader = auto()
+    both_leader = auto()
+    friend_leader = auto()
+    subs = auto()
+    attrs = auto()
+    types = auto()
+    card = auto()
+    all = auto()
 
     # Specific Players/Enemies
-    player = 7
-    enemy = 8
-    enemy_ally = 9
+    player = auto()
+    enemy = auto()
+    enemy_ally = auto()
 
     # Full Team Aspect
-    awokens = 10
-    actives = 11
+    awokens = auto()
+    actives = auto()
 
 
 class OrbShape(Enum):
-    l_shape = 0
-    cross = 1
-    column = 2
-    row = 4
+    l_shape = auto()
+    cross = auto()
+    column = auto()
+    row = auto()
 
 
 class Status(Enum):
-    movetime = 0
-    atk = 1
-    hp = 2
-    rcv = 3
+    movetime = auto()
+    atk = auto()
+    hp = auto()
+    rcv = auto()
 
 
 class Unit(Enum):
-    unknown = -1
-    seconds = 0
-    percent = 1
-    none = 2
+    unknown = auto()
+    seconds = auto()
+    percent = auto()
+    none = auto()
 
 
 class Absorb(Enum):
-    unknown = -1
-    attr = 0
-    combo = 1
-    damage = 2
+    unknown = auto()
+    attr = auto()
+    combo = auto()
+    damage = auto()
 
 
 class Source(Enum):
-    all_sources = 0
-    attrs = 5
-    types = 6
+    all_sources = auto()
+    attrs = auto()
+    types = auto()
 
 
 # LS FUNCTIONS
@@ -153,11 +153,11 @@ class ThresholdType(Enum):
 
 
 class Tag(Enum):
-    NO_SKYFALL = 0
-    BOARD_7X6 = 1
-    DISABLE_POISON = 2
-    FIXED_TIME = 3
-    ERASE_P = 4
+    NO_SKYFALL = auto()
+    BOARD_7X6 = auto()
+    DISABLE_POISON = auto()
+    FIXED_TIME = auto()
+    ERASE_P = auto()
 
 
 def sort_tags(tags):
