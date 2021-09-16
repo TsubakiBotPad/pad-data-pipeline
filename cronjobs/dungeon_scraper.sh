@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source /home/bot/pad-data-pipeline/bin/activate
 

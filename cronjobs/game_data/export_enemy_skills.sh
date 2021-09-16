@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd "$(dirname "$0")" || exit
 source ../shared.sh
 source /home/bot/pad-data-pipeline/bin/activate
