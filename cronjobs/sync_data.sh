@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copies the portraits/icons from the cache into the DadGuide image dir using
 # the DadGuide ID space.

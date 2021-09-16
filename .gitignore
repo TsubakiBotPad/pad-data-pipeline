@@ -136,3 +136,5 @@ pad-resources/*
 pad-game-data-slim/*
 /venv3/
 /venv38/
+pyvenv.cfg
+cronjobs/shared_roots.sh
