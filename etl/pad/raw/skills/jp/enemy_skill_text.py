@@ -1,7 +1,7 @@
 import logging
 
 from pad.raw.skills.jp.skill_common import JpBaseTextConverter, minmax
-from pad.raw.skills.skill_common import TargetType, OrbShape, Source, Unit, Absorb, Status
+from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -17,7 +17,7 @@ TARGET_NAMES = {
     TargetType.attrs: '属性',
     TargetType.types: 'タイプ',
     TargetType.card: '{}体',
-    TargetType.all: '???',
+    TargetType.all: '全体',
 
     # Specific Players/Enemies (For Recovery)
     TargetType.player: 'プレイヤー',
@@ -93,7 +93,10 @@ class JpESTextConverter(JpBaseTextConverter):
         if isinstance(target_types, TargetType):
             target_types = [target_types]
         elif source is not None:
-            target_types = SOURCE_FUNCS[source]([target_types]) + TARGET_NAMES[TargetType(source.value)]
+            source_target = TargetType.attrs if source == Source.attrs \
+                else TargetType.types if source == Source.types \
+                else TargetType.unset
+            target_types = SOURCE_FUNCS[source]([target_types]) + TARGET_NAMES[source_target]
         targets = targets_to_str(target_types).format(target_count)
         if targets == '覚醒スキル':
             return '{}ターンの間、覚醒スキル無効化'.format(minmax(min_turns, max_turns), targets)
@@ -351,10 +354,11 @@ class JpESTextConverter(JpBaseTextConverter):
         return '{}ターンの間、攻撃力が{}%減少'.format(turns, amount)
 
     def target_skill_haste(self, min_turns, max_turns, target):
-        return f'Haste {TARGET_NAMES[target]} skills by {minmax(min_turns, max_turns)} turns'
+        return f'{TARGET_NAMES[target].format(4)}のスキルが{minmax(min_turns, max_turns)}ターン溜まる'
 
     def target_skill_delay(self, min_turns, max_turns, target):
-        return f'Delay {TARGET_NAMES[target]} skills by {minmax(min_turns, max_turns)} turns'
+
+        return f'{TARGET_NAMES[target].format(4)}のスキルが{minmax(min_turns, max_turns)}ターン減らす'
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
