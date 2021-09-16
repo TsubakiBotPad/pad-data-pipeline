@@ -17,6 +17,8 @@ class EggMachine(SimpleSqlItem):
             egg_machine_type_id = 2
         elif eem.egg_machine_type == 2:  # PEM
             egg_machine_type_id = 1
+        elif eem.egg_machine_type == 9:  # VEM
+            egg_machine_type_id = 3
         else:  # Special (collab or other)
             egg_machine_type_id = 0
 

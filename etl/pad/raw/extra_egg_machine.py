@@ -98,7 +98,7 @@ def machine_from_bonuses(server: Server,
     elif machine_code == 'rem_event':
         em_type = 2
         price = 5
-    elif machine_code == 'fem_event':
+    elif machine_code == 'vem_event':
         em_type = 9
         price = 0
     else:
