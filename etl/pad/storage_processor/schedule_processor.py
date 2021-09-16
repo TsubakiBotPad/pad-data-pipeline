@@ -58,6 +58,7 @@ IGNORED_BONUS_TYPES = [
     BonusType.special_dungeon_info_link,
     BonusType.dungeon_unavailable_popup,  # This might be useful if it becomes more common
     BonusType.reward_table_8p,
+    BonusType.fem_event,
 
     # Might need this to tag dungeons as tournaments, even closed ones.
     # Probably happens outside this processor though.
