@@ -3,16 +3,15 @@ Parses the extra egg machine data.
 """
 
 import time
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from bs4 import BeautifulSoup
 
-# from pad.api.pad_api import PadApiClient
 from pad.common import pad_util
-# The typical JSON file name for this data.
 from pad.common.shared_types import Server
 from pad.raw.bonus import Bonus
 
+# The typical JSON file name for this data.
 FILE_NAME = 'egg_machines.json'
 
 
@@ -93,6 +92,18 @@ def machine_from_bonuses(server: Server,
                          machine_name: str) -> List[ExtraEggMachine]:
     """Extracts pem and rem info from the bonus listing."""
     m_events = [x for x in bonus_data if x.bonus_name == machine_code and x.is_open()]
+    if machine_code == 'pem_event':
+        em_type = 1
+        price = 500
+    elif machine_code == 'rem_event':
+        em_type = 2
+        price = 5
+    elif machine_code == 'fem_event':
+        em_type = 9
+        price = 0
+    else:
+        raise ValueError("Invalid machine_code")
+
     # Probably should only be one of these
     em_events = []
     for event in m_events:
@@ -102,9 +113,9 @@ def machine_from_bonuses(server: Server,
             'start': event.start_time_str,
             'end': event.end_time_str,
             'row': event.egg_machine_id,
-            'egg_machine_type': 1 if event.bonus_name == 'pem_event' else 2,
+            'egg_machine_type': em_type,
             # pri can actually be found in another event but it's probably safe to fix it.
-            'pri': 500 if event.bonus_name == 'pem_event' else 5,
+            'pri': price,
         })
 
     return [ExtraEggMachine(em, server) for em in em_events]
@@ -120,7 +131,7 @@ def scrape_machine_contents(page: str, egg_machine: ExtraEggMachine):
         print(page)
         return
 
-    has_rate = egg_machine.name != 'Pal Egg Machine'
+    has_rate = egg_machine.egg_machine_type not in (1, 9)
     min_cols = 2 if has_rate else 1
 
     rows = table.find_all('tr')
