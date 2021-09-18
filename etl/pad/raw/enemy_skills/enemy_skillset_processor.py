@@ -4,18 +4,17 @@ called a ProcessedSkillset.
 """
 import collections
 import copy
-from typing import Set, Tuple, List, Optional
+from typing import List, Optional, Set, Tuple
 
 from pad.raw.card import Card, ESRef
-from pad.raw.skills.enemy_skill_info import ESBranchAttrOnBoard, ESInstance, ESBehavior, ESEnrageAttackUp, \
-    ESAttackUPRemainingEnemies, \
-    ESAttackUPCooldown, ESDamageShield, ESStatusShield, ESAbsorbCombo, ESAbsorbAttribute, ESAbsorbThreshold, \
-    ESDebuffMovetime, ESSkyfall, ESNoSkyfall, ESVoidShield, ESComboSkyfall, ESDebuffATK, ESDebuffRCV, ESCondition, \
-    ESCountdownMessage, ESDefaultAttack, attribute_bitmap, ESNone, ESPreemptive, ESAttackPreemptive, ESAttackUpStatus, \
-    ESUnknown, ESAction, ESDispel, ESBranchFlag, ESEndPath, ESFlagOperation, ESBranchHP, ESBranchLevel, ESSetCounter, \
-    ESSetCounterIf, ESCountdown, ESBranchCounter, ESBranchCard, ESBranchCombo, ESBranchRemainingEnemies, \
-    ESBranchEraseAttr, ESBranchDamage, ESBranchDamageAttribute, ESBranchSkillUse, ESPassive, ESDeathCry, \
-    ESSkillSetOnDeath, ESRecoverEnemyAlly
+from pad.raw.skills.enemy_skill_info import ESAbsorbAttribute, ESAbsorbCombo, ESAbsorbThreshold, ESAction, \
+    ESAttackPreemptive, ESAttackUPCooldown, ESAttackUPRemainingEnemies, ESAttackUpStatus, ESBehavior, \
+    ESBranchAttrOnBoard, ESBranchCard, ESBranchCombo, ESBranchCounter, ESBranchDamage, ESBranchDamageAttribute, \
+    ESBranchEraseAttr, ESBranchFlag, ESBranchHP, ESBranchLevel, ESBranchRemainingEnemies, ESBranchSkillUse, \
+    ESBranchTypes, ESComboSkyfall, ESCondition, ESCountdown, ESCountdownMessage, ESDamageShield, ESDeathCry, \
+    ESDebuffATK, ESDebuffMovetime, ESDebuffRCV, ESDefaultAttack, ESDispel, ESEndPath, ESEnrageAttackUp, ESFlagOperation, \
+    ESInstance, ESNoSkyfall, ESNone, ESPassive, ESPreemptive, ESRecoverEnemyAlly, ESSetCounter, ESSetCounterIf, \
+    ESSkillSetOnDeath, ESSkyfall, ESStatusShield, ESUnknown, ESVoidShield, attribute_bitmap
 
 
 class StandardSkillGroup(object):
@@ -141,7 +140,9 @@ class Context(object):
         # Attributes erased in the previous round
         self.attributes_erased = 0
         # Damage done in the previous round
-        self.attributes_on_board = 0
+        self.attributes_on_board = set()
+        # Types on your team
+        self.types_on_team = set()
         # Damage done in the previous round
         self.damage_done = 0
         # attributes attacked with in previous round
@@ -407,8 +408,8 @@ def default_attack():
 
 def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]:
     original_ctx = ctx.clone()
-    results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches, damage_branches, \
-    attributes_attacked_branches, skill_use_branches = loop_through_inner(ctx, behaviors)
+    results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches, type_branches, \
+    damage_branches, attributes_attacked_branches, skill_use_branches = loop_through_inner(ctx, behaviors)
     # Handle extracting alternate actions based on card values
     card_extra_actions = []
     for card_ids in sorted(card_branches):
@@ -469,7 +470,7 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
     on_board_attribute_extra_actions = []
     for on_board_attribute in on_board_attribute_branches:
         on_board_attribute_ctx = original_ctx.clone()
-        on_board_attribute_ctx.attributes_on_board = on_board_attribute
+        on_board_attribute_ctx.attributes_on_board.add(on_board_attribute)
         on_board_loop, *_ = loop_through_inner(on_board_attribute_ctx, behaviors)
         new_behaviors = [x for x in on_board_loop if x not in results]
 
@@ -481,6 +482,24 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
 
     # Add any alternate preempts
     for nb in on_board_attribute_extra_actions:
+        results.insert(0, nb)
+
+    # Handle extracting alternate actions based on attributes existing on board
+    type_extra_actions = []
+    for mtype in type_branches:
+        type_ctx = original_ctx.clone()
+        type_ctx.types.add(mtype)
+        on_board_loop, *_ = loop_through_inner(type_ctx, behaviors)
+        new_behaviors = [x for x in on_board_loop if x not in results]
+
+        # Update the description to distinguish
+        for nb in new_behaviors:
+            nb.condition.types = {mtype}
+
+        type_extra_actions.extend(new_behaviors)
+
+    # Add any alternate preempts
+    for nb in type_extra_actions:
         results.insert(0, nb)
 
     # Handle extracting alternate actions based on damage done
@@ -549,7 +568,8 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
 
 
 def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
-        Tuple[List[ESInstance], List[List[int]], List[int], List[int], List[int], List[int], List[int], List[int]]:
+        Tuple[List[ESInstance], List[List[int]], List[int], List[int], List[int],
+              List[int], List[int], List[int], List[int]]:
     """Executes a single turn through the simulator.
 
     This is called multiple times with varying Context values to probe the action set
@@ -569,12 +589,18 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
     erase_attribute_branches = []  # type: List[int]
     # If any BranchAttrOnBoard instructions were spotted
     on_board_attribute_branches = []  # type: List[int]
+    # If any BranchTypes instructions were spotted
+    type_branches = []  # type: List[int]
     # If any BranchDamage instructions were spotted
     damage_branches = []  # type: List[int]
     # If any BranchDamageAttribute instructions were spotted
     attributes_attacked_branches = []  # type: List[int]
     # If any BranchSkillUse instructions were spotted
     skills_used_branches = []  # type: List[int]
+
+    # This only works becuase the values are mutable.  We can't reassign them.
+    return_value = (results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches,
+                    type_branches, damage_branches, attributes_attacked_branches, skills_used_branches)
 
     # The current spot in the behavior array.
     idx = 0
@@ -589,8 +615,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             # if len(results) == 0:
             #     # if the result set is empty, add something
             #     results.append(default_attack())
-            return results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches,\
-                   damage_branches, attributes_attacked_branches, skills_used_branches
+            return return_value
         traversed.append(idx)
 
         # Extract the current behavior and its type.
@@ -614,8 +639,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             behaviors[idx] = None
             ctx.is_preemptive = True
             results.append(instance)
-            return (results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches,
-                    damage_branches, attributes_attacked_branches, skills_used_branches)
+            return return_value
 
         if isinstance(b, ESAttackUpStatus):
             # This is a special case; it's not a terminal action unlike other enrages.
@@ -646,9 +670,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                     if b.is_conditional():
                         idx += 1
                         continue
-                    return (results, card_branches, combo_branches, erase_attribute_branches,
-                            on_board_attribute_branches, damage_branches, attributes_attacked_branches,
-                            skills_used_branches)
+                    return return_value
                 else:
                     # Not a terminal action, so accumulate it and continue.
                     if ctx.check_skill_use(cond) and ctx.check_no_apply_skill_effects(b):
@@ -660,8 +682,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
                 if not ctx.apply_skill_effects(b):
                     idx += 1
                     continue
-                return (results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches,
-                        damage_branches, attributes_attacked_branches, skills_used_branches)
+                return return_value
 
         if isinstance(b, ESBranchFlag):
             if b.branch_value == b.branch_value & ctx.flags:
@@ -678,8 +699,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             # if len(results) == 0:
             #     # if the result set is empty, add something
             #     results.append(default_attack())
-            return (results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches,
-                    damage_branches, attributes_attacked_branches, skills_used_branches)
+            return return_value
 
         if isinstance(b, ESFlagOperation):
             # Operations which change flag state, we always move to the next behavior after.
@@ -736,8 +756,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
             ctx.counter -= 1
             if ctx.counter > 0:
                 results.append(countdown_message())
-                return (results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches,
-                        damage_branches, attributes_attacked_branches, skills_used_branches)
+                return return_value
             else:
                 idx += 1
                 continue
@@ -781,8 +800,14 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
         if isinstance(b, ESBranchAttrOnBoard):
             # Branch if an attribute appears on the board
-            idx = b.target_round if ctx.attributes_on_board == b.branch_attr else idx + 1
+            idx = b.target_round if b.branch_attr in ctx.attributes_on_board else idx + 1
             on_board_attribute_branches.append(b.branch_attr)
+            continue
+
+        if isinstance(b, ESBranchTypes):
+            # Branch if an attribute appears on the board
+            idx = b.target_round if b.branch_types in ctx.types_on_team else idx + 1
+            type_branches.append(b.branch_types)
             continue
 
         if isinstance(b, ESBranchDamage):
@@ -808,7 +833,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
     if iter_count == 1000:
         print('error, iter count exceeded 1000')
     return (results, card_branches, combo_branches, erase_attribute_branches, on_board_attribute_branches,
-            damage_branches, attributes_attacked_branches, skills_used_branches)
+            type_branches, damage_branches, attributes_attacked_branches, skills_used_branches)
 
 
 def info_from_behaviors(behaviors: List[Optional[ESInstance]]):
