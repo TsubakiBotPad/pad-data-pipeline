@@ -1789,6 +1789,16 @@ class ESBranchAttrOnBoard(ESBranch):
         self.branch_attr = skill.params[1]
 
 
+class ESBranchTypes(ESBranch):
+    skill_types = [135]
+    branch_condition = 'types in team'
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.operation = 'HAS'
+        self.branch_types = typing_bitmap(skill.params[1])
+
+
 class ESPreemptive(ESLogic):
     skill_types = [49]
 
@@ -2039,6 +2049,7 @@ ENEMY_SKILLS = [
     ESBlindStickySkyfall,
     ESTargetedSkillHaste,
     ESTargetedSkillDelay,
+    ESBranchTypes,
 ]
 
 BEHAVIOR_MAP = {t: s for s in ENEMY_SKILLS for t in s.skill_types}
