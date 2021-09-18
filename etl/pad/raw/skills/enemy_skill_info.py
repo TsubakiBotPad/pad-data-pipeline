@@ -719,8 +719,8 @@ class ESRecoverPlayer(ESRecover):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill, target=TargetType.player)
-        self.min_amount = self.params[1]
-        self.max_amount = self.params[1]
+        self.min_amount = self.params[1] or 100
+        self.max_amount = self.min_amount
         self.hp_threshold = self.params[2]
 
     def description(self, converter):
