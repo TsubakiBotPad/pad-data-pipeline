@@ -586,7 +586,7 @@ class EnASTextConverter(EnBaseTextConverter):
         if act.target != 1:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}: Unknown target {act.target}")
             return ""
-        return self.fmt_duration(act.duration) + self.fmt_multiplier_text(0, act.atk_mult, 0) + " for this monster"
+        return self.fmt_duration(act.duration) + self.fmt_multiplier_text(1, act.atk_mult, 1) + " for this monster"
 
     def inflict_es(self, act):
         if act.selector_type == 2:
