@@ -1508,13 +1508,16 @@ class LSMatchAttrPlusShield(LeaderSkill):
     skill_type = 171
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 100, 0])
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 100, 0, 0])
         self.match_attributes = list_binary_con(data[0:4])
         self.min_match = data[4]
         self.min_atk = mult(data[5])
         self.min_rcv = 1
         shield = mult(data[6])
-        super().__init__(171, ms, atk=self.min_atk, shield=shield)
+        self.atk_step = mult(data[7])
+        self.rcv_step = 0
+        max_atk = self.min_atk + (self.atk_step * (len(self.match_attributes) - self.min_match))
+        super().__init__(171, ms, atk=max_atk, shield=shield)
 
     def text(self, converter) -> str:
         return converter.multi_attribute_match_text(self)
