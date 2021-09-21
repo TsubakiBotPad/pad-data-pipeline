@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 import os
 from typing import List
 
@@ -178,26 +178,38 @@ class EnLSTextConverter(EnBaseTextConverter):
         if not ls.match_attributes:
             return ''
 
-        skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
-                                                    atk=ls.min_atk,
-                                                    rcv=ls.min_rcv)
+        skill_text = ''
+        min_atk = ls.min_atk
+        min_rcv = ls.min_rcv
+        shield = ls.shield
+        min_match = ls.min_match
+        if (min_atk == 1 and ls.atk != 1) or (min_rcv == 1 and ls.rcv != 1):
+            skill_text = self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', atk=min_atk, rcv=min_rcv)
+            skill_text += f' when matching {min_match} {self.ATTRIBUTES[ls.match_attributes[0]]} combos; '
+            min_match += 1
+            min_atk += ls.atk_step
+            min_rcv += ls.rcv_step
+            shield = 0
+
+        skill_text += self.fmt_stats_type_attr_bonus(ls, reduce_join_txt=' and ', skip_attr_all=True,
+                                                     atk=min_atk, rcv=min_rcv, shield=shield)
 
         if len(set(ls.match_attributes)) == 1:
-            skill_text += ' when matching {}'.format(ls.min_match)
-            if not len(ls.match_attributes) != ls.min_match:
+            skill_text += ' when matching {}'.format(min_match)
+            if not len(ls.match_attributes) != min_match:
                 skill_text += '+'
             skill_text += ' {} combos'.format(self.ATTRIBUTES[ls.match_attributes[0]])
-            if len(ls.match_attributes) != ls.min_match:
+            if len(ls.match_attributes) != min_match:
                 skill_text += ', up to {}x at {} {} combos'.format(fmt_mult(ls.atk), len(ls.match_attributes),
                                                                    self.ATTRIBUTES[ls.match_attributes[0]])
         else:
-            skill_text += ' when matching {}'.format(self.attributes_to_str(ls.match_attributes[:ls.min_match]))
-            if len(ls.match_attributes) > ls.min_match:
-                if ls.min_match == 1:
+            skill_text += ' when matching {}'.format(self.attributes_to_str(ls.match_attributes[:min_match]))
+            if len(ls.match_attributes) > min_match:
+                if min_match == 1:
                     skill_text += ' or {}'.format(self.attributes_to_str(ls.match_attributes[1:]))
                 else:
                     skill_text += ' (or {})'.format(self.attributes_to_str(ls.match_attributes[1:]))
-            if ls.atk > ls.min_atk:
+            if ls.atk > min_atk:
                 skill_text += ' up to {}x when matching {}'.format(fmt_mult(ls.atk),
                                                                    self.attributes_to_str(ls.match_attributes))
         return skill_text
