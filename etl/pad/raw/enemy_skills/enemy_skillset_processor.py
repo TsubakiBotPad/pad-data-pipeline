@@ -488,13 +488,13 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
     type_extra_actions = []
     for mtype in type_branches:
         type_ctx = original_ctx.clone()
-        type_ctx.types.add(mtype)
+        type_ctx.types_on_team.update(mtype)
         on_board_loop, *_ = loop_through_inner(type_ctx, behaviors)
         new_behaviors = [x for x in on_board_loop if x not in results]
 
         # Update the description to distinguish
         for nb in new_behaviors:
-            nb.condition.types = {mtype}
+            nb.condition.types_on_team = set(mtype)
 
         type_extra_actions.extend(new_behaviors)
 
@@ -569,7 +569,7 @@ def loop_through(ctx, behaviors: List[Optional[ESInstance]]) -> List[ESInstance]
 
 def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
         Tuple[List[ESInstance], List[List[int]], List[int], List[int], List[int],
-              List[int], List[int], List[int], List[int]]:
+              List[List[int]], List[int], List[int], List[int]]:
     """Executes a single turn through the simulator.
 
     This is called multiple times with varying Context values to probe the action set
@@ -590,7 +590,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
     # If any BranchAttrOnBoard instructions were spotted
     on_board_attribute_branches = []  # type: List[int]
     # If any BranchTypes instructions were spotted
-    type_branches = []  # type: List[int]
+    type_branches = []  # type: List[List[int]]
     # If any BranchDamage instructions were spotted
     damage_branches = []  # type: List[int]
     # If any BranchDamageAttribute instructions were spotted
@@ -806,7 +806,7 @@ def loop_through_inner(ctx: Context, behaviors: List[Optional[ESInstance]]) -> \
 
         if isinstance(b, ESBranchTypes):
             # Branch if an attribute appears on the board
-            idx = b.target_round if b.branch_types in ctx.types_on_team else idx + 1
+            idx = b.target_round if any(t in ctx.types_on_team for t in b.branch_types) else idx + 1
             type_branches.append(b.branch_types)
             continue
 
