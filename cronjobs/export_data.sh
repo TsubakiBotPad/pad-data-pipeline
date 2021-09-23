@@ -4,6 +4,7 @@ set -x
 
 cd "$(dirname "$0")" || exit
 source ./discord.sh
+source ./shared_root.sh
 source ./shared.sh
 
 echo "Exporting DG (NO WAVES) to sqlite"

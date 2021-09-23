@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-source /home/bot/pad-data-pipeline/bin/activate
-
 set -e
 set -x
 
 cd "$(dirname "$0")" || exit
+source ./shared_root.sh
 source ./shared.sh
+source "${VENV_ROOT}/bin/activate"
 
 flock -xn /tmp/dg_scraper_na.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py \
   --db_config=${DB_CONFIG} \
