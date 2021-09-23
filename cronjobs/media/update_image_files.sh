@@ -3,6 +3,7 @@
 # Updates the local cache of full monster pics / portraits from the JP server.
 
 cd "$(dirname "$0")" || exit
+source ../discord.sh
 source ../shared_root.sh
 source ../shared.sh
 source "${VENV_ROOT}/bin/activate"
