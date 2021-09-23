@@ -205,7 +205,7 @@ class JpESTextConverter(JpBaseTextConverter):
             .format(minmax(min_turns, max_turns), lock, self.attributes_to_str(attributes), chance)
 
     def void(self, threshold, turns):
-        return '{}ターンの間、{}以上のダメージを無効化'.format(self.big_number(turns), threshold)
+        return '{}ターンの間、{}以上のダメージを無効化'.format(turns, self.big_number(threshold))
 
     def damage_reduction(self, source_type: Source, source=None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)

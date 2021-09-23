@@ -936,7 +936,7 @@ class ESVoidShield(ESAction):
         super().__init__(skill)
         self.turns = self.params[1]
         # mysterious params[2], always 1055 except for no.2485 Hakumen no Mono who has 31
-        self.void_threshold = self.params[3]
+        self.void_threshold = self.params[3] or 0
 
     def description(self, converter):
         return converter.void(self.void_threshold, self.turns)
@@ -993,7 +993,7 @@ class ESSkyfall(ESAction):
         self.min_turns = self.params[2] or 0
         self.max_turns = self.params[3]
         self.attributes = attribute_bitmap(self.params[1])
-        self.chance = self.params[4]
+        self.chance = self.params[4] or 0
 
     def description(self, converter):
         return converter.skyfall(self.attributes, self.chance,
