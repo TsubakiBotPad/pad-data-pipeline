@@ -11,7 +11,7 @@ echo "Exporting Enemy Skills"
 echo "Exporting PAD Assets"
 ./export_pad_assets.sh
 
-echo "Exporting PAD Data"
-./export_pad_data.sh
+# echo "Exporting PAD Data"
+# ./export_pad_data.sh
 
 hook_info "Game data export finished"
