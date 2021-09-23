@@ -8,10 +8,7 @@ source ../discord.sh
 echo "Exporting Enemy Skills"
 ./export_enemy_skills.sh
 
-echo "Exporting PAD Assets"
-./export_pad_assets.sh
-
-echo "Writing PAD Data"  # This doesn't export for some reason?  TODO: Find out why.
+echo "Exporting PAD Data"
 ./export_pad_data.sh
 
 hook_info "Game data export finished"
