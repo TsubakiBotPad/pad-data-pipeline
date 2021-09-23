@@ -3,8 +3,9 @@
 # Updates the local cache of orb skin files.
 
 cd "$(dirname "$0")" || exit
-source /home/bot/pad-data-pipeline/bin/activate
+source ../shared_root.sh
 source ../shared.sh
+source "${VENV_ROOT}/bin/activate"
 
 RUN_DIR="${MEDIA_ETL_DIR}/orb_styles_pull"
 CACHE_DIR="${PAD_DATA_DIR}/orb_styles"

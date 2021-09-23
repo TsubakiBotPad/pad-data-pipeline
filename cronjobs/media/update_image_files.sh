@@ -3,8 +3,9 @@
 # Updates the local cache of full monster pics / portraits from the JP server.
 
 cd "$(dirname "$0")" || exit
-source /home/bot/pad-data-pipeline/bin/activate
+source ../shared_root.sh
 source ../shared.sh
+source "${VENV_ROOT}/bin/activate"
 
 function error_exit() {
   hook_error "Image Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"

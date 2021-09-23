@@ -3,6 +3,7 @@ set -e
 set -x
 
 cd "$(dirname "$0")" || exit
+source ./shared_root.sh
 source ./shared.sh
 source ./discord.sh
 
