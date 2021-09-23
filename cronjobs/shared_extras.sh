@@ -5,7 +5,7 @@ set -x
 
 declare -x REPO_ROOT="${PROJECT_ROOT}/pad-data-pipeline"
 declare -x PAD_RESOURCES_ROOT="${PROJECT_ROOT}/pad-resources"
-declare -x GAME_DATA_DIR="${PROJECT_ROOT}/pad-game-data-slim"
+declare -x GAME_DATA_DIR="${PROJECT_ROOT}/pad-data-pipeline-export"
 
 declare -x PAD_DATA_DIR="${REPO_ROOT}/pad_data"
 declare -x CRONJOBS_DIR="${REPO_ROOT}/cronjobs"

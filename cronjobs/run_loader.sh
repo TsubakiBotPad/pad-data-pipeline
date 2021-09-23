@@ -5,7 +5,8 @@ set -x
 
 cd "$(dirname "$0")" || exit
 source ./discord.sh
-source ./shared_roots.sh
+source ./project_root.sh
+source ./shared_extras.sh
 source "${VENV_ROOT}/bin/activate"
 
 # This may not work on Mac

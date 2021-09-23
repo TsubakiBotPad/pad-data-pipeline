@@ -4,7 +4,8 @@ set -e
 set -x
 
 cd "$(dirname "$0")" || exit
-source ./shared_roots.sh
+source ./project_root.sh
+source ./shared_extras.sh
 source "${VENV_ROOT}/bin/activate"
 
 flock -xn /tmp/dg_scraper_na.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py \
