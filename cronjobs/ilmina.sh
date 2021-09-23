@@ -3,8 +3,8 @@ set -e
 set -x
 
 cd "$(dirname "$0")" || exit
-source ./project_root.sh
-source ./shared_extras.sh
+source ./shared_root.sh
+source ./shared.sh
 
 python3 "${ETL_DIR}/export_spawns.py" \
   --db_config="${DB_CONFIG}" \

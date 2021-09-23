@@ -3,8 +3,8 @@
 # Updates the local cache of hq monster pics.
 
 cd "$(dirname "$0")" || exit
-source ../project_root.sh
-source ../shared_extras.sh
+source ../shared_root.sh
+source ../shared.sh
 source "${VENV_ROOT}/bin/activate"
 
 python3 "${MEDIA_ETL_DIR}/image_pull/PADImageDownload.py" \

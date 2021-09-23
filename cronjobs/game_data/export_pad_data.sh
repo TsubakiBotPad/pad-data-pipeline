@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 cd "$(dirname "$0")" || exit
-source ../project_root.sh
-source ../shared_extras.sh
+source ../shared_root.sh
+source ../shared.sh
 source "${VENV_ROOT}/bin/activate"
 
 cd "${GAME_DATA_DIR}" || exit

@@ -3,8 +3,8 @@
 # Updates the local cache of orb skin files.
 
 cd "$(dirname "$0")" || exit
-source ../project_root.sh
-source ../shared_extras.sh
+source ../shared_root.sh
+source ../shared.sh
 source "${VENV_ROOT}/bin/activate"
 
 RUN_DIR="${MEDIA_ETL_DIR}/orb_styles_pull"
