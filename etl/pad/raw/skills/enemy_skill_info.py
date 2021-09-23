@@ -136,6 +136,9 @@ class ESCondition(object):
         # Only executes if these attributes are cleared
         self.attributes_erased = None
 
+        # Only executes if these types are on team
+        self.types_on_team = None
+
         # Only executs if this much damage is done
         self.damage_done = None
 
