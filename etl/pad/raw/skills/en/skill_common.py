@@ -55,7 +55,7 @@ def pluralize2(noun, number, max_number=None):
 def minmax(nmin, nmax, p=False, fmt=False):
     fmt = fmt_mult if fmt else (lambda x: '{:,}'.format(x))
     if None in [nmin, nmax] or nmin == nmax:
-        return "{}".format(fmt(nmin or nmax)) + ("%" if p else '')
+        return "{}".format(fmt(nmin if nmin is not None else nmax)) + ("%" if p else '')
     elif p:
         return "{}%~{}%".format(fmt(int(nmin)), fmt(int(nmax)))
     else:
