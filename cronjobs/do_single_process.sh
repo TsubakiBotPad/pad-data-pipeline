@@ -3,7 +3,7 @@ set -e
 set -x
 
 cd "$(dirname "$0")" || exit
-source ./shared.sh
+source ./shared_roots.sh
 source ./discord.sh
 
 flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \

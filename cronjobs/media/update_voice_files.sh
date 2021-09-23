@@ -2,10 +2,9 @@
 #
 # Updates the local cache of voice files and fixes them.
 
-source /home/bot/pad-data-pipeline/bin/activate
-
 cd "$(dirname "$0")" || exit
-source ../shared.sh
+source ../shared_roots.sh
+source "${VENV_ROOT}/bin/activate"
 
 RUN_DIR="${MEDIA_ETL_DIR}/voice_pull"
 CACHE_DIR="${PAD_DATA_DIR}/voices/raw"

@@ -3,8 +3,8 @@
 # Updates the local cache of story files.
 
 cd "$(dirname "$0")" || exit
-source /home/bot/pad-data-pipeline/bin/activate
-source ../shared.sh
+source ../shared_roots.sh
+source "${VENV_ROOT}/bin/activate"
 
 RUN_DIR="${MEDIA_ETL_DIR}/story_pull"
 TOOL_DIR=${RUN_DIR}

@@ -4,7 +4,7 @@ set -x
 
 cd "$(dirname "$0")" || exit
 source ./discord.sh
-source ./shared.sh
+source ./shared_roots.sh
 
 echo "Exporting DG (NO WAVES) to sqlite"
 DADGUIDE_DB_FILE=${DADGUIDE_GAME_DB_DIR}/dadguide.sqlite

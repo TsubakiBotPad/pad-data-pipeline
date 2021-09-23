@@ -3,7 +3,7 @@ set -e
 set -x
 
 cd "$(dirname "$0")" || exit
-source ./shared.sh
+source ./shared_roots.sh
 source ./discord.sh
 
 function human_fixes_check() {
