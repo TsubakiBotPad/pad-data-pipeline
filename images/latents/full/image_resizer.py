@@ -32,28 +32,25 @@ End constants
 
 def process_file(file_name: str):
     team_file = os.path.join('..', 'team_display', file_name)
-    single_file = os.path.join('..', 'single_width', file_name)
-    print('processing', file_name, 'to', team_file, 'and', single_file)
+    print('processing', file_name, 'to', team_file)
     img = Image.open(file_name)
     if img.size == one_slot:
         # No processing needed
         shutil.copy2(file_name, team_file)
-        shutil.copy2(file_name, single_file)
         return
 
-    # Shrink to single width size
-    # NOTE: this needs some tuning. The all-stat latent is totally borked,
-    # and the 6-slot latents are slightly trimmed.
-    new_img = Image.new("RGBA", one_slot)
-    original_width = img.size[0]
-
-    new_img.paste(img.crop((0, 0, N, 32)))
-    new_img.paste(img.crop((original_width / 2 - 16 + N, 0,
-                            original_width / 2 + 16 - N, 32)),
-                  (N, 0))
-    new_img.paste(img.crop((original_width - N, 0, original_width, 32)),
-                  (one_slot[0] - N, 0))
-    new_img.save(single_file)
+    # # Shrink to single width size
+    # # We don't need to do this any more! Fancy single widths are exported
+    # new_img = Image.new("RGBA", one_slot)
+    # original_width = img.size[0]
+    #
+    # new_img.paste(img.crop((0, 0, N, 32)))
+    # new_img.paste(img.crop((original_width / 2 - 16 + N, 0,
+    #                         original_width / 2 + 16 - N, 32)),
+    #               (N, 0))
+    # new_img.paste(img.crop((original_width - N, 0, original_width, 32)),
+    #               (one_slot[0] - N, 0))
+    # new_img.save(single_file)
 
     img = img.convert('RGBA')
     if img.size == two_slot_default:
