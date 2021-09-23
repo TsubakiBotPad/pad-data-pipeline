@@ -12,5 +12,5 @@ python3 "${ETL_DIR}/rebuild_enemy_skills.py" \
   --output_dir="${GAME_DATA_DIR}"
 
 git add behavior_*
-git commit -m 'rebuild enemy skills'
+git commit -m 'rebuild enemy skills' || true
 git push
