@@ -4,7 +4,6 @@ set -e
 set -x
 
 cd "$(dirname "$0")" || exit
-source ./secrets.sh
 
 function hook_error() {
   echo "$1"
