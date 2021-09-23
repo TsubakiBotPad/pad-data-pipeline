@@ -3,6 +3,7 @@
 set -e
 set -x
 
+cd "$(dirname "$0")" || exit
 source ./shared_roots.sh
 
 declare -rx PAD_DATA_DIR="${REPO_ROOT}/pad_data"
