@@ -37,7 +37,7 @@ irregulars = {
 
 def pluralize(word, number, *, verb=False):
     irregular_plural = irregulars.get(word)
-    if (number in (1, '1')) == verb:
+    if (number not in (1, '1')) ^ verb:
         noun = irregular_plural or word + 's'
     return word
 
