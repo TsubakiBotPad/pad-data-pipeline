@@ -1,7 +1,7 @@
 import logging
 
 from pad.raw.skills.emoji_en.skill_common import EmojiBaseTextConverter
-from pad.raw.skills.en.skill_common import capitalize_first, minmax, pluralize2, pluralize
+from pad.raw.skills.en.skill_common import capitalize_first, minmax, noun_count, pluralize
 from pad.raw.skills.skill_common import TargetType, Source, Unit, Status, OrbShape, Absorb
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -246,7 +246,7 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
         elif source is not None:
             target_types = SOURCE_FUNCS[source]([target_types]) + ' cards'
         targets = targets_to_str(target_types)
-        output = '({} {} '.format(emoji_dict['bind'], pluralize2(targets, target_count))
+        output = '({} {} '.format(emoji_dict['bind'], noun_count(targets, target_count))
         output += 'for ' + minmax(min_turns, max_turns) + ')'
         return output
 
@@ -506,11 +506,11 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
 
     def target_skill_haste(self, min_turns, max_turns, target):
         return f'({emoji_dict["skill_haste"]} {possessive(TARGET_NAMES[target])}' \
-               f' skill by {pluralize2("turn", min_turns, max_turns)})'
+               f' skill by {noun_count("turn", min_turns, max_turns)})'
 
     def target_skill_delay(self, min_turns, max_turns, target):
         return f'({emoji_dict["skill_delay"]} {possessive(TARGET_NAMES[target])}' \
-               f' skill by {pluralize2("turn", min_turns, max_turns)})'
+               f' skill by {noun_count("turn", min_turns, max_turns)})'
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)

@@ -1,6 +1,6 @@
 import logging
 
-from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, pluralize2, minmax, pluralize, ordinal
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, noun_count, minmax, pluralize, ordinal
 from pad.raw.skills.skill_common import TargetType, Source, Unit, Status, OrbShape, Absorb
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -96,7 +96,7 @@ class EnESTextConverter(EnBaseTextConverter):
             format(minmax(int(min_hit) * int(mult), int(max_hit) * int(mult)))
         if min_hit and max_hit != 1:
             output += ' ({:s}, {:,}% each)'. \
-                format(pluralize2("hit", minmax(min_hit, max_hit)), mult)
+                format(noun_count("hit", minmax(min_hit, max_hit)), mult)
         return output
 
     def skip(self):
@@ -108,8 +108,8 @@ class EnESTextConverter(EnBaseTextConverter):
         elif source is not None:
             target_types = SOURCE_FUNCS[source]([target_types]) + ' cards'
         targets = targets_to_str(target_types)
-        output = 'Bind {:s} '.format(pluralize2(targets, target_count))
-        output += 'for ' + pluralize2('turn', minmax(min_turns, max_turns))
+        output = 'Bind {:s} '.format(noun_count(targets, target_count))
+        output += 'for ' + noun_count('turn', minmax(min_turns, max_turns))
         return output
 
     def orb_change(self, orb_from, orb_to, random_count=None, random_type_count=None, exclude_hearts=False):
@@ -150,17 +150,17 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def blind_sticky_random(self, turns, min_count, max_count):
         if min_count == 42:
-            return 'Blind all orbs for {:s}'.format(pluralize2('turn', turns))
+            return 'Blind all orbs for {:s}'.format(noun_count('turn', turns))
         else:
             return 'Blind random {:s} orbs for {:s}' \
-                .format(minmax(min_count, max_count), pluralize2('turn', turns))
+                .format(minmax(min_count, max_count), noun_count('turn', turns))
 
     def blind_sticky_fixed(self, turns):
-        return 'Blind orbs in specific positions for {:s}'.format(pluralize2('turn', turns))
+        return 'Blind orbs in specific positions for {:s}'.format(noun_count('turn', turns))
 
     def blind_sticky_skyfall(self, turns, chance, b_turns):
         return 'For {:s}, {}% chance for skyfall orbs to be blinded for {:s}'.format(
-            pluralize2('turn', turns), chance, pluralize2('turn', b_turns))
+            noun_count('turn', turns), chance, noun_count('turn', b_turns))
 
     def dispel_buffs(self):
         return 'Voids player buff effects'
@@ -176,11 +176,11 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def enrage(self, mult, turns):
         output = 'Increase damage to {:,}% for the next '.format(mult)
-        output += pluralize2('turn', turns) if turns else 'attack'
+        output += noun_count('turn', turns) if turns else 'attack'
         return output
 
     def status_shield(self, turns):
-        return 'Voids status ailments for {:s}'.format(pluralize2('turn', turns))
+        return 'Voids status ailments for {:s}'.format(noun_count('turn', turns))
 
     def debuff(self, d_type, amount, unit, turns):
         amount = amount or 0
@@ -189,7 +189,7 @@ class EnESTextConverter(EnBaseTextConverter):
         unit = UNITS[unit]
         turns = turns or 0
         type_text = capitalize_first(STATUSES[d_type] or '')
-        turn_text = pluralize2('turn', turns)
+        turn_text = noun_count('turn', turns)
         return '{:s} {:.0f}{:s} for {:s}'.format(type_text, amount, unit, turn_text)
 
     def end_battle(self):
@@ -208,7 +208,7 @@ class EnESTextConverter(EnBaseTextConverter):
         if abs_type == Absorb.attr:
             source = self.attributes_to_str(condition)
             return 'Absorb {:s} damage for {:s}' \
-                .format(source, pluralize2("turn", min_turns, max_turns))
+                .format(source, noun_count("turn", min_turns, max_turns))
         elif abs_type == Absorb.combo:
             source = 'combos <= {:d}'.format(condition)
         elif abs_type == Absorb.damage:
@@ -217,7 +217,7 @@ class EnESTextConverter(EnBaseTextConverter):
             raise ValueError("unknown absorb type: {}".format(abs_type))
 
         return 'Absorb damage when {:s} for {:s}' \
-            .format(source, pluralize2("turn", min_turns, max_turns))
+            .format(source, noun_count("turn", min_turns, max_turns))
 
     def skyfall(self, attributes, chance, min_turns, max_turns=None, locked=False):
         lock = 'Locked ' if locked else ''
@@ -226,10 +226,10 @@ class EnESTextConverter(EnBaseTextConverter):
         if lock and orbs == 'Random':
             orbs = orbs.lower()
         return '{:s}{:s} skyfall +{:d}% for {:s}' \
-            .format(lock, orbs, chance, pluralize2('turn', min_turns, max_turns))
+            .format(lock, orbs, chance, noun_count('turn', min_turns, max_turns))
 
     def void(self, threshold, turns):
-        return 'Void damage >= {:,} for {:s}'.format(threshold, pluralize2('turn', turns))
+        return 'Void damage >= {:,} for {:s}'.format(threshold, noun_count('turn', turns))
 
     def damage_reduction(self, source_type: Source, source=None, percent=None, turns=None):
         source = (SOURCE_FUNCS[source_type])(source)
@@ -237,11 +237,11 @@ class EnESTextConverter(EnBaseTextConverter):
             source += ' ' + source_type.name
         if percent is None:
             return 'Immune to damage from {:s} for {:s}' \
-                .format(source, pluralize2('turn', turns))
+                .format(source, noun_count('turn', turns))
         else:
             if turns:
                 return 'Reduce damage from {:s} by {:d}% for {:s}' \
-                    .format(source, percent, pluralize2('turn', turns))
+                    .format(source, percent, noun_count('turn', turns))
             else:
                 return 'Reduce damage from {:s} by {:d}%' \
                     .format(source, percent)
@@ -256,7 +256,7 @@ class EnESTextConverter(EnBaseTextConverter):
         return 'Damage which would reduce HP from above {:d}% to below {:d}% is nullified'.format(percent, remaining)
 
     def leadswap(self, turns):
-        return 'Leader changes to random sub for {:s}'.format(pluralize2('turn', turns))
+        return 'Leader changes to random sub for {:s}'.format(noun_count('turn', turns))
 
     def row_col_spawn(self, position_type, positions, attributes):
         return 'Change the {:s} {:s} to {:s} orbs'.format(
@@ -282,7 +282,7 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def skill_delay(self, min_turns, max_turns):
         return 'Delay active skills by {:s}' \
-            .format(pluralize2('turn', minmax(min_turns, max_turns)))
+            .format(noun_count('turn', minmax(min_turns, max_turns)))
 
     def orb_lock(self, count, attributes):
         if count == 42 and attributes == self.ATTRS_EXCEPT_BOMBS:
@@ -299,7 +299,7 @@ class EnESTextConverter(EnBaseTextConverter):
         return 'Seal the {:s} {:s} for {:s}' \
             .format(self.concat_list_and([ordinal(x) for x in positions]),
                     pluralize(ORB_SHAPES[position_type], len(positions)),
-                    pluralize2('turn', turns))
+                    noun_count('turn', turns))
 
     def cloud(self, turns, width, height, x, y):
         if width == 6 and height == 1:
@@ -317,7 +317,7 @@ class EnESTextConverter(EnBaseTextConverter):
         if len(pos) == 0:
             pos.append('a random location')
         return 'A {:s} of clouds appears for {:s} at {:s}' \
-            .format(shape, pluralize2('turn', turns), ', '.join(pos))
+            .format(shape, noun_count('turn', turns), ', '.join(pos))
 
     def fixed_start(self):
         return 'Fix orb movement starting point to random position on the board'
@@ -330,24 +330,24 @@ class EnESTextConverter(EnBaseTextConverter):
 
     def attribute_block(self, turns, attributes):
         return 'Unable to match {:s} orbs for {:s}' \
-            .format(self.attributes_to_str(attributes), pluralize2('turn', turns))
+            .format(self.attributes_to_str(attributes), noun_count('turn', turns))
 
     def spinners(self, turns, speed, random_num=None):
         if random_num is None:
             return 'Specific orbs change every {:.1f}s for {:s}' \
-                .format(speed / 100, pluralize2('turn', turns))
+                .format(speed / 100, noun_count('turn', turns))
         else:
             return 'Random {:d} orbs change every {:.1f}s for {:s}' \
-                .format(random_num, speed / 100, pluralize2('turn', turns))
+                .format(random_num, speed / 100, noun_count('turn', turns))
 
     def max_hp_change(self, turns, max_hp, percent):
         if percent:
-            return 'Change player HP to {:,}% for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return 'Change player HP to {:,}% for {:s}'.format(max_hp, noun_count('turn', turns))
         else:
-            return 'Change player HP to {:,} for {:s}'.format(max_hp, pluralize2('turn', turns))
+            return 'Change player HP to {:,} for {:s}'.format(max_hp, noun_count('turn', turns))
 
     def fixed_target(self, turns):
-        return 'Forces attacks to hit this enemy for {:s}'.format(pluralize2('turn', turns))
+        return 'Forces attacks to hit this enemy for {:s}'.format(noun_count('turn', turns))
 
     def death_cry(self, message):
         if message is None:
@@ -368,26 +368,26 @@ class EnESTextConverter(EnBaseTextConverter):
         return 'Fever Mode: clear {:d} {:s} {:s}'.format(orb_req, self.ATTRIBUTES[attribute], pluralize('orb', orb_req))
 
     def lead_alter(self, turns, target):
-        return 'Change leader to [{:d}] for {:s}'.format(target, pluralize2('turn', turns))
+        return 'Change leader to [{:d}] for {:s}'.format(target, noun_count('turn', turns))
 
     def force_board_size(self, turns: int, size_param: int):
         size = {1: '7x6', 2: '5x4', 3: '6x5'}.get(size_param, 'unknown')
-        return 'Change board size to {} for {:s}'.format(size, pluralize2('turn', turns))
+        return 'Change board size to {} for {:s}'.format(size, noun_count('turn', turns))
 
     def no_skyfall(self, turns):
-        return 'No skyfall for {:s}'.format(pluralize2('turn', turns))
+        return 'No skyfall for {:s}'.format(noun_count('turn', turns))
 
     def combo_skyfall(self, turns, chance):
-        return 'For {:s}, {}% chance for combo orb skyfall.'.format(pluralize2('turn', turns), chance)
+        return 'For {:s}, {}% chance for combo orb skyfall.'.format(noun_count('turn', turns), chance)
 
     def debuff_atk(self, turns, amount):
-        return 'ATK -{}% for {:s}'.format(amount, pluralize2('turn', turns))
+        return 'ATK -{}% for {:s}'.format(amount, noun_count('turn', turns))
 
     def target_skill_haste(self, min_turns, max_turns, target):
-        return f'Haste {possessive(TARGET_NAMES[target])} skills by {pluralize2("turn", min_turns, max_turns)}'
+        return f'Haste {possessive(TARGET_NAMES[target])} skills by {noun_count("turn", min_turns, max_turns)}'
 
     def target_skill_delay(self, min_turns, max_turns, target):
-        return f'Delay {possessive(TARGET_NAMES[target])} skills by {pluralize2("turn", min_turns, max_turns)}'
+        return f'Delay {possessive(TARGET_NAMES[target])} skills by {noun_count("turn", min_turns, max_turns)}'
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
