@@ -69,7 +69,7 @@ def pull_data(args):
     db_wrapper.connect(db_config)
     entry_id = int(db_wrapper.get_single_value("SELECT MAX(entry_id) FROM wave_data;"))
 
-    print('entering dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
+    print('entering', server, 'dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
     for e_idx in range(loop_count):
         print('entering', e_idx)
         entry_id += 1

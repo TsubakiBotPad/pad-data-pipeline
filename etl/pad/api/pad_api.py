@@ -216,7 +216,7 @@ class PadApiClient(object):
     def login(self):
         login_payload = self.get_login_payload()
         login_url = self.build_url(login_payload)
-        print("Login URL {}", login_url)
+        print("Login URL ", login_url)
         self.login_json = self.get_json_results(login_url)
         self.session_id = self.login_json['sid']
 
