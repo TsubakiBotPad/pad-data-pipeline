@@ -630,6 +630,60 @@ class Evolution(SimpleSqlItem):
         return 'Evo ({}): {} -> {}, type={}'.format(self.key_value(), self.from_id, self.to_id, self.evolution_type)
 
 
+class Transformation(SimpleSqlItem):
+    """Monster evolution entry."""
+    KEY_COL = 'transformation_id'
+
+    @classproperty
+    def TABLE(cls):
+        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
+        if server.upper() == "NA":
+            return 'transformations_na'
+        # elif server.upper() == "JP":
+        #    return 'transformations_jp'
+        # elif server.upper() == "KR":
+        #     return 'transformations_kr'
+        else:
+            return 'transformations'
+
+    @staticmethod
+    def from_csm(o: CrossServerCard) -> Optional['Transformation']:
+        card = o.cur_card.card
+
+        def convert(x: MonsterNo) -> MonsterId:
+            return o.cur_card.no_to_id(x)
+
+        return Transformation(
+            transformation_id=None,  # Key that is looked up or inserted
+            from_monster_id=convert(card.monster_no),
+            to_monster_id=convert(o.cur_card.active_skill.transform_id))
+
+    def __init__(self,
+                 transformation_id: int = None,
+                 from_monster_id: MonsterId = None,
+                 to_monster_id: MonsterId = None,
+                 tstamp: int = None):
+        self.transformation_id = transformation_id
+        self.from_monster_id = from_monster_id
+        self.to_monster_id = to_monster_id
+        self.tstamp = tstamp
+
+    def exists_strategy(self):
+        return ExistsStrategy.BY_VALUE
+
+    def _non_auto_insert_cols(self):
+        return [self._key()]
+
+    def _non_auto_update_cols(self):
+        return [self._key()]
+
+    def _lookup_columns(self):
+        return ['from_monster_id', 'to_monster_id']
+
+    def __str__(self):
+        return 'Transform ({}): {} -> {}'.format(self.key_value(), self.from_monster_id, self.to_monster_id)
+
+
 class AltMonster(SimpleSqlItem):
     """Alt. monster data."""
     KEY_COL = 'alt_monster_id'

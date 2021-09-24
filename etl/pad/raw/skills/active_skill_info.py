@@ -1,6 +1,6 @@
 import logging
 from collections import OrderedDict, namedtuple
-from typing import List, Any
+from typing import List, Any, Optional
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.skill_common import merge_defaults, mult, binary_con
@@ -13,7 +13,8 @@ ASTextConverter = Any
 class ActiveSkill(object):
     skill_type = -1
 
-    def __init__(self, ms: MonsterSkill):
+    def __init__(self, ms: MonsterSkill, *,
+                 transform_id: Optional[int] = None):
         if self.skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(self.skill_type, ms.skill_type))
         self.skill_id = ms.skill_id
@@ -25,6 +26,12 @@ class ActiveSkill(object):
         self.levels = ms.levels
         self.turn_max = ms.turn_max
         self.turn_min = ms.turn_min
+
+        self._transform_id = transform_id
+
+    @property
+    def transform_id(self):
+        return self._transform_id
 
     def text(self, converter: ASTextConverter) -> str:
         return '<unsupported>: {}'.format(self.raw_description)
@@ -582,6 +589,15 @@ class ASMultiPartSkill(ActiveSkill):
     def parts(self):
         return self.child_skills
 
+    @property
+    def transform_id(self):
+        transform_id = None
+        for part in self.parts:
+            if part.transform_id and transform_id:
+                human_fix_logger.warning("Multiple transform in one random AS")
+            transform_id = part.transform_id or transform_id
+        return transform_id
+
     def text(self, converter: ASTextConverter) -> str:
         text_to_item = OrderedDict()
         for p in self.parts:
@@ -622,6 +638,15 @@ class ASRandomSkill(ActiveSkill):
     def parts(self):
         return sum([s.parts if isinstance(s, ASMultiPartSkill) else [s]
                     for s in self.random_skills], [])
+
+    @property
+    def transform_id(self):
+        transform_id = None
+        for part in self.random_skills:
+            if part.transform_id and transform_id:
+                human_fix_logger.warning("Multiple transform in one random AS")
+            transform_id = part.transform_id or transform_id
+        return transform_id
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_skill(self)
@@ -1048,7 +1073,7 @@ class ASChangeMonster(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.change_to = data[0]
-        super().__init__(ms)
+        super().__init__(ms, transform_id=self.change_to)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_monster(self)
