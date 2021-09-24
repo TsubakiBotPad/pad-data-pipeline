@@ -3,7 +3,7 @@ from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
 from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, ordinal, \
-    pluralize, pluralize2
+    pluralize, noun_count
 from pad.raw.skills.skill_common import fmt_mult
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -28,16 +28,16 @@ COLUMN_INDEX = {
 
 class EnASTextConverter(EnBaseTextConverter):
     def fmt_repeated(self, text, amount):
-        return '{} {:s}'.format(text, pluralize2('time', amount))
+        return '{} {:s}'.format(text, noun_count('time', amount))
 
     def fmt_mass_atk(self, mass_attack):
         return 'all enemies' if mass_attack else 'an enemy'
 
     def fmt_duration(self, duration, max_duration=None):
         if max_duration and duration != max_duration:
-            return 'For {}~{:s}, '.format(duration, pluralize2('turn', max_duration))
+            return 'For {}~{:s}, '.format(duration, noun_count('turn', max_duration))
         else:
-            return 'For {:s}, '.format(pluralize2('turn', duration))
+            return 'For {:s}, '.format(noun_count('turn', duration))
 
     def attr_nuke_convert(self, act):
         return 'Deal ' + fmt_mult(act.multiplier) + 'x ATK ' + self.ATTRIBUTES[int(
@@ -78,7 +78,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'Poison all enemies (' + fmt_mult(act.multiplier) + 'x ATK)'
 
     def ctw_convert(self, act):
-        return 'Freely move orbs for {:s}'.format(pluralize2('second', act.duration))
+        return 'Freely move orbs for {:s}'.format(noun_count('second', act.duration))
 
     def gravity_convert(self, act):
         return 'Reduce enemies\' remaining HP by ' + fmt_mult(act.percentage_hp * 100) + '%'
@@ -102,16 +102,16 @@ class EnASTextConverter(EnBaseTextConverter):
             if skill_text:
                 skill_text += '; '
             skill_text += ('Remove all binds and awoken skill binds' if (unbind >= 9999 and awoken_unbind) else
-                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind)) if (
+                           ('Reduce binds and awoken skill binds by {:s}'.format(noun_count('turn', awoken_unbind)) if (
                                    unbind and awoken_unbind) else
                             ('Remove all binds' if unbind >= 9999 else
-                             ('Reduce binds by {:s}'.format(pluralize2('turn', unbind)) if unbind else
+                             ('Reduce binds by {:s}'.format(noun_count('turn', unbind)) if unbind else
                               ('Remove all awoken skill binds' if awoken_unbind >= 9999 else
-                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind))))))))
+                               ('Reduce awoken skill binds by {:s}'.format(noun_count('turn', awoken_unbind))))))))
         return skill_text
 
     def delay_convert(self, act):
-        return 'Delay enemies\' next attack by {:s}'.format(pluralize2('turn', act.turns))
+        return 'Delay enemies\' next attack by {:s}'.format(noun_count('turn', act.turns))
 
     def defense_reduction_convert(self, act):
         return self.fmt_duration(act.duration) + \
@@ -191,12 +191,12 @@ class EnASTextConverter(EnBaseTextConverter):
             if skill_text:
                 skill_text += '; '
             skill_text += ('Remove all binds and awoken skill binds' if (unbind >= 9999 and awoken_unbind) else
-                           ('Reduce binds and awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind)) if (
+                           ('Reduce binds and awoken skill binds by {:s}'.format(noun_count('turn', awoken_unbind)) if (
                                    unbind and awoken_unbind) else
                             ('Remove all binds' if unbind >= 9999 else
-                             ('Reduce binds by {:s}'.format(pluralize2('turn', unbind)) if unbind else
+                             ('Reduce binds by {:s}'.format(noun_count('turn', unbind)) if unbind else
                               ('Remove all awoken skill binds' if awoken_unbind >= 9999 else
-                               ('Reduce awoken skill binds by {:s}'.format(pluralize2('turn', awoken_unbind))))))))
+                               ('Reduce awoken skill binds by {:s}'.format(noun_count('turn', awoken_unbind))))))))
 
         return skill_text
 
@@ -253,7 +253,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return skill_text + ' all enemies to ' + self.ATTRIBUTES[act.attribute] + ' Att.'
 
     def haste_convert(self, act):
-        return 'Charge all allies\' skills by {:s}'.format(pluralize2('turn', act.turns, act.max_turns))
+        return 'Charge all allies\' skills by {:s}'.format(noun_count('turn', act.turns, act.max_turns))
 
     def random_orb_change_convert(self, act):
         from_attr = act.from_attr
@@ -304,7 +304,7 @@ class EnASTextConverter(EnBaseTextConverter):
                    fmt_mult(act.percentage) + 'x orb move time'
         elif act.percentage == 0:
             return self.fmt_duration(act.duration) + \
-                   'increase orb move time by {:s}'.format(pluralize2('second', fmt_mult(act.static)))
+                   'increase orb move time by {:s}'.format(noun_count('second', fmt_mult(act.static)))
         raise ValueError()
 
     def row_change_convert(self, act):
@@ -515,7 +515,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return skill_text
 
     def match_disable_convert(self, act):
-        return 'Reduce unable to match orbs effect by {:s}'.format(pluralize2('turn', act.duration))
+        return 'Reduce unable to match orbs effect by {:s}'.format(noun_count('turn', act.duration))
 
     def board_refresh(self, act):
         return 'Replace all orbs'
@@ -544,14 +544,14 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def spawn_spinner(self, turns: int, speed: float, count: int):
         return 'Create {:s} that {:s} every {:.1f}s for {:s}' \
-            .format(pluralize2('spinner', count), pluralize("change", count, verb=True),
-                    speed, pluralize2('turn', turns))
+            .format(noun_count('spinner', count), pluralize("change", count, verb=True),
+                    speed, noun_count('turn', turns))
 
     def ally_active_disable(self, turns: int):
-        return 'Disable team active skills for {:s}'.format(pluralize2('turn', turns))
+        return 'Disable team active skills for {:s}'.format(noun_count('turn', turns))
 
     def ally_active_delay(self, turns: int):
-        return 'Self-delay active skills by {:s}'.format(pluralize2('turn', turns))
+        return 'Self-delay active skills by {:s}'.format(noun_count('turn', turns))
 
     def create_unmatchable(self, act):
         skill_text = self.fmt_duration(act.duration)
