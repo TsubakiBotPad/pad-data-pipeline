@@ -71,7 +71,7 @@ def pull_data(args, api_client=None, db_wrapper=None):
     entry_id = int(db_wrapper.get_single_value("SELECT MAX(entry_id) FROM wave_data;"))
 
     print('entering', server, 'dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
-    for e_idx in tqdm(range(loop_count)):
+    for e_idx in tqdm(range(loop_count), unit='runs'):
         entry_id += 1
         entry_json = api_client.enter_dungeon(dungeon_id, floor_id, self_card=friend_card)
         wave_response = pad_api.extract_wave_response_from_entry(entry_json)
