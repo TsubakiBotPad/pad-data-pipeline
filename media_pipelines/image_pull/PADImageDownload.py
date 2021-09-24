@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 GUNGHO_TEMPLATE = 'https://pad.gungho.jp/member/img/graphic/illust/{}'
 
-# The final padded image size (matches the rest of the miru images)
+# The final padded image size (matches the rest of the Tsubaki images)
 IMAGE_SIZE = (640, 388)
 
 # The maximum size of the monster to be positioned within the image
@@ -26,6 +26,8 @@ IMAGE_SIZE_NO_PADDING = (640 - 70 * 2, 388 - 35 * 2)
 
 def download_file(url, file_path):
     r = requests.get(url, allow_redirects=False)
+    if r.status_code == 302:
+        raise Exception("No HQ Image")
     if r.status_code != 200:
         raise Exception('Bad status code:', r.status_code)
 
@@ -40,8 +42,7 @@ def generate_resized_image(source_file, dest_file):
     # These images are color-indexed, gross
     img = img.convert('RGBA')
 
-    if img.size[0] > img.size[1]:
-        max_size = IMAGE_SIZE_NO_PADDING[0] if img.size[0] > img.size[1] else IMAGE_SIZE_NO_PADDING[1]
+    max_size = IMAGE_SIZE_NO_PADDING[0] if img.size[0] > img.size[1] else IMAGE_SIZE_NO_PADDING[1]
     img.thumbnail((max_size, max_size), Image.ANTIALIAS)
 
     old_size = img.size
@@ -84,9 +85,10 @@ for file_name in os.listdir(raw_dir):
 
     try:
         download_file(gungho_url, tmp_corrected_file_path)
-        generate_resized_image(tmp_corrected_file_path, corrected_file_path)
     except Exception as e:
-        print('failed to download/resize', gungho_url, tmp_corrected_file_path, e)
+        print('Failed to download: ', e)
+    else:
+        generate_resized_image(tmp_corrected_file_path, corrected_file_path)
 
     if os.path.exists(tmp_corrected_file_path):
         os.remove(tmp_corrected_file_path)
