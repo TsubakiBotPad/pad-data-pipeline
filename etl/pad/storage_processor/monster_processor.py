@@ -4,7 +4,7 @@ from pad.common import pad_util
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
 from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution, MonsterWithExtraImageInfo, \
-    AltMonster
+    AltMonster, Transformation
 
 logger = logging.getLogger('processor')
 human_fix_logger = logging.getLogger('human_fix')
@@ -87,5 +87,14 @@ class MonsterProcessor(object):
                 continue
 
             item = Evolution.from_csm(m)
+            if item:
+                db.insert_or_update(item)
+
+        logger.info('loading transforms')
+        for m in self.data.ownable_cards:
+            if not (m.cur_card.active_skill and m.cur_card.active_skill.transform_id):
+                continue
+
+            item = Transformation.from_csm(m)
             if item:
                 db.insert_or_update(item)
