@@ -543,8 +543,9 @@ class EnASTextConverter(EnBaseTextConverter):
         return self.fmt_duration(act.duration) + attrs + " orbs appear locked"
 
     def spawn_spinner(self, turns: int, speed: float, count: int):
-        return 'Random {:d} orbs change every {:.1f}s for {:s}' \
-            .format(count, speed, pluralize2('turn', turns))
+        return 'Create {:s} that {:s} every {:.1f}s for {:s}' \
+            .format(pluralize2('spinner', count), pluralize("change", count, verb=True),
+                    speed, pluralize2('turn', turns))
 
     def ally_active_disable(self, turns: int):
         return 'Disable team active skills for {:s}'.format(pluralize2('turn', turns))
