@@ -35,11 +35,11 @@ irregulars = {
 }
 
 
-def pluralize(noun, number):
-    irregular_plural = irregulars.get(noun)
-    if number not in (1, '1'):
-        noun = irregular_plural or noun + 's'
-    return noun
+def pluralize(word, number, *, verb=False):
+    irregular_plural = irregulars.get(word)
+    if (number in (1, '1')) == verb:
+        noun = irregular_plural or word + 's'
+    return word
 
 
 def pluralize2(noun, number, max_number=None):
