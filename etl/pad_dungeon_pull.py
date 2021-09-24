@@ -3,6 +3,8 @@ import json
 import logging
 import time
 
+from tqdm import tqdm
+
 from pad.api import pad_api
 
 from pad.db.db_util import DbWrapper
@@ -70,8 +72,7 @@ def pull_data(args):
     entry_id = int(db_wrapper.get_single_value("SELECT MAX(entry_id) FROM wave_data;"))
 
     print('entering', server, 'dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
-    for e_idx in range(loop_count):
-        print('entering', e_idx)
+    for e_idx in tqdm(range(loop_count)):
         entry_id += 1
         entry_json = api_client.enter_dungeon(dungeon_id, floor_id, self_card=friend_card)
         wave_response = pad_api.extract_wave_response_from_entry(entry_json)
