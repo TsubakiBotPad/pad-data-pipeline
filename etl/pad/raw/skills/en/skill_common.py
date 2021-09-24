@@ -36,13 +36,13 @@ irregulars = {
 
 
 def pluralize(word, number, *, verb=False):
-    irregular_plural = irregulars.get(word)
-    if (number in (1, '1')) == verb:
-        noun = irregular_plural or word + 's'
-    return word
+    # Flip logic for verbs.  Singulars end in 's'
+    if (str(number) == '1') ^ verb:
+        return word
+    return irregulars.get(word) or word + 's'
 
 
-def pluralize2(noun, number, max_number=None):
+def noun_count(noun, number, max_number=None):
     if isinstance(number, int) or max_number is not None:
         number = minmax(number, max_number)
     if number is None:
