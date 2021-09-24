@@ -25,5 +25,5 @@ def format_int_list(values: List[int]) -> str:
 
 
 class classproperty(property):
-    def __get__(self, *args, **kwargs) -> classmethod:
+    def __get__(self, *args, **kwargs):
         return classmethod(self.fget).__get__(None, args[1])()
