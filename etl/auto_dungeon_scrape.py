@@ -1,9 +1,10 @@
 import argparse
 import json
 import logging
-import subprocess
+import os
 import time
 
+from pad.api import pad_api
 from pad.common.dungeon_types import RawDungeonType
 from pad.common.shared_types import Server
 from pad.db import db_util
@@ -11,8 +12,14 @@ from pad.raw.bonus import BonusType
 from pad.raw_processor import merged_database
 from pad_dungeon_pull import pull_data
 
-fail_logger = logging.getLogger('human_fix')
-fail_logger.disabled = True
+logger = logging.getLogger('autodungeon')
+logger.setLevel(logging.INFO)
+
+human_fix_logger = logging.getLogger('human_fix')
+human_fix_logger.disabled = True
+
+fail_logger = logging.getLogger('processor_failures')
+logger.setLevel(logging.INFO)
 
 # Dungeons in this list should have twice the minimum wave count.
 # They just have too much variability to get by on a normal scrape size.
@@ -40,7 +47,7 @@ def parse_args():
     input_group.add_argument("--user_uuid", required=True, help="Account UUID")
     input_group.add_argument("--user_intid", required=True, help="Account code")
 
-    input_group.add_argument("--minimum_wave_count", default=60, type=int,
+    input_group.add_argument("--minimum_wave_count", default=1000, type=int,
                              help="Minimum stored wave count to skip loading wave data")
     input_group.add_argument("--maximum_wave_age", default=90, type=int,
                              help="Number of days before wave data becomes obsolete and needs to be reloaded")
@@ -60,7 +67,7 @@ class Arg:
     pass
 
 
-def do_dungeon_load(args, dungeon_id, floor_id):
+def do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper):
     if not args.doupdates:
         print('skipping due to dry run')
         return
@@ -72,9 +79,9 @@ def do_dungeon_load(args, dungeon_id, floor_id):
     dg_pull_arg.user_intid = args.user_intid
     dg_pull_arg.floor_id = floor_id
     dg_pull_arg.dungeon_id = dungeon_id
-    dg_pull_arg.loop_count = 20
+    dg_pull_arg.loop_count = 100
     dg_pull_arg.logsql = False
-    pull_data(dg_pull_arg)
+    pull_data(dg_pull_arg, api_client, db_wrapper)
 
 
 CHECK_AGE_SQL = '''
@@ -101,7 +108,7 @@ WHERE dungeon_id={dungeon_id} AND floor_id={floor_id} AND DATEDIFF(NOW(), pull_t
 '''
 
 
-def load_dungeons(args, db_wrapper, current_dungeons):
+def load_dungeons(args, db_wrapper, current_dungeons, api_client):
     """Scrapes data for all current dungeons.
 
     If there is not enough 'new' data, we try to scrape data.
@@ -114,12 +121,12 @@ def load_dungeons(args, db_wrapper, current_dungeons):
 
     for dungeon in current_dungeons:
         dungeon_id = dungeon.dungeon_id
-        print('processing', dungeon.clean_name, dungeon_id)
+        print(f'Processing {dungeon.clean_name} ({dungeon_id})')
 
         minimum_wave_count = args.minimum_wave_count
         if dungeon_id in EXTRA_RUN_DUNGEONS:
-            print('variable dungeon, doubling the wave count')
-            minimum_wave_count *= 2
+            print('Variable dungeon. Increasing the wave count')
+            minimum_wave_count *= 10
 
         for sub_dungeon in dungeon.sub_dungeons:
             floor_id = sub_dungeon.simple_sub_dungeon_id
@@ -130,9 +137,15 @@ def load_dungeons(args, db_wrapper, current_dungeons):
             newer_count = int(wave_info["newer"] or 0)
 
             should_enter = newer_count < minimum_wave_count
-            print('entries for {} : old={} new={} entering={}'.format(floor_id, older_count, newer_count, should_enter))
+            print(f'Entries for floor {floor_id}: old={older_count} new={newer_count} entering={should_enter}')
             if should_enter:
-                do_dungeon_load(args, dungeon_id, floor_id)
+                try:
+                    do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper)
+                except Exception as e:
+                    print(f"Failed to enter. Skipping dungeon. ({e})")
+                    fail_logger.warning(f"Failed to enter dungeon {dungeon.clean_name} ({dungeon_id})"
+                                        f" on floor {floor_id}.\n{e}")
+                    break
 
             wave_info = db_wrapper.get_single_or_no_row(
                 CHECK_AGE_SQL.format(age=args.maximum_wave_age, dungeon_id=dungeon_id, floor_id=floor_id))
@@ -140,7 +153,7 @@ def load_dungeons(args, db_wrapper, current_dungeons):
             newer_count = int(wave_info["newer"] or 0)
 
             should_purge = older_count > 0 and newer_count >= minimum_wave_count
-            print('entries for {} : old={} new={} purging={}'.format(floor_id, older_count, newer_count, should_purge))
+            print(f'Entries for {floor_id}: old={older_count} new={newer_count} purging={should_purge}')
 
             # This section cleans up 'old' data. We consider data to be out of date if approximately 3 months have
             # passed. If we have the opportunity to scrape a dungeon (e.g. a collab) that comes back, we will. It will
@@ -182,7 +195,7 @@ def identify_dungeons(database, group):
     for dungeon in database.dungeons:
         if dungeon.one_time:
             continue
-        if dungeon.full_dungeon_type in [RawDungeonType.NORMAL, RawDungeonType.TECHNICAL]:
+        if dungeon.full_dungeon_type in (RawDungeonType.NORMAL, RawDungeonType.TECHNICAL):
             selected_dungeons.append(dungeon)
 
     # Identify special dungeons from bonuses
@@ -218,6 +231,9 @@ def identify_dungeons(database, group):
 def load_data(args):
     server = Server.from_str(args.server)
 
+    if os.name != 'nt':
+        fail_logger.addHandler(logging.FileHandler('/tmp/autodungeon_processor_issues.txt', mode='w'))
+
     pad_db = merged_database.Database(server, args.input_dir)
     pad_db.load_database(skip_skills=True, skip_extra=True)
 
@@ -230,9 +246,21 @@ def load_data(args):
 
     dungeons = identify_dungeons(pad_db, args.group)
 
-    load_dungeons(args, db_wrapper, dungeons)
+    if server == Server.na:
+        endpoint = pad_api.ServerEndpoint.NA
+    elif server == Server.jp:
+        endpoint = pad_api.ServerEndpoint.JA
+    else:
+        raise Exception('unexpected server:' + args.server)
+
+    api_client = pad_api.PadApiClient(endpoint, args.user_uuid, args.user_intid)
+    api_client.login()
+    print('load_player_data')
+    api_client.load_player_data()
+
+    load_dungeons(args, db_wrapper, dungeons, api_client)
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    load_data(args)
+    arguments = parse_args()
+    load_data(arguments)
