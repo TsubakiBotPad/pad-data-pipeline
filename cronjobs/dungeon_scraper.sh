@@ -22,6 +22,7 @@ function human_fixes_check() {
   processor_fails="/tmp/autodungeon_processor_issues.txt"
   if [[ -s ${processor_fails} ]]; then
     echo "Alerting for autodungeon processor issues"
+    hook_file "${processor_fails}"
     hook_warn "\`\`\`\n$(cat "${processor_fails}" \
                        | sed ':a;N;$!ba;s/\n/\\n/g' \
                        | head -c 1990)\n\`\`\`"
