@@ -166,7 +166,7 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
             newer_count = int(wave_info["newer"] or 0)
 
             should_purge = older_count > 0 and newer_count >= minimum_wave_count
-            print(f'Entries for {floor_id}: old={older_count} new={newer_count} purging={should_purge}')
+            print(f'Entries for floor {floor_id}: old={older_count} new={newer_count} purging={should_purge}')
 
             # This section cleans up 'old' data. We consider data to be out of date if approximately 3 months have
             # passed. If we have the opportunity to scrape a dungeon (e.g. a collab) that comes back, we will. It will
