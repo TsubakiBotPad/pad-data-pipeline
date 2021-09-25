@@ -5,6 +5,7 @@ import os
 import time
 
 from pad.api import pad_api
+from pad.api.pad_api import BadResponseCode
 from pad.common.dungeon_types import RawDungeonType
 from pad.common.shared_types import Server
 from pad.db import db_util
@@ -141,11 +142,24 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
             if should_enter:
                 try:
                     do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper)
-                except Exception as e:
-                    print(f"Failed to enter. Skipping dungeon. ({e})")
-                    fail_logger.warning(f"Failed to enter dungeon {dungeon.clean_name} ({dungeon_id})"
-                                        f" on floor {floor_id}.\n{e}")
-                    break
+                except BadResponseCode as brc:
+                    if brc.code == 2:
+                        try:
+                            print("Attempting Relog...")
+                            api_client.login()
+                            api_client.load_player_data()
+                            do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper)
+                            brc.code = 0
+                        except BadResponseCode as brc2:
+                            brc = brc2
+
+                    if brc.code == 8:
+                        print(f"Failed to enter. Skipping dungeon. ({brc})")
+                        fail_logger.warning(f"Failed to enter dungeon {dungeon.clean_name} ({dungeon_id})"
+                                            f" on floor {floor_id}.\n{brc}")
+                        break
+                    elif brc.code != 0:
+                        raise
 
             wave_info = db_wrapper.get_single_or_no_row(
                 CHECK_AGE_SQL.format(age=args.maximum_wave_age, dungeon_id=dungeon_id, floor_id=floor_id))
@@ -153,7 +167,7 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
             newer_count = int(wave_info["newer"] or 0)
 
             should_purge = older_count > 0 and newer_count >= minimum_wave_count
-            print(f'Entries for {floor_id}: old={older_count} new={newer_count} purging={should_purge}')
+            print(f'Entries for floor {floor_id}: old={older_count} new={newer_count} purging={should_purge}')
 
             # This section cleans up 'old' data. We consider data to be out of date if approximately 3 months have
             # passed. If we have the opportunity to scrape a dungeon (e.g. a collab) that comes back, we will. It will
