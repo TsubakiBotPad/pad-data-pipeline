@@ -3,6 +3,8 @@ import json
 import logging
 import time
 
+from tqdm import tqdm
+
 from pad.api import pad_api
 
 from pad.db.db_util import DbWrapper
@@ -33,26 +35,24 @@ def parse_args():
     return parser.parse_args()
 
 
-def pull_data(args):
+def pull_data(args, api_client=None, db_wrapper=None):
     if args.logsql:
         logging.getLogger('database').setLevel(logging.DEBUG)
 
     server = args.server.upper()
-    endpoint = None
-    if server == 'NA':
-        endpoint = pad_api.ServerEndpoint.NA
-    elif server == 'JP':
-        endpoint = pad_api.ServerEndpoint.JA
-    else:
-        raise Exception('unexpected server:' + args.server)
 
-    api_client = pad_api.PadApiClient(endpoint, args.user_uuid, args.user_intid)
+    if api_client is None:
+        if server == 'NA':
+            endpoint = pad_api.ServerEndpoint.NA
+        elif server == 'JP':
+            endpoint = pad_api.ServerEndpoint.JA
+        else:
+            raise Exception('unexpected server:' + args.server)
 
-    print('login')
-    api_client.login()
-
-    print('load_player_data')
-    api_client.load_player_data()
+        api_client = pad_api.PadApiClient(endpoint, args.user_uuid, args.user_intid)
+        api_client.login()
+        print('load_player_data')
+        api_client.load_player_data()
 
     friend_card = api_client.get_any_card_except_in_cur_deck()
     dungeon_id = args.dungeon_id
@@ -60,18 +60,18 @@ def pull_data(args):
     loop_count = args.loop_count
     pull_id = int(time.time())
 
-    print('Connecting to database')
-    with open(args.db_config) as f:
-        db_config = json.load(f)
+    if db_wrapper is None:
+        print('Connecting to database')
+        with open(args.db_config) as f:
+            db_config = json.load(f)
 
-    dry_run = False
-    db_wrapper = DbWrapper(dry_run)
-    db_wrapper.connect(db_config)
+        db_wrapper = DbWrapper(False)
+        db_wrapper.connect(db_config)
+
     entry_id = int(db_wrapper.get_single_value("SELECT MAX(entry_id) FROM wave_data;"))
 
-    print('entering dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
-    for e_idx in range(loop_count):
-        print('entering', e_idx)
+    print('entering', server, 'dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
+    for e_idx in tqdm(range(loop_count), unit='runs'):
         entry_id += 1
         entry_json = api_client.enter_dungeon(dungeon_id, floor_id, self_card=friend_card)
         wave_response = pad_api.extract_wave_response_from_entry(entry_json)
