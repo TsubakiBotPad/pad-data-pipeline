@@ -39,6 +39,12 @@ RESPONSE_CODES = {
 }
 
 
+class BadResponseCode(Exception):
+    def __init__(self, code, *args):
+        self.code = code
+        super().__init__(*args)
+
+
 class ServerEndpointInfo(object):
     def __init__(self, server: Server, keygen_fn: Callable[[str, int], str], force_v=None):
         self.server = server
@@ -397,7 +403,7 @@ class PadApiClient(object):
         result_json = r.json()
         response_code = result_json.get('res', 0)
         if response_code != 0:
-            raise Exception(
+            raise BadResponseCode(response_code,
                 'Bad server response: {} ({})'.format(response_code, RESPONSE_CODES.get(response_code, '???')))
         return result_json
 
