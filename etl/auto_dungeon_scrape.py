@@ -145,6 +145,7 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
                 except BadResponseCode as brc:
                     if brc.code == 2:
                         try:
+                            print("Attempting Relog...")
                             api_client.login()
                             api_client.load_player_data()
                             do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper)
