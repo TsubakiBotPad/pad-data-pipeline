@@ -392,15 +392,21 @@ class PadApiClient(object):
         final_payload_str = '{}&key={}'.format(payload_str, key)
         return '{}?{}'.format(self.server_api_endpoint, final_payload_str)
 
-    def get_json_results(self, url, post_data=None):
-        s = requests.Session()
+    def get_json_results(self, url, post_data=None, *, session=None, attempts_remaining=5):
+        if attempts_remaining <= 0:
+            raise ValueError("Invalid JSON.  Out of tries.")
+
+        s = session or requests.Session()
         if post_data:
             req = requests.Request('POST', url, headers=self.default_headers, data=post_data)
         else:
             req = requests.Request('GET', url, headers=self.default_headers)
         p = req.prepare()
         r = s.send(p)
-        result_json = r.json()
+        try:
+            result_json = r.json()
+        except json.JSONDecodeError:
+            return self.get_json_results(url, post_data, attempts_remaining=attempts_remaining-1)
         response_code = result_json.get('res', 0)
         if response_code != 0:
             raise BadResponseCode(response_code,
