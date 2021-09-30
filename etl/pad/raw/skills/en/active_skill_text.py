@@ -584,10 +584,15 @@ class EnASTextConverter(EnBaseTextConverter):
             return skill_text + f" for each instance of {self.typing_to_str(act.types, 'or')} in team"
 
     def team_target_stat_change(self, act):
-        if act.target != 1:
+        skill_text = self.fmt_duration(act.duration) + self.fmt_multiplier_text(1, act.atk_mult, 1)
+        if act.target == 1:
+            skill_text += " for this monster"
+        elif act.target == 2:
+            skill_text += " for team leader"
+        else:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}: Unknown target {act.target}")
-            return ""
-        return self.fmt_duration(act.duration) + self.fmt_multiplier_text(1, act.atk_mult, 1) + " for this monster"
+            skill_text += " for ???"
+        return skill_text
 
     def inflict_es(self, act):
         if act.selector_type == 2:
