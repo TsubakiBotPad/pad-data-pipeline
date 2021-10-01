@@ -76,7 +76,8 @@ class MonsterProcessor(object):
 
             sql = f'DELETE FROM {Awakening.TABLE} WHERE monster_id = {m.monster_id} AND order_idx > {len(items)}'
             deleted_awos = db.update_item(sql)
-            logger.info(deleted_awos)
+            if deleted_awos:
+                logger.info(f"Deleted {deleted_awos} unused awakenings from monster {m.monster_id}")
 
     def _process_evolutions(self, db):
         logger.info('loading evolutions')
