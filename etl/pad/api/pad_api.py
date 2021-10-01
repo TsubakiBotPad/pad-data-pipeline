@@ -41,9 +41,9 @@ RESPONSE_CODES = {
 
 
 class BadResponseCode(Exception):
-    def __init__(self, code, *args):
+    def __init__(self, code):
         self.code = code
-        super().__init__(*args)
+        super().__init__(f"Bad server response: {code} ({RESPONSE_CODES.get(code, '???')})")
 
 
 class ServerEndpointInfo(object):
@@ -412,8 +412,7 @@ class PadApiClient(object):
         if response_code == 1:
             return self.get_json_results(url, post_data, attempts_remaining=attempts_remaining-1)
         elif response_code != 0:
-            raise BadResponseCode(response_code,
-                'Bad server response: {} ({})'.format(response_code, RESPONSE_CODES.get(response_code, '???')))
+            raise BadResponseCode(response_code)
         return result_json
 
     def get_egg_machine_page(self, gtype, grow):
