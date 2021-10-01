@@ -75,7 +75,8 @@ class MonsterProcessor(object):
                                            pad_util.json_string_dump(item, pretty=True))
 
             sql = f'DELETE FROM {Awakening.TABLE} WHERE monster_id = {m.monster_id} AND order_idx > {len(items)}'
-            db.execute(sql)
+            deleted_awos = db.update_item(sql)
+            logger.info(deleted_awos)
 
     def _process_evolutions(self, db):
         logger.info('loading evolutions')
