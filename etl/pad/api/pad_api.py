@@ -22,8 +22,9 @@ from .player_data import PlayerDataResponse, RecommendedHelpersResponse, FriendE
 
 RESPONSE_CODES = {
     0: 'Okay',
+    1: 'An unexpected error occurred.',
     2: 'Re-login',
-    3: 'Unregistered',
+    3: 'Unregistered user.',
     8: 'dungeon not open',
     12: 'That person has too many friends.',
     25: 'Too many friend invites.',
@@ -40,9 +41,9 @@ RESPONSE_CODES = {
 
 
 class BadResponseCode(Exception):
-    def __init__(self, code, *args):
+    def __init__(self, code):
         self.code = code
-        super().__init__(*args)
+        super().__init__(f"Bad server response: {code} ({RESPONSE_CODES.get(code, '???')})")
 
 
 class ServerEndpointInfo(object):
@@ -408,9 +409,10 @@ class PadApiClient(object):
         except json.JSONDecodeError:
             return self.get_json_results(url, post_data, attempts_remaining=attempts_remaining-1)
         response_code = result_json.get('res', 0)
-        if response_code != 0:
-            raise BadResponseCode(response_code,
-                'Bad server response: {} ({})'.format(response_code, RESPONSE_CODES.get(response_code, '???')))
+        if response_code == 1:
+            return self.get_json_results(url, post_data, attempts_remaining=attempts_remaining-1)
+        elif response_code != 0:
+            raise BadResponseCode(response_code)
         return result_json
 
     def get_egg_machine_page(self, gtype, grow):
