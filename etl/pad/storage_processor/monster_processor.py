@@ -74,11 +74,8 @@ class MonsterProcessor(object):
                     human_fix_logger.fatal('Failed to insert item (probably new awakening): %s',
                                            pad_util.json_string_dump(item, pretty=True))
 
-            sql = 'SELECT COUNT(*) FROM {} WHERE monster_id = {}'.format(Awakening.TABLE, m.monster_id)
-            stored_awakening_count = db.get_single_value(sql, op=int)
-            if len(items) < stored_awakening_count:
-                human_fix_logger.error('Incorrect awakening count for %s, got %s wanted %s',
-                                       m.monster_id, stored_awakening_count, len(items))
+            sql = f'DELETE FROM {Awakening.TABLE} WHERE monster_id = {m.monster_id} AND order_idx > {len(items)}'
+            db.execute(sql)
 
     def _process_evolutions(self, db):
         logger.info('loading evolutions')
