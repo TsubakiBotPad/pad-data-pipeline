@@ -1789,5 +1789,12 @@
     "name_ko": "Untranslated",
     "series_id": 265,
     "series_type": "collab"
+  },
+  {
+    "name_en": "Star Wars",
+    "name_ja": "STAR WARS",
+    "name_ko": "STAR WARS",
+    "series_id": 266,
+    "series_type": "collab"
   }
 ]
