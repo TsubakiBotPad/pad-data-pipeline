@@ -74,7 +74,7 @@ class MonsterProcessor(object):
                     human_fix_logger.fatal('Failed to insert item (probably new awakening): %s',
                                            pad_util.json_string_dump(item, pretty=True))
 
-            sql = f'DELETE FROM {Awakening.TABLE} WHERE monster_id = {m.monster_id} AND order_idx > {len(items)}'
+            sql = f'DELETE FROM {Awakening.TABLE} WHERE monster_id = {m.monster_id} AND order_idx >= {len(items)}'
             deleted_awos = db.update_item(sql)
             if deleted_awos:
                 logger.info(f"Deleted {deleted_awos} unused awakenings from monster {m.monster_id}")
