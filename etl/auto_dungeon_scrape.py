@@ -123,6 +123,9 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
     for dungeon in current_dungeons:
         dungeon_id = dungeon.dungeon_id
         print(f'Processing {dungeon.clean_name} ({dungeon_id})')
+        if dungeon.EIGHT_PLAYER == RawDungeonType.EIGHT_PLAYER:
+            print('Skipping 8 player dungeon.')
+            continue
 
         minimum_wave_count = args.minimum_wave_count
         if dungeon_id in EXTRA_RUN_DUNGEONS:
@@ -138,7 +141,8 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
             newer_count = int(wave_info["newer"] or 0)
 
             should_enter = newer_count < minimum_wave_count
-            print(f'Entries for floor {floor_id}: old={older_count} new={newer_count} entering={should_enter}')
+            print(f'Entries for floor {floor_id} ({sub_dungeon.na_sub_dungeon.clean_name}):'
+                  f' old={older_count} new={newer_count} entering={should_enter}')
             if should_enter:
                 try:
                     do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper)
