@@ -5,11 +5,12 @@ class RawDungeonType(Enum):
     NORMAL = 0
     SPECIAL = 1
     TECHNICAL = 2
-    GIFT = 3
+    SOLOSPECIAL = 3
     RANKING = 4
     DEPRECATED = 5  # Not entirely sure of this one but seems like a safe bet
     UNUSED_6 = 6
-    MULTIPLAYER = 7
+    THREE_PLAYER = 7
+    UNUSED_8 = 8
     STORY = 9
     EIGHT_PLAYER = 10
 
