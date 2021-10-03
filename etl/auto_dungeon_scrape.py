@@ -123,7 +123,7 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
     for dungeon in current_dungeons:
         dungeon_id = dungeon.dungeon_id
         print(f'Processing {dungeon.clean_name} ({dungeon_id})')
-        if dungeon.EIGHT_PLAYER == RawDungeonType.EIGHT_PLAYER:
+        if dungeon.full_dungeon_type == RawDungeonType.EIGHT_PLAYER:
             print('Skipping 8 player dungeon.')
             continue
 
