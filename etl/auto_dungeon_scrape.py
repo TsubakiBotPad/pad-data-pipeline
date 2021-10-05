@@ -141,7 +141,7 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
             newer_count = int(wave_info["newer"] or 0)
 
             should_enter = newer_count < minimum_wave_count
-            print(f'Entries for floor {floor_id} ({sub_dungeon.na_sub_dungeon.clean_name}):'
+            print(f'Entries for floor {floor_id} ({sub_dungeon.clean_name}):'
                   f' old={older_count} new={newer_count} entering={should_enter}')
             if should_enter:
                 try:
