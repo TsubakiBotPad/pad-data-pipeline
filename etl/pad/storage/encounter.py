@@ -17,9 +17,6 @@ class Encounter(SimpleSqlItem):
                  enemy_id: int = None,
                  monster_id: int = None,
                  stage: int = None,
-                 comment_jp: str = None,
-                 comment_na: str = None,
-                 comment_kr: str = None,
                  amount: int = None,
                  order_idx: int = None,
                  turns: int = None,
@@ -35,9 +32,6 @@ class Encounter(SimpleSqlItem):
         self.enemy_id = enemy_id
         self.monster_id = monster_id
         self.stage = stage
-        self.comment_jp = comment_jp
-        self.comment_na = comment_na
-        self.comment_kr = comment_kr
         self.amount = amount
         self.order_idx = order_idx
         self.turns = turns
