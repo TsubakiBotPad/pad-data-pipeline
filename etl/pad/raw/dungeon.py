@@ -5,12 +5,13 @@ Parses Dungeon and DungeonFloor data.
 import csv
 import re
 from io import StringIO
-from typing import List, Any
+from typing import Any, List, Optional
 
-from pad.common import pad_util, dungeon_types
-# The typical JSON file name for this data.
+from pad.common import pad_util
+from pad.common.dungeon_types import RawDungeonType, RawRepeatDay
 from pad.common.shared_types import DungeonId, SubDungeonId
 
+# The typical JSON file name for this data.
 FILE_NAME = 'download_dungeon_data.json'
 
 
@@ -65,26 +66,24 @@ class SubDungeon(pad_util.Printable):
         self.fixed_team = {}
 
         for field in self.remaining_fields:
-            if not 'fc1' in field:
+            if 'fc1' not in field:
                 continue
-            else:
-                # TODO: this broke, look into re-enabling it
-                continue
-            for sub_field in field.split('|'):
-                if not sub_field.startswith('fc'):
-                    continue
-                idx = int(sub_field[2])
-                contents = sub_field[4:]
-                details = contents.split(';')
-                full_record = len(details) > 1
-                self.fixed_team[idx] = {
-                    'monster_id': details[0],
-                    'hp_plus': details[1] if full_record else 0,
-                    'atk_plus': details[2] if full_record else 0,
-                    'rcv_plus': details[3] if full_record else 0,
-                    'awakening_count': details[4] if full_record else 0,
-                    'skill_level': details[5] if full_record else 0,
-                }
+            # # TODO: this broke, look into re-enabling it
+            # for sub_field in field.split('|'):
+            #     if not sub_field.startswith('fc'):
+            #         continue
+            #     idx = int(sub_field[2])
+            #     contents = sub_field[4:]
+            #     details = contents.split(';')
+            #     full_record = len(details) > 1
+            #     self.fixed_team[idx] = {
+            #         'monster_id': details[0],
+            #         'hp_plus': details[1] if full_record else 0,
+            #         'atk_plus': details[2] if full_record else 0,
+            #         'rcv_plus': details[3] if full_record else 0,
+            #         'awakening_count': details[4] if full_record else 0,
+            #         'skill_level': details[5] if full_record else 0,
+            #     }
 
         # This code imported from Rikuu, need to clean it up and merge
         # with the other modifiers parsing code. For now just importing
@@ -150,10 +149,10 @@ class Dungeon(pad_util.Printable):
         self.dungeon_type = None  # type: Optional[str]
 
         # A more detailed dungeon type.
-        self.full_dungeon_type = dungeon_types.RawDungeonType(int(raw[3]))
+        self.full_dungeon_type = RawDungeonType(int(raw[3]))
 
         # This will be a day of the week, or an empty string if it doesn't repeat regularly
-        self.repeat_day = dungeon_types.RawRepeatDay(int(raw[4]))
+        self.repeat_day = RawRepeatDay(int(raw[4]))
 
         # Seems to relate to dungeon type?
         self._unknown_5 = int(raw[5])
