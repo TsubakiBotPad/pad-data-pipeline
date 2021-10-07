@@ -885,7 +885,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Matching a 3x3 Heal Orb square boosts ATK by 2x and inflicts 99,999 points of bonus damage",
+    "desc_en": "Matching a 3x3 Heal Orb square boosts ATK by 2x and inflicts 999,999 points of bonus damage",
     "desc_en_official": "Matching a 3x3 Heal Orb square boosts ATK & inflicts 99 points of bonus damage",
     "desc_ja": "回復ドロップを3×3の正方形で消すと攻撃力が2倍にし、99ダメージの追い打ち",
     "desc_ja_official": "回復ドロップを3×3の正方形で消すと 攻撃力がアップし、99ダメージの追い打ち",
