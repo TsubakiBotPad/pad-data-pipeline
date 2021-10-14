@@ -132,6 +132,10 @@ bin/
 # vim swap files
 *.swp
 
+# For Node
+package-lock.json
+node_modules/
+
 pad-resources/*
 pad-game-data-slim/*
 /venv3/
