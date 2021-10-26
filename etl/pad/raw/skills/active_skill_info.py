@@ -1,9 +1,9 @@
 import logging
-from collections import OrderedDict, namedtuple
-from typing import List, Any, Optional
+from collections import namedtuple
+from typing import Any, List, Optional
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.skill_common import merge_defaults, mult, binary_con
+from pad.raw.skills.skill_common import binary_con, merge_defaults, mult
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -30,7 +30,11 @@ class ActiveSkill(object):
         self._transform_id = transform_id
 
     @property
-    def transform_id(self):
+    def parts(self) -> List["ActiveSkill"]:
+        return [self]
+
+    @property
+    def transform_id(self) -> int:
         return self._transform_id
 
     def text(self, converter: ASTextConverter) -> str:
@@ -42,6 +46,26 @@ class ActiveSkill(object):
 
 class ASConditional(ActiveSkill):
     pass
+
+
+class ASMultiPart(ActiveSkill):
+    def __init__(self, ms: MonsterSkill):
+        self.child_ids = ms.data
+        self.child_skills = []
+        super().__init__(ms)
+
+    @property
+    def parts(self):
+        return sum([s.parts for s in self.child_skills], [])
+
+    @property
+    def transform_id(self):
+        transform_id = None
+        for part in self.child_skills:
+            if part.transform_id and transform_id:
+                human_fix_logger.warning("Multiple transform in one multi-part AS")
+            transform_id = part.transform_id or transform_id
+        return transform_id
 
 
 class ASMultiplierMultiTargetAttrNuke(ActiveSkill):
@@ -577,37 +601,11 @@ class PartWithTextAndCount(object):
         return self.text if self.repeat == 1 else converter.fmt_repeated(self.text, self.repeat)
 
 
-class ASMultiPartSkill(ActiveSkill):
+class ASMultiPartSkill(ASMultiPart):
     skill_type = 116
 
-    def __init__(self, ms: MonsterSkill):
-        self.child_ids = ms.data
-        self.child_skills = []
-        super().__init__(ms)
-
-    @property
-    def parts(self):
-        return self.child_skills
-
-    @property
-    def transform_id(self):
-        transform_id = None
-        for part in self.parts:
-            if part.transform_id and transform_id:
-                human_fix_logger.warning("Multiple transform in one random AS")
-            transform_id = part.transform_id or transform_id
-        return transform_id
-
     def text(self, converter: ASTextConverter) -> str:
-        text_to_item = OrderedDict()
-        for p in self.parts:
-            p_text = p.text(converter)
-            if p_text in text_to_item:
-                text_to_item[p_text].repeat += 1
-            else:
-                text_to_item[p_text] = PartWithTextAndCount(p, p_text)
-
-        return converter.multi_part_active(text_to_item.values())
+        return converter.multi_part_active(self)
 
 
 class ASHpRecoveryandBindClear(ActiveSkill):
@@ -626,27 +624,8 @@ class ASHpRecoveryandBindClear(ActiveSkill):
         return converter.heal_active_convert(self)
 
 
-class ASRandomSkill(ActiveSkill):
+class ASRandomSkill(ASMultiPart):
     skill_type = 118
-
-    def __init__(self, ms: MonsterSkill):
-        self.random_skill_ids = ms.data
-        self.random_skills = []
-        super().__init__(ms)
-
-    @property
-    def parts(self):
-        return sum([s.parts if isinstance(s, ASMultiPartSkill) else [s]
-                    for s in self.random_skills], [])
-
-    @property
-    def transform_id(self):
-        transform_id = None
-        for part in self.random_skills:
-            if part.transform_id and transform_id:
-                human_fix_logger.warning("Multiple transform in one random AS")
-            transform_id = part.transform_id or transform_id
-        return transform_id
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_skill(self)
@@ -886,7 +865,7 @@ class ASAwokenSkillBurst2(ActiveSkill):
         if self.toggle == 1:
             self.amount_per = data[7]
         elif self.toggle in [0, 2]:
-            self.amount_per = data[7] / 100
+            self.amount_per = mult(data[7])
         elif self.toggle == 3:
             self.amount_per = mult(data[7])
         super().__init__(ms)
@@ -1243,6 +1222,37 @@ class ASTeamTargetStatBuff(ActiveSkill):
         return converter.team_target_stat_change(self)
 
 
+class ASAwokenSkillStatBoost(ActiveSkill):
+    skill_type = 231
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [1, 0, 0, 0, 0, 0, 0, 0])
+        self.duration = data[0]
+        self.awakenings = data[1:4]
+        self.unknown_4 = data[4]
+        self.unknown_5 = data[5]
+        self.atk_per = mult(data[6])
+        self.rcv_per = mult(data[7])
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.awakening_stat_boost_convert(self)
+
+
+class ASEvolvingSkill(ASMultiPart):
+    skill_type = 232
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.evolving_active(self)
+
+
+class ASLoopingEvolvingSkill(ASEvolvingSkill):
+    skill_type = 233
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.looping_evolving_active(self)
+
+
 class ASInflictES(ActiveSkill):
     skill_type = 1000
 
@@ -1277,29 +1287,18 @@ def convert(skill_list: List[MonsterSkill]):
         if skill_constructor is not None:
             results[s.skill_id] = skill_constructor(s)
 
-    # Fills in ASMultiPartSkills
+    # Fill in MultiSkills
     for s in results.values():
-        if not isinstance(s, ASMultiPartSkill):
+        if not isinstance(s, ASMultiPart):
             continue
 
         for p_id in s.child_ids:
             if p_id not in results:
-                human_fix_logger.error('failed to look up multipart active skill id: %d', p_id)
+                human_fix_logger.error('failed to look up multi-part active skill id: %d', p_id)
                 continue
             p_skill = results[p_id]
             s.child_skills.append(p_skill)
 
-    # Fills in ASRandomSkill
-    for s in results.values():
-        if not isinstance(s, ASRandomSkill):
-            continue
-
-        for p_id in s.random_skill_ids:
-            if p_id not in results:
-                human_fix_logger.error('failed to look up random leader skill id: %d', p_id)
-                continue
-            p_skill = results[p_id]
-            s.random_skills.append(p_skill)
     return list(results.values())
 
 
@@ -1386,5 +1385,8 @@ ALL_ACTIVE_SKILLS = [
     ASLeaderSwapRightSub,
     ASTeamCompositionBuff,
     ASTeamTargetStatBuff,
+    ASAwokenSkillStatBoost,
+    ASEvolvingSkill,
+    ASLoopingEvolvingSkill,
     ASInflictES,
 ]

@@ -389,6 +389,9 @@ class EnESTextConverter(EnBaseTextConverter):
     def target_skill_delay(self, min_turns, max_turns, target):
         return f'Delay {possessive(TARGET_NAMES[target])} skills by {noun_count("turn", min_turns, max_turns)}'
 
+    def disable_assists(self, turns):
+        return 'Disable active skills for {:s}'.format(noun_count('turn', turns))
+
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
 

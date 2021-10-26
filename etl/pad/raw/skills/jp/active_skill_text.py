@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
@@ -236,6 +237,21 @@ class JpASTextConverter(JpBaseTextConverter):
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
         skill_text += self.concat_list_and(filter(None, awakens))
         skill_text += 'の覚醒数1つにつき受けるダメージを{}％減少'.format(fmt_mult(act.amount_per * 100))
+        return skill_text
+
+    def awakening_stat_boost_convert(self, act):
+        # TODO: Write this better
+        skill_text = ""
+        if act.atk_per:
+            skill_text = self.fmt_duration(act.duration) + 'チーム内の'
+            awakens = self.concat_list_and(self.AWAKENING_MAP[a] or '???' for a in act.awakenings if a)
+            skill_text += f'の覚醒数1つにつき攻撃力が{fmt_mult(act.atk_per * 100)}％上がる'
+            if act.rcv_per:
+                skill_text += '。'
+        if act.rcv_per:
+            skill_text += self.fmt_duration(act.duration) + 'チーム内の'
+            awakens = self.concat_list_and(self.AWAKENING_MAP[a] or '???' for a in act.awakenings if a)
+            skill_text += f'の覚醒数1つにつき回復力が{fmt_mult(act.rcv_per * 100)}％上がる'
         return skill_text
 
     def change_enemies_attribute_convert(self, act):
@@ -502,7 +518,7 @@ class JpASTextConverter(JpBaseTextConverter):
 
     def random_skill(self, act):
         random_skills_text = []
-        for idx, s in enumerate(act.random_skills, 1):
+        for idx, s in enumerate(act.child_skills, 1):
             random_skills_text.append('{}、{}'.format(half_to_full(idx), s.full_text(self)))
         return '下からスキルをランダムて発動：{}'.format("；".join(random_skills_text))
 
@@ -557,14 +573,39 @@ class JpASTextConverter(JpBaseTextConverter):
             return self.fmt_duration(act.duration) + f"自分の攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 2:
             return self.fmt_duration(act.duration) + f"リーダーの攻撃力を{fmt_mult(act.atk_mult)}倍"
+        elif act.target == 8:
+            return self.fmt_duration(act.duration) + f"ランダムでサブ4体の攻撃力を{fmt_mult(act.atk_mult)}倍"
         else:
             return self.fmt_duration(act.duration) + f"???の攻撃力を{fmt_mult(act.atk_mult)}倍"
+
+    def evolving_active(self, act):
+        skill_text = "スキル使うと、次の階段に変化。最終階段のスキル使うと、最初のスキル戻る："
+        skill_text += '；'.join(f"{half_to_full(c)}、{skill.full_text(self)}"
+                              for c, skill in enumerate(act.child_skills, 1))
+        return skill_text
+
+    def looping_evolving_active(self, act):
+        skill_text = "スキル使うと、次の階段に変化："
+        skill_text += '；'.join(f"{half_to_full(c)}、{skill.full_text(self)}"
+                              for c, skill in enumerate(act.child_skills, 1))
+        return skill_text
 
     def inflict_es(self, act):
         return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"
                 "ックを送信して、アラディアが実際にここに何かを書き込むようにしてください")
 
-    def multi_part_active(self, skills: List[PartWithTextAndCount]):
+    def multi_part_active(self, act):
+        text_to_item = OrderedDict()
+        for p in act.parts:
+            p_text = p.text(self)
+            if p_text in text_to_item:
+                text_to_item[p_text].repeat += 1
+            else:
+                text_to_item[p_text] = PartWithTextAndCount(p, p_text)
+
+        return self.combine_skills_text(list(text_to_item.values()))
+
+    def combine_skills_text(self, skills: List[PartWithTextAndCount]):
         skill_text = ""
         for c, skillpart in enumerate(skills):
             skill_text += skillpart.full_text(self)

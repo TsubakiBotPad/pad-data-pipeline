@@ -1488,6 +1488,17 @@ class ESTargetedSkillDelay(ESAction):
         return converter.target_skill_delay(self.min_turns, self.max_turns, self.target)
 
 
+class ESDisableAssists(ESAction):
+    skill_types = [141]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.turns = self.params[1]
+
+    def description(self, converter):
+        return converter.disable_assists(self.turns)
+
+
 # Passive
 class ESPassive(ESBehavior):
     def __init__(self, skill: EnemySkill):
@@ -2053,6 +2064,7 @@ ENEMY_SKILLS = [
     ESTargetedSkillHaste,
     ESTargetedSkillDelay,
     ESBranchTypes,
+    ESDisableAssists,
 ]
 
 BEHAVIOR_MAP = {t: s for s in ENEMY_SKILLS for t in s.skill_types}

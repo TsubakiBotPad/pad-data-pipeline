@@ -357,8 +357,10 @@ class JpESTextConverter(JpBaseTextConverter):
         return f'{TARGET_NAMES[target].format(4)}のスキルが{minmax(min_turns, max_turns)}ターン溜まる'
 
     def target_skill_delay(self, min_turns, max_turns, target):
-
         return f'{TARGET_NAMES[target].format(4)}のスキルが{minmax(min_turns, max_turns)}ターン減らす'
+
+    def disable_assists(self, turns):
+        return '{}ターンの間、アシストが無効になった'.format(turns)
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)

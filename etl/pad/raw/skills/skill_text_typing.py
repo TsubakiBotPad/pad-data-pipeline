@@ -128,7 +128,7 @@ def parse_as_conditions(skill, child=False) -> List[ASTags]:
 
     if isinstance(skill, ASRandomSkill):
         results.add(ASTags.ETC)
-        for s in skill.random_skills:
+        for s in skill.child_skills:
             results.update(parse_as_conditions(s, True))
 
     if isinstance(skill, (ASOrbEnhance, ASBicolorOrbEnhance, ASOrbEnhanceNew)):

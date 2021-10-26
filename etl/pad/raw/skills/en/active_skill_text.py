@@ -1,9 +1,10 @@
 import logging
+from collections import OrderedDict
 from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
-from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, ordinal, \
-    pluralize, noun_count
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, noun_count, \
+    ordinal, pluralize
 from pad.raw.skills.skill_common import fmt_mult
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -245,6 +246,21 @@ class EnASTextConverter(EnBaseTextConverter):
         skill_text += ' awakening skill on the team'
         return skill_text
 
+    def awakening_stat_boost_convert(self, act):
+        skill_text = self.fmt_duration(act.duration)
+        if act.atk_per and act.atk_per == act.rcv_per:
+            skill_text += f"increase ATK & RCV by {fmt_mult(act.atk_per * 100)}%"
+        else:
+            if act.atk_per:
+                skill_text += f"increase ATK by {fmt_mult(act.atk_per * 100)}%"
+                if act.rcv_per:
+                    skill_text += " and "
+            if act.rcv_per:
+                skill_text += f"increase RCV by {fmt_mult(act.rcv_per * 100)}%"
+        awakenings = self.concat_list_and(self.AWAKENING_MAP[a] or '???' for a in act.awakenings if a)
+        skill_text += f" for each {awakenings} awakening skill on the team"
+        return skill_text
+    
     def change_enemies_attribute_convert(self, act):
         if act.turns is not None:
             skill_text = self.fmt_duration(act.turns) + 'change'
@@ -531,7 +547,7 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def random_skill(self, act):
         random_skills_text = []
-        for idx, s in enumerate(act.random_skills, 1):
+        for idx, s in enumerate(act.child_skills, 1):
             random_skills_text.append('{}) {}'.format(idx, s.full_text(self)))
         return 'Activate a random skill from the list: {}'.format(self.concat_list_and(random_skills_text))
 
@@ -589,9 +605,23 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += " for this monster"
         elif act.target == 2:
             skill_text += " for team leader"
+        elif act.target == 8:
+            skill_text += " for all subs"
         else:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}: Unknown target {act.target}")
             skill_text += " for ???"
+        return skill_text
+
+    def evolving_active(self, act):
+        skill_text = "After each skill, evolve to the next:"
+        for c, skill in enumerate(act.child_skills, 1):
+            skill_text += f" {c}) {skill.full_text(self)}"
+        return skill_text
+
+    def looping_evolving_active(self, act):
+        skill_text = "After each skill, evolve to the next looping around if the end is reached:"
+        for c, skill in enumerate(act.child_skills, 1):
+            skill_text += f" {c}) {skill.full_text(self)}"
         return skill_text
 
     def inflict_es(self, act):
@@ -607,7 +637,18 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text = "To some other players, "
         return skill_text + "do something mean (probably)"
 
-    def multi_part_active(self, skills: List[PartWithTextAndCount]):
+    def multi_part_active(self, act):
+        text_to_item = OrderedDict()
+        for p in act.parts:
+            p_text = p.text(self)
+            if p_text in text_to_item:
+                text_to_item[p_text].repeat += 1
+            else:
+                text_to_item[p_text] = PartWithTextAndCount(p, p_text)
+
+        return self.combine_skills_text(list(text_to_item.values()))
+
+    def combine_skills_text(self, skills: List[PartWithTextAndCount]):
         skill_text = ""
         for c, skillpart in enumerate(skills):
             skill_text += skillpart.full_text(self)
