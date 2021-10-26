@@ -59,7 +59,8 @@ emoji_dict = {
     'multi_attack': '{multi_attack}',
     'self': '{target_self}',
     'health': '{health}',
-    'combo': '{combo_orb}'
+    'combo': '{combo_orb}',
+    'disable_assists': '{skill_haste}',
 }
 
 # This is unused because in discord the skyfall orbs are really hard to see, if I can make a better appearing symbol I
@@ -511,6 +512,9 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
     def target_skill_delay(self, min_turns, max_turns, target):
         return f'({emoji_dict["skill_delay"]} {possessive(TARGET_NAMES[target])}' \
                f' skill by {noun_count("turn", min_turns, max_turns)})'
+
+    def disable_assists(self, turns):
+        return '{} for {}'.format(emoji_dict['disable_assists'], noun_count('turn', turns))
 
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
