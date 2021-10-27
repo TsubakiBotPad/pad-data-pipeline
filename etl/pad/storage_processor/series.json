@@ -1797,5 +1797,12 @@
     "name_ko": "스타워즈",
     "series_id": 266,
     "series_type": "collab"
+  },
+  {
+    "name_en": "Prince of Tennis",
+    "name_ja": "新テニスの王子様",
+    "name_ko": "신 테니스의 왕자",
+    "series_id": 267,
+    "series_type": null
   }
 ]
