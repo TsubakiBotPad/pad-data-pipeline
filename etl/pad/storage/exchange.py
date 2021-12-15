@@ -18,6 +18,7 @@ class Exchange(SimpleSqlItem):
         return Exchange(trade_id=o.trade_id,
                         server_id=o.server.value,
                         target_monster_id=target_monster_id,
+                        target_monster_amount=o.monster_amount,
                         required_monster_ids=req_monster_csv_str,
                         required_count=o.required_count,
                         start_timestamp=o.start_timestamp,
@@ -32,6 +33,7 @@ class Exchange(SimpleSqlItem):
                  trade_id: int = None,
                  server_id: int = None,
                  target_monster_id: int = None,
+                 target_monster_amount: int = None,
                  required_monster_ids: str = None,
                  required_count: int = None,
                  start_timestamp: int = None,
@@ -45,6 +47,7 @@ class Exchange(SimpleSqlItem):
         self.trade_id = trade_id
         self.server_id = server_id
         self.target_monster_id = target_monster_id
+        self.target_monster_amount = target_monster_amount
         self.required_monster_ids = required_monster_ids
         self.required_count = required_count
         self.start_timestamp = start_timestamp
