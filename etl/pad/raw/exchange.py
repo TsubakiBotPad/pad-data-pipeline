@@ -19,8 +19,12 @@ class Exchange(Printable):
     """Exchangeable monsters, options to exhange, and any event text."""
 
     def __init__(self, raw: List[str], server: Server):
+        # TODO: Remove this when amount comes to NA
+        if server != Server.jp:
+            raw.insert(7, "1")
+
         self.server = server
-        self.unknown_000 = str(raw[0])  # Seems to always be 'A'
+        self.unknown_000 = str(raw[0])  # Seems to always be 'A'  (For Array maybe?  TODO: Look into this for GH CSV)
 
         # Seems to be the unique ID for the trade?
         self.trade_id = int(raw[1])
@@ -41,41 +45,44 @@ class Exchange(Printable):
         self.monster_max_skill = bool(monster_flags & 1)
         self.monster_max_awoken = bool(monster_flags & 2)
 
+        # Trade monster amount
+        self.monster_amount = int(raw[7])
+
         # Trade availability start time string
-        self.start_time_str = str(raw[7])
+        self.start_time_str = str(raw[8])
         self.start_timestamp = pad_util.gh_to_timestamp_2(self.start_time_str, server)
 
         # Trade availability end time string
-        self.end_time_str = str(raw[8])
+        self.end_time_str = str(raw[9])
         self.end_timestamp = pad_util.gh_to_timestamp_2(self.end_time_str, server)
 
         # Start time string for the announcement text, probably?
-        self.announcement_start_time_str = str(raw[9])
+        self.announcement_start_time_str = str(raw[10])
         self.announcement_start_timestamp = pad_util.gh_to_timestamp_2(
             self.announcement_start_time_str, server) if self.announcement_start_time_str else ''
 
         # End time string for the announcement text, probably?
-        self.announcement_end_time_str = str(raw[10])
+        self.announcement_end_time_str = str(raw[11])
         self.announcement_end_timestamp = pad_util.gh_to_timestamp_2(
             self.announcement_end_time_str, server) if self.announcement_end_time_str else ''
 
         # Optional text that appears above monster name, for limited time events
-        self.announcement_text = str(raw[11])
+        self.announcement_text = str(raw[12])
 
         # Clean version of the announcement text without formatting
         self.announcement_text_clean = pad_util.strip_colors(self.announcement_text)
 
         # Number of required monsters for the trade
-        self.required_count = int(raw[12])
+        self.required_count = int(raw[13])
 
         # Flags, e.g. restricted
-        self.flag_type = int(raw[13])
+        self.flag_type = int(raw[14])
         self.no_dupes = bool(self.flag_type & 1)
         self.restricted = bool(self.flag_type & 2)
         self.multi_exchange = bool(self.flag_type & 4)
 
         # Options for trading the monster
-        self.required_monsters = list(map(int, raw[14:]))
+        self.required_monsters = list(map(int, raw[15:]))
 
     def __str__(self):
         return 'Exchange({} {} - {} - {}/{})'.format(self.server, self.monster_id, len(self.required_monsters),
