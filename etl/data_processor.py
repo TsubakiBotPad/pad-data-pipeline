@@ -65,10 +65,10 @@ type_name_to_processor: Dict[str, List[Any]] = {
             RankRewardProcessor, ScheduleProcessor, SeriesProcessor,
             SkillTagProcessor, TimestampProcessor],
     'AllLong': [DimensionProcessor, DungeonContentProcessor, DungeonProcessor,
-            EggMachineProcessor, EnemySkillProcessor, ExchangeProcessor,
-            MonsterProcessor, PurchaseProcessor, PurgeDataProcessor,
-            RankRewardProcessor, ScheduleProcessor, SeriesProcessor,
-            SkillTagProcessor, TimestampProcessor],
+                EggMachineProcessor, EnemySkillProcessor, ExchangeProcessor,
+                MonsterProcessor, PurchaseProcessor, PurgeDataProcessor,
+                RankRewardProcessor, ScheduleProcessor, SeriesProcessor,
+                SkillTagProcessor, TimestampProcessor],
     'Events': [DungeonProcessor, ScheduleProcessor],
     'Monsters': [AwokenSkillProcessor, SeriesProcessor, MonsterProcessor],
     'None': [],
@@ -104,7 +104,7 @@ def parse_args():
 
     proc_group = parser.add_argument_group("Processors")
     proc_group.add_argument("--processors", default="All",
-                             help="Comma-separated specific processors to run.")
+                            help="Comma-separated specific processors to run.")
     proc_group.add_argument("--server", default="COMBINED", help="Server to build for")
 
     output_group = parser.add_argument_group("Output")
@@ -187,7 +187,6 @@ def load_data(args):
             processors.extend(type_name_to_processor[proc])
         else:
             logger.warning("Unknown processor: {}\nSkipping...".format(proc))
-
 
     # Load dimension tables
     if DimensionProcessor in processors:
