@@ -181,7 +181,7 @@ def load_data(args):
     db_wrapper.connect(db_config)
 
     processors = []
-    for proc in (args.processors or 'All').split(","):
+    for proc in args.processors.split(","):
         proc = proc.strip()
         if proc in type_name_to_processor:
             processors.extend(type_name_to_processor[proc])

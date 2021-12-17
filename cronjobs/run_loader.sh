@@ -10,10 +10,15 @@ source ./discord.sh
 source "${VENV_ROOT}/bin/activate"
 
 # This may not work on Mac
-options=$(getopt -o '' --long server:,processors: -- "$@")
+options=$(getopt -o '' --long skipdownload,skipupload,server:,processors: -- "$@")
 eval set -- "$options"
+
+# Defaults
 SERVER="COMBINED"
 PROCESSORS=""
+DOWNLOAD=1
+UPLOAD=1
+
 while true; do
     case "$1" in
     --server)
@@ -27,6 +32,12 @@ while true; do
     --processors)
         shift;
         PROCESSORS=$1
+        ;;
+    --skipdownload)
+        DOWNLOAD=0
+        ;;
+    --skipupload)
+        UPLOAD=0
         ;;
     --)
         shift
@@ -49,8 +60,10 @@ function success_exit() {
 trap error_exit ERR
 trap success_exit EXIT
 
-echo "Pulling Data"
-./pull_data.sh
+if [ $DOWNLOAD -eq 1 ]; then
+  echo "Pulling Data"
+  ./pull_data.sh
+fi
 
 echo "Updating DadGuide"
 if [ -z "$PROCESSORS" ]; then
@@ -62,7 +75,9 @@ fi
 echo "Exporting Data"
 ./export_data.sh
 
-echo "Syncing"
-./sync_data.sh
+if [ $UPLOAD -eq 1 ]; then
+  echo "Syncing"
+  ./sync_data.sh
+fi
 
 hook_info "Pipeline completed successfully!"
