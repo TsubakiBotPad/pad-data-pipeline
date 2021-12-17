@@ -173,37 +173,13 @@ def load_data(args):
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
 
-    if args.processors:
-        for processor in args.processors.split(","):
-            processor = processor.strip()
-            logger.info('Running specific processor {}'.format(processor))
-            seriesproc = None
-
-            classes = type_name_to_processor[processor]
-            if SeriesProcessor in classes:
-                classes.remove(SeriesProcessor)
-                seriesproc = SeriesProcessor(cs_database)
-                seriesproc.pre_process(db_wrapper)
-
-            for class_type in classes:
-                if class_type in (DimensionProcessor, RankRewardProcessor, AwokenSkillProcessor, SkillTagProcessor,
-                                  TimestampProcessor, PurgeDataProcessor):
-                    processor = class_type()
-                    processor.process(db_wrapper)
-                elif class_type == EnemySkillProcessor:
-                    processor = class_type(db_wrapper, cs_database)
-                    processor.load_static()
-                    processor.load_enemy_skills()
-                    if args.es_dir:
-                        processor.load_enemy_data(args.es_dir)
-                else:
-                    processor = class_type(cs_database)
-                    processor.process(db_wrapper)
-
-            if seriesproc is not None:
-                seriesproc.post_process(db_wrapper)
-        logger.info('done')
-        return
+    processors = []
+    for proc in args.processors.split(","):
+        proc = proc.strip()
+        if proc in type_name_to_processor:
+            processors.extend(type_name_to_processor[proc])
+        else:
+            logger.warning("Unknown processor: {}\nSkipping...".format(proc))
 
     # Load dimension tables
     DimensionProcessor().process(db_wrapper)
