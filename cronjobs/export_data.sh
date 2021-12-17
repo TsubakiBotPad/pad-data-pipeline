@@ -21,7 +21,7 @@ ${SCHEMA_TOOLS_DIR}/mysql2sqlite.sh \
 mv "${DADGUIDE_DB_FILE_TMP}" "${DADGUIDE_DB_FILE}"
 
 echo "Zipping/copying DB dump"
-DADGUIDE_ZIP_DB_FILE="${DADGUIDE_GAME_DB_DIR}/v2_dadguide.sqlite.zip"
+DADGUIDE_ZIP_DB_FILE="${DADGUIDE_GAME_DB_DIR}/dadguide.sqlite.zip"
 DADGUIDE_ZIP_DB_FILE_TMP="${DADGUIDE_ZIP_DB_FILE}_tmp"
 rm -f "${DADGUIDE_ZIP_DB_FILE_TMP}"
 zip -j "${DADGUIDE_ZIP_DB_FILE_TMP}" "${DADGUIDE_DB_FILE}"
