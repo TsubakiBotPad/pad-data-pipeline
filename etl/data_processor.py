@@ -44,24 +44,31 @@ human_fix_logger = logging.getLogger('human_fix')
 human_fix_logger.setLevel(logging.INFO)
 
 type_name_to_processor: Dict[str, List[Any]] = {
-    'DungeonProcessor': [DungeonProcessor],
-    'DungeonContentProcessor': [DungeonContentProcessor],
-    'ScheduleProcessor': [ScheduleProcessor],
     'DimensionProcessor': [DimensionProcessor],
-	'DungeonContentProcessor': [DungeonContentProcessor],
-	'DungeonProcessor': [DungeonProcessor],
-	'EggMachineProcessor': [EggMachineProcessor],
-	'EnemySkillProcessor': [EnemySkillProcessor],
-	'ExchangeProcessor': [ExchangeProcessor],
-	'MonsterProcessor': [MonsterProcessor],
-	'PurchaseProcessor': [PurchaseProcessor],
-	'PurgeDataProcessor': [PurgeDataProcessor],
-	'RankRewardProcessor': [RankRewardProcessor],
-	'ScheduleProcessor': [ScheduleProcessor],
-	'SeriesProcessor': [SeriesProcessor],
-	'SkillTagProcessor': [SkillTagProcessor],
-	'TimestampProcessor': [TimestampProcessor],
-    
+    'DungeonContentProcessor': [DungeonContentProcessor],
+    'DungeonProcessor': [DungeonProcessor],
+    'EggMachineProcessor': [EggMachineProcessor],
+    'EnemySkillProcessor': [EnemySkillProcessor],
+    'ExchangeProcessor': [ExchangeProcessor],
+    'MonsterProcessor': [MonsterProcessor],
+    'PurchaseProcessor': [PurchaseProcessor],
+    'PurgeDataProcessor': [PurgeDataProcessor],
+    'RankRewardProcessor': [RankRewardProcessor],
+    'ScheduleProcessor': [ScheduleProcessor],
+    'SeriesProcessor': [SeriesProcessor],
+    'SkillTagProcessor': [SkillTagProcessor],
+    'TimestampProcessor': [TimestampProcessor],
+
+    'All': [DimensionProcessor, DungeonProcessor,  # All except DCP
+            EggMachineProcessor, EnemySkillProcessor, ExchangeProcessor,
+            MonsterProcessor, PurchaseProcessor, PurgeDataProcessor,
+            RankRewardProcessor, ScheduleProcessor, SeriesProcessor,
+            SkillTagProcessor, TimestampProcessor],
+    'AllLong': [DimensionProcessor, DungeonContentProcessor, DungeonProcessor,
+            EggMachineProcessor, EnemySkillProcessor, ExchangeProcessor,
+            MonsterProcessor, PurchaseProcessor, PurgeDataProcessor,
+            RankRewardProcessor, ScheduleProcessor, SeriesProcessor,
+            SkillTagProcessor, TimestampProcessor],
     'Events': [DungeonProcessor, ScheduleProcessor],
     'Monsters': [AwokenSkillProcessor, SeriesProcessor, MonsterProcessor],
     'None': [],
@@ -94,17 +101,17 @@ def parse_args():
                              help="If true, only load ES and then quit")
     input_group.add_argument("--media_dir", required=False,
                              help="Path to the root folder containing images, voices, etc")
-    input_group.add_argument("--processors", required=False,
+
+    proc_group = parser.add_argument_group("Processors")
+    proc_group.add_argument("--processors", default="All",
                              help="Comma-separated specific processors to run.")
-    input_group.add_argument("--server", default="COMBINED", help="Server to build for")
+    proc_group.add_argument("--server", default="COMBINED", help="Server to build for")
 
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--output_dir", required=True,
                               help="Path to a folder where output should be saved")
     output_group.add_argument("--pretty", default=False, action="store_true",
                               help="Controls pretty printing of results")
-    output_group.add_argument("--skip_long", default=False, action="store_true",
-                              help="Skip slow-running loaders")
 
     help_group = parser.add_argument_group("Help")
     help_group.add_argument("-h", "--help", action="help",
@@ -173,95 +180,91 @@ def load_data(args):
     db_wrapper = DbWrapper(dry_run)
     db_wrapper.connect(db_config)
 
-    if args.processors:
-        for processor in args.processors.split(","):
-            processor = processor.strip()
-            logger.info('Running specific processor {}'.format(processor))
-            seriesproc = None
+    processors = []
+    for proc in (args.processors or 'All').split(","):
+        proc = proc.strip()
+        if proc in type_name_to_processor:
+            processors.extend(type_name_to_processor[proc])
+        else:
+            logger.warning("Unknown processor: {}\nSkipping...".format(proc))
 
-            classes = type_name_to_processor[processor]
-            if SeriesProcessor in classes:
-                classes.remove(SeriesProcessor)
-                seriesproc = SeriesProcessor(cs_database)
-                seriesproc.pre_process(db_wrapper)
-
-            for class_type in classes:
-                if class_type in (DimensionProcessor, RankRewardProcessor, AwokenSkillProcessor, SkillTagProcessor,
-                                  TimestampProcessor, PurgeDataProcessor):
-                    processor = class_type()
-                    processor.process(db_wrapper)
-                elif class_type == EnemySkillProcessor:
-                    processor = class_type(db_wrapper, cs_database)
-                    processor.load_static()
-                    processor.load_enemy_skills()
-                    if args.es_dir:
-                        processor.load_enemy_data(args.es_dir)
-                else:
-                    processor = class_type(cs_database)
-                    processor.process(db_wrapper)
-
-            if seriesproc is not None:
-                seriesproc.post_process(db_wrapper)
-        logger.info('done')
-        return
 
     # Load dimension tables
-    DimensionProcessor().process(db_wrapper)
+    if DimensionProcessor in processors:
+        DimensionProcessor().process(db_wrapper)
 
     # # Load rank data
-    RankRewardProcessor().process(db_wrapper)
+    if RankRewardProcessor in processors:
+        RankRewardProcessor().process(db_wrapper)
 
     # # Ensure awakenings
-    AwokenSkillProcessor().process(db_wrapper)
+    if AwokenSkillProcessor in processors:
+        AwokenSkillProcessor().process(db_wrapper)
 
     # # Ensure tags
-    SkillTagProcessor().process(db_wrapper)
+    if SkillTagProcessor in processors:
+        SkillTagProcessor().process(db_wrapper)
 
     # # Load enemy skills
-    es_processor = EnemySkillProcessor(db_wrapper, cs_database)
-    es_processor.load_static()
-    es_processor.load_enemy_skills()
-    if args.es_dir:
-        es_processor.load_enemy_data(args.es_dir)
+    if EnemySkillProcessor in processors:
+        es_processor = EnemySkillProcessor(db_wrapper, cs_database)
+        es_processor.load_static()
+        es_processor.load_enemy_skills()
+        if args.es_dir:
+            es_processor.load_enemy_data(args.es_dir)
 
     # Load basic series data
-    series_processor = SeriesProcessor(cs_database)
-    series_processor.pre_process(db_wrapper)
+    series_processor = None
+    if SeriesProcessor in processors:
+        series_processor = SeriesProcessor(cs_database)
+        series_processor.pre_process(db_wrapper)
 
     # # Load monster data
-    MonsterProcessor(cs_database).process(db_wrapper)
+    if MonsterProcessor in processors:
+        MonsterProcessor(cs_database).process(db_wrapper)
 
     # Auto-assign monster series
-    series_processor.post_process(db_wrapper)
+    if series_processor is not None:
+        series_processor.post_process(db_wrapper)
 
     # Egg machines
-    EggMachineProcessor(cs_database).process(db_wrapper)
+    if EggMachineProcessor in processors:
+        EggMachineProcessor(cs_database).process(db_wrapper)
 
     # Load dungeon data
-    dungeon_processor = DungeonProcessor(cs_database)
-    dungeon_processor.process(db_wrapper)
-    if not args.skip_long and input_args.server.lower() == "combined":
+    dungeon_processor = None
+    if DungeonProcessor in processors:
+        dungeon_processor = DungeonProcessor(cs_database)
+        dungeon_processor.process(db_wrapper)
+
+    if DungeonContentProcessor in processors and input_args.server.lower() == "combined":
         # Load dungeon data derived from wave info
         DungeonContentProcessor(cs_database).process(db_wrapper)
 
     # Toggle any newly-available dungeons visible
-    dungeon_processor.post_encounter_process(db_wrapper)
+    if dungeon_processor is not None:
+        dungeon_processor.post_encounter_process(db_wrapper)
 
     # Load event data
-    ScheduleProcessor(cs_database).process(db_wrapper)
+    if ScheduleProcessor in processors:
+        ScheduleProcessor(cs_database).process(db_wrapper)
 
     # Load exchange data
-    ExchangeProcessor(cs_database).process(db_wrapper)
+    if ExchangeProcessor in processors:
+        ExchangeProcessor(cs_database).process(db_wrapper)
 
     # Load purchase data
-    PurchaseProcessor(cs_database).process(db_wrapper)
+    if PurchaseProcessor in processors:
+        PurchaseProcessor(cs_database).process(db_wrapper)
 
     # Update timestamps
-    TimestampProcessor().process(db_wrapper)
+    if ExchangeProcessor in processors:
+        TimestampProcessor().process(db_wrapper)
 
-    PurgeDataProcessor().process(db_wrapper)
+    if PurgeDataProcessor in processors:
+        PurgeDataProcessor().process(db_wrapper)
 
-    logger.info('done')
+    logger.info('Done')
 
 
 if __name__ == '__main__':
