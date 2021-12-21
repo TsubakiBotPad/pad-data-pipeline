@@ -32,6 +32,8 @@ class SeriesProcessor(object):
         # For monsters with no series, try applying the series of the ancestor.
         monster_id_to_series_id = db.load_to_key_value('monster_id', 'series_id', 'monster_series', 'priority = 1')
         monster_id_to_ancestor_id = db.load_to_key_value('to_id', 'from_id', 'evolutions')
+        monster_id_to_ancestor_id.update(db.load_to_key_value('to_monster_id', 'from_monster_id', 'transformations'))
+
         for csc in self.data.ownable_cards:
             monster_id = csc.monster_id
             series_id = monster_id_to_series_id.get(monster_id, 0)
