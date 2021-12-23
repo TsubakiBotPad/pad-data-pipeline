@@ -63,13 +63,13 @@ zip -j "${DADGUIDE_MYSQL_ZIP_FILE}" "${DADGUIDE_MYSQL_FILE}"
 #  sqlite3 "${DADGUIDE_WAVE_DATA_FILE}"
 #zip -j "${DADGUIDE_WAVE_DATA_ZIP_FILE}" "${DADGUIDE_WAVE_DATA_FILE}"
 #rm -f "${DADGUIDE_WAVE_DATA_FILE}"
-
-echo "Creating icon zip"
-rm -f /tmp/icons.zip
-# Spammy command
-set +x
-(cd "${DADGUIDE_MEDIA_DIR}" && zip -q -r -0 - icons/*.png awakenings/*.png latents/*/*.png types/*.png badges/*.png) >/tmp/icons.zip
-set -x
-mv /tmp/icons.zip "${DADGUIDE_GAME_DB_DIR}/icons.zip"
+#
+#echo "Creating icon zip"
+#rm -f /tmp/icons.zip
+## Spammy command
+#set +x
+#(cd "${DADGUIDE_MEDIA_DIR}" && zip -q -r -0 - icons/*.png awakenings/*.png latents/*/*.png types/*.png badges/*.png) >/tmp/icons.zip
+#set -x
+#mv /tmp/icons.zip "${DADGUIDE_GAME_DB_DIR}/icons.zip"
 
 echo "{\"last_edited\": $(date +%s)}" >${DADGUIDE_GAME_DB_DIR}/version.json
