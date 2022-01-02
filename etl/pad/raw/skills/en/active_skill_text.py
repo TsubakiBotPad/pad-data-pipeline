@@ -227,7 +227,7 @@ class EnASTextConverter(EnBaseTextConverter):
         skill_text = 'Heal {:d}x RCV for each '.format(int(act.amount_per))
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
         skill_text += self.concat_list_and(filter(None, awakens))
-        skill_text += ' awakening skill on the team'
+        skill_text += ' awoken skill on the team'
         return skill_text
 
     def awakening_attack_boost_convert(self, act):
@@ -235,7 +235,7 @@ class EnASTextConverter(EnBaseTextConverter):
                      fmt_mult(act.amount_per * 100) + '% for each '
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
         skill_text += self.concat_list_and(filter(None, awakens))
-        skill_text += ' awakening skill on the team'
+        skill_text += ' awoken skill on the team'
         return skill_text
 
     def awakening_shield_convert(self, act):
@@ -243,7 +243,7 @@ class EnASTextConverter(EnBaseTextConverter):
                      fmt_mult(act.amount_per * 100) + '% for each '
         awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
         skill_text += self.concat_list_and(filter(None, awakens))
-        skill_text += ' awakening skill on the team'
+        skill_text += ' awoken skill on the team'
         return skill_text
 
     def awakening_stat_boost_convert(self, act):
@@ -258,7 +258,7 @@ class EnASTextConverter(EnBaseTextConverter):
             if act.rcv_per:
                 skill_text += f"increase RCV by {fmt_mult(act.rcv_per * 100)}%"
         awakenings = self.concat_list_and(self.AWAKENING_MAP[a] or '???' for a in act.awakenings if a)
-        skill_text += f" for each {awakenings} awakening skill on the team"
+        skill_text += f" for each {awakenings} awoken skill on the team"
         return skill_text
     
     def change_enemies_attribute_convert(self, act):

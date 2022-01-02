@@ -1913,7 +1913,7 @@ def convert(skill_list: List[MonsterSkill]):
             continue
         for p_id in s.child_ids:
             if p_id not in results:
-                human_fix_logger.warning('failed to look up leader skill id:' + str(p_id))
+                human_fix_logger.warning('Failed to look up leader skill id:' + str(p_id))
                 continue
             p_skill = results[p_id]
             s.child_skills.append(p_skill)
