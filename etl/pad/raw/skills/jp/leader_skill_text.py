@@ -423,6 +423,14 @@ class JpLSTextConverter(JpBaseTextConverter):
             return f"チーム内の{self.typing_to_str(ls.types, '、')}一つにつき" \
                    f"HPが{ls.hp_boost}%と攻撃力が{ls.atk_boost}%と回復力が{ls.rcv_boost}%上がる"
 
+    def rarity_threshold_boost(self, ls):
+        skill_text = f"チームの総レアリティが{{}}の場合、攻撃力{ls.atk}倍"
+        if ls.lower_limit == 0:
+            return skill_text.format(f"{ls.upper_limit}以上")
+        if ls.upper_limit == 9999:
+            return skill_text.format(f"{ls.lower_limit}以下")
+        return skill_text.format(f"{ls.lower_limit}～{ls.upper_limit}")
+
     def full_text(self, text, tags=None):
         tags = tags or []
         if isinstance(text, (str, type(None))):

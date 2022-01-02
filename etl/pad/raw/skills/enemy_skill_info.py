@@ -929,6 +929,14 @@ class ESAbsorbThreshold(ESAbsorb):
         return converter.absorb(self.absorb_type, self.absorb_threshold, self.turns)
 
 
+class ESAbsorbThresholdBig(ESAbsorbThreshold):
+    skill_types = [138]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.absorb_threshold *= 1_0000_0000
+
+
 class ESVoidShield(ESAction):
     skill_types = [71]
 
@@ -947,7 +955,7 @@ class ESVoidShieldBig(ESVoidShield):
 
     def __init__(self, skill: EnemySkill):
         super().__init__(skill)
-        self.turns *= 1_0000_0000
+        self.void_threshold *= 1_0000_0000
 
 
 class ESDamageShield(ESAction):
@@ -2005,6 +2013,7 @@ ENEMY_SKILLS = [
     ESBoardChange,
     ESBoardChangeAttackBits,
     ESAbsorbThreshold,
+    ESAbsorbThresholdBig,
     ESBindAwoken,
     ESSkillDelay,
     ESRandomSpawn,

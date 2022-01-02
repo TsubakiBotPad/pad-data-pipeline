@@ -1253,6 +1253,19 @@ class ASLoopingEvolvingSkill(ASEvolvingSkill):
         return converter.looping_evolving_active(self)
 
 
+class ASConditionalFloorThreshold(ASConditional):
+    skill_type = 234
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 9999])
+        self.lower_limit = data[0]
+        self.upper_limit = data[1] or 9999
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.conditional_floor_thresh(self)
+
+
 class ASInflictES(ActiveSkill):
     skill_type = 1000
 
@@ -1388,5 +1401,6 @@ ALL_ACTIVE_SKILLS = [
     ASAwokenSkillStatBoost,
     ASEvolvingSkill,
     ASLoopingEvolvingSkill,
+    ASConditionalFloorThreshold,
     ASInflictES,
 ]
