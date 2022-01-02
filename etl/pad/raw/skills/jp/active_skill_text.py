@@ -546,9 +546,9 @@ class JpASTextConverter(JpBaseTextConverter):
 
     def conditional_hp_thresh(self, act):
         if act.lower_limit == 0:
-            return f"HP {act.upper_limit}%以下"
+            return f"HP {act.upper_limit}%以下："
         if act.upper_limit == 100:
-            return f"HP {act.lower_limit}%以上"
+            return f"HP {act.lower_limit}%以上："
         return f"HP {act.lower_limit}%～{act.upper_limit}%の場合："
 
     def nail_orb_skyfall(self, act):
