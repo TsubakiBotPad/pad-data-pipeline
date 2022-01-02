@@ -546,10 +546,10 @@ class JpASTextConverter(JpBaseTextConverter):
 
     def conditional_hp_thresh(self, act):
         if act.lower_limit == 0:
-            return f"HP {act.upper_limit}%以下"
+            return f"HP {act.upper_limit}%以下："
         if act.upper_limit == 100:
-            return f"HP {act.lower_limit}%以上"
-        return f"HP{act.lower_limit}%～{act.upper_limit}%の場合："
+            return f"HP {act.lower_limit}%以上："
+        return f"HP {act.lower_limit}%～{act.upper_limit}%の場合："
 
     def nail_orb_skyfall(self, act):
         return f'{self.fmt_duration(act.duration)}釘ドロップが{fmt_mult(act.chance * 100)}％落ちやすくなる'
@@ -589,6 +589,13 @@ class JpASTextConverter(JpBaseTextConverter):
         skill_text += '；'.join(f"{half_to_full(c)}、{skill.full_text(self)}"
                               for c, skill in enumerate(act.child_skills, 1))
         return skill_text
+
+    def conditional_floor_thresh(self, act):
+        if act.lower_limit == 0:
+            return f"バトル{act.upper_limit}以前："
+        if act.upper_limit == 9999:
+            return f"バトル{act.lower_limit}以降："
+        return f"バトル{act.lower_limit}～{act.upper_limit}："
 
     def inflict_es(self, act):
         return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"
