@@ -1294,7 +1294,7 @@ def convert(skill_list: List[MonsterSkill]):
 
         for p_id in s.child_ids:
             if p_id not in results:
-                human_fix_logger.error('failed to look up multi-part active skill id: %d', p_id)
+                human_fix_logger.error('Failed to look up multi-part active skill id: %d', p_id)
                 continue
             p_skill = results[p_id]
             s.child_skills.append(p_skill)
