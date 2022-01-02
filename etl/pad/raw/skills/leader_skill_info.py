@@ -1582,7 +1582,7 @@ class LSFixedMovementTime(LeaderSkill):
         return converter.passive_stats_text(self)
 
 
-class LSRowMatcHPlusDamageReduction(LeaderSkill):
+class LSRowMatchPlusDamageReduction(LeaderSkill):
     skill_type = 182
 
     def __init__(self, ms: MonsterSkill):
@@ -1827,6 +1827,19 @@ class LSColorCrossCombo(LeaderSkill):
         return converter.color_cross_combo_text(self)
 
 
+class LSRarityThresholdBoost(LeaderSkill):
+    skill_type = 217
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [9999, 0, 100])
+        self.upper_limit = data[0] or 9999
+        self.lower_limit = data[1]
+        super().__init__(217, ms, atk=multi_floor(data[2]))
+
+    def text(self, converter) -> str:
+        return converter.rarity_threshold_boost(self)
+
+
 class LSBlobMatchMultiAttrBonusCombo(LeaderSkill):
     skill_type = 219
 
@@ -2031,7 +2044,7 @@ ALL_LEADER_SKILLS = [
     LSCollabConditionalBoost,
     LSOrbRemainingMultiplier,
     LSFixedMovementTime,
-    LSRowMatcHPlusDamageReduction,
+    LSRowMatchPlusDamageReduction,
     LSDualThresholdBoost,
     LSBonusTimeStatBoost,
     LSSevenBySixStatBoost,
@@ -2046,6 +2059,7 @@ ALL_LEADER_SKILLS = [
     LSColorComboBonusCombo,
     LSHeartCrossCombo,
     LSColorCrossCombo,
+    LSRarityThresholdBoost,
     LSBlobMatchMultiAttrBonusCombo,
     LSLMatchComboBoost,
     LSLMatchBonusDamage,

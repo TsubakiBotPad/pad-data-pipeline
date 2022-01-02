@@ -624,6 +624,13 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += f" {c}) {skill.full_text(self)}"
         return skill_text
 
+    def conditional_floor_thresh(self, act):
+        if act.lower_limit == 0:
+            return f"If on floor {act.upper_limit} or earlier: "
+        if act.upper_limit == 9999:
+            return f"If on floor {act.lower_limit} or later: "
+        return f"If between floor {act.lower_limit} and floor {act.upper_limit} (inclusive): "
+
     def inflict_es(self, act):
         if act.selector_type == 2:
             if len(act.players) == 1:
