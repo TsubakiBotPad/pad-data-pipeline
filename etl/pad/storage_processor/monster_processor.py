@@ -3,8 +3,9 @@ import logging
 from pad.common import pad_util
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
-from pad.storage.monster import LeaderSkill, ActiveSkill, Monster, Awakening, Evolution, MonsterWithExtraImageInfo, \
+from pad.storage.monster import Monster, Awakening, Evolution, MonsterWithExtraImageInfo, \
     AltMonster, Transformation
+from pad.storage.monster_skill import ActiveSkill, LeaderSkill, upsert_active_skill_data
 
 logger = logging.getLogger('processor')
 human_fix_logger = logging.getLogger('human_fix')
@@ -26,18 +27,19 @@ class MonsterProcessor(object):
     def _process_skills(self, db: DbWrapper):
         logger.info('loading skills for %s cards', len(self.data.ownable_cards))
         ls_count = 0
-        as_count = 0
+        active_skills = set()
         for csc in self.data.ownable_cards:
-            card_ls = csc.leader_skill
-            if card_ls:
+            if csc.leader_skill:
                 ls_count += 1
-                db.insert_or_update(LeaderSkill.from_css(card_ls))
-            card_as = csc.active_skill
-            if card_as:
-                as_count += 1
-                db.insert_or_update(ActiveSkill.from_css(card_as))
+                db.insert_or_update(LeaderSkill.from_css(csc.leader_skill))
+            if csc.active_skill:
+                active_skills.add(csc.active_skill)
+                db.insert_or_update(ActiveSkill.from_css(csc.active_skill))
 
-        logger.info('loaded %s leader skills and %s active skills', ls_count, as_count)
+        for acss in active_skills:
+            upsert_active_skill_data(db, acss)
+
+        logger.info('loaded %s leader skills and %s active skills', ls_count, len(active_skills))
 
     def _process_monsters(self, db):
         logger.info('loading %s monsters', len(self.data.ownable_cards))

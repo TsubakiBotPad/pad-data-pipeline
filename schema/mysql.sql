@@ -320,7 +320,7 @@ CREATE TABLE `dungeons` (
   `dungeon_id` int(11) NOT NULL,
   `name_ja` text NOT NULL,
   `name_en` text NOT NULL,
-  `name_ko` text NOT NULL,
+  `name_ko` tags NOT NULL,
   `dungeon_type` int(11) NOT NULL,
   `series_id` int(11) DEFAULT NULL,
   `icon_id` int(11) DEFAULT NULL,
