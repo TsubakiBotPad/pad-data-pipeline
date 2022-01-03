@@ -246,13 +246,13 @@ class ActiveSkillsCompound(SimpleSqlItem):
             -> 'ActiveSkillsCompound':
         skill = skill.cur_skill
 
-        compound_skill_type_id = -1
+        compound_skill_type_id = 0
         if isinstance(skill, ASRandomSkill):
-            compound_skill_type_id = 0
-        elif isinstance(skill, ASEvolvingSkill):
             compound_skill_type_id = 1
-        elif isinstance(skill, ASLoopingEvolvingSkill):
+        elif isinstance(skill, ASEvolvingSkill):
             compound_skill_type_id = 2
+        elif isinstance(skill, ASLoopingEvolvingSkill):
+            compound_skill_type_id = 3
 
         return ActiveSkillsCompound(
             active_skills_compound_id=None,  # Key that is looked up or inserted
@@ -293,18 +293,22 @@ class ActiveSkillsCompound(SimpleSqlItem):
 
 
 def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
+    db.insert_or_update(ActivePart.from_css(skill.cur_skill))
     for part in skill.cur_skill.parts:
         db.insert_or_update(ActivePart.from_css(part))
+
+    if isinstance(skill.cur_skill, ASMultiPartSkill):
+        for c, part in enumerate(skill.cur_skill.parts):
+            db.insert_or_update(ActiveSkillParts.from_css(skill, part, c))
+    else:
+        db.insert_or_update(ActiveSkillParts.from_css(skill, skill.cur_skill, 0))
 
     if isinstance(skill.cur_skill, ASCompound):
         for c, subskill in enumerate(skill.cur_skill.child_skills):
             db.insert_or_update(ActiveSkill.from_as(subskill))
             db.insert_or_update(ActiveSkillsCompound.from_css(skill, subskill, c))
-    elif isinstance(skill.cur_skill, ASMultiPartSkill):
-        for c, part in enumerate(skill.cur_skill.parts):
-            db.insert_or_update(ActiveSkillParts.from_css(skill, part, c))
     else:
-        db.insert_or_update(ActiveSkillParts.from_css(skill, skill.cur_skill, 0))
+        db.insert_or_update(ActiveSkillsCompound.from_css(skill, skill.cur_skill, 0))
 
 
 class LeaderSkill(SimpleSqlItem):

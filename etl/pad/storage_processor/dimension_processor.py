@@ -158,9 +158,10 @@ class DCompoundSkillTypes(SimpleSqlItem):
 
 
 D_COMPOUND_SKILL_TYPES = [
-    DCompoundSkillTypes(0, 'Random'),
-    DCompoundSkillTypes(1, 'Evolving'),
-    DCompoundSkillTypes(2, 'Looping'),
+    DCompoundSkillTypes(0, 'Normal'),
+    DCompoundSkillTypes(1, 'Random'),
+    DCompoundSkillTypes(2, 'Evolving'),
+    DCompoundSkillTypes(3, 'Looping'),
 ]
 
 
