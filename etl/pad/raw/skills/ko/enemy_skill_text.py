@@ -2,7 +2,7 @@ import logging
 
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.en.skill_common import ordinal, minmax
-from pad.raw.skills.kr.skill_common import KrBaseTextConverter
+from pad.raw.skills.ko.skill_common import KoBaseTextConverter
 from pad.raw.skills.skill_common import TargetType, OrbShape, Status, Unit, Source, Absorb
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -46,7 +46,7 @@ ORB_SHAPES = {
 
 
 def orbshape_to_str(shapes):
-    return KrBaseTextConverter.concat_list_and([ORB_SHAPES[x] for x in shapes])
+    return KoBaseTextConverter.concat_list_and([ORB_SHAPES[x] for x in shapes])
 
 
 STATUSES = {
@@ -65,12 +65,12 @@ UNITS = {
 
 SOURCE_FUNCS = {
     Source.all_sources: lambda x: 'all sources',
-    Source.types: KrBaseTextConverter.typing_to_str,
-    Source.attrs: KrBaseTextConverter.attributes_to_str,
+    Source.types: KoBaseTextConverter.typing_to_str,
+    Source.attrs: KoBaseTextConverter.attributes_to_str,
 }
 
 
-class KrESTextConverter(KrBaseTextConverter, EnESTextConverter):
+class KoESTextConverter(KoBaseTextConverter, EnESTextConverter):
     def not_set(self):
         return 'No description set'
 

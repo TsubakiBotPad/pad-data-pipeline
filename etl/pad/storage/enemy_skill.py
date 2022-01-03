@@ -4,7 +4,7 @@ from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.common.utils import classproperty
 from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerESInstance
-from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
+from pad.raw.skills.ja.enemy_skill_text import JaESTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.emoji_en.enemy_skill_text import EnEmojiESTextConverter
 
@@ -50,7 +50,7 @@ class EnemySkill(SimpleSqlItem):
         max_hits = exemplar.attack.max_hits if has_attack else 0
         atk_mult = exemplar.attack.atk_multiplier if has_attack else 0
 
-        ja_desc = exemplar.full_description(JpESTextConverter())
+        ja_desc = exemplar.full_description(JaESTextConverter())
         en_desc = exemplar.full_description(EnESTextConverter())
         # ko_desc = exemplar.full_description(KrESTextConverter())
         en_emoji_desc = exemplar.full_description(EnEmojiESTextConverter())
