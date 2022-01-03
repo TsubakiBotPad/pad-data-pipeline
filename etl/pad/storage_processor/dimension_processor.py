@@ -87,6 +87,45 @@ class DEventType(SimpleSqlItem):
 
 D_EVENT_TYPES = [
     DEventType(0, 'General'),
+    DEventType(1, 'EXP Boost'),
+    DEventType(2, 'Coin Boost'),
+    DEventType(3, 'Drop Boost'),
+    DEventType(5, 'Stamina Reduction'),
+    DEventType(6, 'Dungeon'),
+    DEventType(8, 'PEM Event'),
+    DEventType(9, 'REM Event'),
+    DEventType(10, 'PEM Cost'),
+    DEventType(11, 'Feed XP Bonus Chance'),
+    DEventType(12, 'Plus Drop Rate 1'),
+    DEventType(13, 'Unknown 13'),
+    DEventType(14, 'Unknown 14'),
+    DEventType(15, 'Send Egg Roll'),
+    DEventType(16, 'Plus Drop Rate 2'),
+    DEventType(17, 'Feed Skillup Bonus Chance'),
+    DEventType(20, 'Tournament Active'),
+    DEventType(21, 'Tournament Closed'),
+    DEventType(22, 'Score Announcement'),
+    DEventType(23, 'PAD Metadata'),
+    DEventType(24, 'Gift Dungeon with Reward'),
+    DEventType(25, 'Dungeon Special Event'),
+    DEventType(29, 'Multiplayer Announcement'),
+    DEventType(31, 'Multiplayer Dungeon Text'),
+    DEventType(32, 'Tournament Text'),
+    DEventType(33, 'PAD Metadata 2'),
+    DEventType(36, 'Daily Dragons'),
+    DEventType(37, 'Monthly Quest Dungeon'),
+    DEventType(38, 'Exchange Text'),
+    DEventType(39, 'Dungeon Floor Text'),
+    DEventType(40, 'Unknown 40'),
+    DEventType(41, 'Normal Announcement'),
+    DEventType(42, 'Technical Announcement'),
+    DEventType(43, 'Dungeon Web Info Link'),
+    DEventType(44, 'Stone Purchase Text'),
+    DEventType(47, 'Story Category Text'),
+    DEventType(50, 'Special Dungeon Info Link'),
+    DEventType(52, 'Dungeon Unavailable Popup'),
+    DEventType(53, '8P Reward Table'),
+    DEventType(54, 'VEM Event'),
 ]
 
 
@@ -104,8 +143,6 @@ D_EGG_MACHINE_TYPES = [
     DEggMachinesType(0, 'Special'),
     DEggMachinesType(1, 'REM'),
     DEggMachinesType(2, 'PEM'),
-<<<<<<< Updated upstream
-=======
     DEggMachinesType(3, 'VEM'),
 ]
 
@@ -125,7 +162,6 @@ D_COMPOUND_SKILL_TYPES = [
     DCompoundSkillTypes(1, 'Random'),
     DCompoundSkillTypes(2, 'Evolving'),
     DCompoundSkillTypes(3, 'Looping'),
->>>>>>> Stashed changes
 ]
 
 
@@ -143,4 +179,6 @@ class DimensionProcessor(object):
         for item in D_EVENT_TYPES:
             db.insert_or_update(item)
         for item in D_EGG_MACHINE_TYPES:
+            db.insert_or_update(item)
+        for item in D_COMPOUND_SKILL_TYPES:
             db.insert_or_update(item)
