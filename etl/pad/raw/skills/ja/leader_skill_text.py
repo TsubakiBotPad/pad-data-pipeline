@@ -3,7 +3,7 @@ import logging
 import os
 from typing import List
 
-from pad.raw.skills.jp.skill_common import JpBaseTextConverter, fmt_mult
+from pad.raw.skills.ja.skill_common import JaBaseTextConverter, fmt_mult
 from pad.raw.skills.skill_common import Tag
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -12,7 +12,7 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 SERIES = json.load(open(os.path.join(__location__, "../../../storage_processor/series.json")))
 
 
-class JpLSTextConverter(JpBaseTextConverter):
+class JaLSTextConverter(JaBaseTextConverter):
     _COLLAB_MAP = {x['collab_id']: x['name_ja'] for x in SERIES if 'collab_id' in x}
     _GROUP_MAP = {
         0: 'ドット進化',

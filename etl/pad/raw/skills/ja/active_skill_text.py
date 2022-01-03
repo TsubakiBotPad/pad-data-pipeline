@@ -2,7 +2,7 @@ from collections import OrderedDict
 from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
-from pad.raw.skills.jp.skill_common import JpBaseTextConverter, minmax
+from pad.raw.skills.ja.skill_common import JaBaseTextConverter, minmax
 
 
 def fmt_mult(x):
@@ -35,7 +35,7 @@ def half_to_full(n):
     return o
 
 
-class JpASTextConverter(JpBaseTextConverter):
+class JaASTextConverter(JaBaseTextConverter):
     def fmt_repeated(self, text, amount):
         return '{}ｘ{}回'.format(text, amount)
 

@@ -15,16 +15,16 @@ from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
 from pad.raw.skills.enemy_skill_info import BEHAVIOR_MAP
-from pad.raw.skills.jp.active_skill_text import JpASTextConverter
-from pad.raw.skills.jp.enemy_skill_text import JpESTextConverter
-from pad.raw.skills.jp.leader_skill_text import JpLSTextConverter
+from pad.raw.skills.ja.active_skill_text import JaASTextConverter
+from pad.raw.skills.ja.enemy_skill_text import JaESTextConverter
+from pad.raw.skills.ja.leader_skill_text import JaLSTextConverter
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw_processor import merged_database
 from pad.raw_processor.crossed_data import CrossServerDatabase, CrossServerEnemySkill, CrossServerDungeon
 
-AS_CONVERTERS = (JpASTextConverter(), EnASTextConverter(), EnASTextConverter())
-LS_CONVERTERS = (JpLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
-ES_CONVERTERS = (JpESTextConverter(), EnESTextConverter(), EnESTextConverter(), EnEmojiESTextConverter())
+AS_CONVERTERS = (JaASTextConverter(), EnASTextConverter(), EnASTextConverter())
+LS_CONVERTERS = (JaLSTextConverter(), EnLSTextConverter(), EnLSTextConverter())
+ES_CONVERTERS = (JaESTextConverter(), EnESTextConverter(), EnESTextConverter(), EnEmojiESTextConverter())
 
 
 def parse_args():

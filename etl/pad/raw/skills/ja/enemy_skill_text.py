@@ -1,6 +1,6 @@
 import logging
 
-from pad.raw.skills.jp.skill_common import JpBaseTextConverter, minmax
+from pad.raw.skills.ja.skill_common import JaBaseTextConverter, minmax
 from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -32,7 +32,7 @@ TARGET_NAMES = {
 
 def targets_to_str(targets):
     return targets if isinstance(targets, str) \
-        else JpBaseTextConverter().concat_list_and([TARGET_NAMES[x] for x in targets])
+        else JaBaseTextConverter().concat_list_and([TARGET_NAMES[x] for x in targets])
 
 
 ORB_SHAPES = {
@@ -42,7 +42,7 @@ ORB_SHAPES = {
 
 
 def orbshape_to_str(shapes):
-    return JpBaseTextConverter().concat_list_and([ORB_SHAPES[x] for x in shapes])
+    return JaBaseTextConverter().concat_list_and([ORB_SHAPES[x] for x in shapes])
 
 
 UNITS = {
@@ -54,12 +54,12 @@ UNITS = {
 
 SOURCE_FUNCS = {
     Source.all_sources: lambda x: '受ける',
-    Source.types: JpBaseTextConverter().typing_to_str,
-    Source.attrs: JpBaseTextConverter().attributes_to_str,
+    Source.types: JaBaseTextConverter().typing_to_str,
+    Source.attrs: JaBaseTextConverter().attributes_to_str,
 }
 
 
-class JpESTextConverter(JpBaseTextConverter):
+class JaESTextConverter(JaBaseTextConverter):
     def not_set(self):
         return '詳細はありません'
 

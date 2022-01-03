@@ -68,6 +68,10 @@ class ASMultiPart(ActiveSkill):
         return transform_id
 
 
+class ASCompound(ASMultiPart):
+    pass
+
+
 class ASMultiplierMultiTargetAttrNuke(ActiveSkill):
     # Do not add this to the ALL_SKILLS list! skill_type=0 can imply 'no skill'
     skill_type = 0
@@ -624,7 +628,7 @@ class ASHpRecoveryandBindClear(ActiveSkill):
         return converter.heal_active_convert(self)
 
 
-class ASRandomSkill(ASMultiPart):
+class ASRandomSkill(ASCompound):
     skill_type = 118
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1239,14 +1243,14 @@ class ASAwokenSkillStatBoost(ActiveSkill):
         return converter.awakening_stat_boost_convert(self)
 
 
-class ASEvolvingSkill(ASMultiPart):
+class ASEvolvingSkill(ASCompound):
     skill_type = 232
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.evolving_active(self)
 
 
-class ASLoopingEvolvingSkill(ASEvolvingSkill):
+class ASLoopingEvolvingSkill(ASCompound):
     skill_type = 233
 
     def text(self, converter: ASTextConverter) -> str:
