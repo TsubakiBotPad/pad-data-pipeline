@@ -7,7 +7,8 @@ from pad.storage.dungeon import Dungeon, SubDungeon
 from pad.storage.egg_machine import EggMachine
 from pad.storage.encounter import Encounter, Drop
 from pad.storage.enemy_skill import EnemySkill, EnemyData
-from pad.storage.monster import Monster, ActiveSkill, LeaderSkill, Awakening, Evolution
+from pad.storage.monster import Monster, Awakening, Evolution
+from pad.storage.monster_skill import ActiveSkill, LeaderSkill
 from pad.storage.rank_reward import RankReward
 from pad.storage.schedule import ScheduleEvent
 from pad.storage.series import Series
