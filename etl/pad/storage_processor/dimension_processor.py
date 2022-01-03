@@ -104,6 +104,28 @@ D_EGG_MACHINE_TYPES = [
     DEggMachinesType(0, 'Special'),
     DEggMachinesType(1, 'REM'),
     DEggMachinesType(2, 'PEM'),
+<<<<<<< Updated upstream
+=======
+    DEggMachinesType(3, 'VEM'),
+]
+
+
+class DCompoundSkillTypes(SimpleSqlItem):
+    """Compound active skill group types."""
+    TABLE = 'd_compound_skill_types'
+    KEY_COL = 'compound_skill_type_id'
+
+    def __init__(self, compound_skill_type_id: int = None, name: str = None):
+        self.compound_skill_type_id = compound_skill_type_id
+        self.name = name
+
+
+D_COMPOUND_SKILL_TYPES = [
+    DCompoundSkillTypes(0, 'Normal'),
+    DCompoundSkillTypes(1, 'Random'),
+    DCompoundSkillTypes(2, 'Evolving'),
+    DCompoundSkillTypes(3, 'Looping'),
+>>>>>>> Stashed changes
 ]
 
 
