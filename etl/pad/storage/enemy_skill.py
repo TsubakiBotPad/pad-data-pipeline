@@ -10,6 +10,7 @@ from pad.raw.skills.ko.enemy_skill_text import KoESTextConverter
 from pad.raw_processor.crossed_data import CrossServerESInstance
 
 
+class EnemySkill(SimpleSqlItem):
     """Enemy skill data."""
     KEY_COL = 'enemy_skill_id'
 
