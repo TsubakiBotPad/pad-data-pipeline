@@ -3,15 +3,13 @@ import os
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
 from pad.common.utils import classproperty
 from pad.db.sql_item import SimpleSqlItem
-from pad.raw_processor.crossed_data import CrossServerESInstance
-from pad.raw.skills.ja.enemy_skill_text import JaESTextConverter
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.emoji_en.enemy_skill_text import EnEmojiESTextConverter
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+from pad.raw.skills.ja.enemy_skill_text import JaESTextConverter
+from pad.raw.skills.ko.enemy_skill_text import KoESTextConverter
+from pad.raw_processor.crossed_data import CrossServerESInstance
 
 
-# from pad.raw.skills.kr.enemy_skill_text import KrESTextConverter
-
-class EnemySkill(SimpleSqlItem):
     """Enemy skill data."""
     KEY_COL = 'enemy_skill_id'
 
@@ -50,20 +48,20 @@ class EnemySkill(SimpleSqlItem):
         max_hits = exemplar.attack.max_hits if has_attack else 0
         atk_mult = exemplar.attack.atk_multiplier if has_attack else 0
 
-        ja_desc = exemplar.full_description(JaESTextConverter())
-        en_desc = exemplar.full_description(EnESTextConverter())
-        # ko_desc = exemplar.full_description(KrESTextConverter())
-        en_emoji_desc = exemplar.full_description(EnEmojiESTextConverter())
+        desc_ja = exemplar.full_description(JaESTextConverter())
+        desc_en = exemplar.full_description(EnESTextConverter())
+        desc_ko = exemplar.full_description(KoESTextConverter())
+        desc_en_emoji = exemplar.full_description(EnEmojiESTextConverter())
 
         return EnemySkill(
             enemy_skill_id=o.enemy_skill_id,
             name_ja=o.jp_skill.name,
             name_en=o.na_skill.name,
             name_ko=o.kr_skill.name,
-            desc_ja=ja_desc,
-            desc_en=en_desc,
-            desc_ko=en_desc,
-            desc_en_emoji=en_emoji_desc,
+            desc_ja=desc_ja,
+            desc_en=desc_en,
+            desc_ko=desc_ko,
+            desc_en_emoji=desc_en_emoji,
             min_hits=min_hits,
             max_hits=max_hits,
             atk_mult=atk_mult)

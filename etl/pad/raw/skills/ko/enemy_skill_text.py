@@ -117,7 +117,7 @@ class KoESTextConverter(KoBaseTextConverter, EnESTextConverter):
 
     def enrage(self, mult, turns):
         output = '{}턴동안 공격력 {}%로 상승' if turns else '다음 {}번 공격 {}% 데미지'
-        return output.format(mult)
+        return output.format(turns, mult)
 
     def status_shield(self, turns):
         return '{}턴 동안 상태이상 무효화 '.format(turns)
@@ -160,7 +160,7 @@ class KoESTextConverter(KoBaseTextConverter, EnESTextConverter):
 
     def row_col_spawn(self, position_type, positions, attributes):
         return '{}을 {}드롭으로 변환'.format(
-            self.concat_list_and(map(lambda x: x + ORB_SHAPES[position_type], positions)),
+            self.concat_list_and(map(lambda x: str(x) + ORB_SHAPES[position_type], positions)),
             self.attributes_to_str(attributes))
 
     def row_col_multi(self, desc_arr):
