@@ -40,8 +40,11 @@ class ActiveSkill(object):
     def text(self, converter: ASTextConverter) -> str:
         return '<unsupported>: {}'.format(self.raw_description)
 
-    def full_text(self, converter: ASTextConverter) -> str:
+    def templated_text(self, converter: ASTextConverter) -> str:
         return self.text(converter) or ''
+
+    def full_text(self, converter: ASTextConverter) -> str:
+        return converter.process_raw(self.templated_text(converter))
 
 
 class ASConditional(ActiveSkill):
@@ -595,14 +598,17 @@ class ASMiniNukeandHpRecovery(ActiveSkill):
         return converter.drain_attr_attack_convert(self)
 
 
-class PartWithTextAndCount(object):
+class PartWithTextAndCount:
     def __init__(self, act: ActiveSkill, text: str):
         self.act = act
         self.text = text
         self.repeat = 1
 
-    def full_text(self, converter: ASTextConverter):
+    def templated_text(self, converter: ASTextConverter):
         return self.text if self.repeat == 1 else converter.fmt_repeated(self.text, self.repeat)
+
+    def full_text(self, converter: ASTextConverter):
+        return converter.process_raw(self.templated_text(converter))
 
 
 class ASMultiPartSkill(ASMultiPart):

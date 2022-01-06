@@ -39,33 +39,39 @@ class ActiveSkill(SimpleSqlItem):
         kr_skill = css.kr_skill
         cur_skill = css.cur_skill
 
-        ja_description = cur_skill.full_text(JaASTextConverter())
-        en_description = cur_skill.full_text(EnASTextConverter())
+        desc_ja = cur_skill.full_text(JaASTextConverter())
+        desc_ja_templated = cur_skill.templated_text(JaASTextConverter())
+        desc_en = cur_skill.full_text(EnASTextConverter())
+        desc_en_templated = cur_skill.templated_text(EnASTextConverter())
+        desc_ko = cur_skill.full_text(KoASTextConverter())
+        desc_ko_templated = cur_skill.templated_text(KoASTextConverter())
 
         skill_type_tags = skill_text_typing.parse_as_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
-        # In the event that we don't have KR data, use the NA name and calculated description.
-        kr_name = kr_skill.name if cur_skill != kr_skill else na_skill.name
-        ko_desc = kr_skill.raw_description if cur_skill != kr_skill else en_description
-
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
-            name_ja=cur_skill.name,
+            name_ja=jp_skill.name,
             name_en=na_skill.name,
-            name_ko=kr_name,
-            desc_ja=ja_description,
-            desc_en=en_description,
-            desc_ko=ko_desc,
+            name_ko=kr_skill.name,
+            desc_ja=desc_ja,
+            desc_ja_templated=desc_ja_templated,
+            desc_en=desc_en,
+            desc_en_templated=desc_en_templated,
+            desc_ko=desc_ko,
+            desc_ko_templated=desc_ko_templated,
             turn_max=cur_skill.turn_max,
             turn_min=cur_skill.turn_min,
             tags=tags)
 
     @staticmethod
     def from_as(act: ASSkill) -> 'ActiveSkill':
-        ja_description = act.full_text(JaASTextConverter())
-        en_description = act.full_text(EnASTextConverter())
-        ko_description = act.full_text(EnASTextConverter())
+        desc_ja = act.full_text(JaASTextConverter())
+        desc_ja_templated = act.templated_text(JaASTextConverter())
+        desc_en = act.full_text(EnASTextConverter())
+        desc_en_templated = act.templated_text(EnASTextConverter())
+        desc_ko = act.full_text(KoASTextConverter())
+        desc_ko_templated = act.templated_text(KoASTextConverter())
 
         skill_type_tags = skill_text_typing.parse_as_conditions(act, True)
         tags = skill_text_typing.format_conditions(skill_type_tags)
@@ -75,9 +81,12 @@ class ActiveSkill(SimpleSqlItem):
             name_ja="",
             name_en="",
             name_ko="",
-            desc_ja=ja_description,
-            desc_en=en_description,
-            desc_ko=ko_description,
+            desc_ja=desc_ja,
+            desc_ja_templated=desc_ja_templated,
+            desc_en=desc_en,
+            desc_en_templated=desc_en_templated,
+            desc_ko=desc_ko,
+            desc_ko_templated=desc_ko_templated,
             turn_max=act.turn_max or -1,
             turn_min=act.turn_min or -1,
             tags=tags)
@@ -88,8 +97,11 @@ class ActiveSkill(SimpleSqlItem):
                  name_en: str = None,
                  name_ko: str = None,
                  desc_ja: str = None,
+                 desc_ja_templated: str = None,
                  desc_en: str = None,
+                 desc_en_templated: str = None,
                  desc_ko: str = None,
+                 desc_ko_templated: str = None,
                  turn_max: int = None,
                  turn_min: int = None,
                  tags: str = None,
@@ -99,8 +111,11 @@ class ActiveSkill(SimpleSqlItem):
         self.name_en = name_en
         self.name_ko = name_ko
         self.desc_ja = desc_ja
+        self.desc_ja_templated = desc_ja_templated
         self.desc_en = desc_en
+        self.desc_en_templated = desc_en_templated
         self.desc_ko = desc_ko
+        self.desc_ko_templated = desc_ko_templated
         self.turn_max = turn_max
         self.turn_min = turn_min
         self.tags = tags
@@ -130,9 +145,12 @@ class ActivePart(SimpleSqlItem):
 
     @staticmethod
     def from_css(act: ASSkill) -> 'ActivePart':
-        ja_description = act.full_text(JaASTextConverter())
-        en_description = act.full_text(EnASTextConverter())
-        ko_description = act.full_text(KoASTextConverter())
+        desc_ja = act.full_text(JaASTextConverter())
+        desc_ja_templated = act.templated_text(JaASTextConverter())
+        desc_en = act.full_text(EnASTextConverter())
+        desc_en_templated = act.templated_text(EnASTextConverter())
+        desc_ko = act.full_text(KoASTextConverter())
+        desc_ko_templated = act.templated_text(KoASTextConverter())
 
         skill_type_tags = skill_text_typing.parse_as_conditions(act, True)
         tags = skill_text_typing.format_conditions(skill_type_tags)
@@ -140,24 +158,32 @@ class ActivePart(SimpleSqlItem):
         return ActivePart(
             active_part_id=act.skill_id,
             active_skill_type_id=act.skill_type,
-            desc_ja=ja_description,
-            desc_en=en_description,
-            desc_ko=ko_description,
+            desc_ja=desc_ja,
+            desc_ja_templated=desc_ja_templated,
+            desc_en=desc_en,
+            desc_en_templated=desc_en_templated,
+            desc_ko=desc_ko,
+            desc_ko_templated=desc_ko_templated,
             tags=tags)
 
     def __init__(self,
                  active_part_id: int = None,
                  active_skill_type_id: int = None,
                  desc_ja: str = None,
+                 desc_ja_templated: str = None,
                  desc_en: str = None,
+                 desc_en_templated: str = None,
                  desc_ko: str = None,
+                 desc_ko_templated: str = None,
                  tags: str = None,
                  tstamp: int = None):
         self.active_part_id = active_part_id
         self.active_skill_type_id = active_skill_type_id
-        self.desc_ja = desc_ja
+        self.desc_ja_templated = desc_ja_templated
         self.desc_en = desc_en
+        self.desc_en_templated = desc_en_templated
         self.desc_ko = desc_ko
+        self.desc_ko_templated = desc_ko_templated
         self.tags = tags
         self.tstamp = tstamp
 
@@ -334,25 +360,25 @@ class LeaderSkill(SimpleSqlItem):
         kr_skill = css.kr_skill
         cur_skill = css.cur_skill
 
-        en_ls_converter = EnLSTextConverter()
         jp_ls_converter = JaLSTextConverter()
-        en_description = cur_skill.full_text(en_ls_converter) or na_skill.raw_description
-        ja_description = cur_skill.full_text(jp_ls_converter) or jp_skill.raw_description
+        en_ls_converter = EnLSTextConverter()
+        desc_ja = cur_skill.full_text(jp_ls_converter) or jp_skill.raw_description
+        desc_en = cur_skill.full_text(en_ls_converter) or na_skill.raw_description
         skill_type_tags = skill_text_typing.parse_ls_conditions(css)
         tags = skill_text_typing.format_conditions(skill_type_tags)
 
         # In the event that we don't have KR data, use the NA name and calculated description.
-        kr_name = kr_skill.name if cur_skill != kr_skill else na_skill.name
-        ko_desc = kr_skill.raw_description if cur_skill != kr_skill else en_description
+        name_ko = kr_skill.name if cur_skill != kr_skill else na_skill.name
+        desc_ko = kr_skill.raw_description if cur_skill != kr_skill else desc_en
 
         return LeaderSkill(
             leader_skill_id=jp_skill.skill_id,
             name_ja=jp_skill.name,
             name_en=na_skill.name,
-            name_ko=kr_name,
-            desc_ja=ja_description,
-            desc_en=en_description,
-            desc_ko=ko_desc,
+            name_ko=name_ko,
+            desc_ja=desc_ja,
+            desc_en=desc_en,
+            desc_ko=desc_ko,
             max_hp=cur_skill.hp,
             max_atk=cur_skill.atk,
             max_rcv=cur_skill.rcv,

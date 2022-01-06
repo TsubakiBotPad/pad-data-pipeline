@@ -1,6 +1,8 @@
 from typing import Dict
 from enum import Enum, auto
 
+import jinja2
+
 
 class I13NotImplemented(NotImplementedError):
     pass
@@ -18,7 +20,7 @@ def multi_getattr(o, *args):
     raise Exception('Attributes not found:' + str(args))
 
 
-class BaseTextConverter(object):
+class BaseTextConverter:
     """Contains code shared across AS and LS converters."""
     _ATTRS = _TYPES = {}
 
@@ -86,6 +88,11 @@ class BaseTextConverter(object):
 
     ATTRS_EXCEPT_BOMBS = list(range(9))
     ALL_ATTRS = list(range(10))
+
+    def process_raw(self, text: str) -> str:
+        return jinja2.Template(text).render(
+            awoskills={f"id{awid}": name for awid, name in self.AWAKENING_MAP.items()}
+        )
 
 
 # ENUMS
