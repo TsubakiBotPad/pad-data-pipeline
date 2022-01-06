@@ -1,29 +1,18 @@
-import os
 from datetime import date
 from typing import List, Optional
 
-from pad.common.shared_types import Server, MonsterId, MonsterNo
-from pad.common.utils import format_int_list, classproperty
+from pad.common.shared_types import MonsterId, MonsterNo, Server
+from pad.common.utils import format_int_list
 from pad.db import sql_item
-from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
+from pad.db.sql_item import ExistsStrategy
 from pad.raw_processor.crossed_data import CrossServerCard
+from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
 
-class Monster(SimpleSqlItem):
+class Monster(ServerDependentSqlItem):
     """Monster data."""
     KEY_COL = 'monster_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'monsters_na'
-        # elif server.upper() == "JP":
-        #    return 'monsters_jp'
-        # elif server.upper() == "KR":
-        #     return 'monsters_kr'
-        else:
-            return 'monsters'
+    BASE_TABLE = 'monsters'
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> 'Monster':
@@ -60,10 +49,10 @@ class Monster(SimpleSqlItem):
                 return s
             return s.raw_data
 
-        diff_stats = diff_possible and (jp_card.max_hp != na_card.max_hp or         # This whole block is only
-                                        jp_card.max_atk != na_card.max_atk or       # applicable when dealing with
-                                        jp_card.max_rcv != na_card.max_rcv or       # JP cards.  Ignore when building
-                                        jp_card.max_level != na_card.max_level or   # a NA database.
+        diff_stats = diff_possible and (jp_card.max_hp != na_card.max_hp or  # This whole block is only
+                                        jp_card.max_atk != na_card.max_atk or  # applicable when dealing with
+                                        jp_card.max_rcv != na_card.max_rcv or  # JP cards.  Ignore when building
+                                        jp_card.max_level != na_card.max_level or  # a NA database.
                                         jp_card.limit_mult != na_card.limit_mult)
         diff_awakenings = diff_possible and (jp_card.awakenings != na_card.awakenings or
                                              jp_card.super_awakenings != na_card.super_awakenings)
@@ -249,21 +238,10 @@ class Monster(SimpleSqlItem):
         return 'Monster({}): {}'.format(self.key_value(), self.name_en)
 
 
-class MonsterWithExtraImageInfo(SimpleSqlItem):
+class MonsterWithExtraImageInfo(ServerDependentSqlItem):
     """Monster helper for updating the image-related info."""
     KEY_COL = 'monster_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'monsters_na'
-        # elif server.upper() == "JP":
-        #    return 'monsters_jp'
-        # elif server.upper() == "KR":
-        #     return 'monsters_kr'
-        else:
-            return 'monsters'
+    BASE_TABLE = 'monsters'
 
     def __init__(self,
                  monster_id: int = None,
@@ -279,21 +257,10 @@ class MonsterWithExtraImageInfo(SimpleSqlItem):
         return 'MonsterImage({}): animated={} hq={}'.format(self.key_value(), self.has_animation, self.has_hqimage)
 
 
-class MonsterWithMPValue(SimpleSqlItem):
+class MonsterWithMPValue(ServerDependentSqlItem):
     """Monster helper for inserting MP purchase."""
     KEY_COL = 'monster_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'monsters_na'
-        # elif server.upper() == "JP":
-        #    return 'monsters_jp'
-        # elif server.upper() == "KR":
-        #     return 'monsters_kr'
-        else:
-            return 'monsters'
+    BASE_TABLE = 'monsters'
 
     def __init__(self,
                  monster_id: int = None,
@@ -307,21 +274,10 @@ class MonsterWithMPValue(SimpleSqlItem):
         return 'MonsterMP({}): {}'.format(self.key_value(), self.buy_mp)
 
 
-class Awakening(SimpleSqlItem):
+class Awakening(ServerDependentSqlItem):
     """Monster awakening entry."""
     KEY_COL = 'awakening_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'awakenings_na'
-        # elif server.upper() == "JP":
-        #    return 'awakenings_jp'
-        # elif server.upper() == "KR":
-        #     return 'awakenings_kr'
-        else:
-            return 'awakenings'
+    BASE_TABLE = 'awakenings'
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> List['Awakening']:
@@ -372,21 +328,10 @@ class Awakening(SimpleSqlItem):
             self.key_value(), self.monster_id, self.awoken_skill_id, self.is_super)
 
 
-class Evolution(SimpleSqlItem):
+class Evolution(ServerDependentSqlItem):
     """Monster evolution entry."""
     KEY_COL = 'evolution_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'evolutions_na'
-        # elif server.upper() == "JP":
-        #    return 'evolutions_jp'
-        # elif server.upper() == "KR":
-        #     return 'evolutions_kr'
-        else:
-            return 'evolutions'
+    BASE_TABLE = 'evolutions'
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> Optional['Evolution']:
@@ -456,21 +401,10 @@ class Evolution(SimpleSqlItem):
         return 'Evo ({}): {} -> {}, type={}'.format(self.key_value(), self.from_id, self.to_id, self.evolution_type)
 
 
-class Transformation(SimpleSqlItem):
+class Transformation(ServerDependentSqlItem):
     """Monster evolution entry."""
     KEY_COL = 'transformation_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'transformations_na'
-        # elif server.upper() == "JP":
-        #    return 'transformations_jp'
-        # elif server.upper() == "KR":
-        #     return 'transformations_kr'
-        else:
-            return 'transformations'
+    BASE_TABLE = 'transformations'
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> Optional['Transformation']:
@@ -510,21 +444,10 @@ class Transformation(SimpleSqlItem):
         return 'Transform ({}): {} -> {}'.format(self.key_value(), self.from_monster_id, self.to_monster_id)
 
 
-class AltMonster(SimpleSqlItem):
+class AltMonster(ServerDependentSqlItem):
     """Alt. monster data."""
     KEY_COL = 'alt_monster_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'alt_monsters_na'
-        # elif server.upper() == "JP":
-        #    return 'alt_monsters_jp'
-        # elif server.upper() == "KR":
-        #     return 'alt_monsters_kr'
-        else:
-            return 'alt_monsters'
+    BASE_TABLE = 'alt_monsters'
 
     @staticmethod
     def from_csm(o: CrossServerCard) -> 'AltMonster':
