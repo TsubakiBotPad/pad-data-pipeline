@@ -1,9 +1,7 @@
-import os
 from typing import Collection
 
-from pad.common.utils import classproperty
 from pad.db.db_util import DbWrapper
-from pad.db.sql_item import ExistsStrategy, SimpleSqlItem
+from pad.db.sql_item import ExistsStrategy
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ASCompound, ASEvolvingSkill, ASLoopingEvolvingSkill, ASMultiPartSkill, \
     ASRandomSkill, ActiveSkill as ASSkill
@@ -13,25 +11,13 @@ from pad.raw.skills.ja.active_skill_text import JaASTextConverter
 from pad.raw.skills.ja.leader_skill_text import JaLSTextConverter
 from pad.raw.skills.ko.active_skill_text import KoASTextConverter
 from pad.raw_processor.crossed_data import CrossServerSkill
+from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
 
-class ActiveSkill(SimpleSqlItem):
+class ActiveSkill(ServerDependentSqlItem):
     """Monster active skill."""
     KEY_COL = 'active_skill_id'
-
-    @classproperty
-    def TABLE(cls):
-        base_table_name = 'active_skills'
-
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return base_table_name + '_na'
-        # elif server.upper() == "JP":
-        #    return base_table_name + '_jp'
-        # elif server.upper() == "KR":
-        #    return base_table_name + '_kr'
-        else:
-            return base_table_name
+    BASE_TABLE = 'active_skills'
 
     @staticmethod
     def from_css(css: CrossServerSkill) -> 'ActiveSkill':
@@ -143,23 +129,10 @@ class ActiveSkill(SimpleSqlItem):
         return 'ActiveSkill({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
 
 
-class ActivePart(SimpleSqlItem):
+class ActivePart(ServerDependentSqlItem):
     """Monster active skill part."""
     KEY_COL = 'active_part_id'
-
-    @classproperty
-    def TABLE(cls):
-        base_table_name = 'active_parts'
-
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return base_table_name + '_na'
-        # elif server.upper() == "JP":
-        #    return base_table_name + '_jp'
-        # elif server.upper() == "KR":
-        #    return base_table_name + '_kr'
-        else:
-            return base_table_name
+    BASE_TABLE = 'active_parts'
 
     @staticmethod
     def from_css(act: ASSkill) -> 'ActivePart':
@@ -209,23 +182,10 @@ class ActivePart(SimpleSqlItem):
         return 'ActivePart({}): {}'.format(self.key_value(), self.desc_en)
 
 
-class ActiveSkillParts(SimpleSqlItem):
+class ActiveSkillParts(ServerDependentSqlItem):
     """Active skills to their parts."""
     KEY_COL = 'active_skill_part_id'
-
-    @classproperty
-    def TABLE(cls):
-        base_table_name = 'active_skill_parts'
-
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return base_table_name + '_na'
-        # elif server.upper() == "JP":
-        #    return base_table_name + '_jp'
-        # elif server.upper() == "KR":
-        #    return base_table_name + '_kr'
-        else:
-            return base_table_name
+    BASE_TABLE = 'active_skill_parts'
 
     @staticmethod
     def from_css(skill: CrossServerSkill, part: ASSkill, order_idx: int = 0) \
@@ -267,23 +227,10 @@ class ActiveSkillParts(SimpleSqlItem):
                                                              self.active_part_id, self.order_idx)
 
 
-class ActiveSkillsCompound(SimpleSqlItem):
+class ActiveSkillsCompound(ServerDependentSqlItem):
     """Active skills to their subskills."""
     KEY_COL = 'active_skills_compound_id'
-
-    @classproperty
-    def TABLE(cls):
-        base_table_name = 'active_skills_compound'
-
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return base_table_name + '_na'
-        # elif server.upper() == "JP":
-        #    return base_table_name + '_jp'
-        # elif server.upper() == "KR":
-        #    return base_table_name + '_kr'
-        else:
-            return base_table_name
+    BASE_TABLE = 'active_skills_compound'
 
     @staticmethod
     def from_css(skill: CrossServerSkill, subskill: ASSkill, order_idx: int = 0) \
@@ -333,7 +280,7 @@ class ActiveSkillsCompound(SimpleSqlItem):
 
     def __str__(self):
         return 'ActiveSkillsCompound({}): {} -> {} (#{})'.format(self.key_value(), self.active_skill_id,
-                                                                self.child_active_skill_id, self.order_idx)
+                                                                 self.child_active_skill_id, self.order_idx)
 
 
 def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill, owned_ids: Collection[int]):
@@ -356,21 +303,10 @@ def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill, owned_ids: 
         db.insert_or_update(ActiveSkillsCompound.from_css(skill, skill.cur_skill, 0))
 
 
-class LeaderSkill(SimpleSqlItem):
+class LeaderSkill(ServerDependentSqlItem):
     """Monster leader skill."""
     KEY_COL = 'leader_skill_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'leader_skills_na'
-        # elif server.upper() == "JP":
-        #    return 'leader_skills_jp'
-        # elif server.upper() == "KR":
-        #     return 'leader_skills_kr'
-        else:
-            return 'leader_skills'
+    BASE_TABLE = 'leader_skills'
 
     @staticmethod
     def from_css(css: CrossServerSkill) -> 'LeaderSkill':
