@@ -95,7 +95,7 @@ class KoBaseTextConverter(BaseTextConverter):
 
     @staticmethod
     def concat_list_semicolons(iterable):
-        array = '; '.join([str(i) for i in iterable if i])
+        return '; '.join([str(i) for i in iterable if i])
 
     @staticmethod
     def big_number(n):
