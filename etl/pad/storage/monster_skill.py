@@ -122,7 +122,7 @@ class ActiveSkill(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'Active({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
+        return 'ActiveSkill({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
 
 
 class ActivePart(SimpleSqlItem):
@@ -426,4 +426,4 @@ class LeaderSkill(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'Leader ({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
+        return 'LeaderSkill({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
