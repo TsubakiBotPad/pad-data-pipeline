@@ -36,8 +36,9 @@ class MonsterProcessor(object):
                 active_skills.add(csc.active_skill)
                 db.insert_or_update(ActiveSkill.from_css(csc.active_skill))
 
+        owned_ids = {act.skill_id for act in active_skills}
         for acss in active_skills:
-            upsert_active_skill_data(db, acss)
+            upsert_active_skill_data(db, acss, owned_ids)
 
         logger.info('loaded %s leader skills and %s active skills', ls_count, len(active_skills))
 

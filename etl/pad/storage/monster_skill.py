@@ -1,4 +1,5 @@
 import os
+from typing import Collection
 
 from pad.common.utils import classproperty
 from pad.db.db_util import DbWrapper
@@ -68,7 +69,12 @@ class ActiveSkill(SimpleSqlItem):
             tags=tags)
 
     @staticmethod
-    def from_as(act: ASSkill) -> 'ActiveSkill':
+    def from_as(act: ASSkill, parent: CrossServerSkill) -> 'ActiveSkill':
+        parent_jp_skill = parent.jp_skill
+        parent_na_skill = parent.na_skill
+        parent_kr_skill = parent.kr_skill
+        parent_cur_skill = parent.cur_skill
+
         desc_ja = act.full_text(JaASTextConverter())
         desc_templated_ja = act.templated_text(JaASTextConverter())
         desc_en = act.full_text(EnASTextConverter())
@@ -81,20 +87,20 @@ class ActiveSkill(SimpleSqlItem):
 
         return ActiveSkill(
             active_skill_id=act.skill_id,
-            name_ja="",
-            name_en="",
-            name_ko="",
+            name_ja=parent_jp_skill.name,
+            name_en=parent_na_skill.name,
+            name_ko=parent_kr_skill.name,
             desc_ja=desc_ja,
             desc_templated_ja=desc_templated_ja,
-            desc_official_ja="",
+            desc_official_ja=parent_jp_skill.raw_description,
             desc_en=desc_en,
             desc_templated_en=desc_templated_en,
-            desc_official_en="",
+            desc_official_en=parent_na_skill.raw_description,
             desc_ko=desc_ko,
             desc_templated_ko=desc_templated_ko,
-            desc_official_ko="",
-            turn_max=act.turn_max or -1,
-            turn_min=act.turn_min or -1,
+            desc_official_ko=parent_kr_skill.raw_description,
+            turn_max=act.turn_max or parent_cur_skill.turn_max,
+            turn_min=act.turn_min or parent_cur_skill.turn_max,
             tags=tags)
 
     def __init__(self,
@@ -330,7 +336,7 @@ class ActiveSkillsCompound(SimpleSqlItem):
                                                                 self.child_active_skill_id, self.order_idx)
 
 
-def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
+def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill, owned_ids: Collection[int]):
     db.insert_or_update(ActivePart.from_css(skill.cur_skill))
     for part in skill.cur_skill.parts:
         db.insert_or_update(ActivePart.from_css(part))
@@ -343,7 +349,8 @@ def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
 
     if isinstance(skill.cur_skill, ASCompound):
         for c, subskill in enumerate(skill.cur_skill.child_skills):
-            db.insert_or_update(ActiveSkill.from_as(subskill))
+            if subskill.skill_id not in owned_ids:
+                db.insert_or_update(ActiveSkill.from_as(subskill, parent=skill))
             db.insert_or_update(ActiveSkillsCompound.from_css(skill, subskill, c))
     else:
         db.insert_or_update(ActiveSkillsCompound.from_css(skill, skill.cur_skill, 0))
