@@ -225,24 +225,24 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def awakening_heal_convert(self, act):
         skill_text = 'Heal {:d}x RCV for each '.format(int(act.amount_per))
-        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += self.concat_list_and(filter(None, awakens))
+        awakens = [f"{{{{ awoskills.id{a}|default('???') }}}}" for a in act.awakenings if a]
+        skill_text += self.concat_list_and(awakens)
         skill_text += ' awoken skill on the team'
         return skill_text
 
     def awakening_attack_boost_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'increase ATK by ' + \
                      fmt_mult(act.amount_per * 100) + '% for each '
-        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += self.concat_list_and(filter(None, awakens))
+        awakens = [f"{{{{ awoskills.id{a}|default('???') }}}}" for a in act.awakenings if a]
+        skill_text += self.concat_list_and(awakens)
         skill_text += ' awoken skill on the team'
         return skill_text
 
     def awakening_shield_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'reduce damage taken by ' + \
                      fmt_mult(act.amount_per * 100) + '% for each '
-        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += self.concat_list_and(filter(None, awakens))
+        awakens = [f"{{{{ awoskills.id{a}|default('???') }}}}" for a in act.awakenings if a]
+        skill_text += self.concat_list_and(awakens)
         skill_text += ' awoken skill on the team'
         return skill_text
 
@@ -257,7 +257,8 @@ class EnASTextConverter(EnBaseTextConverter):
                     skill_text += " and "
             if act.rcv_per:
                 skill_text += f"increase RCV by {fmt_mult(act.rcv_per * 100)}%"
-        awakenings = self.concat_list_and(self.AWAKENING_MAP[a] or '???' for a in act.awakenings if a)
+        awakenings = self.concat_list_and(f"{{{{ awoskills.id{a}|default('???') }}}}"
+                                          for a in act.awakenings if a)
         skill_text += f" for each {awakenings} awoken skill on the team"
         return skill_text
     
@@ -552,6 +553,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'Activate a random skill from the list: {}'.format(self.concat_list_and(random_skills_text))
 
     def change_monster(self, act):
+        # TODO: Use a template here
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
 
     def skyfall_lock(self, act):
@@ -642,6 +644,7 @@ class EnASTextConverter(EnBaseTextConverter):
         else:
             human_fix_logger.warning(f"Invalid AS 1000 selector_type: {act.selector_type}")
             skill_text = "To some other players, "
+        # TODO: Add a template here
         return skill_text + "do something mean (probably)"
 
     def multi_part_active(self, act):

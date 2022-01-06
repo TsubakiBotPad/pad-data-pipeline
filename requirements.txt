@@ -3,6 +3,7 @@ fake_useragent
 git+https://github.com/nachoapps/padtools.git
 pytz
 bs4
+jinja2
 protobuf
 pymysql
 pillow

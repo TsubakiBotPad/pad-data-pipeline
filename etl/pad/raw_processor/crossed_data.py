@@ -12,7 +12,6 @@ from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
-from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.enemy_skill_info import ESInstance, ESUnknown, ESNone
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw_processor.jp_replacements import jp_en_replacements
@@ -492,7 +491,6 @@ class CrossServerDatabase(object):
                                                        kr_database.active_skills,
                                                        server)
 
-        en_as_converter = EnASTextConverter()
         for ask in self.active_skills:
             ask.skill_type_tags = list(skill_text_typing.parse_as_conditions(ask))
             ask.skill_type_tags.sort(key=lambda x: x.value)
