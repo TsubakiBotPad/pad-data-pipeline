@@ -220,22 +220,22 @@ class JaASTextConverter(JaBaseTextConverter):
 
     def awakening_heal_convert(self, act):
         skill_text = 'チーム内の'
-        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += self.concat_list_and(filter(None, awakens))
+        awakens = [f"{{{{ awoskills.id{a}|default('???') }}}}" for a in act.awakenings if a]
+        skill_text += self.concat_list_and(awakens)
         skill_text += 'の覚醒数1つにつき回復力ｘ{}倍をHP回復'.format(act.amount_per)
         return skill_text
 
     def awakening_attack_boost_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'チーム内の'
-        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += self.concat_list_and(filter(None, awakens))
+        awakens = [f"{{{{ awoskills.id{a}|default('???') }}}}" for a in act.awakenings if a]
+        skill_text += self.concat_list_and(awakens)
         skill_text += 'の覚醒数1つにつき攻撃力が{}％上がる'.format(fmt_mult(act.amount_per * 100))
         return skill_text
 
     def awakening_shield_convert(self, act):
         skill_text = self.fmt_duration(act.duration) + 'チーム内の'
-        awakens = [self.AWAKENING_MAP[a] for a in act.awakenings]
-        skill_text += self.concat_list_and(filter(None, awakens))
+        awakens = [f"{{{{ awoskills.id{a}|default('???') }}}}" for a in act.awakenings if a]
+        skill_text += self.concat_list_and(awakens)
         skill_text += 'の覚醒数1つにつき受けるダメージを{}％減少'.format(fmt_mult(act.amount_per * 100))
         return skill_text
 
@@ -244,13 +244,15 @@ class JaASTextConverter(JaBaseTextConverter):
         skill_text = ""
         if act.atk_per:
             skill_text = self.fmt_duration(act.duration) + 'チーム内の'
-            awakens = self.concat_list_and(self.AWAKENING_MAP[a] or '???' for a in act.awakenings if a)
+            awakens = self.concat_list_and(f"{{{{ awoskills.id{a}|default('???') }}}}"
+                                           for a in act.awakenings if a)
             skill_text += f'の覚醒数1つにつき攻撃力が{fmt_mult(act.atk_per * 100)}％上がる'
             if act.rcv_per:
                 skill_text += '。'
         if act.rcv_per:
             skill_text += self.fmt_duration(act.duration) + 'チーム内の'
-            awakens = self.concat_list_and(self.AWAKENING_MAP[a] or '???' for a in act.awakenings if a)
+            awakens = self.concat_list_and(f"{{{{ awoskills.id{a}|default('???') }}}}"
+                                           for a in act.awakenings if a)
             skill_text += f'の覚醒数1つにつき回復力が{fmt_mult(act.rcv_per * 100)}％上がる'
         return skill_text
 
