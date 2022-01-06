@@ -1,31 +1,15 @@
-import os
-
 from dadguide_proto.enemy_skills_pb2 import MonsterBehavior
-from pad.common.utils import classproperty
-from pad.db.sql_item import SimpleSqlItem
-from pad.raw_processor.crossed_data import CrossServerESInstance
-from pad.raw.skills.ja.enemy_skill_text import JaESTextConverter
-from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
 from pad.raw.skills.emoji_en.enemy_skill_text import EnEmojiESTextConverter
+from pad.raw.skills.en.enemy_skill_text import EnESTextConverter
+from pad.raw.skills.ja.enemy_skill_text import JaESTextConverter
+from pad.raw_processor.crossed_data import CrossServerESInstance
+from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
 
-# from pad.raw.skills.kr.enemy_skill_text import KrESTextConverter
-
-class EnemySkill(SimpleSqlItem):
+class EnemySkill(ServerDependentSqlItem):
     """Enemy skill data."""
     KEY_COL = 'enemy_skill_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'enemy_skills_na'
-        # elif server.upper() == "JP":
-        #    return 'enemy_skills_jp'
-        # elif server.upper() == "KR":
-        #    return 'enemy_skills_kr'
-        else:
-            return 'enemy_skills'
+    BASE_TABLE = 'enemy_skills'
 
     @staticmethod
     def from_json(o):
@@ -98,21 +82,10 @@ class EnemySkill(SimpleSqlItem):
         return 'EnemySkill({}): {} - {}'.format(self.key_value(), self.name_en, self.desc_en)
 
 
-class EnemyData(SimpleSqlItem):
+class EnemyData(ServerDependentSqlItem):
     """Enemy skill data."""
     KEY_COL = 'enemy_id'
-
-    @classproperty
-    def TABLE(cls):
-        server = os.environ.get("CURRENT_PIPELINE_SERVER") or ""
-        if server.upper() == "NA":
-            return 'enemy_data_na'
-        # elif server.upper() == "JP":
-        #    return 'enemy_data_jp'
-        # elif server.upper() == "KR":
-        #    return 'enemy_data_kr'
-        else:
-            return 'enemy_data'
+    BASE_TABLE = 'enemy_data'
 
     @staticmethod
     def from_mb(o: MonsterBehavior, status: int) -> 'EnemyData':
