@@ -12,6 +12,7 @@ ASTextConverter = Any
 
 class ActiveSkill:
     skill_type = -1
+    compound_skill_type = 0
 
     def __init__(self, ms: MonsterSkill, *,
                  transform_id: Optional[int] = None):
@@ -26,6 +27,8 @@ class ActiveSkill:
         self.levels = ms.levels
         self.turn_max = ms.turn_max
         self.turn_min = ms.turn_min
+
+        self.child_skills = [self]
 
         self._transform_id = transform_id
 
@@ -57,9 +60,9 @@ class ASConditional(ActiveSkill):
 
 class ASMultiPart(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
+        super().__init__(ms)
         self.child_ids = ms.data
         self._child_skills = []
-        super().__init__(ms)
 
     @property
     def child_skills(self):
@@ -644,6 +647,7 @@ class ASHpRecoveryandBindClear(ActiveSkill):
 
 class ASRandomSkill(ASCompound):
     skill_type = 118
+    compound_skill_type = 1
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_skill(self)
@@ -1259,6 +1263,7 @@ class ASAwokenSkillStatBoost(ActiveSkill):
 
 class ASEvolvingSkill(ASCompound):
     skill_type = 232
+    compound_skill_type = 2
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.evolving_active(self)
@@ -1266,6 +1271,7 @@ class ASEvolvingSkill(ASCompound):
 
 class ASLoopingEvolvingSkill(ASCompound):
     skill_type = 233
+    compound_skill_type = 3
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.looping_evolving_active(self)

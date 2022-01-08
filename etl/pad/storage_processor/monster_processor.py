@@ -27,20 +27,15 @@ class MonsterProcessor(object):
     def _process_skills(self, db: DbWrapper):
         logger.info('loading skills for %s cards', len(self.data.ownable_cards))
         ls_count = 0
-        active_skills = set()
+        as_count = 0
         for csc in self.data.ownable_cards:
             if csc.leader_skill:
                 ls_count += 1
                 db.insert_or_update(LeaderSkill.from_css(csc.leader_skill))
             if csc.active_skill:
-                active_skills.add(csc.active_skill)
-                db.insert_or_update(ActiveSkill.from_css(csc.active_skill))
-
-        owned_ids = {act.skill_id for act in active_skills}
-        for acss in active_skills:
-            upsert_active_skill_data(db, acss, owned_ids)
-
-        logger.info('loaded %s leader skills and %s active skills', ls_count, len(active_skills))
+                as_count += 1
+                upsert_active_skill_data(db, csc.active_skill)
+        logger.info('loaded %s leader skills and %s active skills', ls_count, as_count)
 
     def _process_monsters(self, db):
         logger.info('loading %s monsters', len(self.data.ownable_cards))
