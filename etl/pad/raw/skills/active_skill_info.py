@@ -28,8 +28,6 @@ class ActiveSkill:
         self.turn_max = ms.turn_max
         self.turn_min = ms.turn_min
 
-        self.child_skills = [self]
-
         self._transform_id = transform_id
 
     @property
