@@ -10,7 +10,7 @@ human_fix_logger = logging.getLogger('human_fix')
 ASTextConverter = Any
 
 
-class ActiveSkill(object):
+class ActiveSkill:
     skill_type = -1
     compound_skill_type = 0
 
@@ -28,9 +28,11 @@ class ActiveSkill(object):
         self.turn_max = ms.turn_max
         self.turn_min = ms.turn_min
 
-        self.child_skills = [self]
-
         self._transform_id = transform_id
+
+    @property
+    def child_skills(self) -> List["ActiveSkill"]:
+        return [self]
 
     @property
     def parts(self) -> List["ActiveSkill"]:
@@ -57,9 +59,12 @@ class ASConditional(ActiveSkill):
 class ASMultiPart(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         super().__init__(ms)
-
         self.child_ids = ms.data
-        self.child_skills = []
+        self._child_skills = []
+
+    @property
+    def child_skills(self):
+        return self._child_skills
 
     @property
     def parts(self):
