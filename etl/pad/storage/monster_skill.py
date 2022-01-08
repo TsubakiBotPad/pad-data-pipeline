@@ -27,10 +27,10 @@ class ActiveSkill(ServerDependentSqlItem):
         cur_skill = css.cur_skill
 
         desc_ja = cur_skill.full_text(JaASTextConverter())
-        desc_templated_ja = cur_skill.templated_text(JaASTextConverter())
         desc_en = cur_skill.full_text(EnASTextConverter())
-        desc_templated_en = cur_skill.templated_text(EnASTextConverter())
         desc_ko = cur_skill.full_text(KoASTextConverter())
+        desc_templated_ja = cur_skill.templated_text(JaASTextConverter())
+        desc_templated_en = cur_skill.templated_text(EnASTextConverter())
         desc_templated_ko = cur_skill.templated_text(KoASTextConverter())
 
         skill_type_tags = skill_text_typing.parse_as_conditions(css)
@@ -38,87 +38,55 @@ class ActiveSkill(ServerDependentSqlItem):
 
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
+            compound_skill_type_id = cur_skill.compound_skill_type,
             name_ja=jp_skill.name,
             name_en=na_skill.name,
             name_ko=kr_skill.name,
             desc_ja=desc_ja,
-            desc_templated_ja=desc_templated_ja,
-            desc_official_ja=jp_skill.raw_description,
             desc_en=desc_en,
-            desc_templated_en=desc_templated_en,
-            desc_official_en=na_skill.raw_description,
             desc_ko=desc_ko,
+            desc_templated_ja=desc_templated_ja,
+            desc_templated_en=desc_templated_en,
             desc_templated_ko=desc_templated_ko,
+            desc_official_ja=jp_skill.raw_description,
+            desc_official_en=na_skill.raw_description,
             desc_official_ko=kr_skill.raw_description,
             turn_max=cur_skill.turn_max,
             turn_min=cur_skill.turn_min,
             tags=tags)
 
-    @staticmethod
-    def from_as(act: ASSkill, parent: CrossServerSkill) -> 'ActiveSkill':
-        parent_jp_skill = parent.jp_skill
-        parent_na_skill = parent.na_skill
-        parent_kr_skill = parent.kr_skill
-        parent_cur_skill = parent.cur_skill
-
-        desc_ja = act.full_text(JaASTextConverter())
-        desc_templated_ja = act.templated_text(JaASTextConverter())
-        desc_en = act.full_text(EnASTextConverter())
-        desc_templated_en = act.templated_text(EnASTextConverter())
-        desc_ko = act.full_text(KoASTextConverter())
-        desc_templated_ko = act.templated_text(KoASTextConverter())
-
-        skill_type_tags = skill_text_typing.parse_as_conditions(act, True)
-        tags = skill_text_typing.format_conditions(skill_type_tags)
-
-        return ActiveSkill(
-            active_skill_id=act.skill_id,
-            name_ja=parent_jp_skill.name,
-            name_en=parent_na_skill.name,
-            name_ko=parent_kr_skill.name,
-            desc_ja=desc_ja,
-            desc_templated_ja=desc_templated_ja,
-            desc_official_ja=parent_jp_skill.raw_description,
-            desc_en=desc_en,
-            desc_templated_en=desc_templated_en,
-            desc_official_en=parent_na_skill.raw_description,
-            desc_ko=desc_ko,
-            desc_templated_ko=desc_templated_ko,
-            desc_official_ko=parent_kr_skill.raw_description,
-            turn_max=act.turn_max or parent_cur_skill.turn_max,
-            turn_min=act.turn_min or parent_cur_skill.turn_max,
-            tags=tags)
-
     def __init__(self,
                  active_skill_id: int = None,
+                 compound_skill_type_id: int = None,
                  name_ja: str = None,
                  name_en: str = None,
                  name_ko: str = None,
                  desc_ja: str = None,
-                 desc_templated_ja: str = None,
-                 desc_official_ja: str = None,
                  desc_en: str = None,
-                 desc_templated_en: str = None,
-                 desc_official_en: str = None,
                  desc_ko: str = None,
+                 desc_templated_ja: str = None,
+                 desc_templated_en: str = None,
                  desc_templated_ko: str = None,
+                 desc_official_ja: str = None,
+                 desc_official_en: str = None,
                  desc_official_ko: str = None,
                  turn_max: int = None,
                  turn_min: int = None,
                  tags: str = None,
                  tstamp: int = None):
         self.active_skill_id = active_skill_id
+        self.compound_skill_type_id = compound_skill_type_id
         self.name_ja = name_ja
         self.name_en = name_en
         self.name_ko = name_ko
         self.desc_ja = desc_ja
-        self.desc_templated_ja = desc_templated_ja
-        self.desc_official_ja = desc_official_ja
         self.desc_en = desc_en
-        self.desc_templated_en = desc_templated_en
-        self.desc_official_en = desc_official_en
         self.desc_ko = desc_ko
+        self.desc_templated_ja = desc_templated_ja
+        self.desc_templated_en = desc_templated_en
         self.desc_templated_ko = desc_templated_ko
+        self.desc_official_ja = desc_official_ja
+        self.desc_official_en = desc_official_en
         self.desc_official_ko = desc_official_ko
         self.turn_max = turn_max
         self.turn_min = turn_min
@@ -129,18 +97,79 @@ class ActiveSkill(ServerDependentSqlItem):
         return 'ActiveSkill({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
 
 
+class ActiveSubskill(ServerDependentSqlItem):
+    """Monster active subskill."""
+    KEY_COL = 'active_subskill_id'
+    BASE_TABLE = 'active_subskills'
+
+    @staticmethod
+    def from_as(act: ASSkill) -> 'ActiveSubskill':
+        desc_ja = act.full_text(JaASTextConverter())
+        desc_en = act.full_text(EnASTextConverter())
+        desc_ko = act.full_text(KoASTextConverter())
+        desc_templated_ja = act.templated_text(JaASTextConverter())
+        desc_templated_en = act.templated_text(EnASTextConverter())
+        desc_templated_ko = act.templated_text(KoASTextConverter())
+
+        skill_type_tags = skill_text_typing.parse_as_conditions(act, True)
+        tags = skill_text_typing.format_conditions(skill_type_tags)
+
+        return ActiveSubskill(
+            active_subskill_id=act.skill_id,
+            # TODO: Figure out how to do names
+            name_ja="",
+            name_en="",
+            name_ko="",
+            desc_ja=desc_ja,
+            desc_en=desc_en,
+            desc_ko=desc_ko,
+            desc_templated_ja=desc_templated_ja,
+            desc_templated_en=desc_templated_en,
+            desc_templated_ko=desc_templated_ko,
+            tags=tags)
+
+    def __init__(self,
+                 active_subskill_id: int = None,
+                 name_ja: str = None,
+                 name_en: str = None,
+                 name_ko: str = None,
+                 desc_ja: str = None,
+                 desc_en: str = None,
+                 desc_ko: str = None,
+                 desc_templated_ja: str = None,
+                 desc_templated_en: str = None,
+                 desc_templated_ko: str = None,
+                 tags: str = None,
+                 tstamp: int = None):
+        self.active_subskill_id = active_subskill_id
+        self.name_ja = name_ja
+        self.name_en = name_en
+        self.name_ko = name_ko
+        self.desc_ja = desc_ja
+        self.desc_en = desc_en
+        self.desc_ko = desc_ko
+        self.desc_templated_ja = desc_templated_ja
+        self.desc_templated_en = desc_templated_en
+        self.desc_templated_ko = desc_templated_ko
+        self.tags = tags
+        self.tstamp = tstamp
+
+    def __str__(self):
+        return 'ActiveSubskill({}): {}'.format(self.key_value(), self.desc_en)
+
+
 class ActivePart(ServerDependentSqlItem):
-    """Monster active skill part."""
+    """Monster active subskill part."""
     KEY_COL = 'active_part_id'
     BASE_TABLE = 'active_parts'
 
     @staticmethod
-    def from_css(act: ASSkill) -> 'ActivePart':
+    def from_as(act: ASSkill) -> 'ActivePart':
         desc_ja = act.full_text(JaASTextConverter())
-        desc_templated_ja = act.templated_text(JaASTextConverter())
         desc_en = act.full_text(EnASTextConverter())
-        desc_templated_en = act.templated_text(EnASTextConverter())
         desc_ko = act.full_text(KoASTextConverter())
+        desc_templated_ja = act.templated_text(JaASTextConverter())
+        desc_templated_en = act.templated_text(EnASTextConverter())
         desc_templated_ko = act.templated_text(KoASTextConverter())
 
         skill_type_tags = skill_text_typing.parse_as_conditions(act, True)
@@ -150,10 +179,10 @@ class ActivePart(ServerDependentSqlItem):
             active_part_id=act.skill_id,
             active_skill_type_id=act.skill_type,
             desc_ja=desc_ja,
-            desc_templated_ja=desc_templated_ja,
             desc_en=desc_en,
-            desc_templated_en=desc_templated_en,
             desc_ko=desc_ko,
+            desc_templated_ja=desc_templated_ja,
+            desc_templated_en=desc_templated_en,
             desc_templated_ko=desc_templated_ko,
             tags=tags)
 
@@ -161,19 +190,20 @@ class ActivePart(ServerDependentSqlItem):
                  active_part_id: int = None,
                  active_skill_type_id: int = None,
                  desc_ja: str = None,
-                 desc_templated_ja: str = None,
                  desc_en: str = None,
-                 desc_templated_en: str = None,
                  desc_ko: str = None,
+                 desc_templated_ja: str = None,
+                 desc_templated_en: str = None,
                  desc_templated_ko: str = None,
                  tags: str = None,
                  tstamp: int = None):
         self.active_part_id = active_part_id
         self.active_skill_type_id = active_skill_type_id
-        self.desc_templated_ja = desc_templated_ja
+        self.desc_ja = desc_ja
         self.desc_en = desc_en
-        self.desc_templated_en = desc_templated_en
         self.desc_ko = desc_ko
+        self.desc_templated_ja = desc_templated_ja
+        self.desc_templated_en = desc_templated_en
         self.desc_templated_ko = desc_templated_ko
         self.tags = tags
         self.tstamp = tstamp
@@ -182,30 +212,73 @@ class ActivePart(ServerDependentSqlItem):
         return 'ActivePart({}): {}'.format(self.key_value(), self.desc_en)
 
 
-class ActiveSkillParts(ServerDependentSqlItem):
-    """Active skills to their parts."""
-    KEY_COL = 'active_skill_part_id'
-    BASE_TABLE = 'active_skill_parts'
+class ActiveSkillsSubskills(ServerDependentSqlItem):
+    """Active skills to their subskills."""
+    KEY_COL = 'active_skills_subskills_id'
+    BASE_TABLE = 'active_skills_subskills'
 
     @staticmethod
-    def from_css(skill: CrossServerSkill, part: ASSkill, order_idx: int = 0) \
-            -> 'ActiveSkillParts':
-        skill = skill.cur_skill
+    def from_css(skill: CrossServerSkill, subskill: ASSkill, order_idx: int = 0) \
+            -> 'ActiveSkillsSubskills':
 
-        return ActiveSkillParts(
-            active_skill_part_id=None,  # Key that is looked up or inserted
-            active_skill_id=skill.skill_id,
+        return ActiveSkillsSubskills(
+            active_skills_subskills_id=None,  # Key that is looked up or inserted
+            active_skill_id=skill.cur_skill.skill_id,
+            active_subskill_id=subskill.skill_id,
+            order_idx=order_idx)
+
+    def __init__(self,
+                 active_skills_subskills_id: int = None,
+                 active_skill_id: int = None,
+                 active_subskill_id: int = None,
+                 order_idx: int = None,
+                 tstamp: int = None):
+        self.active_skills_subskills_id = active_skills_subskills_id
+        self.active_skill_id = active_skill_id
+        self.active_subskill_id = active_subskill_id
+        self.order_idx = order_idx
+        self.tstamp = tstamp
+
+    def exists_strategy(self):
+        return ExistsStrategy.BY_VALUE
+
+    def _non_auto_insert_cols(self):
+        return [self._key()]
+
+    def _non_auto_update_cols(self):
+        return [self._key()]
+
+    def _lookup_columns(self):
+        return ['active_skill_id', 'active_subskill_id', 'order_idx']
+
+    def __str__(self):
+        return 'ActiveSkillsCompound({}): {} -> {} (#{})'.format(self.key_value(), self.active_skill_id,
+                                                                 self.active_subskill_id, self.order_idx)
+
+
+class ActiveSubskillsParts(ServerDependentSqlItem):
+    """Active subskills to their parts."""
+    KEY_COL = 'active_subskills_parts_id'
+    BASE_TABLE = 'active_subskills_parts'
+
+    @staticmethod
+    def from_css(skill: ASSkill, part: ASSkill, order_idx: int = 0) \
+            -> 'ActiveSubskillsParts':
+
+        return ActiveSubskillsParts(
+            active_subskills_parts_id=None,  # Key that is looked up or inserted
+            active_subskill_id=skill.skill_id,
             active_part_id=part.skill_id,
             order_idx=order_idx)
 
     def __init__(self,
-                 active_skill_part_id: int = None,
-                 active_skill_id: int = None,
+                 active_subskills_parts_id: int = None,
+                 active_subskill_id: int = None,
                  active_part_id: int = None,
                  order_idx: int = None,
                  tstamp: int = None):
-        self.active_skill_part_id = active_skill_part_id
-        self.active_skill_id = active_skill_id
+        self.active_subskills_parts_id = active_subskills_parts_id
+        self.active_subskill_id = active_subskill_id
         self.active_part_id = active_part_id
         self.order_idx = order_idx
         self.tstamp = tstamp
@@ -220,87 +293,21 @@ class ActiveSkillParts(ServerDependentSqlItem):
         return [self._key()]
 
     def _lookup_columns(self):
-        return ['active_skill_id', 'active_part_id', 'order_idx']
+        return ['active_subskill_id', 'active_part_id', 'order_idx']
 
     def __str__(self):
-        return 'ActiveSkillParts({}): {} -> {} (#{})'.format(self.key_value(), self.active_skill_id,
-                                                             self.active_part_id, self.order_idx)
+        return 'ActiveSubskillsParts({}): {} -> {} (#{})'.format(self.key_value(), self.active_subskill_id,
+                                                                 self.active_part_id, self.order_idx)
 
 
-class ActiveSkillsCompound(ServerDependentSqlItem):
-    """Active skills to their subskills."""
-    KEY_COL = 'active_skills_compound_id'
-    BASE_TABLE = 'active_skills_compound'
-
-    @staticmethod
-    def from_css(skill: CrossServerSkill, subskill: ASSkill, order_idx: int = 0) \
-            -> 'ActiveSkillsCompound':
-        skill = skill.cur_skill
-
-        compound_skill_type_id = 0
-        if isinstance(skill, ASRandomSkill):
-            compound_skill_type_id = 1
-        elif isinstance(skill, ASEvolvingSkill):
-            compound_skill_type_id = 2
-        elif isinstance(skill, ASLoopingEvolvingSkill):
-            compound_skill_type_id = 3
-
-        return ActiveSkillsCompound(
-            active_skills_compound_id=None,  # Key that is looked up or inserted
-            compound_skill_type_id=compound_skill_type_id,
-            active_skill_id=skill.skill_id,
-            child_active_skill_id=subskill.skill_id,
-            order_idx=order_idx)
-
-    def __init__(self,
-                 active_skills_compound_id: int = None,
-                 compound_skill_type_id: int = None,
-                 active_skill_id: int = None,
-                 child_active_skill_id: int = None,
-                 order_idx: int = None,
-                 tstamp: int = None):
-        self.active_skills_compound_id = active_skills_compound_id
-        self.compound_skill_type_id = compound_skill_type_id
-        self.active_skill_id = active_skill_id
-        self.child_active_skill_id = child_active_skill_id
-        self.order_idx = order_idx
-        self.tstamp = tstamp
-
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['active_skill_id', 'child_active_skill_id', 'order_idx']
-
-    def __str__(self):
-        return 'ActiveSkillsCompound({}): {} -> {} (#{})'.format(self.key_value(), self.active_skill_id,
-                                                                 self.child_active_skill_id, self.order_idx)
-
-
-def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill, owned_ids: Collection[int]):
-    db.insert_or_update(ActivePart.from_css(skill.cur_skill))
-    for part in skill.cur_skill.parts:
-        db.insert_or_update(ActivePart.from_css(part))
-
-    if isinstance(skill.cur_skill, ASMultiPartSkill):
-        for c, part in enumerate(skill.cur_skill.parts):
-            db.insert_or_update(ActiveSkillParts.from_css(skill, part, c))
-    else:
-        db.insert_or_update(ActiveSkillParts.from_css(skill, skill.cur_skill, 0))
-
-    if isinstance(skill.cur_skill, ASCompound):
-        for c, subskill in enumerate(skill.cur_skill.child_skills):
-            if subskill.skill_id not in owned_ids:
-                db.insert_or_update(ActiveSkill.from_as(subskill, parent=skill))
-            db.insert_or_update(ActiveSkillsCompound.from_css(skill, subskill, c))
-    else:
-        db.insert_or_update(ActiveSkillsCompound.from_css(skill, skill.cur_skill, 0))
+def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
+    db.insert_or_update(ActiveSkill.from_css(skill))
+    for c, subskill in enumerate(skill.cur_skill.child_skills):
+        db.insert_or_update(ActiveSubskill.from_as(subskill))
+        for c2, part in enumerate(subskill.parts):
+            db.insert_or_update(ActivePart.from_as(part))
+            db.insert_or_update(ActiveSubskillsParts.from_css(subskill, part, c2))
+        db.insert_or_update(ActiveSkillsSubskills.from_css(skill, subskill, c))
 
 
 class LeaderSkill(ServerDependentSqlItem):
