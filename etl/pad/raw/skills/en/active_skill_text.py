@@ -549,7 +549,7 @@ class EnASTextConverter(EnBaseTextConverter):
     def random_skill(self, act):
         random_skills_text = []
         for idx, s in enumerate(act.child_skills, 1):
-            random_skills_text.append('{}) {}'.format(idx, s.full_text(self)))
+            random_skills_text.append('{}) {}'.format(idx, s.templated_text(self)))
         return 'Activate a random skill from the list: {}'.format(self.concat_list_and(random_skills_text))
 
     def change_monster(self, act):
@@ -617,13 +617,13 @@ class EnASTextConverter(EnBaseTextConverter):
     def evolving_active(self, act):
         skill_text = "After each skill, evolve to the next:"
         for c, skill in enumerate(act.child_skills, 1):
-            skill_text += f" {c}) {skill.full_text(self)}"
+            skill_text += f" {c}) {skill.templated_text(self)}"
         return skill_text
 
     def looping_evolving_active(self, act):
         skill_text = "After each skill, evolve to the next looping around if the end is reached:"
         for c, skill in enumerate(act.child_skills, 1):
-            skill_text += f" {c}) {skill.full_text(self)}"
+            skill_text += f" {c}) {skill.templated_text(self)}"
         return skill_text
 
     def conditional_floor_thresh(self, act):
@@ -661,7 +661,7 @@ class EnASTextConverter(EnBaseTextConverter):
     def combine_skills_text(self, skills: List[PartWithTextAndCount]):
         skill_text = ""
         for c, skillpart in enumerate(skills):
-            skill_text += skillpart.full_text(self)
+            skill_text += skillpart.templated_text(self)
             if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '; '
         return skill_text
