@@ -521,7 +521,7 @@ class JaASTextConverter(JaBaseTextConverter):
     def random_skill(self, act):
         random_skills_text = []
         for idx, s in enumerate(act.child_skills, 1):
-            random_skills_text.append('{}、{}'.format(half_to_full(idx), s.full_text(self)))
+            random_skills_text.append('{}、{}'.format(half_to_full(idx), s.templated_text(self)))
         return '下からスキルをランダムて発動：{}'.format("；".join(random_skills_text))
 
     def change_monster(self, act):
@@ -582,13 +582,13 @@ class JaASTextConverter(JaBaseTextConverter):
 
     def evolving_active(self, act):
         skill_text = "スキル使うと、次の階段に変化。最終階段のスキル使うと、最初のスキル戻る："
-        skill_text += '；'.join(f"{half_to_full(c)}、{skill.full_text(self)}"
+        skill_text += '；'.join(f"{half_to_full(c)}、{skill.templated_text(self)}"
                               for c, skill in enumerate(act.child_skills, 1))
         return skill_text
 
     def looping_evolving_active(self, act):
         skill_text = "スキル使うと、次の階段に変化："
-        skill_text += '；'.join(f"{half_to_full(c)}、{skill.full_text(self)}"
+        skill_text += '；'.join(f"{half_to_full(c)}、{skill.templated_text(self)}"
                               for c, skill in enumerate(act.child_skills, 1))
         return skill_text
 
@@ -617,7 +617,7 @@ class JaASTextConverter(JaBaseTextConverter):
     def combine_skills_text(self, skills: List[PartWithTextAndCount]):
         skill_text = ""
         for c, skillpart in enumerate(skills):
-            skill_text += skillpart.full_text(self)
+            skill_text += skillpart.templated_text(self)
             if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '。'
         return skill_text
