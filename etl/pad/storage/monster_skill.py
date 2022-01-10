@@ -129,7 +129,7 @@ class ActiveSubskill(ServerDependentSqlItem):
             desc_templated_ja=desc_templated_ja,
             desc_templated_en=desc_templated_en,
             desc_templated_ko=desc_templated_ko,
-            cooldown=act.cooldown_turns_max,
+            cooldown=act.cooldown_turns_max or -1,
             tags=tags)
 
     def __init__(self,
