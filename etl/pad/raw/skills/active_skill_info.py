@@ -25,8 +25,8 @@ class ActiveSkill:
         self.raw_data = ms.data
         self.skill_type = ms.skill_type
         self.levels = ms.levels
-        self.turn_max = ms.turn_max
-        self.turn_min = ms.turn_min
+        self.cooldown_turns_max = ms.cooldown_turns_max
+        self.cooldown_turns_min = ms.cooldown_turns_min
 
         self._transform_id = transform_id
 
