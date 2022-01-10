@@ -51,8 +51,8 @@ class ActiveSkill(ServerDependentSqlItem):
             desc_official_ja=jp_skill.raw_description,
             desc_official_en=na_skill.raw_description,
             desc_official_ko=kr_skill.raw_description,
-            turn_max=cur_skill.turn_max,
-            turn_min=cur_skill.turn_min,
+            cooldown_turns_max=cur_skill.cooldown_turns_max,
+            cooldown_turns_min=cur_skill.cooldown_turns_min,
             tags=tags)
 
     def __init__(self,
@@ -70,8 +70,8 @@ class ActiveSkill(ServerDependentSqlItem):
                  desc_official_ja: str = None,
                  desc_official_en: str = None,
                  desc_official_ko: str = None,
-                 turn_max: int = None,
-                 turn_min: int = None,
+                 cooldown_turns_max: int = None,
+                 cooldown_turns_min: int = None,
                  tags: str = None,
                  tstamp: int = None):
         self.active_skill_id = active_skill_id
@@ -88,8 +88,11 @@ class ActiveSkill(ServerDependentSqlItem):
         self.desc_official_ja = desc_official_ja
         self.desc_official_en = desc_official_en
         self.desc_official_ko = desc_official_ko
-        self.turn_max = turn_max
-        self.turn_min = turn_min
+        self.cooldown_turns_max = cooldown_turns_max
+        self.cooldown_turns_min = cooldown_turns_min
+        # TODO: Delete these in one week
+        self.turn_max = cooldown_turns_max
+        self.turn_min = cooldown_turns_min
         self.tags = tags
         self.tstamp = tstamp
 
@@ -126,6 +129,7 @@ class ActiveSubskill(ServerDependentSqlItem):
             desc_templated_ja=desc_templated_ja,
             desc_templated_en=desc_templated_en,
             desc_templated_ko=desc_templated_ko,
+            cooldown=act.cooldown_turns_max or -1,
             tags=tags)
 
     def __init__(self,
@@ -139,6 +143,7 @@ class ActiveSubskill(ServerDependentSqlItem):
                  desc_templated_ja: str = None,
                  desc_templated_en: str = None,
                  desc_templated_ko: str = None,
+                 cooldown: int = None,
                  tags: str = None,
                  tstamp: int = None):
         self.active_subskill_id = active_subskill_id
@@ -151,6 +156,7 @@ class ActiveSubskill(ServerDependentSqlItem):
         self.desc_templated_ja = desc_templated_ja
         self.desc_templated_en = desc_templated_en
         self.desc_templated_ko = desc_templated_ko
+        self.cooldown = cooldown
         self.tags = tags
         self.tstamp = tstamp
 
