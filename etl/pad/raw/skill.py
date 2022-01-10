@@ -34,10 +34,10 @@ class MonsterSkill(pad_util.Printable):
         self.levels = int(raw[3]) or None
 
         # If an active skill, maximum cooldown.
-        self.turn_max = int(raw[4]) if self.levels else None
+        self.cooldown_turns_max = int(raw[4]) if self.levels else None
 
         # If an active skill, minimum cooldown.
-        self.turn_min = self.turn_max - (self.levels - 1) if self.levels else None
+        self.cooldown_turns_min = self.cooldown_turns_max - (self.levels - 1) if self.levels else None
 
         # Unknown field.
         self.unknown_005 = raw[5]
