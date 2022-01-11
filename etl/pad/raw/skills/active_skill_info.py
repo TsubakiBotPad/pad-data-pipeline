@@ -31,7 +31,7 @@ class ActiveSkill:
         self._transform_id = transform_id
 
     @property
-    def child_skills(self) -> List["ActiveSkill"]:
+    def subskills(self) -> List["ActiveSkill"]:
         return [self]
 
     @property
@@ -60,11 +60,7 @@ class ASMultiPart(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         super().__init__(ms)
         self.child_ids = ms.data
-        self._child_skills = []
-
-    @property
-    def child_skills(self):
-        return self._child_skills
+        self.child_skills = []
 
     @property
     def parts(self):
@@ -81,7 +77,9 @@ class ASMultiPart(ActiveSkill):
 
 
 class ASCompound(ASMultiPart):
-    pass
+    @property
+    def subskills(self) -> List["ActiveSkill"]:
+        return self.child_skills
 
 
 class ASMultiplierMultiTargetAttrNuke(ActiveSkill):

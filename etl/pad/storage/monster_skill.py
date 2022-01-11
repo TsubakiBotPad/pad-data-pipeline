@@ -1,10 +1,7 @@
-from typing import Collection
-
 from pad.db.db_util import DbWrapper
 from pad.db.sql_item import ExistsStrategy
 from pad.raw.skills import skill_text_typing
-from pad.raw.skills.active_skill_info import ASCompound, ASEvolvingSkill, ASLoopingEvolvingSkill, ASMultiPartSkill, \
-    ASRandomSkill, ActiveSkill as ASSkill
+from pad.raw.skills.active_skill_info import ActiveSkill as ASSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
 from pad.raw.skills.ja.active_skill_text import JaASTextConverter
@@ -38,7 +35,7 @@ class ActiveSkill(ServerDependentSqlItem):
 
         return ActiveSkill(
             active_skill_id=jp_skill.skill_id,
-            compound_skill_type_id = cur_skill.compound_skill_type,
+            compound_skill_type_id=cur_skill.compound_skill_type,
             name_ja=jp_skill.name,
             name_en=na_skill.name,
             name_ko=kr_skill.name,
@@ -226,7 +223,6 @@ class ActiveSkillsSubskills(ServerDependentSqlItem):
     @staticmethod
     def from_css(skill: CrossServerSkill, subskill: ASSkill, order_idx: int = 0) \
             -> 'ActiveSkillsSubskills':
-
         return ActiveSkillsSubskills(
             active_skills_subskills_id=None,  # Key that is looked up or inserted
             active_skill_id=skill.cur_skill.skill_id,
@@ -258,7 +254,7 @@ class ActiveSkillsSubskills(ServerDependentSqlItem):
         return ['active_skill_id', 'active_subskill_id', 'order_idx']
 
     def __str__(self):
-        return 'ActiveSkillsCompound({}): {} -> {} (#{})'.format(self.key_value(), self.active_skill_id,
+        return 'ActiveSkillsSubskills({}): {} -> {} (#{})'.format(self.key_value(), self.active_skill_id,
                                                                  self.active_subskill_id, self.order_idx)
 
 
@@ -270,7 +266,6 @@ class ActiveSubskillsParts(ServerDependentSqlItem):
     @staticmethod
     def from_css(skill: ASSkill, part: ASSkill, order_idx: int = 0) \
             -> 'ActiveSubskillsParts':
-
         return ActiveSubskillsParts(
             active_subskills_parts_id=None,  # Key that is looked up or inserted
             active_subskill_id=skill.skill_id,
@@ -308,7 +303,7 @@ class ActiveSubskillsParts(ServerDependentSqlItem):
 
 def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
     db.insert_or_update(ActiveSkill.from_css(skill))
-    for c, subskill in enumerate(skill.cur_skill.child_skills):
+    for c, subskill in enumerate(skill.cur_skill.subskills):
         db.insert_or_update(ActiveSubskill.from_as(subskill))
         for c2, part in enumerate(subskill.parts):
             db.insert_or_update(ActivePart.from_as(part))
