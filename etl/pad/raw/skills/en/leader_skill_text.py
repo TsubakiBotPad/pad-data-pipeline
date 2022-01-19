@@ -413,32 +413,41 @@ class EnLSTextConverter(EnBaseTextConverter):
         return skill_text
 
     def color_combo_bonus_damage_text(self, ls):
-        if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            skill_text = '{:,} additional true damage when matching {}'.format(ls.bonus_damage,
-                                                                               self.fmt_multi_attr(
-                                                                                   list(set(ls.attributes)),
-                                                                                   conj='or' if ls.min_combo < len(
-                                                                                       ls.attributes) else 'and'))
+        skill_text = f'{ls.bonus_damage:,} additional true damage'
+        if len(set(ls.attributes)) == 1:
+            skill_text += ' when matching {}'.format(ls.min_combo)
+            if not len(ls.attributes) != ls.min_combo:
+                skill_text += '+'
+            skill_text += ' {} combos'.format(self.ATTRIBUTES[ls.attributes[0]])
+            if len(ls.attributes) != ls.min_combo:
+                skill_text += ', up to {}x at {} {} combos'.format(fmt_mult(ls.atk), len(ls.attributes),
+                                                                   self.ATTRIBUTES[ls.attributes[0]])
         else:
-            skill_text = '{:,} additional true damage when matching {} or more'.format(ls.bonus_damage, ls.min_combo)
-            if ls.attributes:
-                skill_text += ' {} combos'.format(self.fmt_multi_attr(list(set(ls.attributes))))
-            else:
-                skill_text += ' combos'
+            skill_text += ' when matching {}'.format(self.attributes_to_str(ls.attributes[:ls.min_combo]))
+            if len(ls.attributes) > ls.min_combo:
+                if ls.min_combo == 1:
+                    skill_text += ' or {}'.format(self.attributes_to_str(ls.attributes[1:]))
+                else:
+                    skill_text += ' (or {})'.format(self.attributes_to_str(ls.attributes[1:]))
         return skill_text
 
     def color_combo_bonus_combo_text(self, ls):
-        if len(ls.attributes) and ls.attributes[1:] != ls.attributes[:-1]:
-            skill_text = 'Increase combo by {} when matching {}'.format(ls.bonus_combos,
-                                                                        self.fmt_multi_attr(list(set(ls.attributes)),
-                                                                                            conj='or' if ls.min_combo < len(
-                                                                                                ls.attributes) else 'and'))
+        skill_text = f'Increase combo by {ls.bonus_combos}'
+        if len(set(ls.attributes)) == 1:
+            skill_text += ' when matching {}'.format(ls.min_combo)
+            if not len(ls.attributes) != ls.min_combo:
+                skill_text += '+'
+            skill_text += ' {} combos'.format(self.ATTRIBUTES[ls.attributes[0]])
+            if len(ls.attributes) != ls.min_combo:
+                skill_text += ', up to {}x at {} {} combos'.format(fmt_mult(ls.atk), len(ls.attributes),
+                                                                   self.ATTRIBUTES[ls.attributes[0]])
         else:
-            skill_text = 'Increase combo by {} when matching {} or more'.format(ls.bonus_combos, ls.min_combo)
-            if ls.attributes:
-                skill_text += ' {} combos'.format(self.fmt_multi_attr(list(set(ls.attributes))))
-            else:
-                skill_text += ' combos'
+            skill_text += ' when matching {}'.format(self.attributes_to_str(ls.attributes[:ls.min_combo]))
+            if len(ls.attributes) > ls.min_combo:
+                if ls.min_combo == 1:
+                    skill_text += ' or {}'.format(self.attributes_to_str(ls.attributes[1:]))
+                else:
+                    skill_text += ' (or {})'.format(self.attributes_to_str(ls.attributes[1:]))
         return skill_text
 
     def combo_bonus_damage_text(self, ls):
