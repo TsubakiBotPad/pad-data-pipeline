@@ -1,6 +1,8 @@
 from typing import List
 
+from pad.db.sql_item import ExistsStrategy
 from pad.dungeon.wave_converter import ResultFloor
+from pad.raw.dungeon import FixedCard as FixedCardObject
 from pad.raw_processor.crossed_data import CrossServerDungeon, CrossServerSubDungeon
 from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
@@ -87,23 +89,20 @@ class SubDungeon(ServerDependentSqlItem):
     BASE_TABLE = 'sub_dungeons'
 
     @staticmethod
-    def from_csd(o: CrossServerDungeon) -> List['SubDungeon']:
-        results = []
-        for sd in o.sub_dungeons:
-            results.append(SubDungeon(
-                sub_dungeon_id=sd.sub_dungeon_id,
-                dungeon_id=o.dungeon_id,
-                name_ja=sd.jp_sub_dungeon.clean_name,
-                name_en=sd.na_sub_dungeon.clean_name,
-                name_ko=sd.kr_sub_dungeon.clean_name,
-                floors=sd.cur_sub_dungeon.floors,
-                stamina=sd.cur_sub_dungeon.stamina,
-                hp_mult=sd.cur_sub_dungeon.hp_mult,
-                atk_mult=sd.cur_sub_dungeon.atk_mult,
-                def_mult=sd.cur_sub_dungeon.def_mult,
-                s_rank=sd.cur_sub_dungeon.score,
-                technical=sd.cur_sub_dungeon.technical))
-        return results
+    def from_cssd(sd: CrossServerSubDungeon, dgid: int) -> 'SubDungeon':
+        return SubDungeon(
+            sub_dungeon_id=sd.sub_dungeon_id,
+            dungeon_id=dgid,
+            name_ja=sd.jp_sub_dungeon.clean_name,
+            name_en=sd.na_sub_dungeon.clean_name,
+            name_ko=sd.kr_sub_dungeon.clean_name,
+            floors=sd.cur_sub_dungeon.floors,
+            stamina=sd.cur_sub_dungeon.stamina,
+            hp_mult=sd.cur_sub_dungeon.hp_mult,
+            atk_mult=sd.cur_sub_dungeon.atk_mult,
+            def_mult=sd.cur_sub_dungeon.def_mult,
+            s_rank=sd.cur_sub_dungeon.score,
+            technical=sd.cur_sub_dungeon.technical)
 
     def __init__(self,
                  sub_dungeon_id: int = None,
@@ -203,3 +202,46 @@ class SubDungeonRewardData(ServerDependentSqlItem):
 
     def __str__(self):
         return 'SDRewardData({}): {}'.format(self.key_value(), self.reward_na)
+
+
+class FixedCard(ServerDependentSqlItem):
+    """A fixed card in a subdungeon fixed team."""
+    KEY_COL = 'fixed_card_id'
+    BASE_TABLE = 'fixed_cards'
+
+    @staticmethod
+    def from_fc(o: FixedCardObject, sdid: int) -> 'FixedCard':
+        return FixedCard(
+            fixed_card_id=None,  # Key that is looked up or inserted
+            monster_id=o.monster_id,
+            sub_dungeon_id=sdid,
+            order_idx=o.order_idx)
+
+    def __init__(self,
+                 fixed_card_id: int = None,
+                 monster_id: int = None,
+                 sub_dungeon_id: int = None,
+                 order_idx: int = None,
+                 tstamp: int = None):
+        self.fixed_card_id = fixed_card_id
+        self.monster_id = monster_id
+        self.sub_dungeon_id = sub_dungeon_id
+        self.order_idx = order_idx
+        self.tstamp = tstamp
+
+    def exists_strategy(self):
+        return ExistsStrategy.BY_VALUE
+
+    def _non_auto_insert_cols(self):
+        return [self._key()]
+
+    def _non_auto_update_cols(self):
+        return [self._key()]
+
+    def _lookup_columns(self):
+        return ['sub_dungeon_id', 'order_idx']
+
+    def __str__(self):
+        return 'FixedCard({}): {} in {} (#{})'.format(
+            self.key_value(), self.monster_id,
+            self.sub_dungeon_id, self.order_idx)
