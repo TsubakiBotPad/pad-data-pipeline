@@ -56,6 +56,7 @@ def ghtime(time_str: str, server: str) -> datetime.datetime:
         'na': '-0800',
         'jp': '+0900',
         'kr': '+0900',
+        'utc': '+0000'
     }
     timezone_str = '{} {}'.format(time_str, tz_offsets[server])
     return datetime.datetime.strptime(timezone_str, '%y%m%d%H%M%S %z')
