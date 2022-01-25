@@ -3,22 +3,72 @@ Parses Dungeon and DungeonFloor data.
 """
 
 import csv
-import re
 from io import StringIO
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pad.common import pad_util
 from pad.common.dungeon_types import RawDungeonType, RawRepeatDay
+from pad.common.pad_util import ghtime
 from pad.common.shared_types import DungeonId, SubDungeonId
 
 # The typical JSON file name for this data.
 FILE_NAME = 'download_dungeon_data.json'
 
 
+def default_int(modifiers: dict, key: str, default: int) -> int:
+    """This exists because there are so many goddamn typos in GH dungeon data"""
+    try:
+        return int(modifiers.get(key, default))
+    except ValueError:
+        return default
+
+
+def parse_modifiers(mod_str: str) -> Dict[str, Union[bool, str]]:
+    mods = {}
+    for mod in mod_str.split('|'):
+        if ':' not in mod or mod.endswith(':'):
+            mods[mod.split(':')[0]] = True
+            continue
+        k, v = mod.split(':', 1)
+        mods[k] = v.strip()
+    return mods
+
+
+def merge_defaults(data, defaults):
+    return list(data) + defaults[len(data):]
+
+
+class FixedTeamMonster(pad_util.Printable):
+    """A fixed team monster on a subdungeon team."""
+
+    def __init__(self, data: str):
+        data = [int(v) if v.isnumeric() else v
+                for v in data.rstrip(';').split(';')]
+        data = merge_defaults(data, [None, 99, 0, 0, 0, 99, 99])
+        (self.monster_id, self.level,
+         self.plus_hp, self.plus_atk, self.plus_rcv,
+         self.awakening_count, self.skill_level,
+         *rest) = data
+
+        self.latents = [0, 0, 0, 0, 0, 0]
+        self.assist = None
+        self.super_awakening_id = None
+
+        if not rest or rest[0] == 99:
+            pass
+        elif rest[0] == 'a':
+            self.assist = rest[1] or None
+        else:
+            self.latents = merge_defaults(rest[:6], self.latents)
+            if len(rest) > 6:
+                self.super_awakening_id = rest[6] or None
+
+
 class SubDungeon(pad_util.Printable):
     """A dungeon difficulty level."""
 
     def __init__(self, dungeon_id: DungeonId, raw: List[Any]):
+        # https://github.com/TsubakiBotPad/pad-data-pipeline/wiki/Subdungeon-Arguments
         self.sub_dungeon_id = SubDungeonId(dungeon_id * 1000 + int(raw[0]))
         self.simple_sub_dungeon_id = int(raw[0])
         self.raw_name = self.name = raw[1]
@@ -28,7 +78,7 @@ class SubDungeon(pad_util.Printable):
         self.stamina = raw[4]
         self.bgm1 = raw[5]
         self.bgm2 = raw[6]
-        self.rflags2 = int(raw[7])
+        self.disables = int(raw[7])
 
         # If monsters can use skills in this dungeon.
         self.technical = self.rflags1 & 0x80 > 0
@@ -40,79 +90,59 @@ class SubDungeon(pad_util.Printable):
             pos += 1
         pos += 1
 
-        self.flags = int(raw[pos])
-        self.remaining_fields = raw[pos + 1:]
+        flags = int(raw[pos])
+        pos += 1
 
-        # Modifiers parsing doesn't seem to always work
-        # Hacked up version for dungeon modifiers, needed for
-        # enemy parsing.
-        self.hp_mult = 1.0
-        self.atk_mult = 1.0
-        self.def_mult = 1.0
-
-        for field in self.remaining_fields:
-            if 'hp:' in field or 'at:' in field or 'df:' in field:
-                for k, v in re.findall(r'(\w{2}):(\d+)', field):
-                    if k == 'hp':
-                        self.hp_mult = float(v) / 10000
-                    elif k == 'at':
-                        self.atk_mult = float(v) / 10000
-                    elif k == 'df':
-                        self.def_mult = float(v) / 10000
-                break
-
-        # Modifiers parsing also seems to skip fixed teams sometimes.
-        # Hacked up version for just that here.
-        self.fixed_team = {}
-
-        for field in self.remaining_fields:
-            if 'fc1' not in field:
-                continue
-            # # TODO: this broke, look into re-enabling it
-            # for sub_field in field.split('|'):
-            #     if not sub_field.startswith('fc'):
-            #         continue
-            #     idx = int(sub_field[2])
-            #     contents = sub_field[4:]
-            #     details = contents.split(';')
-            #     full_record = len(details) > 1
-            #     self.fixed_team[idx] = {
-            #         'monster_id': details[0],
-            #         'hp_plus': details[1] if full_record else 0,
-            #         'atk_plus': details[2] if full_record else 0,
-            #         'rcv_plus': details[3] if full_record else 0,
-            #         'awakening_count': details[4] if full_record else 0,
-            #         'skill_level': details[5] if full_record else 0,
-            #     }
-
-        # This code imported from Rikuu, need to clean it up and merge
-        # with the other modifiers parsing code. For now just importing
-        # the score parsing, needed for dungeon loading.
+        self.prev_dungeon_id = None
+        self.prev_floor_id = None
+        self.start_timestamp = None
         self.score = None
-        i = 0
+        self.unknown_f4 = None
+        pipe_hell = ""
+        self.end_timestamp = None
 
-        if (self.flags & 0x1) != 0:
-            i += 2
-            # self.requirement = {
-            #  dungeonId: Number(self.remaining_fields[i++]),
-            #  floorId: Number(self.remaining_fields[i++])
-            # };
-        if (self.flags & 0x4) != 0:
-            i += 1
-            # self.beginTime = fromPADTime(self.remaining_fields[i++]);
-        if (self.flags & 0x8) != 0:
-            self.score = int(self.remaining_fields[i])
-            i += 1
-        if (self.flags & 0x10) != 0:
-            i += 1
-            # self.minRank = Number(self.remaining_fields[i++]);
-        if (self.flags & 0x40) != 0:
-            i += 1
-            # self.properties = self.remaining_fields[i++].split('|');
+        if flags & 1 << 0:  # Prev Floor
+            self.prev_dungeon_id = int(raw[pos])
+            self.prev_floor_id = int(raw[pos + 1])
+            pos += 2
 
+        if flags & 1 << 2:  # Start Timestamp
+            self.start_timestamp = ghtime(raw[pos], 'utc')
+            pos += 1
 
-def __str__(self):
-    return 'SubDungeon({} - {})'.format(self.sub_dungeon_id, self.clean_name)
+        if flags & 1 << 3:  # S-Rank Score
+            self.score = int(raw[pos])
+            pos += 1
+
+        if flags & 1 << 4:  # Unknown Value
+            self.unknown_f4 = int(raw[pos])
+            pos += 1
+
+        if flags & 1 << 6:  # Pipe Hell
+            pipe_hell = raw[pos]
+            pos += 1
+
+        if flags & 1 << 7:  # Start Timestamp
+            self.end_timestamp = ghtime(raw[pos], 'utc')
+            pos += 1
+
+        self.restriction_type = int(raw[pos])
+        self.restriction_args = raw[pos + 1:]
+
+        modifiers = parse_modifiers(pipe_hell)
+        self.hp_mult = default_int(modifiers, 'hp', 10000) / 10000
+        self.atk_mult = default_int(modifiers, 'at', 10000) / 10000
+        self.def_mult = default_int(modifiers, 'df', 10000) / 10000
+
+        self.fixed_monsters: Dict[int, FixedTeamMonster] = {}
+        for idx in range(6):
+            if None is (fc := modifiers.get(f'fc{idx + 1}')):
+                # Not all dungeons have fixed cards in all slots
+                continue
+            self.fixed_monsters[idx] = FixedTeamMonster(fc)
+
+    def __str__(self):
+        return 'SubDungeon({} - {})'.format(self.sub_dungeon_id, self.clean_name)
 
 
 prefix_to_dungeontype = {
@@ -163,7 +193,7 @@ class Dungeon(pad_util.Printable):
         # Seems related to the ordering of dungeons, but only within their 'sub group'?
         self.order = int(raw[7]) if raw[7] else None
 
-        self.remaining_fields = raw[8:]
+        self.display_monster_id = int(raw[8]) if len(raw) > 8 else None
 
         for prefix, dungeon_type in prefix_to_dungeontype.items():
             if self.clean_name.startswith(prefix):
