@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Optional
 
 from pad.db.sql_item import ExistsStrategy
 from pad.dungeon.wave_converter import ResultFloor
-from pad.raw.dungeon import FixedCard as FixedCardObject
+from pad.raw.dungeon import FixedTeamMonster as FixedCardObject
 from pad.raw_processor.crossed_data import CrossServerDungeon, CrossServerSubDungeon
 from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
@@ -204,28 +204,86 @@ class SubDungeonRewardData(ServerDependentSqlItem):
         return 'SDRewardData({}): {}'.format(self.key_value(), self.reward_na)
 
 
-class FixedCard(ServerDependentSqlItem):
-    """A fixed card in a subdungeon fixed team."""
-    KEY_COL = 'fixed_card_id'
-    BASE_TABLE = 'fixed_cards'
+class FixedTeam(ServerDependentSqlItem):
+    """A fixed team within a dungeon."""
+    KEY_COL = 'fixed_team_id'
+    BASE_TABLE = 'fixed_teams'
 
     @staticmethod
-    def from_fc(o: FixedCardObject, sdid: int) -> 'FixedCard':
-        return FixedCard(
-            fixed_card_id=None,  # Key that is looked up or inserted
-            monster_id=o.monster_id,
-            sub_dungeon_id=sdid,
-            order_idx=o.order_idx)
+    def from_cssd(sd: CrossServerSubDungeon) -> 'SubDungeon':
+        return FixedTeam(
+            fixed_team_id=sd.sub_dungeon_id,
+            sub_dungeon_id=sd.sub_dungeon_id)
 
     def __init__(self,
-                 fixed_card_id: int = None,
-                 monster_id: int = None,
-                 sub_dungeon_id: int = None,
+                 fixed_team_id: int = None,
+                 sub_dungeon_id: int = None):
+        self.fixed_team_id = fixed_team_id
+        self.sub_dungeon_id = sub_dungeon_id
+        self.tstamp = None
+
+    def __str__(self):
+        return 'FixedTeam({})'.format(self.key_value())
+
+
+class FixedTeamMonster(ServerDependentSqlItem):
+    """A fixed monster in a subdungeon fixed team."""
+    KEY_COL = 'fixed_team_monster_id'
+    BASE_TABLE = 'fixed_team_monsters'
+
+    @staticmethod
+    def from_fc(o: Optional[FixedCardObject], idx: int, sdid: int) -> 'FixedTeamMonster':
+        if o is None:
+            return FixedTeamMonster(
+                fixed_team_id=sdid,
+                fixed_slot_type_id=0,
+                order_idx=idx)
+        if not o.monster_id:
+            return FixedTeamMonster(
+                fixed_team_id=sdid,
+                fixed_slot_type_id=1,
+                order_idx=idx)
+        return FixedTeamMonster(
+            fixed_team_id=sdid,
+            fixed_slot_type_id=2,
+            alt_monster_id=o.monster_id,
+            monster_level=o.level,
+            plus_hp=o.plus_hp,
+            plus_atk=o.plus_atk,
+            plus_rcv=o.plus_rcv,
+            awakening_count=o.awakening_count,
+            skill_level=o.skill_level,
+            assist_alt_monster_id=o.assist,
+            super_awakening_id=o.super_awakening_id,
+            order_idx=idx)
+
+    def __init__(self,
+                 fixed_team_monster_id: int = None,
+                 fixed_team_id: int = None,
+                 fixed_slot_type_id: int = None,
+                 alt_monster_id: Optional[int] = None,
+                 monster_level: Optional[int] = None,
+                 plus_hp: Optional[int] = None,
+                 plus_atk: Optional[int] = None,
+                 plus_rcv: Optional[int] = None,
+                 awakening_count: Optional[int] = None,
+                 skill_level: Optional[int] = None,
+                 assist_alt_monster_id: Optional[int] = None,
+                 super_awakening_id: Optional[int] = None,
                  order_idx: int = None,
                  tstamp: int = None):
-        self.fixed_card_id = fixed_card_id
-        self.monster_id = monster_id
-        self.sub_dungeon_id = sub_dungeon_id
+        self.fixed_team_monster_id = fixed_team_monster_id
+        self.fixed_team_id = fixed_team_id
+        self.fixed_slot_type_id = fixed_slot_type_id
+        self.alt_monster_id = alt_monster_id
+        self.monster_level = monster_level
+        self.plus_hp = plus_hp
+        self.plus_atk = plus_atk
+        self.plus_rcv = plus_rcv
+        self.awakening_count = awakening_count
+        self.skill_level = skill_level
+        self.assist_alt_monster_id = assist_alt_monster_id
+        self.super_awakening_id = super_awakening_id
         self.order_idx = order_idx
         self.tstamp = tstamp
 
@@ -239,9 +297,9 @@ class FixedCard(ServerDependentSqlItem):
         return [self._key()]
 
     def _lookup_columns(self):
-        return ['sub_dungeon_id', 'order_idx']
+        return ['fixed_team_id', 'order_idx']
 
     def __str__(self):
         return 'FixedCard({}): {} in {} (#{})'.format(
-            self.key_value(), self.monster_id,
-            self.sub_dungeon_id, self.order_idx)
+            self.key_value(), self.alt_monster_id,
+            self.fixed_team_id, self.order_idx)

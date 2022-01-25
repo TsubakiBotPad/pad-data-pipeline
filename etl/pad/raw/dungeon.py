@@ -4,7 +4,7 @@ Parses Dungeon and DungeonFloor data.
 
 import csv
 from io import StringIO
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pad.common import pad_util
 from pad.common.dungeon_types import RawDungeonType, RawRepeatDay
@@ -15,12 +15,8 @@ from pad.common.shared_types import DungeonId, SubDungeonId
 FILE_NAME = 'download_dungeon_data.json'
 
 
-def maybe_int(num: str) -> Union[str, int]:
-    return int(num) if num.isnumeric() else num
-
-
 def default_int(modifiers: dict, key: str, default: int) -> int:
-    """This exists because there are so many god damn typos in GH data"""
+    """This exists because there are so many goddamn typos in GH dungeon data"""
     try:
         return int(modifiers.get(key, default))
     except ValueError:
@@ -42,34 +38,30 @@ def merge_defaults(data, defaults):
     return list(data) + defaults[len(data):]
 
 
-class FixedCard(pad_util.Printable):
-    """A fixed card on a subdungeon team."""
+class FixedTeamMonster(pad_util.Printable):
+    """A fixed team monster on a subdungeon team."""
 
-    def __init__(self, data: str, order_idx):
-        data = [maybe_int(v) for v in data.rstrip(';').split(';')]
+    def __init__(self, data: str):
+        data = [int(v) if v.isnumeric() else v
+                for v in data.rstrip(';').split(';')]
         data = merge_defaults(data, [None, 99, 0, 0, 0, 99, 99])
         (self.monster_id, self.level,
          self.plus_hp, self.plus_atk, self.plus_rcv,
          self.awakening_count, self.skill_level,
          *rest) = data
 
-        # If the monster_id is 0, we have to make it None to show there's no monster here
-        self.monster_id = self.monster_id or None
-
         self.latents = [0, 0, 0, 0, 0, 0]
-        self.assist = 0
-        self.super_awakening_id = 0
+        self.assist = None
+        self.super_awakening_id = None
 
         if not rest or rest[0] == 99:
             pass
         elif rest[0] == 'a':
-            self.assist = rest[1]
+            self.assist = rest[1] or None
         else:
             self.latents = merge_defaults(rest[:6], self.latents)
             if len(rest) > 6:
-                self.super_awakening_id = rest[6]
-
-        self.order_idx = order_idx
+                self.super_awakening_id = rest[6] or None
 
 
 class SubDungeon(pad_util.Printable):
@@ -142,12 +134,12 @@ class SubDungeon(pad_util.Printable):
         self.atk_mult = default_int(modifiers, 'at', 10000) / 10000
         self.def_mult = default_int(modifiers, 'df', 10000) / 10000
 
-        self.fixed_cards: Set[FixedCard] = set()
-        for idx in range(1, 6 + 1):
-            if not (fc := modifiers.get(f'fc{idx}')):
+        self.fixed_monsters: Dict[int, FixedTeamMonster] = {}
+        for idx in range(6):
+            if None is (fc := modifiers.get(f'fc{idx + 1}')):
                 # Not all dungeons have fixed cards in all slots
                 continue
-            self.fixed_cards.add(FixedCard(modifiers[f'fc{idx}'], idx))
+            self.fixed_monsters[idx] = FixedTeamMonster(fc)
 
     def __str__(self):
         return 'SubDungeon({} - {})'.format(self.sub_dungeon_id, self.clean_name)
