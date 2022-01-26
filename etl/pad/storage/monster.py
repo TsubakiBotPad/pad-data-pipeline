@@ -450,23 +450,23 @@ class AltMonster(ServerDependentSqlItem):
     BASE_TABLE = 'alt_monsters'
 
     @staticmethod
-    def from_csm(o: CrossServerCard) -> 'AltMonster':
+    def from_csm(o: CrossServerCard, mid: Optional[int]) -> 'AltMonster':
         return AltMonster(
             alt_monster_id=o.monster_id,
-            canonical_id=o.monster_id % 1000000,
+            monster_id=mid,
             active_skill_id=o.cur_card.card.active_skill_id,
             reg_date=date.today().isoformat(),
-            is_alt=20000 <= o.monster_id)
+            is_alt=o.monster_id >= 20000)
 
     def __init__(self,
                  alt_monster_id: int = None,
-                 canonical_id: int = None,
+                 monster_id: Optional[int] = None,
                  active_skill_id: int = None,
                  reg_date: str = None,
                  is_alt: bool = None,
                  tstamp: int = None):
         self.alt_monster_id = alt_monster_id
-        self.canonical_id = canonical_id
+        self.monster_id = monster_id
         self.active_skill_id = active_skill_id
         self.reg_date = reg_date
         self.is_alt = is_alt
@@ -476,4 +476,4 @@ class AltMonster(ServerDependentSqlItem):
         return ['reg_date']
 
     def __str__(self):
-        return 'AltMonster({})'.format(self.key_value())
+        return 'AltMonster({}) - {}'.format(self.key_value(), self.monster_id)

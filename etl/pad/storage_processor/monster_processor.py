@@ -1,11 +1,11 @@
 import logging
 
 from pad.common import pad_util
+from pad.common.pad_util import is_bad_name
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
-from pad.storage.monster import Monster, Awakening, Evolution, MonsterWithExtraImageInfo, \
-    AltMonster, Transformation
-from pad.storage.monster_skill import ActiveSkill, LeaderSkill, upsert_active_skill_data
+from pad.storage.monster import AltMonster, Awakening, Evolution, Monster, MonsterWithExtraImageInfo, Transformation
+from pad.storage.monster_skill import LeaderSkill, upsert_active_skill_data
 
 logger = logging.getLogger('processor')
 human_fix_logger = logging.getLogger('human_fix')
@@ -38,13 +38,13 @@ class MonsterProcessor(object):
         logger.info('loaded %s leader skills and %s active skills', ls_count, as_count)
 
     def _process_monsters(self, db):
-        logger.info('loading %s monsters', len(self.data.ownable_cards))
+        logger.info('loading monsters')
         for m in self.data.all_cards:
-            if 0 < m.monster_id < 19999:
-                item = Monster.from_csm(m)
-                db.insert_or_update(item)
-            item = AltMonster.from_csm(m)
-            db.insert_or_update(item)
+            if 0 < m.monster_id < 19999 and not is_bad_name(m.jp_card.card.name):
+                db.insert_or_update(Monster.from_csm(m))
+            canonical_id = next((cm.monster_id for cm in self.data.ownable_cards
+                                 if cm.monster_id == m.monster_id % 100000), None)
+            db.insert_or_update(AltMonster.from_csm(m, canonical_id))
 
     def _process_monster_images(self, db):
         logger.info('monster images, hq_count=%s, anim_count=%s',
