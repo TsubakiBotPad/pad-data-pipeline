@@ -1,5 +1,6 @@
-from typing import List, Optional
+from typing import Optional
 
+from pad.common.monster_id_mapping import server_monster_id_fn
 from pad.db.sql_item import ExistsStrategy
 from pad.dungeon.wave_converter import ResultFloor
 from pad.raw.dungeon import FixedTeamMonster as FixedCardObject
@@ -232,21 +233,21 @@ class FixedTeamMonster(ServerDependentSqlItem):
     BASE_TABLE = 'fixed_team_monsters'
 
     @staticmethod
-    def from_fc(o: Optional[FixedCardObject], idx: int, sdid: int) -> 'FixedTeamMonster':
+    def from_fc(o: Optional[FixedCardObject], idx: int, cssd: CrossServerSubDungeon) -> 'FixedTeamMonster':
         if o is None:
             return FixedTeamMonster(
-                fixed_team_id=sdid,
+                fixed_team_id=cssd.sub_dungeon_id,
                 fixed_slot_type_id=0,
                 order_idx=idx)
         if not o.monster_id:
             return FixedTeamMonster(
-                fixed_team_id=sdid,
+                fixed_team_id=cssd.sub_dungeon_id,
                 fixed_slot_type_id=1,
                 order_idx=idx)
         return FixedTeamMonster(
-            fixed_team_id=sdid,
+            fixed_team_id=cssd.sub_dungeon_id,
             fixed_slot_type_id=2,
-            alt_monster_id=o.monster_id,
+            alt_monster_id=server_monster_id_fn(cssd.server)(o.monster_id),
             monster_level=o.level,
             plus_hp=o.plus_hp,
             plus_atk=o.plus_atk,

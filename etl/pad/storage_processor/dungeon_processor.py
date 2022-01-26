@@ -38,4 +38,4 @@ class DungeonProcessor(object):
                 db.insert_or_update(FixedTeam.from_cssd(subdungeon))
                 for fcid in range(6):
                     fixed = subdungeon.cur_sub_dungeon.fixed_monsters.get(fcid)
-                    db.insert_or_update(FixedTeamMonster.from_fc(fixed, fcid, subdungeon.sub_dungeon_id))
+                    db.insert_or_update(FixedTeamMonster.from_fc(fixed, fcid, subdungeon))

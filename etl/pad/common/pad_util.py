@@ -145,3 +145,8 @@ def json_string_dump(obj, pretty=False):
 def json_file_dump(obj, f, pretty=False):
     indent = 4 if pretty else None
     json.dump(obj, f, indent=indent, sort_keys=True, default=dump_helper, ensure_ascii=False)
+
+
+def is_bad_name(name):
+    """Finds names that are currently placeholder data."""
+    return any([x in name for x in ['***', '???']]) or any([x == name for x in ['None', '無し', '없음', 'なし']])

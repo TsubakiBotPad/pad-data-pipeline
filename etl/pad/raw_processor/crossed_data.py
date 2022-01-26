@@ -4,15 +4,16 @@ Data from across multiple servers merged together.
 import logging
 import os
 from copy import copy
-from typing import List, Optional, Union, TypeVar, Callable, Tuple
+from typing import Callable, List, Optional, Tuple, TypeVar, Union
 
 from pad.common import dungeon_types, pad_util
-from pad.common.shared_types import MonsterId, DungeonId, Server
+from pad.common.pad_util import is_bad_name
+from pad.common.shared_types import DungeonId, MonsterId, Server
 from pad.raw import Dungeon, EnemySkill
 from pad.raw.dungeon import SubDungeon
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_skill_info import ActiveSkill
-from pad.raw.skills.enemy_skill_info import ESInstance, ESUnknown, ESNone
+from pad.raw.skills.enemy_skill_info import ESInstance, ESNone, ESUnknown
 from pad.raw.skills.leader_skill_info import LeaderSkill
 from pad.raw_processor.jp_replacements import jp_en_replacements
 from pad.raw_processor.merged_data import MergedCard
@@ -22,7 +23,7 @@ fail_logger = logging.getLogger('processor_failures')
 human_fix_logger = logging.getLogger('human_fix')
 
 
-class CrossServerCard(object):
+class CrossServerCard:
     def __init__(self,
                  jp_card: MergedCard,
                  na_card: MergedCard,
@@ -56,11 +57,12 @@ class CrossServerCard(object):
         self.gem = None
 
 
-def build_cross_server_cards(jp_database, na_database, kr_database, server) -> List[CrossServerCard]:
-    all_monster_ids = set(jp_database.monster_id_to_card.keys())
-    all_monster_ids.update(na_database.monster_id_to_card.keys())
-    all_monster_ids.update(kr_database.monster_id_to_card.keys())
-    all_monster_ids = list(sorted(all_monster_ids))
+def build_cross_server_cards(jp_database: Database, na_database: Database, kr_database: Database, server: Server) \
+        -> List[CrossServerCard]:
+    all_monster_ids = list(sorted({
+        *jp_database.monster_id_to_card.keys(),
+        *na_database.monster_id_to_card.keys(),
+        *kr_database.monster_id_to_card.keys()}))
 
     # This is the list of cards we could potentially update
     combined_cards = []  # type: List[CrossServerCard]
@@ -105,11 +107,6 @@ def build_cross_server_cards(jp_database, na_database, kr_database, server) -> L
         human_fix_logger.warning("Unassigned Gem(s): " + ', '.join(aggreg))
 
     return combined_cards
-
-
-def is_bad_name(name):
-    """Finds names that are currently placeholder data."""
-    return any([x in name for x in ['***', '???']]) or any([x == name for x in ['None', '無し', '없음', 'なし']])
 
 
 def _compare_named(override, dest):
@@ -189,12 +186,14 @@ def make_cross_server_card(jp_card: MergedCard,
     if is_bad_name(jp_card.card.name):
         # This is a debug monster, or not yet supported
         # TODO: Make sure this is safe for NA DB generation
-        return None, 'Debug monster'
+        # Update: It's not.  Dungeons can refer to these as fixed cards
+        # return None, 'Debug monster'
+        pass
 
     return CrossServerCard(jp_card, na_card, kr_card, server), None
 
 
-class CrossServerESInstance(object):
+class CrossServerESInstance:
     """A per-monster skill info across servers.
 
     Not sure why we need both of these.
@@ -287,7 +286,7 @@ def _combine_es(jp_skills: List[ESInstance],
     return results
 
 
-class CrossServerDungeon(object):
+class CrossServerDungeon:
     def __init__(self, jp_dungeon: Dungeon, na_dungeon: Dungeon, kr_dungeon: Dungeon, server: Server):
         self.dungeon_id = jp_dungeon.dungeon_id
         self.jp_dungeon = jp_dungeon
@@ -305,7 +304,7 @@ class CrossServerDungeon(object):
             csd.na_sub_dungeon.clean_name = jp_en_replacements(csd.na_sub_dungeon.clean_name)
 
 
-class CrossServerSubDungeon(object):
+class CrossServerSubDungeon:
     def __init__(self,
                  jp_sub_dungeon: SubDungeon,
                  na_sub_dungeon: SubDungeon,
@@ -315,17 +314,16 @@ class CrossServerSubDungeon(object):
         self.jp_sub_dungeon = jp_sub_dungeon
         self.na_sub_dungeon = na_sub_dungeon
         self.kr_sub_dungeon = kr_sub_dungeon
-        self.cur_sub_dungeon = (jp_sub_dungeon, na_sub_dungeon, kr_sub_dungeon)[server.value]
+        self.cur_sub_dungeon: SubDungeon = (jp_sub_dungeon, na_sub_dungeon, kr_sub_dungeon)[server.value]
+        self.server = server
 
 
 def build_cross_server_dungeons(jp_database: Database,
                                 na_database: Database,
                                 kr_database: Database,
                                 server: Server) -> List[CrossServerDungeon]:
-    dungeon_ids = set([dungeon.dungeon_id for dungeon in jp_database.dungeons])
-    dungeon_ids.update([dungeon.dungeon_id for dungeon in na_database.dungeons])
-    dungeon_ids.update([dungeon.dungeon_id for dungeon in kr_database.dungeons])
-    dungeon_ids = list(sorted(dungeon_ids))
+    dungeon_ids = list(sorted({dungeon.dungeon_id for dungeon
+                               in jp_database.dungeons + na_database.dungeons + kr_database.dungeons}))
 
     combined_dungeons = []  # type: List[CrossServerDungeon]
     for dungeon_id in dungeon_ids:
@@ -389,7 +387,7 @@ def make_cross_server_sub_dungeons(jp_dungeon: Dungeon,
 EitherSkillType = Union[ActiveSkill, LeaderSkill]
 
 
-class CrossServerSkill(object):
+class CrossServerSkill:
     def __init__(self, jp_skill: EitherSkillType, na_skill: EitherSkillType, kr_skill: EitherSkillType, server: Server):
         self.skill_id = (jp_skill or na_skill or kr_skill).skill_id
         self.jp_skill = jp_skill
@@ -437,7 +435,7 @@ def make_cross_server_skill(jp_skill: EitherSkillType,
         return None
 
 
-class CrossServerEnemySkill(object):
+class CrossServerEnemySkill:
     def __init__(self, jp_skill: EnemySkill, na_skill: EnemySkill, kr_skill: EnemySkill, server: Server):
         self.enemy_skill_id = (jp_skill or na_skill or kr_skill).enemy_skill_id
         self.jp_skill = jp_skill
@@ -473,13 +471,12 @@ def build_cross_server_enemy_skills(jp_skills: List[EnemySkill],
     return results
 
 
-class CrossServerDatabase(object):
+class CrossServerDatabase:
     def __init__(self, jp_database: Database, na_database: Database, kr_database: Database, server=Server.jp):
-        self.all_cards = build_cross_server_cards(jp_database,
-                                                  na_database,
-                                                  kr_database,
-                                                  server)  # type: List[CrossServerCard]
-        self.ownable_cards = [c for c in self.all_cards if 0 < c.monster_id < 19999]  # type: List[CrossServerCard]
+        self.all_cards = build_cross_server_cards(jp_database, na_database, kr_database, server)
+        self.ownable_cards = [c for c in self.all_cards
+                              if 0 < c.monster_id < 19999
+                              and not is_bad_name(c.jp_card.card.name)]
 
         self.leader_skills = build_cross_server_skills(jp_database.leader_skills,
                                                        na_database.leader_skills,
