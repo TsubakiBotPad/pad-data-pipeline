@@ -21,7 +21,6 @@ class DungeonProcessor(object):
     def process(self, db: DbWrapper):
         logger.info('loading dungeon data')
         self._process_dungeons(db)
-        self._process_subdungeons(db)
         logger.info('done loading dungeon data')
 
     def post_encounter_process(self, db: DbWrapper):
@@ -32,14 +31,12 @@ class DungeonProcessor(object):
     def _process_dungeons(self, db: DbWrapper):
         logger.info('loading %s dungeons', len(self.data.dungeons))
         for dungeon in self.data.dungeons:
-            item = Dungeon.from_csd(dungeon)
-            db.insert_or_update(item)
-        logger.info('done loading dungeons')
-
-    def _process_subdungeons(self, db: DbWrapper):
-        logger.info('loading sub_dungeons')
-        for dungeon in self.data.dungeons:
-            items = SubDungeon.from_csd(dungeon)
-            for item in items:
-                db.insert_or_update(item)
-        logger.info('done loading subdungeons')
+            db.insert_or_update(Dungeon.from_csd(dungeon))
+            for subdungeon in dungeon.sub_dungeons:
+                db.insert_or_update(SubDungeon.from_cssd(subdungeon, dungeon.dungeon_id))
+                if not subdungeon.cur_sub_dungeon.fixed_monsters:
+                    continue
+                db.insert_or_update(FixedTeam.from_cssd(subdungeon))
+                for fcid in range(6):
+                    fixed = subdungeon.cur_sub_dungeon.fixed_monsters.get(fcid)
+                    db.insert_or_update(FixedTeamMonster.from_fc(fixed, fcid, subdungeon))

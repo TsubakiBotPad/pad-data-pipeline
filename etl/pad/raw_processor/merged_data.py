@@ -53,7 +53,6 @@ class MergedCard(pad_util.Printable):
                  leader_skill: LeaderSkill,
                  enemy_skills: List[ESInstance]):
         self.server = server
-        self.id_mapper = server_monster_id_fn(self.server)
         self.monster_no = card.monster_no
         self.monster_id = self.no_to_id(card.monster_no)
         self.card = card

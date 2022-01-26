@@ -41,7 +41,7 @@ def _clean_bonuses(server: Server, bonus_sets, dungeons) -> List[MergedBonus]:
 
 
 def _clean_cards(server: Server,
-                 cards: List[card.Card],
+                 cards: List[Card],
                  enemies: List[MergedEnemy],
                  db) -> List[MergedCard]:
     enemy_by_enemy_id = {e.enemy_id: e for e in enemies}
