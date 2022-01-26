@@ -1804,5 +1804,19 @@
     "name_ko": "신 테니스의 왕자",
     "series_id": 267,
     "series_type": "collab"
+  },
+  {
+    "name_en": "One Punch Man",
+    "name_ja": "ワンパンマン",
+    "name_ko": "원펀맨",
+    "series_id": 268,
+    "series_type": "collab"
+  },
+  {
+    "name_en": "Ultraman",
+    "name_ja": "ウルトラシリーズ",
+    "name_ko": "울트라",
+    "series_id": 269,
+    "series_type": "collab"
   }
 ]

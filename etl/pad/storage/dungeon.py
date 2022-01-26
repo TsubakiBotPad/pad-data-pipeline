@@ -1,8 +1,9 @@
-from typing import List
+from typing import Optional
 
 from pad.common.monster_id_mapping import server_monster_id_fn
 from pad.db.sql_item import ExistsStrategy
 from pad.dungeon.wave_converter import ResultFloor
+from pad.raw.dungeon import FixedTeamMonster as FixedCardObject
 from pad.raw_processor.crossed_data import CrossServerDungeon, CrossServerSubDungeon
 from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
@@ -89,23 +90,20 @@ class SubDungeon(ServerDependentSqlItem):
     BASE_TABLE = 'sub_dungeons'
 
     @staticmethod
-    def from_csd(o: CrossServerDungeon) -> List['SubDungeon']:
-        results = []
-        for sd in o.sub_dungeons:
-            results.append(SubDungeon(
-                sub_dungeon_id=sd.sub_dungeon_id,
-                dungeon_id=o.dungeon_id,
-                name_ja=sd.jp_sub_dungeon.clean_name,
-                name_en=sd.na_sub_dungeon.clean_name,
-                name_ko=sd.kr_sub_dungeon.clean_name,
-                floors=sd.cur_sub_dungeon.floors,
-                stamina=sd.cur_sub_dungeon.stamina,
-                hp_mult=sd.cur_sub_dungeon.hp_mult,
-                atk_mult=sd.cur_sub_dungeon.atk_mult,
-                def_mult=sd.cur_sub_dungeon.def_mult,
-                s_rank=sd.cur_sub_dungeon.score,
-                technical=sd.cur_sub_dungeon.technical))
-        return results
+    def from_cssd(sd: CrossServerSubDungeon, dgid: int) -> 'SubDungeon':
+        return SubDungeon(
+            sub_dungeon_id=sd.sub_dungeon_id,
+            dungeon_id=dgid,
+            name_ja=sd.jp_sub_dungeon.clean_name,
+            name_en=sd.na_sub_dungeon.clean_name,
+            name_ko=sd.kr_sub_dungeon.clean_name,
+            floors=sd.cur_sub_dungeon.floors,
+            stamina=sd.cur_sub_dungeon.stamina,
+            hp_mult=sd.cur_sub_dungeon.hp_mult,
+            atk_mult=sd.cur_sub_dungeon.atk_mult,
+            def_mult=sd.cur_sub_dungeon.def_mult,
+            s_rank=sd.cur_sub_dungeon.score,
+            technical=sd.cur_sub_dungeon.technical)
 
     def __init__(self,
                  sub_dungeon_id: int = None,
