@@ -501,19 +501,17 @@ class EnASTextConverter(EnBaseTextConverter):
                     output.append(result)
                     del board[row_num][1]
 
-        if orb_count == 7:
-            if board == [[3, 4, 5], [3, 5], [5], [5], []]:
-                return 'Create a 7-shape of {} orbs in the upper right corner'.format(self.ATTRIBUTES[act.attribute])
-        if orb_count == 6:
-            if board == [[0, 1, 2], [0, 1, 2], [], [], []]:
-                return 'Create a 3x2 rectangle of {} orbs in the upper left corner'.format(
-                    self.ATTRIBUTES[act.attribute])
-        if orb_count == 12:
-            if board == [[], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], []]:
-                return 'Change all orbs except for the outer ring to {} orbs'.format(self.ATTRIBUTES[act.attribute])
-        if orb_count == 18:
-            if board == [[0, 1, 2, 3, 4, 5], [0, 5], [0, 5], [0, 5], [0, 1, 2, 3, 4, 5]]:
-                skill_text += 'Change the outermost orbs of the board to {} orbs'.format(self.ATTRIBUTES[act.attribute])
+        if board == [[3, 4, 5], [3, 5], [5], [5], []]:
+            return 'Create a 7-shape of {} orbs in the upper right corner'.format(self.ATTRIBUTES[act.attribute])
+        if board == [[0, 1, 2], [0, 1, 2], [], [], []]:
+            return 'Create a 3x2 rectangle of {} orbs in the upper left corner'.format(
+                self.ATTRIBUTES[act.attribute])
+        if board == [[], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], []]:
+            return 'Change all orbs except for the outer ring to {} orbs'.format(self.ATTRIBUTES[act.attribute])
+        if board == [[2, 3, 4], [1, 4, 5], [5], [1, 4, 5], [2, 3, 4]]:
+            skill_text += 'Create 13 {} orbs in the shape of a crescent moon.'.format(self.ATTRIBUTES[act.attribute])
+        if board == [[0, 1, 2, 3, 4, 5], [0, 5], [0, 5], [0, 5], [0, 1, 2, 3, 4, 5]]:
+            skill_text += 'Change the outermost orbs of the board to {} orbs'.format(self.ATTRIBUTES[act.attribute])
 
         if output:
             for entry in output:

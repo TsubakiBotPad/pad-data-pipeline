@@ -491,6 +491,9 @@ class JaASTextConverter(JaBaseTextConverter):
             if len(board[0]) == len(board[4]) == len(board[1]) + len(board[2]) + len(board[3]) == 6:
                 skill_text += '盤面外周を{}ドロップに変化。'.format(self.ATTRIBUTES[act.attribute])
 
+        if board == [[2, 3, 4], [1, 4, 5], [5], [1, 4, 5], [2, 3, 4]]:
+            skill_text += '三日月状に{}ドロップを生成。'.format(self.ATTRIBUTES[act.attribute])
+
         if output:
             for entry in output:
                 if skill_text:
