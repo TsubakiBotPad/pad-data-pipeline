@@ -19,10 +19,6 @@ class Exchange(Printable):
     """Exchangeable monsters, options to exhange, and any event text."""
 
     def __init__(self, raw: List[str], server: Server):
-        # TODO: Remove this when amount comes to NA
-        if server != Server.jp:
-            raw.insert(7, "1")
-
         self.server = server
         self.unknown_000 = str(raw[0])  # Seems to always be 'A'  (For Array maybe?  TODO: Look into this for GH CSV)
 
