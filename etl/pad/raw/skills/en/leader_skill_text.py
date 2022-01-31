@@ -476,12 +476,8 @@ class EnLSTextConverter(EnBaseTextConverter):
             return skill_text + f" for each instance of {self.typing_to_str(ls.types, 'or')} in team"
 
     def rarity_threshold_boost(self, ls):
-        skill_text = self.fmt_multiplier_text(1, ls.atk, 1)
-        if ls.lower_limit == 0:
-            return skill_text + f" when total team rarity is less than or equal to {ls.upper_limit}"
-        if ls.upper_limit == 9999:
-            return skill_text + f" when total team rarity is more than or equal to {ls.lower_limit}"
-        return skill_text + f" when total team rarity is between {ls.lower_limit} and {ls.upper_limit} (inclusive)"
+        skill_text = self.fmt_multiplier_text(ls.hp, ls.atk, 1)
+        return skill_text + f" when total team rarity is less than or equal to {ls.limit}"
 
     def full_text(self, text, tags=None):
         tags = tags or []
