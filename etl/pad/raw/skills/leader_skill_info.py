@@ -1831,10 +1831,9 @@ class LSRarityThresholdBoost(LeaderSkill):
     skill_type = 217
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [9999, 0, 100])
-        self.upper_limit = data[0] or 9999
-        self.lower_limit = data[1]
-        super().__init__(217, ms, atk=multi_floor(data[2]))
+        data = merge_defaults(ms.data, [9999, 0, 0])
+        self.limit = data[0]
+        super().__init__(217, ms, hp=multi_floor(data[1]), atk=multi_floor(data[2]))
 
     def text(self, converter) -> str:
         return converter.rarity_threshold_boost(self)

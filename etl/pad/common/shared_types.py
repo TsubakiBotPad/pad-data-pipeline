@@ -1,6 +1,6 @@
 import math
 from enum import Enum
-from typing import NewType, Dict, Any, List
+from typing import NewType, Dict, Any, List, Union
 
 # Raw data types
 AttrId = NewType('AttrId', int)
@@ -32,8 +32,8 @@ class Curve(Printable):
     """Describes how to scale according to level 1-10."""
 
     def __init__(self,
-                 min_value: int,
-                 max_value: int = None,
+                 min_value: Union[int, float],
+                 max_value: Union[int, float] = None,
                  scale: float = 1.0,
                  max_level: int = 10):
         self.min_value = min_value

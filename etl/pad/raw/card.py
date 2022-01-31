@@ -2,7 +2,7 @@
 Parses card data.
 """
 import logging
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Union
 
 from pad.common import pad_util
 from pad.common.shared_types import AttrId, MonsterNo, SkillId, TypeId, Curve
@@ -50,8 +50,9 @@ class Card(pad_util.Printable):
     """Data about a player-ownable monster."""
 
     def __init__(self, raw: List[str]):
-        _unflatten(raw, 57, 3, replace=True)
-        _unflatten(raw, 58, 1, replace=True)
+        _unflatten(raw, 57, 3)
+        _unflatten(raw, 58, 1)
+        raw: List[Union[str, List]]
 
         self.monster_no = MonsterNo(int(raw[0]))
         self.name = raw[1]
@@ -254,7 +255,7 @@ class Card(pad_util.Printable):
         return 'Card({} - {})'.format(self.monster_no, self.name)
 
 
-def _unflatten(raw: List[Any], idx: int, width: int, replace: bool = False):
+def _unflatten(raw: List[Any], idx: int, width: int):
     """Unflatten a card array.
 
     Index is the slot containing the item count.
@@ -264,9 +265,8 @@ def _unflatten(raw: List[Any], idx: int, width: int, replace: bool = False):
     """
     item_count = raw[idx]
     if item_count == 0:
-        if replace:
-            raw[idx] = list()
-            return
+        raw[idx] = list()
+        return
 
     data_start = idx + 1
     flattened_item_count = width * item_count
@@ -274,9 +274,7 @@ def _unflatten(raw: List[Any], idx: int, width: int, replace: bool = False):
 
     data = list(raw[flattened_data_slice])
     del raw[flattened_data_slice]
-
-    if replace:
-        raw[idx] = data
+    raw[idx] = data
 
 
 def load_card_data(data_dir: str = None, json_file: str = None) -> List[Card]:

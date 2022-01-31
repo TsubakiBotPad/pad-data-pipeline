@@ -106,4 +106,4 @@ class EnemyData(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'EnemyData({}): {}'.format(self.key_value(), len(self.behavior))
+        return 'EnemyData({}): {} bytes'.format(self.key_value(), len(self.behavior))
