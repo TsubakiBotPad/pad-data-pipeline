@@ -163,7 +163,7 @@ async def serve_monster_info(request):
             d.name_en as dungeon_name, d.icon_id as dungeon_icon_id,
             sd.name_en as sub_dungeon_name, sd.sub_dungeon_id as sub_dungeon_id,
             e.amount as amount, e.turns as turns, e.level as level,
-            e.hp as hp, e.atk as atk, e.defence as defence
+            e.hp as hp, e.atk as atk, e.defense as defense
         from encounters e
         inner join dungeons d
         using (dungeon_id)
@@ -194,7 +194,7 @@ async def serve_monster_info(request):
                 'level': x['level'],
                 'hp': x['hp'],
                 'atk': x['atk'],
-                'defence': x['defence'],
+                'defense': x['defense'],
             },
             'dungeon': {
                 'name': x['dungeon_name'],
