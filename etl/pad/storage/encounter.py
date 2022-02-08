@@ -23,7 +23,7 @@ class Encounter(SimpleSqlItem):
                  level: int = None,
                  hp: int = None,
                  atk: int = None,
-                 defence: int = None,
+                 defense: int = None,
                  exp: int = None,
                  tstamp: int = None):
         self.encounter_id = encounter_id
@@ -38,7 +38,7 @@ class Encounter(SimpleSqlItem):
         self.level = level
         self.hp = hp
         self.atk = atk
-        self.defence = defence
+        self.defense = defense
         self.exp = exp
         self.tstamp = tstamp
 
