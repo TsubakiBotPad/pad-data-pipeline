@@ -6,6 +6,8 @@ cd "$(dirname "$0")" || exit
 source ./shared_root.sh
 source ./shared.sh
 
+source "${VENV_ROOT}/bin/activate"
+
 python3 "${ETL_DIR}/export_spawns.py" \
   --db_config="${DB_CONFIG}" \
   --output_dir="${DADGUIDE_ILMINA_DIR}"
