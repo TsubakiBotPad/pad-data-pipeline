@@ -49,84 +49,83 @@ class Enemy(pad_util.Printable):
 class Card(pad_util.Printable):
     """Data about a player-ownable monster."""
 
-    def __init__(self, raw: List[str]):
+    def __init__(self, raw: List):
         _unflatten(raw, 57, 3)
         _unflatten(raw, 58, 1)
-        raw: List[Union[str, List]]
 
-        self.monster_no = MonsterNo(int(raw[0]))
-        self.name = raw[1]
-        self.attr_id = AttrId(int(raw[2]))
-        self.sub_attr_id = AttrId(int(raw[3]))
-        self.is_ult = bool(raw[4])  # True if ultimate, False if normal evo
-        self.type_1_id = TypeId(int(raw[5]))
-        self.type_2_id = TypeId(int(raw[6]))
-        self.rarity = int(raw[7])
-        self.cost = int(raw[8])
+        self.monster_no = MonsterNo(raw[0])
+        self.name: str = raw[1]
+        self.attr_id = AttrId(raw[2])
+        self.sub_attr_id = AttrId(raw[3])
+        self.is_ult: bool = bool(raw[4])  # True if ultimate, False if normal evo
+        self.type_1_id = TypeId(raw[5])
+        self.type_2_id = TypeId(raw[6])
+        self.rarity: int = raw[7]
+        self.cost: int = raw[8]
 
         # Appears to be related to the size of the monster.
         # If 5, the monster always spawns alone. Needs more research.
-        self.unknown_009 = int(raw[9])
+        self.unknown_009: int = raw[9]
 
-        self.max_level = int(raw[10])
-        self.feed_xp_per_level = int(raw[11]) / 4
+        self.max_level: int = raw[10]
+        self.feed_xp_per_level = raw[11] / 4
         self.released_status = raw[12] == 100
-        self.sell_gold_per_level = int(raw[13]) / 10
+        self.sell_gold_per_level = raw[13] / 10
 
-        self.min_hp = int(raw[14])
-        self.max_hp = int(raw[15])
+        self.min_hp: int = raw[14]
+        self.max_hp: int = raw[15]
         self.hp_scale = float(raw[16])
 
-        self.min_atk = int(raw[17])
-        self.max_atk = int(raw[18])
+        self.min_atk: int = raw[17]
+        self.max_atk: int = raw[18]
         self.atk_scale = float(raw[19])
 
-        self.min_rcv = int(raw[20])
-        self.max_rcv = int(raw[21])
+        self.min_rcv: int = raw[20]
+        self.max_rcv: int = raw[21]
         self.rcv_scale = float(raw[22])
 
-        self.xp_max = int(raw[23])
+        self.xp_max: int = raw[23]
         self.xp_scale = float(raw[24])
 
-        self.active_skill_id = SkillId(int(raw[25]))
-        self.leader_skill_id = SkillId(int(raw[26]))
+        self.active_skill_id = SkillId(raw[25])
+        self.leader_skill_id = SkillId(raw[26])
 
         # Enemy turn timer for normal dungeons, and techs where enemy_turns_alt is not populated.
-        self.enemy_turns = int(raw[27])
+        self.enemy_turns: int = raw[27]
 
         # Min = lvl 1 and Max = lvl 10
-        self.enemy_hp_min = int(raw[28])
-        self.enemy_hp_max = int(raw[29])
+        self.enemy_hp_min: int = raw[28]
+        self.enemy_hp_max: int = raw[29]
         self.enemy_hp_scale = float(raw[30])
 
-        self.enemy_atk_min = int(raw[31])
-        self.enemy_atk_max = int(raw[32])
+        self.enemy_atk_min: int = raw[31]
+        self.enemy_atk_max: int = raw[32]
         self.enemy_atk_scale = float(raw[33])
 
-        self.enemy_def_min = int(raw[34])
-        self.enemy_def_max = int(raw[35])
+        self.enemy_def_min: int = raw[34]
+        self.enemy_def_max: int = raw[35]
         self.enemy_def_scale = float(raw[36])
 
-        self.enemy_max_level = int(raw[37])
-        self.enemy_coins_per_level = int(raw[38]) / 2
-        self.enemy_xp_per_level = int(raw[39]) / 2
+        self.enemy_max_level: int = raw[37]
+        self.enemy_coins_per_level = raw[38] / 2
+        self.enemy_xp_per_level = raw[39] / 2
 
-        self.ancestor_id = MonsterNo(int(raw[40]))
+        self.ancestor_id = MonsterNo(raw[40])
 
-        self.evo_mat_id_1 = MonsterNo(int(raw[41]))
-        self.evo_mat_id_2 = MonsterNo(int(raw[42]))
-        self.evo_mat_id_3 = MonsterNo(int(raw[43]))
-        self.evo_mat_id_4 = MonsterNo(int(raw[44]))
-        self.evo_mat_id_5 = MonsterNo(int(raw[45]))
+        self.evo_mat_id_1 = MonsterNo(raw[41])
+        self.evo_mat_id_2 = MonsterNo(raw[42])
+        self.evo_mat_id_3 = MonsterNo(raw[43])
+        self.evo_mat_id_4 = MonsterNo(raw[44])
+        self.evo_mat_id_5 = MonsterNo(raw[45])
 
-        self.un_evo_mat_1 = MonsterNo(int(raw[46]))
-        self.un_evo_mat_2 = MonsterNo(int(raw[47]))
-        self.un_evo_mat_3 = MonsterNo(int(raw[48]))
-        self.un_evo_mat_4 = MonsterNo(int(raw[49]))
-        self.un_evo_mat_5 = MonsterNo(int(raw[50]))
+        self.un_evo_mat_1 = MonsterNo(raw[46])
+        self.un_evo_mat_2 = MonsterNo(raw[47])
+        self.un_evo_mat_3 = MonsterNo(raw[48])
+        self.un_evo_mat_4 = MonsterNo(raw[49])
+        self.un_evo_mat_5 = MonsterNo(raw[50])
 
         # When >0, the enemy turn timer for technical dungeons.
-        self.enemy_turns_alt = int(raw[51])
+        self.enemy_turns_alt: int = raw[51]
 
         # Controls whether the monster uses the 'new' AI or the 'old' AI.
         # Monsters using the old  AI only have support up to some limit of ES values.
@@ -145,38 +144,38 @@ class Card(pad_util.Printable):
         # 3: decrement the counter based on the selected action value
         #
         # The starting and maximum value for the enemy skill action counter.
-        self.enemy_skill_max_counter = int(raw[53])
+        self.enemy_skill_max_counter: int = raw[53]
 
         # The amount to increment the counter each turn.
         #
         # The vast majority of these are 0/1.
         # Deus Ex Machina has 2, Kanna has 7.
-        self.enemy_skill_counter_increment = int(raw[54])
+        self.enemy_skill_counter_increment: int = raw[54]
 
         # Boolean, unlikely to be anything useful, only populated for 495 (1) and 111 (1000).
-        self.unknown_055 = raw[55]
+        self.unknown_055: int = raw[55]
 
         # Unused
-        self.unknown_056 = raw[56]
+        self.unknown_056: Any = raw[56]
 
-        self.enemy_skill_refs = []  # type: List[ESRef]
-        es_data = list(map(int, raw[57]))
+        self.enemy_skill_refs: List[ESRef] = []
+        es_data: List[int] = raw[57]
         for i in range(0, len(es_data) - 2, 3):
             self.enemy_skill_refs.append(ESRef(es_data[i], es_data[i + 1], es_data[i + 2]))
 
-        self.awakenings = raw[58]  # type: List[int]
-        self.super_awakenings = list(map(int, filter(str.strip, raw[59].split(','))))  # List[int]
+        self.awakenings: List[int] = raw[58]
+        self.super_awakenings: List[int] = list(map(int, filter(str.strip, raw[59].split(','))))
 
-        self.base_id = MonsterNo(int(raw[60]))  # ??
-        self.group_id = raw[61]  # ??
+        self.base_id = MonsterNo(int(raw[60]))
+        self.group_id: int = raw[61]
         self.type_3_id = TypeId(int(raw[62]))
 
-        self.sell_mp = int(raw[63])
-        self.latent_on_feed = int(raw[64])
-        self.collab_id = int(raw[65])
+        self.sell_mp: int = raw[63]
+        self.latent_on_feed: int = raw[64]
+        self.collab_id: int = raw[65]
 
         # Bitmap with some non-random flag values
-        self.flags = int(raw[66])
+        self.flags: int = raw[66]
         self.inheritable_flag = bool(self.flags & 1)
         self.take_assists_flag = bool(self.flags & 2)
         self.is_collab_flag = bool(self.flags & 4)
@@ -191,26 +190,29 @@ class Card(pad_util.Printable):
         self.ownable = self.monster_no < 100000
         self.usable = bool(not self.assist_only_flag and self.ownable)
 
-        self.furigana = str(raw[67])  # JP data only?
-        self.limit_mult = int(raw[68])
+        self.furigana: str = raw[67]  # JP data only?
+        self.limit_mult: int = raw[68]
 
         # Number of the voice file, 1-indexed, 0 if no voice
-        self.voice_id = int(raw[69])
+        self.voice_id: int = raw[69]
 
         # Number of the orb skin unlocked, 1-indexed, 0 if no orb skin
-        self.orb_skin_id = int(raw[70])
+        self.orb_skin_id: int = raw[70]
 
-        # Seems like this could have multiple values. Only value so far is: 'link:5757'
-        self.tags = raw[71]
-        self.linked_monster_no = None  # type: Optional[MonsterNo]
-
+        # Seems like this could have multiple values.
+        self.tags: str = raw[71]
+        self.linked_monster_no: Optional[MonsterNo] = None  # No longer used
         if self.tags:
             if 'link:' in self.tags:
                 self.linked_monster_no = MonsterNo(int(self.tags[len('link:'):]))
             else:
                 human_fix_logger.error('Unexpected tag value: %s', self.tags)
 
-        self.other_fields = raw[72:]
+        self.ls_bitflag: int = raw[72] + (raw[73] << 32)
+        self.other_fields: List = raw[74:]
+
+        if self.other_fields:
+            human_fix_logger.error('Unused monster values found.')
 
     def enemy(self) -> Enemy:
         return Enemy(self.enemy_turns,
