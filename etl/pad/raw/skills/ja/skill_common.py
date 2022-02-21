@@ -4,6 +4,8 @@ from typing import Dict
 
 from pad.raw.skills.skill_common import fmt_mult, BaseTextConverter
 
+TRANSLATION_NEEDED = "TBD - Please help us out with JP translations!"
+
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 AWOSKILLS = json.load(open(os.path.join(__location__, "../../../storage_processor/awoken_skill.json")))

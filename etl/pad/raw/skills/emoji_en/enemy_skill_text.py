@@ -156,6 +156,7 @@ TARGET_NAMES = {
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
     TargetType.subs: 'random sub',
+    TargetType.other_subs: 'other subs',
     TargetType.attrs: 'attributes',
     TargetType.types: 'type',
     TargetType.card: '',

@@ -318,8 +318,10 @@ class EnLSTextConverter(EnBaseTextConverter):
         return 'Increase combo by {} when matching 5 Heal orbs in a cross formation'.format(ls.bonus_combos)
 
     def color_cross_combo_text(self, ls):
-        attrs = self.attributes_to_str(ls.attributes, concat='or')
-        return 'Increase combo by {} for each cross of 5 {} orbs'.format(ls.bonus_combos, attrs)
+        skill_text = 'Increase combo by {}'.format(ls.bonus_combos)
+        if ls.shield:
+            skill_text += ' and ' + self.fmt_reduct_text(ls.shield)
+        return skill_text + ' for each cross of 5 {} orbs'.format(self.attributes_to_str(ls.attributes, concat='or'))
 
     def multi_play_text(self, ls):
         multiplier_text = self.passive_stats_text(ls)
@@ -478,6 +480,10 @@ class EnLSTextConverter(EnBaseTextConverter):
     def rarity_threshold_boost(self, ls):
         skill_text = self.fmt_multiplier_text(ls.hp, ls.atk, 1)
         return skill_text + f" when total team rarity is less than or equal to {ls.limit}"
+
+    def sized_blob(self, ls):
+        return f"Increase combo by {ls.extra_combos} for each match of exactly {ls.blob_size}" \
+               f" connected {self.fmt_multi_attr(ls.attributes)} orbs"
 
     def full_text(self, text, tags=None):
         tags = tags or []

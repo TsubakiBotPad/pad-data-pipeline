@@ -3,7 +3,7 @@ import logging
 import os
 from typing import List
 
-from pad.raw.skills.ja.skill_common import JaBaseTextConverter, fmt_mult
+from pad.raw.skills.ja.skill_common import JaBaseTextConverter, TRANSLATION_NEEDED, fmt_mult
 from pad.raw.skills.skill_common import Tag
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -292,6 +292,8 @@ class JaLSTextConverter(JaBaseTextConverter):
 
     def color_cross_combo_text(self, ls):
         attrs = self.attributes_to_str(ls.attributes, concat='か').replace('、', 'か')
+        if ls.shield:
+            '{}の5個十字消しで{}{}コンボ加算。'.format(attrs, self.fmt_reduct_text(ls.shield), ls.bonus_combos)
         return '{}の5個十字消しで{}コンボ加算。'.format(attrs, ls.bonus_combos)
 
     def multi_play_text(self, ls):
@@ -426,6 +428,9 @@ class JaLSTextConverter(JaBaseTextConverter):
     def rarity_threshold_boost(self, ls):
         skill_text = f"チームの総レアリティが{ls.limit}以下の場合、"
         return skill_text + self.fmt_multiplier_text(ls.hp, ls.atk, 1)
+
+    def sized_blob(self, ls):
+        return TRANSLATION_NEEDED
 
     def full_text(self, text, tags=None):
         tags = tags or []
