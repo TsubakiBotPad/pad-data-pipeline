@@ -1,6 +1,6 @@
 import logging
 
-from pad.raw.skills.ja.skill_common import JaBaseTextConverter, minmax
+from pad.raw.skills.ja.skill_common import JaBaseTextConverter, TRANSLATION_NEEDED, minmax
 from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -14,6 +14,7 @@ TARGET_NAMES = {
     TargetType.both_leader: 'リーダーとフレン',
     TargetType.friend_leader: 'フレンド',
     TargetType.subs: 'ランダムでサブ{}体',
+    TargetType.other_subs: TRANSLATION_NEEDED,
     TargetType.attrs: '属性',
     TargetType.types: 'タイプ',
     TargetType.card: '{}体',

@@ -104,6 +104,7 @@ class TargetType(Enum):
     both_leader = auto()
     friend_leader = auto()
     subs = auto()
+    other_subs = auto()
     attrs = auto()
     types = auto()
     card = auto()

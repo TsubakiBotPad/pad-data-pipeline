@@ -10,7 +10,7 @@ from pad.raw.skills.skill_common import mult, merge_defaults, atk_from_slice, rc
 human_fix_logger = logging.getLogger('human_fix')
 
 
-class LeaderSkill(object):
+class LeaderSkill:
     skill_type = -1
 
     def __init__(self, skill_type: int, ms: MonsterSkill,
@@ -1819,9 +1819,9 @@ class LSColorCrossCombo(LeaderSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0, 1])
-        self.bonus_combos = data[2]
         self.attributes = binary_con(data[0])
-        super().__init__(210, ms, extra_combos=self.bonus_combos)
+        self.bonus_combos = data[2]
+        super().__init__(210, ms, shield=mult(data[1]), extra_combos=self.bonus_combos)
 
     def text(self, converter) -> str:
         return converter.color_cross_combo_text(self)
@@ -1907,6 +1907,20 @@ class LSTeamCompositionBuff(LeaderSkill):
 
     def text(self, converter) -> str:
         return converter.composition_buff(self)
+
+
+class LSSizedBlobBoost(LeaderSkill):
+    skill_type = 235
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0])
+        self.attributes = binary_con(data[0])
+        self.blob_size = data[2]
+
+        super().__init__(235, ms, extra_combos=data[4])
+
+    def text(self, converter) -> str:
+        return converter.sized_blob(self)
 
 
 def convert(skill_list: List[MonsterSkill]):
@@ -2064,4 +2078,5 @@ ALL_LEADER_SKILLS = [
     LSLMatchBonusDamage,
     LSComboBonusDamage,
     LSTeamCompositionBuff,
+    LSSizedBlobBoost,
 ]
