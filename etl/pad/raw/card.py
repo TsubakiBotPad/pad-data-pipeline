@@ -208,7 +208,10 @@ class Card(pad_util.Printable):
             else:
                 human_fix_logger.error('Unexpected tag value: %s', self.tags)
 
-        self.ls_bitflag: int = raw[72] + (raw[73] << 32)
+        # Remove this condition once it comes to NA
+        if len(raw) > 72:
+            self.ls_bitflag: int = raw[72] + (raw[73] << 32)
+
         self.other_fields: List = raw[74:]
 
         if self.other_fields:

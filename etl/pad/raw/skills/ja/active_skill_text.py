@@ -2,7 +2,7 @@ from collections import OrderedDict
 from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
-from pad.raw.skills.ja.skill_common import JaBaseTextConverter, minmax
+from pad.raw.skills.ja.skill_common import JaBaseTextConverter, TRANSLATION_NEEDED, minmax
 
 
 def fmt_mult(x):
@@ -580,6 +580,8 @@ class JaASTextConverter(JaBaseTextConverter):
             return self.fmt_duration(act.duration) + f"リーダーの攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 8:
             return self.fmt_duration(act.duration) + f"ランダムでサブ4体の攻撃力を{fmt_mult(act.atk_mult)}倍"
+        elif act.target == 15:
+            return TRANSLATION_NEEDED
         else:
             return self.fmt_duration(act.duration) + f"???の攻撃力を{fmt_mult(act.atk_mult)}倍"
 

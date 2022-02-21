@@ -16,6 +16,7 @@ TARGET_NAMES = {
     TargetType.both_leader: 'both leaders',
     TargetType.friend_leader: 'friend leader',
     TargetType.subs: 'random sub',
+    TargetType.other_subs: 'other subs',
     TargetType.attrs: '속성',
     TargetType.types: '타입',
     TargetType.card: 'card',
