@@ -1818,5 +1818,12 @@
     "name_ko": "울트라",
     "series_id": 269,
     "series_type": "collab"
+  },
+  {
+    "name_en": "Illusory Artists",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 270,
+    "series_type": null
   }
 ]
