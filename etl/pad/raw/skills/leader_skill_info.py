@@ -1913,11 +1913,14 @@ class LSSizedBlobBoost(LeaderSkill):
     skill_type = 235
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, 0, 0, 0, 0])
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0, 0])
         self.attributes = binary_con(data[0])
         self.blob_size = data[2]
-
-        super().__init__(235, ms, extra_combos=data[4])
+        atk = data[3] / 100
+        rcv = data[4] / 100
+        self.bonus_combos = data[5]
+        self.bonus_damage = data[6]
+        super().__init__(235, ms, extra_combos=self.bonus_combos, atk=atk, rcv=rcv, bonus_damage=self.bonus_damage)
 
     def text(self, converter) -> str:
         return converter.sized_blob(self)

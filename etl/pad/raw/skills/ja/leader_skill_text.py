@@ -430,7 +430,24 @@ class JaLSTextConverter(JaBaseTextConverter):
         return skill_text + self.fmt_multiplier_text(ls.hp, ls.atk, 1)
 
     def sized_blob(self, ls):
-        return TRANSLATION_NEEDED
+        if 0 < len(ls.attributes) < 10:
+            attrs = self.attributes_to_str(ls.attributes, concat='か').replace('、', 'か')
+        else:
+            attrs = 'ドロップ'
+        condition = '{}の{}個消し1個につき'.format(attrs, ls.orbs)
+
+        effects = []
+
+        if ls.bonus_combos:
+            effects.append('{}コンボ加算'.format(ls.bonus_combos))
+        if ls.bonus_damage:
+            effects.append('固定{}ダメージ加算'.format(self.big_number(ls.bonus_damage)))
+        if ls.atk:
+            effects.append('攻撃力が{}倍'.format(fmt_mult(ls.atk)))
+        if ls.rcv:
+            effects.append('回復力が{}倍'.format(fmt_mult(ls.rcv)))
+
+        return condition + '、'.join(effects) + '。'
 
     def full_text(self, text, tags=None):
         tags = tags or []
