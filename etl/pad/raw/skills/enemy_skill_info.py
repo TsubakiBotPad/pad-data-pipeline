@@ -2082,3 +2082,4 @@ BEHAVIOR_MAP[9] = ESUnknown
 BEHAVIOR_MAP[21] = ESUnknown
 BEHAVIOR_MAP[93] = ESNone  # FF Animation
 BEHAVIOR_MAP[136] = ESNone  # Shikigami Animation
+BEHAVIOR_MAP[142] = ESNone  # Black Hole Animation
