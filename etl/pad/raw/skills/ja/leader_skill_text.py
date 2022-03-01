@@ -434,12 +434,12 @@ class JaLSTextConverter(JaBaseTextConverter):
             attrs = self.attributes_to_str(ls.attributes, concat='か').replace('、', 'か')
         else:
             attrs = 'ドロップ'
-        condition = '{}の{}個消し1個につき'.format(attrs, ls.orbs)
+        condition = '{}の{}個消し1個につき'.format(attrs, ls.blob_size)
 
         effects = []
 
-        if ls.bonus_combos:
-            effects.append('{}コンボ加算'.format(ls.bonus_combos))
+        if ls.extra_combos:
+            effects.append('{}コンボ加算'.format(ls.extra_combos))
         if ls.bonus_damage:
             effects.append('固定{}ダメージ加算'.format(self.big_number(ls.bonus_damage)))
         if ls.atk:
