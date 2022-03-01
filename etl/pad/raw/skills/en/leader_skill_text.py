@@ -3,7 +3,7 @@ import logging
 import os
 from typing import List
 
-from pad.raw.skills.en.skill_common import EnBaseTextConverter
+from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first
 from pad.raw.skills.skill_common import Tag, fmt_mult
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -482,7 +482,14 @@ class EnLSTextConverter(EnBaseTextConverter):
         return skill_text + f" when total team rarity is less than or equal to {ls.limit}"
 
     def sized_blob(self, ls):
-        return f"Increase combo by {ls.extra_combos} for each match of exactly {ls.blob_size}" \
+        effects = []
+        if ls.atk or ls.rcv:
+            effects.append(self.fmt_multiplier_text(1, ls.atk, ls.rcv))
+        if ls.extra_combos:
+            effects.append(f"increase combo by {ls.extra_combos}")
+        if ls.bonus_damage:
+            effects.append(f"deal {ls.bonus_damage:,} additional true damage")
+        return f"{capitalize_first(self.concat_list_and(effects))} for each match of exactly {ls.blob_size}" \
                f" connected {self.fmt_multi_attr(ls.attributes)} orbs"
 
     def full_text(self, text, tags=None):
