@@ -1916,7 +1916,7 @@ class LSSizedBlobBoost(LeaderSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0, 0])
         self.attributes = binary_con(data[0])
         self.blob_size = data[2]
-        super().__init__(235, ms, atk=multi_floor(data[3]), rcv=multi_floor(data[4]),
+        super().__init__(235, ms, atk=multi_floor(data[3]), shield=multi_floor(data[4]),
                          extra_combos=data[5], bonus_damage=data[6])
 
     def text(self, converter) -> str:
