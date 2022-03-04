@@ -444,8 +444,8 @@ class JaLSTextConverter(JaBaseTextConverter):
             effects.append('固定{}ダメージ加算'.format(self.big_number(ls.bonus_damage)))
         if ls.atk:
             effects.append('攻撃力が{}倍'.format(fmt_mult(ls.atk)))
-        if ls.rcv:
-            effects.append('回復力が{}倍'.format(fmt_mult(ls.rcv)))
+        if ls.shield:
+            effects.append(self.fmt_reduct_text(ls.shield))
 
         return condition + '、'.join(effects) + '。'
 
