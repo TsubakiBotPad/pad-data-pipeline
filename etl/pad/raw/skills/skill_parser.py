@@ -9,7 +9,7 @@ from pad.raw.skills.leader_skill_info import LeaderSkill
 human_fix_logger = logging.getLogger('human_fix')
 
 
-class SkillParser(object):
+class SkillParser:
     def __init__(self):
         self.active_skills = []  # type: List[ActiveSkill]
         self.leader_skills = []  # type: List[LeaderSkill]
@@ -44,3 +44,4 @@ class SkillParser(object):
                 leader = LeaderSkill(-1, skill)
                 self.leader_skills.append(leader)
                 self.ls_by_id[skill_id] = leader
+        return self
