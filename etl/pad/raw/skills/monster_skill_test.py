@@ -17,20 +17,22 @@ from pad.raw.skills.skill_parser import SkillParser
 
 
 class DefaultArgs:
+    # Search options. Only one of these should be non-None
     skill_type = None  # The skill_type to show
+    skill_id = None  # The skill to show
     monster_id = None  # The monster who's skill to show
+
+    showall = False  # Show all skills, even ones without translations
+    showofficial = True  # Show official translations
+
     server = 'NA'  # The input server
+    url = 'https://d30r6ivozz8w2a.cloudfront.net/raw'  # The URL to pull data from
+    filepath = None  # The filepath where JSONs are stored.  Only useful when using this tool offline
 
     # The output languages
     show_en = True
     show_ja = False
     show_ko = False
-
-    url = 'https://d30r6ivozz8w2a.cloudfront.net/raw'  # The URL to pull data from
-    filepath = None  # The filepath where JSONs are stored.  Only useful when using this tool offline
-
-    showall = False  # Show all skills, even ones without translations
-    showofficial = True  # Show official translations
 
 
 ####################################
@@ -41,25 +43,26 @@ search_group.add_argument("--skill_type", type=int, help="The skill type to show
 search_group.add_argument("--skill_id", type=int, help="The skill to show.")
 search_group.add_argument("--monster_id", type=int, help="The monster whos skill to show.")
 
-settings_group = parser.add_argument_group("Settings")
-settings_group.add_argument("--server", default="NA", choices=['NA', 'JP', 'KR'], help="The input server")
-settings_group.add_argument("--show_en", action="store_true",
-                            help="Whether to show En translations."
-                                 " This is defaulted to true if no langauges are selected.")
-settings_group.add_argument("--show_ja", action="store_true", help="Whether to show Ja translations")
-settings_group.add_argument("--show_ko", action="store_true", help="Whether to show Ko translations")
-
+input_group = parser.add_argument_group("Input")
+input_group.add_argument("--server", default="NA", choices=['NA', 'JP', 'KR'], help="The input server")
 input_group = parser.add_argument_group("Paths")
 input_group.add_argument("--url", default="https://d30r6ivozz8w2a.cloudfront.net/raw",
                          help="The URL where the JSONs are stored. Mutually exclusive with --filepath.")
 input_group.add_argument("--filepath", help="The filepath where the JSONs are stored. Mutually exclusive with --url.")
 
 output_group = parser.add_argument_group("Output")
-output_group.add_argument("--showall", action="store_true",
-                          help="Show all skills with this type rather than just ones with descriptions."
-                               " Only useful in skill_type mode")
-output_group.add_argument("--hideofficial", action="store_false", dest='showofficial',
-                          help="Show official translations")
+output_group.add_argument("--show_en", action="store_true",
+                          help="Whether to show En translations."
+                               " This is defaulted to true if no langauges are selected.")
+output_group.add_argument("--show_ja", action="store_true", help="Whether to show Ja translations")
+output_group.add_argument("--show_ko", action="store_true", help="Whether to show Ko translations")
+
+settings_group = parser.add_argument_group("Settings")
+settings_group.add_argument("--showall", action="store_true",
+                            help="Show all skills with this type rather than just ones with descriptions."
+                                 " Only useful in skill_type mode")
+settings_group.add_argument("--hideofficial", action="store_false", dest='showofficial',
+                            help="Show official translations")
 
 help_group = parser.add_argument_group("Help")
 help_group.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
