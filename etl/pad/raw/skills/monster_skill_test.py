@@ -20,7 +20,11 @@ class DefaultArgs:
     skill_type = None  # The skill_type to show
     monster_id = None  # The monster who's skill to show
     server = 'NA'  # The input server
-    lang = 'EN'  # The output language
+
+    # The output languages
+    show_en = True
+    show_ja = False
+    show_ko = False
 
     url = 'https://d30r6ivozz8w2a.cloudfront.net/raw'  # The URL to pull data from
     filepath = None  # The filepath where JSONs are stored.  Only useful when using this tool offline
@@ -32,13 +36,20 @@ class DefaultArgs:
 ####################################
 parser = argparse.ArgumentParser(description="Extracts PAD API data.", add_help=False)
 
-settings_group = parser.add_argument_group("Settings")
-settings_group.add_argument("--skill_type", type=int, help="The skill type to show")
-settings_group.add_argument("--monster_id", type=int, help="The monster whos skill to show.")
-settings_group.add_argument("--server", default="NA", choices=['NA', 'JP', 'KR'], help="The input server")
-settings_group.add_argument("--lang", default="EN", choices=['EN', 'JA', 'KO'], help="The output language")
+search_group = parser.add_argument_group("Search")
+search_group.add_argument("--skill_type", type=int, help="The skill type to show")
+search_group.add_argument("--skill_id", type=int, help="The skill to show.")
+search_group.add_argument("--monster_id", type=int, help="The monster whos skill to show.")
 
-input_group = parser.add_argument_group("Input")
+settings_group = parser.add_argument_group("Settings")
+settings_group.add_argument("--server", default="NA", choices=['NA', 'JP', 'KR'], help="The input server")
+settings_group.add_argument("--show_en", action="store_true",
+                            help="Whether to show En translations."
+                                 " This is defaulted to true if no langauges are selected.")
+settings_group.add_argument("--show_ja", action="store_true", help="Whether to show Ja translations")
+settings_group.add_argument("--show_ko", action="store_true", help="Whether to show Ko translations")
+
+input_group = parser.add_argument_group("Paths")
 input_group.add_argument("--url", default="https://d30r6ivozz8w2a.cloudfront.net/raw",
                          help="The URL where the JSONs are stored. Mutually exclusive with --filepath.")
 input_group.add_argument("--filepath", help="The filepath where the JSONs are stored. Mutually exclusive with --url.")
@@ -47,7 +58,7 @@ output_group = parser.add_argument_group("Output")
 output_group.add_argument("--showall", action="store_true",
                           help="Show all skills with this type rather than just ones with descriptions."
                                " Only useful in skill_type mode")
-output_group.add_argument("--hideofficial", action="store_true", dest='showofficial',
+output_group.add_argument("--hideofficial", action="store_false", dest='showofficial',
                           help="Show official translations")
 
 help_group = parser.add_argument_group("Help")
@@ -63,88 +74,100 @@ def main(args):
             with urllib.request.urlopen(f"{args.url.rstrip('/')}/{args.server.lower()}/{filename}") as resp:
                 return json.load(resp)
 
-    if (args.skill_type is None) == (args.monster_id is None):
-        raise Exception('you must supply either skill_type or monster_id, but not both')
+    def print_translations(skill) -> None:
+        if isinstance(skill, ActiveSkill):
+            if args.show_en:
+                print("EN:", skill.text(EnASTextConverter()))
+            if args.show_ja:
+                print("JA:", skill.text(JaASTextConverter()))
+            if args.show_ko:
+                print("KO:", skill.text(KoASTextConverter()))
+        elif isinstance(skill, LeaderSkill):
+            if args.show_en:
+                print("EN:", skill.text(EnLSTextConverter()))
+            if args.show_ja:
+                print("JA:", skill.text(JaLSTextConverter()))
+            if args.show_ko:
+                print("KO:", skill.text(KoLSTextConverter()))
+
+    if len([o for o in (args.skill_type, args.skill_id, args.monster_id) if o is not None]) != 1:
+        raise Exception('you must supply exactly one of skill_type, skill_id, or monster_id')
 
     if args.server not in ("NA", "JP", "KR"):
         raise Exception('unexpected server:' + args.server)
-    if args.lang not in ("EN", "JA", "KO"):
-        raise Exception('unexpected language:' + args.lang)
+
+    if not any((args.show_en, args.show_ja, args.show_ko)):
+        args.show_en = True
 
     all_skills = [MonsterSkill(sid, raw) for sid, raw in enumerate(download_json('download_skill_data.json')['skill'])]
 
     skill_class = skills = None
-    if args.skill_type is not None:
-        skill_class = next((s for s in ALL_ACTIVE_SKILLS + ALL_LEADER_SKILLS if s.skill_type == args.skill_type), None)
+    if args.skill_type is not None or args.skill_id is not None:
+        skills = skill_class = None
+        if args.skill_type is not None:
+            skill_class = next((s for s in ALL_ACTIVE_SKILLS + ALL_LEADER_SKILLS if s.skill_type == args.skill_type),
+                               None)
 
-        if skill_class is None:
-            raise Exception(f'no creator for skill type: {args.skill_type}')
+            if skill_class is None:
+                raise Exception(f'no creator for skill type: {args.skill_type}')
 
-        skills = [skill_class(skill) for skill in all_skills if skill.skill_type == args.skill_type]
+            skills = [skill_class(skill) for skill in all_skills if skill.skill_type == args.skill_type]
+        elif args.skill_id is not None:
+            try:
+                skill = all_skills[args.skill_id]
+            except IndexError:
+                raise Exception(f"invalid skill id: {args.skill_id}")
 
-        converter = None
-        if issubclass(skill_class, ActiveSkill):
-            if args.lang == "EN":
-                converter = EnASTextConverter()
-            elif args.lang == "JA":
-                converter = JaASTextConverter()
-            elif args.lang == "KO":
-                converter = KoASTextConverter()
-        elif issubclass(skill_class, LeaderSkill):
-            if args.lang == "EN":
-                converter = EnLSTextConverter()
-            elif args.lang == "JA":
-                converter = JaLSTextConverter()
-            elif args.lang == "KO":
-                converter = KoLSTextConverter()
+            skill_class = next((s for s in ALL_ACTIVE_SKILLS + ALL_LEADER_SKILLS
+                                if s.skill_type == skill.skill_type), None)
+            if skill_class is None:
+                if skill.skill_type == 0:
+                    raise Exception(f'invalid skill type. maybe this skill isn\'t out in this server?')
+                else:
+                    raise Exception(f'no creator for skill type: {skill.skill_type}')
+            skills = [skill_class(skill)]
 
-        for skill in skills:
+        for c, skill in enumerate(skills):
             if skill.raw_description or args.showall:
+                if c != 0:
+                    print()
                 if skill.name:
                     print(f"Skill #{skill.skill_id}: {skill.name}")
                 else:
                     print(f"Skill #{skill.skill_id}")
                 print("Raw:", skill.raw_data)
-                print("Translated:", skill.text(converter))
+                print_translations(skill)
                 if skill.raw_description and args.showofficial:
                     print("Official:", skill.raw_description)
-                print()
 
     elif args.monster_id is not None:
-        try:
-            monster = Card(download_json('download_card_data.json')['card'][args.monster_id])
-        except IndexError:
+        raw = next((c for c in download_json('download_card_data.json')['card']
+                    if c[0] == args.monster_id), None)
+        if raw is None:
             raise Exception(f"Invalid monster id: {args.monster_id}")
 
+        monster = Card(raw)
         skill_parser = SkillParser().parse(all_skills)
 
         active_skill = skill_parser.active(monster.active_skill_id)
         leader_skill = skill_parser.leader(monster.leader_skill_id)
 
-        as_converter = ls_converter = None
-        if args.lang == "EN":
-            as_converter = EnASTextConverter()
-            ls_converter = EnLSTextConverter()
-        elif args.lang == "JA":
-            as_converter = JaASTextConverter()
-            ls_converter = JaLSTextConverter()
-        elif args.lang == "KO":
-            as_converter = KoASTextConverter()
-            ls_converter = KoLSTextConverter()
-
         print(f"[{monster.monster_no}] {monster.name}\n")
         if active_skill is not None:
             print(f"Active Skill: {active_skill.name}"
                   f" (ID {active_skill.skill_id}, Type {active_skill.skill_type}, Raw {active_skill.raw_data})\n"
-                  f"{active_skill.text(as_converter)}")
+                  f"Translations:")
+            print_translations(active_skill)
             if args.showofficial:
                 print(f"(Official: {active_skill.raw_description})\n")
+            else:
+                print()
         else:
             print("Active Skill: None\n")
         if leader_skill is not None:
             print(f"Leader Skill: {leader_skill.name}"
-                  f" (ID {leader_skill.skill_id}, Type {leader_skill.skill_type}, Raw {leader_skill.raw_data})\n"
-                  f"{leader_skill.text(ls_converter)}")
+                  f" (ID {leader_skill.skill_id}, Type {leader_skill.skill_type}, Raw {leader_skill.raw_data})")
+            print_translations(leader_skill)
             if args.showofficial:
                 print(f"(Official: {leader_skill.raw_description})")
         else:
