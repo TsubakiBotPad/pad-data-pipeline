@@ -109,6 +109,7 @@ if args.skill_type is not None:
                 print(f"Skill #{skill.skill_id}: {skill.name}")
             else:
                 print(f"Skill #{skill.skill_id}")
+            print("Raw:", skill.raw_data)
             print("Translated:", skill.text(converter))
             if skill.raw_description and args.showofficial:
                 print("Official:", skill.raw_description)
