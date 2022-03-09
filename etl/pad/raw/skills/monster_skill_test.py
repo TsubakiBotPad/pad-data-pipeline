@@ -53,104 +53,107 @@ output_group.add_argument("--hideofficial", action="store_true", dest='showoffic
 help_group = parser.add_argument_group("Help")
 help_group.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
 
-args = parser.parse_args()
 
-if len(sys.argv) < 2:
-    args = DefaultArgs()
+def main(args):
+    def download_json(filename: str) -> Any:
+        if args.filepath is not None:
+            with open(f"{args.filepath.rstrip('/')}/{args.server.lower()}/{filename}") as file:
+                return json.load(file)
+        else:
+            with urllib.request.urlopen(f"{args.url.rstrip('/')}/{args.server.lower()}/{filename}") as resp:
+                return json.load(resp)
 
-if (args.skill_type is None) == (args.monster_id is None):
-    raise Exception('you must supply either skill_type or monster_id, but not both')
+    if (args.skill_type is None) == (args.monster_id is None):
+        raise Exception('you must supply either skill_type or monster_id, but not both')
 
-if args.server not in ("NA", "JP", "KR"):
-    raise Exception('unexpected server:' + args.server)
-if args.lang not in ("EN", "JA", "KO"):
-    raise Exception('unexpected language:' + args.lang)
+    if args.server not in ("NA", "JP", "KR"):
+        raise Exception('unexpected server:' + args.server)
+    if args.lang not in ("EN", "JA", "KO"):
+        raise Exception('unexpected language:' + args.lang)
 
+    all_skills = [MonsterSkill(sid, raw) for sid, raw in enumerate(download_json('download_skill_data.json')['skill'])]
 
-def download_json(filename: str) -> Any:
-    if args.filepath is not None:
-        with open(f"{args.filepath.rstrip('/')}/{args.server.lower()}/{filename}") as file:
-            return json.load(file)
-    else:
-        with urllib.request.urlopen(f"{args.url.rstrip('/')}/{args.server.lower()}/{filename}") as resp:
-            return json.load(resp)
+    skill_class = skills = None
+    if args.skill_type is not None:
+        skill_class = next((s for s in ALL_ACTIVE_SKILLS + ALL_LEADER_SKILLS if s.skill_type == args.skill_type), None)
 
+        if skill_class is None:
+            raise Exception(f'no creator for skill type: {args.skill_type}')
 
-all_skills = [MonsterSkill(sid, raw) for sid, raw in enumerate(download_json('download_skill_data.json')['skill'])]
+        skills = [skill_class(skill) for skill in all_skills if skill.skill_type == args.skill_type]
 
-skill_class = skills = None
-if args.skill_type is not None:
-    skill_class = next((s for s in ALL_ACTIVE_SKILLS + ALL_LEADER_SKILLS if s.skill_type == args.skill_type), None)
+        converter = None
+        if issubclass(skill_class, ActiveSkill):
+            if args.lang == "EN":
+                converter = EnASTextConverter()
+            elif args.lang == "JA":
+                converter = JaASTextConverter()
+            elif args.lang == "KO":
+                converter = KoASTextConverter()
+        elif issubclass(skill_class, LeaderSkill):
+            if args.lang == "EN":
+                converter = EnLSTextConverter()
+            elif args.lang == "JA":
+                converter = JaLSTextConverter()
+            elif args.lang == "KO":
+                converter = KoLSTextConverter()
 
-    if skill_class is None:
-        raise Exception(f'no creator for skill type: {args.skill_type}')
+        for skill in skills:
+            if skill.raw_description or args.showall:
+                if skill.name:
+                    print(f"Skill #{skill.skill_id}: {skill.name}")
+                else:
+                    print(f"Skill #{skill.skill_id}")
+                print("Raw:", skill.raw_data)
+                print("Translated:", skill.text(converter))
+                if skill.raw_description and args.showofficial:
+                    print("Official:", skill.raw_description)
+                print()
 
-    skills = [skill_class(skill) for skill in all_skills if skill.skill_type == args.skill_type]
+    elif args.monster_id is not None:
+        try:
+            monster = Card(download_json('download_card_data.json')['card'][args.monster_id])
+        except IndexError:
+            raise Exception(f"Invalid monster id: {args.monster_id}")
 
-    converter = None
-    if issubclass(skill_class, ActiveSkill):
+        skill_parser = SkillParser().parse(all_skills)
+
+        active_skill = skill_parser.active(monster.active_skill_id)
+        leader_skill = skill_parser.leader(monster.leader_skill_id)
+
+        as_converter = ls_converter = None
         if args.lang == "EN":
-            converter = EnASTextConverter()
+            as_converter = EnASTextConverter()
+            ls_converter = EnLSTextConverter()
         elif args.lang == "JA":
-            converter = JaASTextConverter()
+            as_converter = JaASTextConverter()
+            ls_converter = JaLSTextConverter()
         elif args.lang == "KO":
-            converter = KoASTextConverter()
-    elif issubclass(skill_class, LeaderSkill):
-        if args.lang == "EN":
-            converter = EnLSTextConverter()
-        elif args.lang == "JA":
-            converter = JaLSTextConverter()
-        elif args.lang == "KO":
-            converter = KoLSTextConverter()
+            as_converter = KoASTextConverter()
+            ls_converter = KoLSTextConverter()
 
-    for skill in skills:
-        if skill.raw_description or args.showall:
-            if skill.name:
-                print(f"Skill #{skill.skill_id}: {skill.name}")
-            else:
-                print(f"Skill #{skill.skill_id}")
-            print("Raw:", skill.raw_data)
-            print("Translated:", skill.text(converter))
-            if skill.raw_description and args.showofficial:
-                print("Official:", skill.raw_description)
-            print()
+        print(f"[{monster.monster_no}] {monster.name}\n")
+        if active_skill is not None:
+            print(f"Active Skill: {active_skill.name}"
+                  f" (ID {active_skill.skill_id}, Type {active_skill.skill_type}, Raw {active_skill.raw_data})\n"
+                  f"{active_skill.text(as_converter)}")
+            if args.showofficial:
+                print(f"(Official: {active_skill.raw_description})\n")
+        else:
+            print("Active Skill: None\n")
+        if leader_skill is not None:
+            print(f"Leader Skill: {leader_skill.name}"
+                  f" (ID {leader_skill.skill_id}, Type {leader_skill.skill_type}, Raw {leader_skill.raw_data})\n"
+                  f"{leader_skill.text(ls_converter)}")
+            if args.showofficial:
+                print(f"(Official: {leader_skill.raw_description})")
+        else:
+            print("Leader Skill: None")
 
-elif args.monster_id is not None:
-    try:
-        monster = Card(download_json('download_card_data.json')['card'][args.monster_id])
-    except IndexError:
-        raise Exception(f"Invalid monster id: {args.monster_id}")
 
-    parser = SkillParser().parse(all_skills)
-
-    active_skill = parser.active(monster.active_skill_id)
-    leader_skill = parser.leader(monster.leader_skill_id)
-
-    as_converter = ls_converter = None
-    if args.lang == "EN":
-        as_converter = EnASTextConverter()
-        ls_converter = EnLSTextConverter()
-    elif args.lang == "JA":
-        as_converter = JaASTextConverter()
-        ls_converter = JaLSTextConverter()
-    elif args.lang == "KO":
-        as_converter = KoASTextConverter()
-        ls_converter = KoLSTextConverter()
-
-    print(f"[{monster.monster_no}] {monster.name}\n")
-    if active_skill is not None:
-        print(f"Active Skill: {active_skill.name}"
-              f" (ID {active_skill.skill_id}, Type {active_skill.skill_type}, Raw {active_skill.raw_data})\n"
-              f"{active_skill.text(as_converter)}")
-        if args.showofficial:
-            print(f"(Official: {active_skill.raw_description})\n")
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        args_ = DefaultArgs()
     else:
-        print("Active Skill: None\n")
-    if leader_skill is not None:
-        print(f"Leader Skill: {leader_skill.name}"
-              f" (ID {leader_skill.skill_id}, Type {leader_skill.skill_type}, Raw {leader_skill.raw_data})\n"
-              f"{leader_skill.text(ls_converter)}")
-        if args.showofficial:
-            print(f"(Official: {leader_skill.raw_description})")
-    else:
-        print("Leader Skill: None")
+        args_ = parser.parse_args()
+    main(args_)
