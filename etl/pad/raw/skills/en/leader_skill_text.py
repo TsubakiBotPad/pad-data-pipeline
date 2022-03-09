@@ -485,12 +485,14 @@ class EnLSTextConverter(EnBaseTextConverter):
         effects = []
         if ls.atk or ls.rcv:
             effects.append(self.fmt_multiplier_text(1, ls.atk, ls.rcv))
+        if ls.shield:
+            effects.append(self.fmt_reduct_text(ls.shield))
         if ls.extra_combos:
             effects.append(f"increase combo by {ls.extra_combos}")
         if ls.bonus_damage:
             effects.append(f"deal {ls.bonus_damage:,} additional true damage")
         return f"{capitalize_first(self.concat_list_and(effects))} for each match of exactly {ls.blob_size}" \
-               f" connected {self.fmt_multi_attr(ls.attributes)} orbs"
+               f" connected {self.fmt_multi_attr(ls.attributes)} orbs".replace("  ", " ")
 
     def full_text(self, text, tags=None):
         tags = tags or []
