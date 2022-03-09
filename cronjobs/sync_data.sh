@@ -24,11 +24,12 @@ python3 "${ETL_DIR}/media_copy.py" \
 # Spammy commands
 echo "Rsyncing from repo to images dir"
 set +x
-rsync -t "${ETL_IMAGES_DIR}"/latents/* "${DADGUIDE_MEDIA_DIR}/latents"
-rsync -t "${ETL_IMAGES_DIR}"/awakenings/* "${DADGUIDE_MEDIA_DIR}/awakenings"
-rsync -t "${ETL_IMAGES_DIR}"/badges/* "${DADGUIDE_MEDIA_DIR}/badges"
-rsync -t "${ETL_IMAGES_DIR}"/types/* "${DADGUIDE_MEDIA_DIR}/types"
-rsync -t "${ETL_IMAGES_DIR}"/icons/* "${DADGUIDE_MEDIA_DIR}/icons"
+rsync -tr "${ETL_IMAGES_DIR}"/latents/* "${DADGUIDE_MEDIA_DIR}/latents"
+rsync -tr "${ETL_IMAGES_DIR}"/awakenings/* "${DADGUIDE_MEDIA_DIR}/awakenings"
+rsync -tr "${ETL_IMAGES_DIR}"/badges/* "${DADGUIDE_MEDIA_DIR}/badges"
+rsync -tr "${ETL_IMAGES_DIR}"/types/* "${DADGUIDE_MEDIA_DIR}/types"
+rsync -tr "${ETL_IMAGES_DIR}"/icons/* "${DADGUIDE_MEDIA_DIR}/icons"
+rsync -tr "${PAD_DATA_DIR}"/raw/* "${DADGUIDE_RAW_DIR}"
 set -x
 
 echo "Syncing raw data to AWS s3"

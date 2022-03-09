@@ -22,7 +22,7 @@ declare -x DADGUIDE_PROCESSED_DATA_DIR="${DADGUIDE_DATA_DIR}/processed"
 declare -x DADGUIDE_MEDIA_DIR="${DADGUIDE_DATA_DIR}/media"
 declare -x DADGUIDE_EXTRA_DIR="${DADGUIDE_DATA_DIR}/extra"
 declare -x DADGUIDE_GAME_DB_DIR="${DADGUIDE_DATA_DIR}/db"
-declare -x DADGUIDE_ILMINA_DIR="${DADGUIDE_DATA_DIR}/ilmina"
+declare -x DADGUIDE_RAW_DIR="${DADGUIDE_DATA_DIR}/raw"
 
 declare -x DB_CONFIG="${REPO_ROOT}/cronjobs/db_config.json"
 declare -x ACCOUNT_CONFIG="${REPO_ROOT}/cronjobs/account_config.csv"
