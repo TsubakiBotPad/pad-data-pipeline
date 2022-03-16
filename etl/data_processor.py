@@ -71,6 +71,7 @@ type_name_to_processor: Dict[str, List[Any]] = {
                 SkillTagProcessor, TimestampProcessor],
     'Events': [DungeonProcessor, ScheduleProcessor],
     'Monsters': [AwokenSkillProcessor, SeriesProcessor, MonsterProcessor],
+    'Database': [],
     'None': [],
 }
 
@@ -138,6 +139,9 @@ def load_es_quick_and_die(args):
 
 
 def load_data(args):
+    if args.processors == "None":
+        return
+    
     if args.logsql:
         logging.getLogger('database').setLevel(logging.DEBUG)
     dry_run = not args.doupdates
