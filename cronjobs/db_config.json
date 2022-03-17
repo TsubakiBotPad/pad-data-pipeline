@@ -3,5 +3,6 @@
   "user": "botuser",
   "password": "tsubaki",
   "charset": "utf8",
-  "db": "dadguide"
+  "db": "dadguide",
+  "database": "dadguide"
 }
