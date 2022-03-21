@@ -578,10 +578,12 @@ class JaASTextConverter(JaBaseTextConverter):
             return self.fmt_duration(act.duration) + f"自分の攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 2:
             return self.fmt_duration(act.duration) + f"リーダーの攻撃力を{fmt_mult(act.atk_mult)}倍"
+        elif act.target == 4:
+            return self.fmt_duration(act.duration) + f"助っ人の攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 8:
-            return self.fmt_duration(act.duration) + f"ランダムでサブ4体の攻撃力を{fmt_mult(act.atk_mult)}倍"
+            return self.fmt_duration(act.duration) + f"サブ4体の攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 15:
-            return TRANSLATION_NEEDED
+            return self.fmt_duration(act.duration) + f"全員の攻撃力を{fmt_mult(act.atk_mult)}倍"
         else:
             return self.fmt_duration(act.duration) + f"???の攻撃力を{fmt_mult(act.atk_mult)}倍"
 
