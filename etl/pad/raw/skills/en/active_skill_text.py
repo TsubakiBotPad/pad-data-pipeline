@@ -605,10 +605,12 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += " for this monster"
         elif act.target == 2:
             skill_text += " for team leader"
+        elif act.target == 4:
+            skill_text += " for friend leader"
         elif act.target == 8:
             skill_text += " for all subs"
         elif act.target == 15:
-            skill_text += " for all other subs"
+            skill_text += " for all monsters"
         else:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}: Unknown target {act.target}")
             skill_text += " for ???"
