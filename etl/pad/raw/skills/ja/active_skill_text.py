@@ -530,6 +530,11 @@ class JaASTextConverter(JaBaseTextConverter):
     def change_monster(self, act):
         return "[{}]に変身する".format(act.change_to)
 
+    def random_change_monster(self, act):
+        return "ランダムで変身：{}".format(
+            self.concat_list_and((f'[{id}]' for id in set(act.change_to_ids)), conj='か')
+        )
+
     def skyfall_lock(self, act):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else ''
         return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, attrs)

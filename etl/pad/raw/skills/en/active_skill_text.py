@@ -554,6 +554,11 @@ class EnASTextConverter(EnBaseTextConverter):
         # TODO: Use a template here
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
 
+    def random_change_monster(self, act):
+        return "Randomly changes to {} for the duration of the dungeon".format(
+            self.concat_list_and((f'[{id}]' for id in set(act.change_to_ids)), conj='or')
+        )
+
     def skyfall_lock(self, act):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else 'all'
         return self.fmt_duration(act.duration) + attrs + " orbs appear locked"
