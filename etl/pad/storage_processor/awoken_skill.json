@@ -705,7 +705,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Increase ATK against Awoken enemies by 3x",
+    "desc_en": "Increase ATK against Awoken enemies by 3x & increase damage cap by 1.2x against Awoken enemies",
     "desc_en_official": "Increases ATK against Awaken Material enemies",
     "desc_ja": "能力覚醒用タイプの敵に対して攻撃力が3倍",
     "desc_ja_official": "能力覚醒用タイプの敵に対して 攻撃力がアップする",
