@@ -615,7 +615,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Increase ATK against Balanced enemies by 3x",
+    "desc_en": "Increase ATK against Balanced enemies by 3x & increase damage cap by 1.2x against Balanced enemies",
     "desc_en_official": "Increases ATK against Balanced Type enemies",
     "desc_ja": "バランスタイプの敵に対して攻撃力が3倍",
     "desc_ja_official": "バランスタイプの敵に対して 攻撃力がアップする",
