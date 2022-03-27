@@ -1300,6 +1300,18 @@ class ASInflictES(ActiveSkill):
         return converter.inflict_es(self)
 
 
+class ASRandomChangeMonster(ActiveSkill):
+    skill_type = 236
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0])
+        self.change_to_ids = data
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.random_change_monster(self)
+
+
 def convert(skill_list: List[MonsterSkill]):
     skill_type_to_constructor = {}
     for skill in ALL_ACTIVE_SKILLS:
@@ -1423,4 +1435,5 @@ ALL_ACTIVE_SKILLS = [
     ASLoopingEvolvingSkill,
     ASConditionalFloorThreshold,
     ASInflictES,
+    ASRandomChangeMonster,
 ]

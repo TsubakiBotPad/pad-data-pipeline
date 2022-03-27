@@ -530,6 +530,11 @@ class JaASTextConverter(JaBaseTextConverter):
     def change_monster(self, act):
         return "[{}]に変身する".format(act.change_to)
 
+    def random_change_monster(self, act):
+        return "ランダムで変身：{}".format(
+            self.concat_list_and((f'[{id}]' for id in set(act.change_to_ids)), conj='か')
+        )
+
     def skyfall_lock(self, act):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else ''
         return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, attrs)
@@ -578,10 +583,12 @@ class JaASTextConverter(JaBaseTextConverter):
             return self.fmt_duration(act.duration) + f"自分の攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 2:
             return self.fmt_duration(act.duration) + f"リーダーの攻撃力を{fmt_mult(act.atk_mult)}倍"
+        elif act.target == 4:
+            return self.fmt_duration(act.duration) + f"助っ人の攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 8:
-            return self.fmt_duration(act.duration) + f"ランダムでサブ4体の攻撃力を{fmt_mult(act.atk_mult)}倍"
+            return self.fmt_duration(act.duration) + f"サブ4体の攻撃力を{fmt_mult(act.atk_mult)}倍"
         elif act.target == 15:
-            return TRANSLATION_NEEDED
+            return self.fmt_duration(act.duration) + f"全員の攻撃力を{fmt_mult(act.atk_mult)}倍"
         else:
             return self.fmt_duration(act.duration) + f"???の攻撃力を{fmt_mult(act.atk_mult)}倍"
 

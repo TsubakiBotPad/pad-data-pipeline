@@ -554,6 +554,11 @@ class EnASTextConverter(EnBaseTextConverter):
         # TODO: Use a template here
         return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
 
+    def random_change_monster(self, act):
+        return "Randomly changes to {} for the duration of the dungeon".format(
+            self.concat_list_and((f'[{id}]' for id in set(act.change_to_ids)), conj='or')
+        )
+
     def skyfall_lock(self, act):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else 'all'
         return self.fmt_duration(act.duration) + attrs + " orbs appear locked"
@@ -605,10 +610,12 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += " for this monster"
         elif act.target == 2:
             skill_text += " for team leader"
+        elif act.target == 4:
+            skill_text += " for friend leader"
         elif act.target == 8:
             skill_text += " for all subs"
         elif act.target == 15:
-            skill_text += " for all other subs"
+            skill_text += " for all monsters"
         else:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}: Unknown target {act.target}")
             skill_text += " for ???"
