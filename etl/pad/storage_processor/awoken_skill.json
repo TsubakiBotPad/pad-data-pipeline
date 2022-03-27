@@ -741,7 +741,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Increase ATK against Vendor enemies by 3x",
+    "desc_en": "Increase ATK against Redeemable Material enemies by 3x & increase damage cap by 1.2x against Redeemable Material enemies",
     "desc_en_official": "Increases ATK against Redeemable Material enemies",
     "desc_ja": "売却用タイプの敵に対して攻撃力が3倍",
     "desc_ja_official": "売却用タイプの敵に対して 攻撃力がアップする",
