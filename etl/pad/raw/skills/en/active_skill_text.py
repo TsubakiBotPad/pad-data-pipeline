@@ -1,8 +1,9 @@
 import logging
-from collections import OrderedDict
+from collections import Counter, OrderedDict
+from fractions import Fraction
 from typing import List
 
-from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
+from pad.raw.skills.active_skill_info import ASConditional, ASConditionalFloorThreshold, PartWithTextAndCount
 from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, noun_count, \
     ordinal, pluralize
 from pad.raw.skills.skill_common import fmt_mult
@@ -552,12 +553,16 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def change_monster(self, act):
         # TODO: Use a template here
-        return "Changes to [{}] for the duration of the dungeon".format(act.change_to)
+        return f"Change to [{next(iter(act.transform_ids))}] for the duration of the dungeon"
 
     def random_change_monster(self, act):
-        return "Randomly changes to {} for the duration of the dungeon".format(
-            self.concat_list_and((f'[{id}]' for id in set(act.change_to_ids)), conj='or')
-        )
+        if all(count == 1 for count in act.transform_ids.values()):
+            mons = self.concat_list_and((f'[{mid}]' for mid in set(act.transform_ids)), conj='or')
+        else:
+            denom = len(act.transform_ids)
+            mons = self.concat_list_and((f'[{mid}] ({Fraction(numer, denom)} chance)'
+                                         for mid, numer in sorted(act.transform_ids.items())), conj='or')
+        return f"Randomly change to {mons} for the duration of the dungeon"
 
     def skyfall_lock(self, act):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else 'all'
@@ -612,8 +617,12 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += " for team leader"
         elif act.target == 4:
             skill_text += " for friend leader"
+        elif act.target == 6:
+            skill_text += " for both leaders"
         elif act.target == 8:
             skill_text += " for all subs"
+        elif act.target == 9:
+            skill_text += " for this monster and all subs"
         elif act.target == 15:
             skill_text += " for all monsters"
         else:
@@ -633,12 +642,20 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += f" {c}) {skill.templated_text(self)}"
         return skill_text
 
-    def conditional_floor_thresh(self, act):
+    def conditional_floor_thresh(self, act, context):
         if act.lower_limit == 0:
-            return f"If on floor {act.upper_limit} or earlier: "
-        if act.upper_limit == 9999:
-            return f"If on floor {act.lower_limit} or later: "
-        return f"If between floor {act.lower_limit} and floor {act.upper_limit} (inclusive): "
+            skill_text = f" on floor {act.upper_limit} or earlier: "
+        elif act.upper_limit == 9999:
+            skill_text = f" on floor {act.lower_limit} or later: "
+        else:
+            skill_text = f" between floor {act.lower_limit} and floor {act.upper_limit} (inclusive): "
+
+        if context is None or context.index(act) != 0:
+            # Context-less or not first
+            return "If" + skill_text
+        else:
+            # First
+            return "Must be used" + skill_text
 
     def inflict_es(self, act):
         if act.selector_type == 2:
@@ -657,7 +674,10 @@ class EnASTextConverter(EnBaseTextConverter):
     def multi_part_active(self, act):
         text_to_item = OrderedDict()
         for p in act.parts:
-            p_text = p.text(self)
+            if p.needs_context:
+                p_text = p.text(self, act.parts)
+            else:
+                p_text = p.text(self)
             if p_text in text_to_item:
                 text_to_item[p_text].repeat += 1
             else:
