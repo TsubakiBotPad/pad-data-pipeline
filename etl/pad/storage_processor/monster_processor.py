@@ -89,9 +89,10 @@ class MonsterProcessor(object):
 
         logger.info('loading transforms')
         for m in self.data.ownable_cards:
-            if not (m.cur_card.active_skill and m.cur_card.active_skill.transform_id):
+            if not (m.cur_card.active_skill and m.cur_card.active_skill.transform_ids):
                 continue
 
-            item = Transformation.from_csm(m)
-            if item:
-                db.insert_or_update(item)
+            denom = sum(val for val in m.cur_card.active_skill.transform_ids.values())
+            for tfid, num in m.cur_card.active_skill.transform_ids.items():
+                if tfid is not None:
+                    db.insert_or_update(Transformation.from_csm(m, tfid, num, denom))
