@@ -1,6 +1,8 @@
 import logging
-from collections import namedtuple
-from typing import Any, List, Optional
+from collections import Counter, defaultdict, namedtuple
+from fractions import Fraction
+from numbers import Number
+from typing import Any, Iterable, List, Mapping, Optional
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.skill_common import binary_con, merge_defaults, mult
@@ -15,11 +17,15 @@ class ActiveSkill:
     compound_skill_type = 0
 
     def __init__(self, ms: MonsterSkill, *,
-                 transform_id: Optional[int] = None):
+                 transform_ids: Optional[Mapping[int, Number]] = None,
+                 needs_context: bool = False):
+        if transform_ids is None:
+            transform_ids = {None: 1}
+
         if self.skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(self.skill_type, ms.skill_type))
-        self.skill_id = ms.skill_id
 
+        self.skill_id = ms.skill_id
         self.name = ms.name
         self.raw_description = ms.clean_description
         self.raw_data = ms.data
@@ -28,7 +34,10 @@ class ActiveSkill:
         self.cooldown_turns_max = ms.cooldown_turns_max
         self.cooldown_turns_min = ms.cooldown_turns_min
 
-        self._transform_id = transform_id
+        self._transform_ids = transform_ids
+
+        # If this is true, text can take an optional context: Iterable[ActiveSkill] argument
+        self.needs_context = needs_context
 
     @property
     def subskills(self) -> List["ActiveSkill"]:
@@ -39,8 +48,8 @@ class ActiveSkill:
         return [self]
 
     @property
-    def transform_id(self) -> int:
-        return self._transform_id
+    def transform_ids(self) -> Mapping[int, Number]:
+        return self._transform_ids
 
     def text(self, converter: ASTextConverter) -> str:
         return '<unsupported>: {}'.format(self.raw_description)
@@ -67,13 +76,10 @@ class ASMultiPart(ActiveSkill):
         return sum([s.parts for s in self.child_skills], [])
 
     @property
-    def transform_id(self):
-        transform_id = None
+    def transform_ids(self):
         for part in self.child_skills:
-            if part.transform_id and transform_id:
-                human_fix_logger.warning("Multiple transform in one multi-part AS")
-            transform_id = part.transform_id or transform_id
-        return transform_id
+            if [*part.transform_ids.elements()]:
+                return part.transform_ids
 
 
 class ASCompound(ASMultiPart):
@@ -648,6 +654,17 @@ class ASRandomSkill(ASCompound):
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_skill(self)
 
+    @property
+    def transform_ids(self):
+        transform_ids = defaultdict(int)
+        for part in self.child_skills:
+            if not part.transform_ids:
+                transform_ids[None] += 1
+                continue
+            for tfid, count in part.transform_ids:
+                transform_ids[tfid] += Fraction(count, sum(part.transform_ids.values()))
+        return transform_ids
+
 
 class ASIncreasedSkyfallChance(ActiveSkill):
     skill_type = 126
@@ -1069,8 +1086,7 @@ class ASChangeMonster(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
-        self.change_to = data[0]
-        super().__init__(ms, transform_id=self.change_to)
+        super().__init__(ms, transform_ids=Counter(data))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_monster(self)
@@ -1280,10 +1296,22 @@ class ASConditionalFloorThreshold(ASConditional):
         data = merge_defaults(ms.data, [0, 9999])
         self.lower_limit = data[0]
         self.upper_limit = data[1] or 9999
-        super().__init__(ms)
+        super().__init__(ms, needs_context=True)
+
+    def text(self, converter: ASTextConverter, context: Optional[Iterable[ActiveSkill]] = None) \
+            -> str:
+        return converter.conditional_floor_thresh(self, context)
+
+
+class ASRandomChangeMonster(ActiveSkill):
+    skill_type = 236
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0])
+        super().__init__(ms, transform_ids=Counter(data))
 
     def text(self, converter: ASTextConverter) -> str:
-        return converter.conditional_floor_thresh(self)
+        return converter.random_change_monster(self)
 
 
 class ASInflictES(ActiveSkill):
@@ -1298,18 +1326,6 @@ class ASInflictES(ActiveSkill):
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.inflict_es(self)
-
-
-class ASRandomChangeMonster(ActiveSkill):
-    skill_type = 236
-
-    def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0])
-        self.change_to_ids = data
-        super().__init__(ms)
-
-    def text(self, converter: ASTextConverter) -> str:
-        return converter.random_change_monster(self)
 
 
 def convert(skill_list: List[MonsterSkill]):

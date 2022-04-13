@@ -528,11 +528,12 @@ class JaASTextConverter(JaBaseTextConverter):
         return '下からスキルをランダムて発動：{}'.format("；".join(random_skills_text))
 
     def change_monster(self, act):
-        return "[{}]に変身する".format(act.change_to)
+        return f"[{next(iter(act.transform_ids))}]に変身する"
 
     def random_change_monster(self, act):
+        # TODO: Add probabilities
         return "ランダムで変身：{}".format(
-            self.concat_list_and((f'[{id}]' for id in set(act.change_to_ids)), conj='か')
+            self.concat_list_and((f'[{id}]' for id in act.transform_ids), conj='か')
         )
 
     def skyfall_lock(self, act):
@@ -604,7 +605,7 @@ class JaASTextConverter(JaBaseTextConverter):
                               for c, skill in enumerate(act.child_skills, 1))
         return skill_text
 
-    def conditional_floor_thresh(self, act):
+    def conditional_floor_thresh(self, act, context):
         if act.lower_limit == 0:
             return f"バトル{act.upper_limit}以前："
         if act.upper_limit == 9999:
