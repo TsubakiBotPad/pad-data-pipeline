@@ -24,6 +24,13 @@ trap success_exit EXIT
 
 RUN_DIR="${MEDIA_ETL_DIR}/image_pull"
 
+# Enable NVM (Spammy)
+set +x
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm use 8
+set -x
+
 yarn --cwd=${PAD_RESOURCES_ROOT} update
 
 # Full pictures
