@@ -78,8 +78,9 @@ class ASMultiPart(ActiveSkill):
     @property
     def transform_ids(self):
         for part in self.child_skills:
-            if [*part.transform_ids.elements()]:
+            if any(mid is not None for mid in part.transform_ids.keys()):
                 return part.transform_ids
+        return {None: 1}
 
 
 class ASCompound(ASMultiPart):
@@ -661,7 +662,7 @@ class ASRandomSkill(ASCompound):
             if not part.transform_ids:
                 transform_ids[None] += 1
                 continue
-            for tfid, count in part.transform_ids:
+            for tfid, count in part.transform_ids.items():
                 transform_ids[tfid] += Fraction(count, sum(part.transform_ids.values()))
         return transform_ids
 

@@ -407,12 +407,13 @@ class Transformation(ServerDependentSqlItem):
     BASE_TABLE = 'transformations'
 
     @staticmethod
-    def from_csm(o: CrossServerCard, tfid: MonsterNo) -> Optional['Transformation']:
+    def from_csm(o: CrossServerCard, tfid: MonsterNo, numerator: float, denominator: float) -> Optional['Transformation']:
         card = o.cur_card.card
 
         def convert(x: MonsterNo) -> MonsterId:
             return o.cur_card.no_to_id(x)
 
+        # Do something with the chance
         return Transformation(
             transformation_id=None,  # Key that is looked up or inserted
             from_monster_id=convert(card.monster_no),

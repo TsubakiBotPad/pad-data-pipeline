@@ -561,7 +561,7 @@ class EnASTextConverter(EnBaseTextConverter):
         else:
             denom = len(act.transform_ids)
             mons = self.concat_list_and((f'[{mid}] ({Fraction(numer, denom)} chance)'
-                                         for mid, numer in sorted(act.transform_chances)), conj='or')
+                                         for mid, numer in sorted(act.transform_ids.items())), conj='or')
         return f"Randomly change to {mons} for the duration of the dungeon"
 
     def skyfall_lock(self, act):
@@ -617,8 +617,12 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += " for team leader"
         elif act.target == 4:
             skill_text += " for friend leader"
+        elif act.target == 6:
+            skill_text += " for both leaders"
         elif act.target == 8:
             skill_text += " for all subs"
+        elif act.target == 9:
+            skill_text += " for this monster and all subs"
         elif act.target == 15:
             skill_text += " for all monsters"
         else:
@@ -646,11 +650,11 @@ class EnASTextConverter(EnBaseTextConverter):
         else:
             skill_text = f" between floor {act.lower_limit} and floor {act.upper_limit} (inclusive): "
 
-        if context is None or sum(isinstance(cact, ASConditionalFloorThreshold) for cact in context) > 1:
-            # Context-less or not alone
+        if context is None or context.index(act) != 0:
+            # Context-less or not first
             return "If" + skill_text
         else:
-            # Alone
+            # First
             return "Must be used" + skill_text
 
     def inflict_es(self, act):
