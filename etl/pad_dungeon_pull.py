@@ -27,6 +27,7 @@ def parse_args():
     output_group.add_argument("--db_config", required=True, help="JSON database info")
     output_group.add_argument("--logsql", default=False,
                               action="store_true", help="Logs sql commands")
+    output_group.add_argument("--stream_safe", action="store_true", help="Don't use fancy progress bars")
 
     help_group = parser.add_argument_group("Help")
     help_group.add_argument("-h", "--help", action="help",
@@ -68,13 +69,17 @@ def pull_data(args, api_client=None, db_wrapper=None):
         db_wrapper = DbWrapper(False)
         db_wrapper.connect(db_config)
 
-        stamina = db_wrapper.get_single_value(f"SELECT stamina FROM sub_dungeons"
-                                              f" WHERE sub_dungeon_id = {int(dungeon_id) * 1000 + int(floor_id)};")
-
+    stamina = db_wrapper.get_single_value(f"SELECT stamina FROM sub_dungeons"
+                                          f" WHERE sub_dungeon_id = {int(dungeon_id) * 1000 + int(floor_id)};")
     entry_id = int(db_wrapper.get_single_value("SELECT MAX(entry_id) FROM wave_data;"))
 
+    if args.stream_safe:
+        iterator = range(loop_count)
+    else:
+        iterator = tqdm(range(loop_count), unit='runs')
+
     print('entering', server, 'dungeon', dungeon_id, 'floor', floor_id, loop_count, 'times')
-    for e_idx in tqdm(range(loop_count), unit='runs'):
+    for _ in iterator:
         entry_id += 1
         entry_json = api_client.enter_dungeon(dungeon_id, floor_id, self_card=friend_card, stamina=stamina)
         wave_response = pad_api.extract_wave_response_from_entry(entry_json)

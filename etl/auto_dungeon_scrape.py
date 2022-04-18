@@ -56,6 +56,7 @@ def parse_args():
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--doupdates", default=False,
                               action="store_true", help="Apply updates")
+    output_group.add_argument("--stream_safe", action="store_true", help="Don't use fancy progress bars")
 
     help_group = parser.add_argument_group("Help")
     help_group.add_argument("-h", "--help", action="help",
@@ -82,6 +83,7 @@ def do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper):
     dg_pull_arg.dungeon_id = dungeon_id
     dg_pull_arg.loop_count = 100
     dg_pull_arg.logsql = False
+    dg_pull_arg.stream_safe = args.stream_safe
     pull_data(dg_pull_arg, api_client, db_wrapper)
 
 
