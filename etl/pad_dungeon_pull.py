@@ -69,7 +69,7 @@ def pull_data(args, api_client=None, db_wrapper=None):
         db_wrapper.connect(db_config)
 
         stamina = db_wrapper.get_single_value(f"SELECT stamina FROM sub_dungeons"
-                                              f" WHERE sub_dungeon_id = {dungeon_id * 1000 + floor_id};")
+                                              f" WHERE sub_dungeon_id = {int(dungeon_id) * 1000 + int(floor_id)};")
 
     entry_id = int(db_wrapper.get_single_value("SELECT MAX(entry_id) FROM wave_data;"))
 
