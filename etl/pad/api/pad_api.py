@@ -339,9 +339,9 @@ class PadApiClient(object):
 
     def enter_dungeon(self, dung_id: int, floor_id: int,
                       self_card: CardEntry = None,
-                      friend: FriendEntry = None, friend_leader: FriendLeader = None):
+                      friend: FriendEntry = None, friend_leader: FriendLeader = None, stamina: int = None):
         payload, leaders = self.get_entry_payload(
-            dung_id, floor_id, self_card, friend, friend_leader)
+            dung_id, floor_id, self_card, friend, friend_leader, stamina=stamina)
         url = self.build_url(payload)
         action_json = self.get_json_results(url)
         action_json['entry_leads'] = leaders
@@ -350,7 +350,7 @@ class PadApiClient(object):
     def get_entry_payload(self, dung_id: int, floor_id: int,
                           self_card: CardEntry = None,
                           friend: FriendEntry = None, friend_leader: FriendLeader = None,
-                          fixed_team=False):
+                          fixed_team=False, stamina: int = None):
         """Returns a pair of the entry payload and [leader_card_id, friend_card_id]"""
         cur_ghtime = pad_util.cur_gh_time(self.server_p)
         cur_timestamp = int(cur_ghtime) * 1000 + random.randint(0, 999)
@@ -360,7 +360,7 @@ class PadApiClient(object):
             ('sid', self.session_id),
             ('dung', dung_id),
             ('floor', floor_id),
-            ('time', cur_timestamp),
+            ('time', cur_timestamp)
         ]
 
         if fixed_team:
@@ -380,6 +380,7 @@ class PadApiClient(object):
         enc_entry_data = dungeon_encoding.encodePadDungeon('&'.join(entry_data), 0x23)
         data.extend([
             ('e', enc_entry_data),
+            ('sm', stamina),
             ('r', self.server_r),
             ('m', '0'),
         ])
