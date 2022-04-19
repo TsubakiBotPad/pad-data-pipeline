@@ -611,24 +611,27 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def team_target_stat_change(self, act):
         skill_text = self.fmt_duration(act.duration) + self.fmt_multiplier_text(1, act.atk_mult, 1)
-        if act.target == 1:
-            skill_text += " for this monster"
-        elif act.target == 2:
-            skill_text += " for team leader"
-        elif act.target == 4:
-            skill_text += " for friend leader"
-        elif act.target == 6:
-            skill_text += " for both leaders"
-        elif act.target == 8:
-            skill_text += " for all subs"
-        elif act.target == 9:
-            skill_text += " for this monster and all subs"
-        elif act.target == 15:
-            skill_text += " for all monsters"
-        else:
+        targets = []
+        if act.target & 1:
+            targets.append("this monster")
+
+        if act.target & 6 == 6:
+            targets.append("both leaders")
+        elif act.target & 2:
+            targets.append("team leader")
+        elif act.target & 4:
+            targets.append("friend leader")
+
+        if act.target & 8:
+            targets.append("all subs")
+
+        if act.target & 15 == 15:
+            targets = ["all monsters"]
+
+        if act.target & ~15:
             human_fix_logger.warning(f"Can't parse active skill {act.skill_id}: Unknown target {act.target}")
-            skill_text += " for ???"
-        return skill_text
+            targets.append("???")
+        return skill_text + " for " + self.concat_list_and(targets)
 
     def evolving_active(self, act):
         skill_text = "After each skill, evolve to the next:"
