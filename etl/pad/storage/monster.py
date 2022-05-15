@@ -108,7 +108,7 @@ class Monster(ServerDependentSqlItem):
             diff_leader_skill=diff_leader_skill,
             diff_active_skill=diff_active_skill,
             base_id=o.cur_card.no_to_id(cur_card.base_id),
-            group_id=o.cur_card.group_id,
+            group_id=cur_card.group_id,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
             orb_skin_id=orb_skin_id,
