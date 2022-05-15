@@ -94,5 +94,6 @@ class MonsterProcessor(object):
 
             denom = sum(val for val in m.cur_card.active_skill.transform_ids.values())
             for tfid, num in m.cur_card.active_skill.transform_ids.items():
+                print(m.monster_id, tfid)
                 if tfid is not None:
                     db.insert_or_update(Transformation.from_csm(m, tfid, num, denom))
