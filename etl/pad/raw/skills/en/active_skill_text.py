@@ -658,7 +658,12 @@ class EnASTextConverter(EnBaseTextConverter):
             return "If" + skill_text
         else:
             # First
-            return "Must be used" + skill_text
+            if act.lower_limit == 0:
+                return "Must be used" + skill_text
+            elif act.upper_limit == 9999:
+                return "Can only be used" + skill_text
+            else:
+                return "Must (and can only) be used" + skill_text
 
     def inflict_es(self, act):
         if act.selector_type == 2:
