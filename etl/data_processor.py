@@ -217,18 +217,12 @@ def load_data(args):
             es_processor.load_enemy_data(args.es_dir)
 
     # Load basic series data
-    series_processor = None
     if SeriesProcessor in processors:
-        series_processor = SeriesProcessor(cs_database)
-        series_processor.pre_process(db_wrapper)
+        SeriesProcessor(cs_database).process(db_wrapper)
 
     # # Load monster data
     if MonsterProcessor in processors:
         MonsterProcessor(cs_database).process(db_wrapper)
-
-    # Auto-assign monster series
-    if series_processor is not None:
-        series_processor.post_process(db_wrapper)
 
     # Egg machines
     if EggMachineProcessor in processors:
