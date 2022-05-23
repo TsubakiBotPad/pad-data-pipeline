@@ -140,7 +140,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         min_atk = ls.min_atk
         min_attr = ls.min_attr
 
-        if max(ls.steps) + 1 != len(ls.steps):
+        if max(ls.steps, default=-1) + 1 != len(ls.steps):
             human_fix_logger.warning(f"Unknown behavior for rainbow skill {ls.skill_id}")
 
         if min_atk < ls.atk:
