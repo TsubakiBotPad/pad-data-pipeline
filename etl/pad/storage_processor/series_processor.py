@@ -1,11 +1,9 @@
 import json
 import logging
 import os
-from collections import defaultdict
 
 from pad.db.db_util import DbWrapper
 from pad.raw_processor import crossed_data
-from pad.storage.series import MonsterSeries
 from pad.storage.series import Series
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
