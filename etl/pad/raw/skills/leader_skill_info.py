@@ -1493,10 +1493,11 @@ class LSRainbowMultPlusShield(LeaderSkill):
         self.max_attr = 5
         self.min_atk = mult(data[2])
         self.atk_step = mult(data[4])
+        self.steps = binary_con(data[5])
         self.min_rcv = 1
         self.rcv_step = 0
 
-        max_atk = self.min_atk + self.atk_step * len(binary_con(data[5]))
+        max_atk = self.min_atk + self.atk_step * len(self.steps)
         shield = mult(data[3])
         super().__init__(170, ms, atk=max_atk, shield=shield)
 
