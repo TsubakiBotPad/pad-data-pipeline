@@ -1490,10 +1490,10 @@ class LSRainbowMultPlusShield(LeaderSkill):
         data = merge_defaults(ms.data, [0, 0, 100, 0, 0, 0])
         self.match_attributes = binary_con(data[0])
         self.min_attr = data[1]
-        self.max_attr = 5
         self.min_atk = mult(data[2])
         self.atk_step = mult(data[4])
         self.steps = binary_con(data[5])
+        self.max_attr = self.min_attr + len(self.steps)
         self.min_rcv = 1
         self.rcv_step = 0
 
