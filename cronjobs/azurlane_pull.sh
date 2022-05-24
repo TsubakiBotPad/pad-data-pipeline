@@ -6,6 +6,7 @@ cd "$(dirname "$0")" || exit
 source ./shared_root.sh
 source ./shared.sh
 source ./discord.sh
+source "${VENV_ROOT}/bin/activate"
 
 function error_exit() {
   hook_error "Azurlane pull failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
