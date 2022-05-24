@@ -3,8 +3,6 @@
 set -e
 set -x
 
-cd "$(dirname "$0")" || exit
-
 function hook_error() {
   echo "$1"
   data="{\"content\": \"$1\"}"
