@@ -135,7 +135,7 @@ def main(args):
     os.makedirs(output_dir, exist_ok=True)
 
     output_json = {'items': items}
-    output_json_file = os.path.join(output_dir, 'azure_lane.json')
+    output_json_file = os.path.join(output_dir, 'data.json')
     with open(output_json_file, "w") as f:
         json.dump(output_json, f)
 
