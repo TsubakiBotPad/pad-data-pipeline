@@ -4,6 +4,7 @@ import os
 
 from bs4 import BeautifulSoup
 import requests
+import urllib
 
 parser = argparse.ArgumentParser(description="Downloads Azur Lane data.", add_help=False)
 
@@ -60,14 +61,29 @@ def process_ship(full_url, item):
 
     switcher = page.find('section', {'class': 'tabber__section'})
 
-    tabs = switcher.findAll('article', {'class': 'tabber__panel'})
+    #grab top level only to avoid nesting. Check for nesting later, keep top level title base
+    tabs = switcher.findAll('article', {'class': 'tabber__panel'}, recursive=False)
     if tabs:
         for tab in tabs:
-            title = tab['title']
-            link = tab.find('div', {'class': 'shipskin-image'}).find('a', {'class': 'image'})
-            link_target = link['href']
-            full_url = f'{BASE_URL}{link_target}'
-            process_image(full_url, title, item)
+            #check for inner variations eg no-background
+            inner_tabs = tab.findAll('article', {'class': 'tabber__panel'})
+            if inner_tabs:
+                #keep the skin name of the outer tab, run on inner tab
+                title_base = tab['title']
+                for inner_tab in inner_tabs:
+                    title = title_base
+                    if inner_tab['title'] != 'Default':
+                        title = "{} {}".format(title_base, inner_tab['title'])
+                    link = inner_tab.find('div', {'class': 'shipskin-image'}).find('a', {'class': 'image'})
+                    link_target = link['href']
+                    full_url = f'{BASE_URL}{link_target}'
+                    process_image(full_url, title, item)
+            else:
+                title = tab['title']
+                link = tab.find('div', {'class': 'shipskin-image'}).find('a', {'class': 'image'})
+                link_target = link['href']
+                full_url = f'{BASE_URL}{link_target}'
+                process_image(full_url, title, item)
     else:
         # Ships with only 1 skin don't have tabbers
         header = page.find('div', {'class': 'azl_box_head'})
@@ -143,6 +159,7 @@ def main(args):
         for image in item['images']:
             url = image['url']
             filename = url[url.rfind("/") + 1:]
+            filename = urllib.parse.unquote(filename)
             image_path = os.path.join(output_dir, filename)
             if not os.path.exists(image_path):
                 download_file(url, image_path)
