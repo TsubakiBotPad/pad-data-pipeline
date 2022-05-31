@@ -887,7 +887,7 @@
     "adj_rcv": 0,
     "desc_en": "Matching a 3x3 Heal Orb square boosts ATK by 3.5x and inflicts 9,999,999 points of bonus damage",
     "desc_en_official": "Matching a 3x3 Heal Orb square boosts ATK & inflicts 999,999 points of bonus damage",
-    "desc_ja": "回復ドロップを3×3の正方形で消すと攻撃力が2倍にし、999,999ダメージの追い打ち",
+    "desc_ja": "回復ドロップを3×3の正方形で消すと攻撃力が2倍にし、999万ダメージの追い打ち",
     "desc_ja_official": "回復ドロップを3×3の正方形で消すと 攻撃力がアップし、999,999ダメージの追い打ち",
     "desc_ko": "회복드롭을 3x3 정사각형 모양으로 맞추면 해당 몬스터의 공격력이 2배, 대미지 999,999의 추가 공격",
     "desc_ko_official": "회복드롭을 3x3 정사각형으로 지우면 공격력이 상승하여 대미지 999,999의 추가 공격",
