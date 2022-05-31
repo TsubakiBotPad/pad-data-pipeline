@@ -1029,7 +1029,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "ATK increases by 2.2x when HP is 50% or less",
+    "desc_en": "HP50％以下で攻撃力が2.2",
     "desc_en_official": "ATK increases when HP is 50% or less",
     "desc_ja": "HP50％以下で攻撃力が2倍",
     "desc_ja_official": "HP50%以下で攻撃力がアップする",
