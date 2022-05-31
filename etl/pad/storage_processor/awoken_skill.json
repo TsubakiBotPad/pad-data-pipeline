@@ -1065,7 +1065,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Matching 5 Orbs of the same Att. as this monster in an L shape boosts this match's ATK by 1.5x, unlocks Orbs, and removes locked Orb skyfall",
+    "desc_en": "Matching 5 Orbs of the same Att. as this monster in an L shape boosts this match's ATK by 1.7x, unlocks Orbs, and removes locked Orb skyfall",
     "desc_en_official": "Increases ATK and unlocks Orbs when matching 5 Orbs of the same Att. as this monster in an L shape.",
     "desc_ja": "自分と同じ属性のドロップ5個をL字型に消すと攻撃力が1.5倍にし、盤面のロック状態を解除する",
     "desc_ja_official": "自分と同じ属性のドロップ5個を L字型に消すと攻撃力がアップし、 ロック状態を解除する",
