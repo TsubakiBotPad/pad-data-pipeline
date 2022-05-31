@@ -1600,5 +1600,23 @@
     "name_ko": "Untranslated",
     "name_ko_official": "Unknown Official Name",
     "pad_awakening_id": 89
+  },
+  {
+    "adj_atk": 0,
+    "adj_hp": 0,
+    "adj_rcv": 0,
+    "desc_en": "Adds Healer type to card. Applies immediately after entering the dungeon, so does not count towards killer latents or dungeon type requirements.",
+    "desc_en_official": "Unknown Official Text",
+    "desc_ja": "ダンジョン潜入中、回復タイプが追加される",
+    "desc_ja_official": "Unknown Official Text",
+    "desc_ko": "Untranslated",
+    "desc_ko_official": "Unknown Official Text",
+    "name_en": "Type Addition-Healer",
+    "name_en_official": "Unknown Official Name",
+    "name_ja": "回復タイプ追加",
+    "name_ja_official": "Unknown Official Name",
+    "name_ko": "Untranslated",
+    "name_ko_official": "Unknown Official Name",
+    "pad_awakening_id": 90
   }
 ]
