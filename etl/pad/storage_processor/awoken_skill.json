@@ -1067,7 +1067,7 @@
     "adj_rcv": 0,
     "desc_en": "自分と同じ属性のドロップ5個をL字型に消すと攻撃力が1.7倍にし、盤面のロック状態を解除する ",
     "desc_en_official": "Increases ATK and unlocks Orbs when matching 5 Orbs of the same Att. as this monster in an L shape.",
-    "desc_ja": "自分と同じ属性のドロップ5個をL字型に消すと攻撃力が1.5倍にし、盤面のロック状態を解除する",
+    "desc_ja": "自分と同じ属性のドロップ5個をL字型に消すと攻撃力が1.7倍にし、盤面のロック状態を解除する ",
     "desc_ja_official": "自分と同じ属性のドロップ5個を L字型に消すと攻撃力がアップし、 ロック状態を解除する",
     "desc_ko": "자신과 같은 속성의 드롭을 L자 모양으로 지우면 공격력이 상승하고, 드롭의 잠금 상태를 해제 (개당 1.5배)",
     "desc_ko_official": "자신과 같은 속성의 드롭 5개를 L자형으로 지우면 공격력이 상승하고 잠금 상태를 해제한다",
