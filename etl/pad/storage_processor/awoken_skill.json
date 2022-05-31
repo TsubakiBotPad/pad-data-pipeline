@@ -1677,7 +1677,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Adds a Light subattribute to card, at 15% of the card's base damage, while removing any existing subattribute. Damage percentage is uniform, regardless of type of pre-existing subattribute or main attribute (or lack thereof). Applies immediately after entering the dungeon, so does not count towards dungeon attribute requirements.",
+    "desc_en": "Adds a Dark subattribute to card, at 15% of the card's base damage, while removing any existing subattribute. Damage percentage is uniform, regardless of pre-existing subattribute or main attribute (or lack thereof). Applies immediately after entering the dungeon, so does not count towards dungeon attribute requirements.",
     "desc_en_official": "Unknown Official Text",
     "desc_ja": "ダンジョン潜入中、副属性が光属性に変更される（ダメージは攻撃力の15％分）",
     "desc_ja_official": "Unknown Official Text",
