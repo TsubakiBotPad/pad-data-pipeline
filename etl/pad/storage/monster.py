@@ -109,6 +109,7 @@ class Monster(ServerDependentSqlItem):
             diff_active_skill=diff_active_skill,
             base_id=o.cur_card.no_to_id(cur_card.base_id),
             group_id=cur_card.group_id,
+            collab_id=cur_card.collab_id,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
             orb_skin_id=orb_skin_id,
@@ -165,6 +166,7 @@ class Monster(ServerDependentSqlItem):
                  diff_active_skill: bool = None,
                  base_id: int = None,
                  group_id: int = None,
+                 collab_id: int = None,
                  has_animation: bool = None,
                  has_hqimage: bool = None,
                  orb_skin_id: int = None,
@@ -220,6 +222,7 @@ class Monster(ServerDependentSqlItem):
         self.diff_active_skill = diff_active_skill
         self.base_id = base_id
         self.group_id = group_id
+        self.collab_id = collab_id
         self.has_animation = has_animation
         self.has_hqimage = has_hqimage
         self.orb_skin_id = orb_skin_id
