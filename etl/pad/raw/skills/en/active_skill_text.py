@@ -559,7 +559,7 @@ class EnASTextConverter(EnBaseTextConverter):
         if all(count == 1 for count in act.transform_ids.values()):
             mons = self.concat_list_and((f'[{mid}]' for mid in set(act.transform_ids)), conj='or')
         else:
-            denom = len(act.transform_ids)
+            denom = sum(act.transform_ids.values())
             mons = self.concat_list_and((f'[{mid}] ({Fraction(numer, denom)} chance)'
                                          for mid, numer in sorted(act.transform_ids.items())), conj='or')
         return f"Randomly change to {mons} for the duration of the dungeon"
