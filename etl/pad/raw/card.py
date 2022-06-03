@@ -2,7 +2,7 @@
 Parses card data.
 """
 import logging
-from typing import List, Any, Optional, Union
+from typing import List, Any, Optional
 
 from pad.common import pad_util
 from pad.common.shared_types import AttrId, MonsterNo, SkillId, TypeId, Curve
@@ -190,7 +190,7 @@ class Card(pad_util.Printable):
         self.ownable = self.monster_no < 100000
         self.usable = bool(not self.assist_only_flag and self.ownable)
 
-        self.furigana: str = raw[67]  # JP data only?
+        self.search_strings: List[str] = raw[67].split('|')
         self.limit_mult: int = raw[68]
 
         # Number of the voice file, 1-indexed, 0 if no voice
@@ -209,8 +209,7 @@ class Card(pad_util.Printable):
                 human_fix_logger.error('Unexpected tag value: %s', self.tags)
 
         # Remove this condition once it comes to NA
-        if len(raw) > 72:
-            self.ls_bitflag: int = raw[72] + (raw[73] << 32)
+        self.ls_bitflag: int = raw[72] + (raw[73] << 32)
 
         self.other_fields: List = raw[74:]
 
