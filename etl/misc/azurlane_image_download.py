@@ -2,9 +2,8 @@ import argparse
 import json
 import os
 
-from bs4 import BeautifulSoup
 import requests
-import urllib
+from bs4 import BeautifulSoup
 
 parser = argparse.ArgumentParser(description="Downloads Azur Lane data.", add_help=False)
 
@@ -61,14 +60,14 @@ def process_ship(full_url, item):
 
     switcher = page.find('section', {'class': 'tabber__section'})
 
-    #grab top level only to avoid nesting. Check for nesting later, keep top level title base
+    # grab top level only to avoid nesting. Check for nesting later, keep top level title base
     tabs = switcher.findAll('article', {'class': 'tabber__panel'}, recursive=False)
     if tabs:
         for tab in tabs:
-            #check for inner variations eg no-background
+            # check for inner variations eg no-background
             inner_tabs = tab.findAll('article', {'class': 'tabber__panel'})
             if inner_tabs:
-                #keep the skin name of the outer tab, run on inner tab
+                # keep the skin name of the outer tab, run on inner tab
                 title_base = tab['title']
                 for inner_tab in inner_tabs:
                     title = title_base
@@ -155,14 +154,15 @@ def main(args):
     with open(output_json_file, "w") as f:
         json.dump(output_json, f)
 
-    for item in items:
-        for image in item['images']:
-            url = image['url']
-            filename = url[url.rfind("/") + 1:]
-            filename = urllib.parse.unquote(filename)
-            image_path = os.path.join(output_dir, filename)
-            if not os.path.exists(image_path):
-                download_file(url, image_path)
+    # # Download Images
+    # for item in items:
+    #     for image in item['images']:
+    #         url = image['url']
+    #         filename = url[url.rfind("/") + 1:]
+    #         filename = urllib.parse.unquote(filename)
+    #         image_path = os.path.join(output_dir, filename)
+    #         if not os.path.exists(image_path):
+    #             download_file(url, image_path)
 
 
 if __name__ == "__main__":
