@@ -1828,6 +1828,20 @@ class LSColorCrossCombo(LeaderSkill):
         return converter.color_cross_combo_text(self)
 
 
+class LSGainAwakening(LeaderSkill):
+    skill_type = 213
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0])
+        self.attributes = binary_con(data[0])
+        self.types = binary_con(data[1])
+        self.awakening = data[2]
+        super().__init__(213, ms)
+
+    def text(self, converter) -> str:
+        return converter.gain_awakening(self)
+
+
 class LSRarityThresholdBoost(LeaderSkill):
     skill_type = 217
 
@@ -2073,6 +2087,7 @@ ALL_LEADER_SKILLS = [
     LSColorComboBonusCombo,
     LSHeartCrossCombo,
     LSColorCrossCombo,
+    LSGainAwakening,
     LSRarityThresholdBoost,
     LSBlobMatchMultiAttrBonusCombo,
     LSLMatchComboBoost,

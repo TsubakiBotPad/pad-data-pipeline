@@ -296,6 +296,17 @@ class JaLSTextConverter(JaBaseTextConverter):
             '{}の5個十字消しで{}{}コンボ加算。'.format(attrs, self.fmt_reduct_text(ls.shield), ls.bonus_combos)
         return '{}の5個十字消しで{}コンボ加算。'.format(attrs, ls.bonus_combos)
 
+    def gain_awakening(self, ls):
+        targets = []
+        if ls.attributes:
+            targets.append(self.attributes_to_str(ls.attributes, concat='、') + '属性')
+        if ls.types:
+            targets.append(self.typing_to_str(ls.types, concat='、') + 'タイプ')
+        return '{}に{}を付与。'.format(
+            '、'.join(targets),
+            self.AWAKENING_MAP[ls.awakening]
+        )
+
     def multi_play_text(self, ls):
         multiplier_text = self.fmt_stats_type_attr_bonus(ls)
         return 'マルチプレイ時に{}。'.format(multiplier_text)
