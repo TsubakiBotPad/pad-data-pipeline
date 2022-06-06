@@ -326,6 +326,17 @@ class EnLSTextConverter(EnBaseTextConverter):
             skill_text += ' and ' + self.fmt_reduct_text(ls.shield)
         return skill_text + ' for each cross of 5 {} orbs'.format(self.attributes_to_str(ls.attributes, concat='or'))
 
+    def gain_awakening(self, ls):
+        targets = []
+        if ls.attributes:
+            targets.append(self.attributes_to_str(ls.attributes, concat='and') + ' Att.')
+        if ls.types:
+            targets.append(self.typing_to_str(ls.types, concat='and') + ' type')
+        return 'Gain {} for {}.'.format(
+            self.AWAKENING_MAP[ls.awakening],
+            ' and '.join(targets),
+        )
+
     def multi_play_text(self, ls):
         multiplier_text = self.passive_stats_text(ls)
         return '{} when in multiplayer mode'.format(multiplier_text)
