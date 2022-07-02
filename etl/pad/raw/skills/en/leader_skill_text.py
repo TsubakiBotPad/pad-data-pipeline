@@ -331,7 +331,7 @@ class EnLSTextConverter(EnBaseTextConverter):
         if ls.attributes:
             targets.append(self.attributes_to_str(ls.attributes, concat='and') + ' Att.')
         if ls.types:
-            targets.append(self.typing_to_str(ls.types, concat='and') + ' type')
+            targets.append(self.typing_to_str(ls.types, conj='and') + ' type')
         return 'Gain {} for {}.'.format(
             self.AWAKENING_MAP[ls.awakening],
             ' and '.join(targets),

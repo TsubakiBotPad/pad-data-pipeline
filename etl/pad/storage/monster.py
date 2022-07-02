@@ -69,7 +69,6 @@ class Monster(ServerDependentSqlItem):
             name_ja=jp_card.name,
             name_en=na_card.name,
             name_ko=kr_card.name,
-            pronunciation_ja=jp_card.furigana,
             hp_min=cur_card.min_hp,
             hp_max=cur_card.max_hp,
             hp_scale=cur_card.hp_scale,
@@ -126,7 +125,6 @@ class Monster(ServerDependentSqlItem):
                  name_ja: str = None,
                  name_en: str = None,
                  name_ko: str = None,
-                 pronunciation_ja: str = None,
                  hp_min: int = None,
                  hp_max: int = None,
                  hp_scale: float = None,
@@ -182,7 +180,6 @@ class Monster(ServerDependentSqlItem):
         self.name_ja = name_ja
         self.name_en = name_en
         self.name_ko = name_ko
-        self.pronunciation_ja = pronunciation_ja
         self.hp_min = hp_min
         self.hp_max = hp_max
         self.hp_scale = hp_scale

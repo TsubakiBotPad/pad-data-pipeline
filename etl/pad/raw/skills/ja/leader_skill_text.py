@@ -301,7 +301,7 @@ class JaLSTextConverter(JaBaseTextConverter):
         if ls.attributes:
             targets.append(self.attributes_to_str(ls.attributes, concat='、') + '属性')
         if ls.types:
-            targets.append(self.typing_to_str(ls.types, concat='、') + 'タイプ')
+            targets.append(self.typing_to_str(ls.types, conj='、') + 'タイプ')
         return '{}に{}を付与。'.format(
             '、'.join(targets),
             self.AWAKENING_MAP[ls.awakening]
