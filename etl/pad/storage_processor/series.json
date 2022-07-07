@@ -1889,5 +1889,26 @@
     "name_ko": "Untranslated",
     "series_id": 279,
     "series_type": null
+  },
+  {
+    "name_en": "Hunter × Hunter 1",
+    "name_ja": "ハンターハンター１",
+    "name_ko": "Untranslated",
+    "series_id": 280,
+    "series_type": "collab"
+  },
+  {
+    "name_en": "Hunter × Hunter 2",
+    "name_ja": "ハンターハンター２",
+    "name_ko": "Untranslated",
+    "series_id": 281,
+    "series_type": "collab"
+  },
+  {
+    "name_en": "STAR WARS Collab",
+    "name_ja": "Untranslated",
+    "name_ko": "Untranslated",
+    "series_id": 282,
+    "series_type": "collab"
   }
 ]
