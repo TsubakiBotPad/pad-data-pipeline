@@ -7,7 +7,7 @@ from typing import List, Optional
 from pad.common.pad_util import Printable
 from pad.raw import EnemySkill
 from pad.raw.card import Card, ESRef
-from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit
+from pad.raw.skills.skill_common import Absorb, OrbShape, Source, Status, TargetType, Unit, mult
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -1507,6 +1507,20 @@ class ESDisableAssists(ESAction):
         return converter.disable_assists(self.turns)
 
 
+class ESDebuffATKTarget(ESAction):
+    skill_types = [143]
+
+    def __init__(self, skill: EnemySkill):
+        super().__init__(skill)
+        self.turns = self.params[1]
+        self.targets = self.params[2]
+        self.count = self.params[3]
+        self.mult = self.params[4]
+
+    def description(self, converter):
+        return converter.debuff_atk_target(self.turns, self.targets, self.count, self.mult)
+
+
 # Passive
 class ESPassive(ESBehavior):
     def __init__(self, skill: EnemySkill):
@@ -2074,6 +2088,7 @@ ENEMY_SKILLS = [
     ESTargetedSkillDelay,
     ESBranchTypes,
     ESDisableAssists,
+    ESDebuffATKTarget,
 ]
 
 BEHAVIOR_MAP = {t: s for s in ENEMY_SKILLS for t in s.skill_types}

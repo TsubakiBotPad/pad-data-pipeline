@@ -517,6 +517,17 @@ class EnEmojiESTextConverter(EmojiBaseTextConverter):
     def disable_assists(self, turns):
         return '{} for {}'.format(emoji_dict['disable_assists'], noun_count('turn', turns))
 
+    def debuff_atk_target(self, turns, targets, count, mult):
+        if targets == 3:
+            target_text = "both leaders"
+        elif targets == 4:
+            target_text = noun_count('random sub', count)
+        elif targets == 7:
+            target_text = noun_count('random card', count)
+        else:
+            target_text = '???'
+        return f"{target_text} {emoji_dict['atk_debuff']} {100-mult}% for {turns}"
+
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
 

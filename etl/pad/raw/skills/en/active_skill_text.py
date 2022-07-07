@@ -513,6 +513,8 @@ class EnASTextConverter(EnBaseTextConverter):
             skill_text += 'Create 13 {} orbs in the shape of a crescent moon.'.format(self.ATTRIBUTES[act.attribute])
         if board == [[0, 1, 2, 3, 4, 5], [0, 5], [0, 5], [0, 5], [0, 1, 2, 3, 4, 5]]:
             skill_text += 'Change the outermost orbs of the board to {} orbs'.format(self.ATTRIBUTES[act.attribute])
+        if board == [[4, 5], [3, 4], [2, 3], [1, 2], [0, 1]]:
+            skill_text += 'Create a 2-orb wide bottom-left to top-right diagonal of {} orbs'.format(self.ATTRIBUTES[act.attribute])
 
         if output:
             for entry in output:

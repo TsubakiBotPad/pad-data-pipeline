@@ -363,6 +363,9 @@ class JaESTextConverter(JaBaseTextConverter):
     def disable_assists(self, turns):
         return '{}ターンの間、アシストが無効になった'.format(turns)
 
+    def debuff_atk_target(self, turns, targets, count, mult):
+        return TRANSLATION_NEEDED
+
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
 
