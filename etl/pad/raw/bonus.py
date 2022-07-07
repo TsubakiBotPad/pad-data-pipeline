@@ -58,6 +58,8 @@ class BonusType(Enum):
     dungeon_unavailable_popup = 52
     reward_table_8p = 53
     vem_event = 54
+    vem_rules_1 = 58
+    vem_rules_2 = 49
 
 
 class BonusTypeEntry(object):
@@ -88,6 +90,10 @@ ALL_TYPES = [
     BonusTypeEntry(BonusType.rem_event),
     # VEM text.
     BonusTypeEntry(BonusType.vem_event),
+    # VEM rules.
+    BonusTypeEntry(BonusType.vem_rules_1),
+    # VEM rules (again).
+    BonusTypeEntry(BonusType.vem_rules_2),
     # Current PEM pal point cost.
     BonusTypeEntry(BonusType.pem_cost),
     # Feed XP modifier.
