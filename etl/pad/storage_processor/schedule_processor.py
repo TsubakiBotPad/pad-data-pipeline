@@ -59,6 +59,8 @@ IGNORED_BONUS_TYPES = [
     BonusType.dungeon_unavailable_popup,  # This might be useful if it becomes more common
     BonusType.reward_table_8p,
     BonusType.vem_event,
+    BonusType.vem_rules_1,
+    BonusType.vem_rules_2,
 
     # Might need this to tag dungeons as tournaments, even closed ones.
     # Probably happens outside this processor though.
