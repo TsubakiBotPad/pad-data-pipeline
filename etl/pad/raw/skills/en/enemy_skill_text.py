@@ -393,6 +393,18 @@ class EnESTextConverter(EnBaseTextConverter):
     def disable_assists(self, turns):
         return 'Disable active skills for {:s}'.format(noun_count('turn', turns))
 
+    def debuff_atk_target(self, turns, targets, count, mult):
+        if targets == 3:
+            target_text = "both leaders"
+        elif targets == 4:
+            target_text = noun_count('random sub', count)
+        elif targets == 7:
+            target_text = noun_count('random card', count)
+        else:
+            human_fix_logger.warning(f"Unknown DebuffATKTarget target {targets}")
+            target_text = '???'
+        return f"For {noun_count('turn', turns)}, {mult}% ATK for {target_text}"
+
     def branch(self, condition, compare, value, rnd):
         return 'Branch on {} {} {}, target rnd {}'.format(condition, compare, value, rnd)
 
