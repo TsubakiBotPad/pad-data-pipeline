@@ -47,7 +47,7 @@ def copy_media(args):
     hq_portrait_output_dir = os.path.join(output_dir, 'hq_portraits')
     animated_portrait_output_dir = os.path.join(output_dir, 'animated_portraits')
 
-    for jp_id in range(1, 9000):
+    for jp_id in range(1, 10000):
         monster_id = jp_id
         monster_id_filled = str(monster_id).zfill(5)
 
@@ -66,7 +66,7 @@ def copy_media(args):
         do_copy(animated_portrait_input_dir, '{}.gif'.format(monster_id),
                 animated_portrait_output_dir, '{}.gif'.format(monster_id_filled))
 
-    for na_id in range(1, 9000):
+    for na_id in range(1, 10000):
         monster_id = monster_id_mapping.na_no_to_monster_id(MonsterNo(na_id))
         monster_id_filled = str(monster_id).zfill(5)
 
