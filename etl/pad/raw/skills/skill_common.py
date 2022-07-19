@@ -1,5 +1,5 @@
-from typing import Dict
 from enum import Enum, auto
+from typing import Dict, List
 
 import jinja2
 
@@ -211,3 +211,32 @@ def list_con_pos(x):
 
 def merge_defaults(data, defaults):
     return list(data) + defaults[len(data):]
+
+
+class Board:
+    DAWNGLARE_CONSTS = "RBGLDHJPMX X8765432."
+
+    def __init__(self, data: List[List[int]] = None):
+        self.data = data or [[-1 for _ in range(7)] for _ in range(6)]
+
+    def __or__(self, other):
+        if not isinstance(other, Board):
+            raise TypeError(f"unsupported operand type(s) for |: 'Board' and '{other.__class__.__name__}'")
+        return Board([[other.data[i][j] if other.data[i][j] != -1 else self.data[i][j]
+                       for j in range(7)] for i in range(6)])
+
+    def __and__(self, other):
+        if not isinstance(other, Board):
+            raise TypeError(f"unsupported operand type(s) for &: 'Board' and '{other.__class__.__name__}'")
+        return Board([[self.data[i][j] if self.data[i][j] == other.data[i][j] else -1
+                       for j in range(7)] for i in range(6)])
+
+    def __bool__(self):
+        return any(any(v != -1 for v in row) for row in self.data)
+
+    def to_7x6(self):
+        return "".join("".join(self.DAWNGLARE_CONSTS[v] for v in row) for row in self.data)
+
+    def to_6x5(self):
+        return "".join("".join(self.DAWNGLARE_CONSTS[v] for j, v in enumerate(row) if j != 3)
+                       for i, row in enumerate(self.data) if i != 2)

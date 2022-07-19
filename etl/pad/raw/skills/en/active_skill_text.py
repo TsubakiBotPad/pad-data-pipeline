@@ -1,5 +1,6 @@
 import logging
 from collections import Counter, OrderedDict
+from copy import deepcopy
 from fractions import Fraction
 from typing import List
 
@@ -435,13 +436,7 @@ class EnASTextConverter(EnBaseTextConverter):
                                                                              self.fmt_mass_atk(act.mass_attack))
 
     def fixed_pos_convert(self, act):
-        board = [
-            list(act.row_pos_1),
-            list(act.row_pos_2),
-            list(act.row_pos_3),
-            list(act.row_pos_4),
-            list(act.row_pos_5),
-        ]
+        board = deepcopy(act.pos_map)
 
         orb_count = 0
 
