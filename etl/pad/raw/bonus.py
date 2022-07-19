@@ -59,7 +59,7 @@ class BonusType(Enum):
     reward_table_8p = 53
     vem_event = 54
     vem_rules_1 = 58
-    vem_rules_2 = 49
+    vem_rules_2 = 59
 
 
 class BonusTypeEntry(object):
