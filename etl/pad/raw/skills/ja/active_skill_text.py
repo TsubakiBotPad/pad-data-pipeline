@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from copy import deepcopy
 from typing import List
 
 from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
@@ -432,12 +433,7 @@ class JaASTextConverter(JaBaseTextConverter):
             self.ATTRIBUTES[act.attribute])
 
     def fixed_pos_convert(self, act):
-        board = [[], [], [], [], []]
-        board[0] = list(act.row_pos_1)
-        board[1] = list(act.row_pos_2)
-        board[2] = list(act.row_pos_3)
-        board[3] = list(act.row_pos_4)
-        board[4] = list(act.row_pos_5)
+        board = deepcopy(act.pos_map)
         orb_count = 0
 
         output = []

@@ -1,11 +1,12 @@
 import logging
 from collections import Counter, defaultdict, namedtuple
+from copy import copy
 from fractions import Fraction
-from numbers import Number
+from numbers import Rational
 from typing import Any, Iterable, List, Mapping, Optional
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.skill_common import binary_con, merge_defaults, mult
+from pad.raw.skills.skill_common import Board, binary_con, merge_defaults, mult
 
 human_fix_logger = logging.getLogger('human_fix')
 
@@ -17,10 +18,13 @@ class ActiveSkill:
     compound_skill_type = 0
 
     def __init__(self, ms: MonsterSkill, *,
-                 transform_ids: Optional[Mapping[int, Number]] = None,
+                 transform_ids: Mapping[int, Rational] = None,
+                 board: Board = None,
                  needs_context: bool = False):
         if transform_ids is None:
             transform_ids = {None: 1}
+        if board is None:
+            board = Board()
 
         if self.skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(self.skill_type, ms.skill_type))
@@ -35,6 +39,7 @@ class ActiveSkill:
         self.cooldown_turns_min = ms.cooldown_turns_min
 
         self._transform_ids = transform_ids
+        self._board = board
 
         # If this is true, text can take an optional context: Iterable[ActiveSkill] argument
         self.needs_context = needs_context
@@ -48,8 +53,12 @@ class ActiveSkill:
         return [self]
 
     @property
-    def transform_ids(self) -> Mapping[int, Number]:
+    def transform_ids(self) -> Mapping[int, Rational]:
         return self._transform_ids
+
+    @property
+    def board(self) -> Board:
+        return self._board
 
     def text(self, converter: ASTextConverter) -> str:
         return '<unsupported>: {}'.format(self.raw_description)
@@ -68,8 +77,8 @@ class ASConditional(ActiveSkill):
 class ASMultiPart(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         super().__init__(ms)
-        self.child_ids = ms.data
-        self.child_skills = []
+        self.child_ids: List[int] = ms.data
+        self.child_skills: List[ActiveSkill] = []
 
     @property
     def parts(self):
@@ -81,6 +90,15 @@ class ASMultiPart(ActiveSkill):
             if any(mid is not None for mid in part.transform_ids.keys()):
                 return part.transform_ids
         return {None: 1}
+
+    @property
+    def board(self):
+        if not self.child_skills:
+            return Board()
+        board = self.child_skills[0].board
+        for part in self.child_skills:
+            board |= part.board
+        return board
 
 
 class ASCompound(ASMultiPart):
@@ -442,7 +460,12 @@ class ASBoardChange(ActiveSkill):
         data = merge_defaults(ms.data, [])
         self.from_attr = list(range(10))
         self.to_attr = [v for v in data if v != -1]
-        super().__init__(ms)
+
+        board = None
+        if len(self.to_attr) == 1:
+            board = Board([[self.to_attr[0] for _ in range(7)] for _ in range(6)])
+
+        super().__init__(ms, board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.board_change_convert(self)
@@ -666,6 +689,13 @@ class ASRandomSkill(ASCompound):
                 transform_ids[tfid] += Fraction(count, sum(part.transform_ids.values()))
         return transform_ids
 
+    @property
+    def board(self):
+        board = Board()
+        for part in self.child_skills:
+            board &= part.board
+        return board
+
 
 class ASIncreasedSkyfallChance(ActiveSkill):
     skill_type = 126
@@ -693,7 +723,13 @@ class ASColumnOrbChange(ActiveSkill):
         # TODO: simplify this
         self.columns = [OrbLine(int(i), binary_con(orbs)) for indices, orbs in
                         zip(data[::2], data[1::2]) for i in binary_con(indices)]
-        super().__init__(ms)
+        board = Board()
+        for col in self.columns:
+            # Ignore random cols
+            if len(col.attrs) == 1:
+                idx = col.index if col.index < 3 else col.index + 1
+                board |= Board([[col.attrs[0] if j == idx else -1 for j in range(7)] for _ in range(6)])
+        super().__init__(ms, board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.column_change_convert(self)
@@ -707,7 +743,15 @@ class ASRowOrbChange(ActiveSkill):
         # TODO: simplify this
         self.rows = [OrbLine(int(i), binary_con(orbs)) for indices, orbs in
                      zip(data[::2], data[1::2]) for i in binary_con(indices)]
-        super().__init__(ms)
+
+        board = Board()
+        for row in self.rows:
+            # Ignore random cols
+            if len(row.attrs) == 1:
+                idx = row.index if row.index < 2 else row.index + 1
+                board |= Board([[row.attrs[0] if i == idx else -1 for _ in range(7)] for i in range(6)])
+
+        super().__init__(ms, board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.row_change_convert(self)
@@ -971,13 +1015,14 @@ class ASFixedPosConvertSomething(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0])
-        self.row_pos_1 = binary_con(data[0])
-        self.row_pos_2 = binary_con(data[1])
-        self.row_pos_3 = binary_con(data[2])
-        self.row_pos_4 = binary_con(data[3])
-        self.row_pos_5 = binary_con(data[4])
+        self.pos_map = [binary_con(row) for row in data[:5]]
         self.attribute = data[5]
-        super().__init__(ms)
+
+        board_data = [[self.attribute if j in self.pos_map[i] else -1 for j in range(6)] for i in range(5)]
+        board_data.insert(2, copy(board_data[2]))
+        [row.insert(3, row[3]) for row in board_data]
+        board = Board(board_data)
+        super().__init__(ms, board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.fixed_pos_convert(self)
