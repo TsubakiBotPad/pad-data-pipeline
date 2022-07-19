@@ -126,6 +126,8 @@ class ActiveSubskill(ServerDependentSqlItem):
             desc_templated_ja=desc_templated_ja,
             desc_templated_en=desc_templated_en,
             desc_templated_ko=desc_templated_ko,
+            board_65=act.board.to_6x5(),
+            board_76=act.board.to_7x6(),
             cooldown=act.cooldown_turns_max or -1,
             tags=tags)
 
@@ -140,6 +142,8 @@ class ActiveSubskill(ServerDependentSqlItem):
                  desc_templated_ja: str = None,
                  desc_templated_en: str = None,
                  desc_templated_ko: str = None,
+                 board_65: str = None,
+                 board_76: str = None,
                  cooldown: int = None,
                  tags: str = None,
                  tstamp: int = None):
@@ -153,6 +157,8 @@ class ActiveSubskill(ServerDependentSqlItem):
         self.desc_templated_ja = desc_templated_ja
         self.desc_templated_en = desc_templated_en
         self.desc_templated_ko = desc_templated_ko
+        self.board_65 = board_65
+        self.board_76 = board_76
         self.cooldown = cooldown
         self.tags = tags
         self.tstamp = tstamp
