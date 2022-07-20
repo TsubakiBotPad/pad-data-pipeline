@@ -214,7 +214,7 @@ def merge_defaults(data, defaults):
 
 
 class Board:
-    DAWNGLARE_CONSTS = "RBGLDHJPMX X8765432."
+    DAWNGLARE_CONSTS = "RBGLDHJPMX X8765432Z"
 
     def __init__(self, data: List[List[int]] = None):
         self.data = data or [[-1 for _ in range(7)] for _ in range(6)]
