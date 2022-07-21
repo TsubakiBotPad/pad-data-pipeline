@@ -1852,5 +1852,23 @@
     "name_ko": "Untranslated",
     "name_ko_official": "Unknown Official Name",
     "pad_awakening_id": 103
+  },
+  {
+    "adj_atk": 0,
+    "adj_hp": 0,
+    "adj_rcv": 0,
+    "desc_en": "Untranslated",
+    "desc_en_official": "Unknown Official Text",
+    "desc_ja": "Untranslated",
+    "desc_ja_official": "Unknown Official Text",
+    "desc_ko": "Untranslated",
+    "desc_ko_official": "Unknown Official Text",
+    "name_en": "Enhanced Heal Orbs+",
+    "name_en_official": "Unknown Official Name",
+    "name_ja": "回復ドロップ強化＋",
+    "name_ja_official": "Unknown Official Name",
+    "name_ko": "Untranslated",
+    "name_ko_official": "Unknown Official Name",
+    "pad_awakening_id": 104
   }
 ]
