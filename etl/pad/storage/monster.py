@@ -277,6 +277,27 @@ class MonsterWithMPValue(ServerDependentSqlItem):
         return 'MonsterMP({}): {}'.format(self.key_value(), self.buy_mp)
 
 
+class LatentTamadra(ServerDependentSqlItem):
+    """Latent tamadra to add monster_id to latent_skills."""
+    KEY_COL = 'latent_awakening_id'
+    BASE_TABLE = 'latent_skills'
+
+    @staticmethod
+    def from_csm(o: CrossServerCard):
+        return LatentTamadra(latent_skill_id=o.cur_card.card.latent_on_feed,
+                             monster_id=o.monster_id)
+
+    def __init__(self,
+                 latent_skill_id: int = None,
+                 monster_id: int = None,
+                 tstamp: int = None):
+        self.monster_id = monster_id
+        self.tstamp = tstamp
+
+    def __str__(self):
+        return 'LatentTamadra({}): {}'.format(self.key_value(), self.monster_id)
+
+
 class Awakening(ServerDependentSqlItem):
     """Monster awakening entry."""
     KEY_COL = 'awakening_id'
