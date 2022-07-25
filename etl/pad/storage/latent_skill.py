@@ -1,14 +1,17 @@
+import json
+
 from pad.db.sql_item import SimpleSqlItem
+from pad.raw_processor.crossed_data import CrossServerCard
 
 
-class AwokenSkill(SimpleSqlItem):
-    """Monster awakening."""
-    TABLE = 'awoken_skills'
-    KEY_COL = 'awoken_skill_id'
+class LatentSkill(SimpleSqlItem):
+    """Monster latent."""
+    TABLE = 'latent_skills'
+    KEY_COL = 'latent_skill_id'
 
     @staticmethod
     def from_json(o):
-        return AwokenSkill(awoken_skill_id=o['pad_awakening_id'],
+        return LatentSkill(latent_skill_id=o['latent_skill_id'],
                            name_ja=o['name_ja'],
                            name_en=o['name_en'],
                            name_ko=o['name_ko'],
@@ -21,13 +24,15 @@ class AwokenSkill(SimpleSqlItem):
                            desc_ja_official=o['desc_ja_official'],
                            desc_en_official=o['desc_en_official'],
                            desc_ko_official=o['desc_ko_official'],
-                           adj_hp=o['adj_hp'],
-                           adj_atk=o['adj_atk'],
-                           adj_rcv=o['adj_rcv'])
+                           slots=o['slots'],
+                           required_awakening=o['required_awakening'],
+                           required_types=o['required_types'],
+                           required_level=o['required_level'],
+                           has_120_boost=o['has_120_boost'])
 
     def __init__(self,
-                 awoken_skill_id: int = None,
-                 name_ja=None,
+                 latent_skill_id: int = None,
+                 name_ja: str = None,
                  name_en: str = None,
                  name_ko: str = None,
                  desc_ja: str = None,
@@ -39,11 +44,14 @@ class AwokenSkill(SimpleSqlItem):
                  desc_ja_official: str = None,
                  desc_en_official: str = None,
                  desc_ko_official: str = None,
-                 adj_hp: int = None,
-                 adj_atk: int = None,
-                 adj_rcv: int = None,
+                 slots: int = None,
+                 required_awakening: int = None,
+                 required_types: list = None,
+                 required_level: int = None,
+                 has_120_boost: bool = None,
+                 monster_id: int = None,
                  tstamp: int = None):
-        self.awoken_skill_id = awoken_skill_id
+        self.latent_skill_id = latent_skill_id
         self.name_ja = name_ja
         self.name_en = name_en
         self.name_ko = name_ko
@@ -56,10 +64,13 @@ class AwokenSkill(SimpleSqlItem):
         self.desc_ja_official = desc_ja_official
         self.desc_en_official = desc_en_official
         self.desc_ko_official = desc_ko_official
-        self.adj_hp = adj_hp
-        self.adj_atk = adj_atk
-        self.adj_rcv = adj_rcv
+        self.slots = slots
+        self.required_awakening = required_awakening
+        self.required_types = json.dumps(required_types)
+        self.required_level = required_level
+        self.has_120_boost = has_120_boost
+        self.monster_id = monster_id
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'AwokenSkill({}): {}'.format(self.key_value(), self.name_en)
+        return 'LatentSkill({}): {}'.format(self.key_value(), self.name_en)
