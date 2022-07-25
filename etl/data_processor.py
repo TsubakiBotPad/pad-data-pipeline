@@ -209,10 +209,6 @@ def load_data(args):
     if AwokenSkillProcessor in processors:
         AwokenSkillProcessor().process(db_wrapper)
 
-    # # Ensure Latents
-    if LatentSkillProcessor in processors:
-        LatentSkillProcessor(cs_database).process(db_wrapper)
-
     # # Ensure tags
     if SkillTagProcessor in processors:
         SkillTagProcessor().process(db_wrapper)
@@ -232,6 +228,10 @@ def load_data(args):
     # # Load monster data
     if MonsterProcessor in processors:
         MonsterProcessor(cs_database).process(db_wrapper)
+
+    # # Ensure Latents
+    if LatentSkillProcessor in processors:
+        LatentSkillProcessor(cs_database).process(db_wrapper)
 
     # Egg machines
     if EggMachineProcessor in processors:

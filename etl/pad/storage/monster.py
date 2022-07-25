@@ -279,7 +279,7 @@ class MonsterWithMPValue(ServerDependentSqlItem):
 
 class LatentTamadra(ServerDependentSqlItem):
     """Latent tamadra to add monster_id to latent_skills."""
-    KEY_COL = 'latent_awakening_id'
+    KEY_COL = 'latent_skill_id'
     BASE_TABLE = 'latent_skills'
 
     @staticmethod
@@ -291,6 +291,7 @@ class LatentTamadra(ServerDependentSqlItem):
                  latent_skill_id: int = None,
                  monster_id: int = None,
                  tstamp: int = None):
+        self.latent_skill_id = latent_skill_id
         self.monster_id = monster_id
         self.tstamp = tstamp
 
