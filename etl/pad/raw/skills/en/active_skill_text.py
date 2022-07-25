@@ -499,17 +499,19 @@ class EnASTextConverter(EnBaseTextConverter):
 
         if board == [[3, 4, 5], [3, 5], [5], [5], []]:
             return 'Create a 7-shape of {} orbs in the upper right corner'.format(self.ATTRIBUTES[act.attribute])
-        if board == [[0, 1, 2], [0, 1, 2], [], [], []]:
+        elif board == [[0, 1, 2], [0, 1, 2], [], [], []]:
             return 'Create a 3x2 rectangle of {} orbs in the upper left corner'.format(
                 self.ATTRIBUTES[act.attribute])
-        if board == [[], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], []]:
+        elif board == [[], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], []]:
             return 'Change all orbs except for the outer ring to {} orbs'.format(self.ATTRIBUTES[act.attribute])
-        if board == [[2, 3, 4], [1, 4, 5], [5], [1, 4, 5], [2, 3, 4]]:
+        elif board == [[2, 3, 4], [1, 4, 5], [5], [1, 4, 5], [2, 3, 4]]:
             skill_text += 'Create 13 {} orbs in the shape of a crescent moon.'.format(self.ATTRIBUTES[act.attribute])
-        if board == [[0, 1, 2, 3, 4, 5], [0, 5], [0, 5], [0, 5], [0, 1, 2, 3, 4, 5]]:
+        elif board == [[0, 1, 2, 3, 4, 5], [0, 5], [0, 5], [0, 5], [0, 1, 2, 3, 4, 5]]:
             skill_text += 'Change the outermost orbs of the board to {} orbs'.format(self.ATTRIBUTES[act.attribute])
-        if board == [[4, 5], [3, 4], [2, 3], [1, 2], [0, 1]]:
+        elif board == [[4, 5], [3, 4], [2, 3], [1, 2], [0, 1]]:
             skill_text += 'Create a 2-orb wide bottom-left to top-right diagonal of {} orbs'.format(self.ATTRIBUTES[act.attribute])
+        elif board == [[0, 1, 2, 3, 4], [3], [2], [1], [0, 1, 2, 3, 4]]:
+            skill_text += 'Create 13 {} orbs in the shape of a Z.'.format(self.ATTRIBUTES[act.attribute])
 
         if output:
             for entry in output:
