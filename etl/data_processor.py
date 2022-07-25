@@ -19,6 +19,7 @@ from pad.storage_processor.dungeon_processor import DungeonProcessor
 from pad.storage_processor.egg_machine_processor import EggMachineProcessor
 from pad.storage_processor.enemy_skill_processor import EnemySkillProcessor
 from pad.storage_processor.exchange_processor import ExchangeProcessor
+from pad.storage_processor.latent_skill_processor import LatentSkillProcessor
 from pad.storage_processor.monster_processor import MonsterProcessor
 from pad.storage_processor.purchase_processor import PurchaseProcessor
 from pad.storage_processor.purge_data_processor import PurgeDataProcessor
@@ -58,19 +59,23 @@ type_name_to_processor: Dict[str, List[Any]] = {
     'SeriesProcessor': [SeriesProcessor],
     'SkillTagProcessor': [SkillTagProcessor],
     'TimestampProcessor': [TimestampProcessor],
+    'LatentSkillProcessor': [LatentSkillProcessor],
 
-    'All': [DimensionProcessor, DungeonProcessor,  # All except DCP
-            EggMachineProcessor, EnemySkillProcessor, ExchangeProcessor,
-            MonsterProcessor, PurchaseProcessor, PurgeDataProcessor,
-            RankRewardProcessor, ScheduleProcessor, SeriesProcessor,
-            SkillTagProcessor, TimestampProcessor],
-    'AllLong': [DimensionProcessor, DungeonContentProcessor, DungeonProcessor,
-                EggMachineProcessor, EnemySkillProcessor, ExchangeProcessor,
-                MonsterProcessor, PurchaseProcessor, PurgeDataProcessor,
-                RankRewardProcessor, ScheduleProcessor, SeriesProcessor,
-                SkillTagProcessor, TimestampProcessor],
+    'All': [AwokenSkillProcessor, DimensionProcessor,  # All except DCP
+            DungeonProcessor, EggMachineProcessor, EnemySkillProcessor,
+            ExchangeProcessor, LatentSkillProcessor, MonsterProcessor,
+            PurchaseProcessor, PurgeDataProcessor, RankRewardProcessor,
+            ScheduleProcessor, SeriesProcessor, SkillTagProcessor,
+            TimestampProcessor],
+    'AllLong': [AwokenSkillProcessor, DimensionProcessor, DungeonContentProcessor,
+                DungeonProcessor, EggMachineProcessor, EnemySkillProcessor,
+                ExchangeProcessor, LatentSkillProcessor, MonsterProcessor,
+                PurchaseProcessor, PurgeDataProcessor, RankRewardProcessor,
+                ScheduleProcessor, SeriesProcessor, SkillTagProcessor,
+                TimestampProcessor],
     'Events': [DungeonProcessor, ScheduleProcessor],
     'Monsters': [AwokenSkillProcessor, SeriesProcessor, MonsterProcessor],
+    'CRUDSave': [AwokenSkillProcessor, SeriesProcessor, MonsterProcessor, LatentSkillProcessor],
     'Database': [],
     'None': [],
 }
@@ -141,7 +146,7 @@ def load_es_quick_and_die(args):
 def load_data(args):
     if args.processors == "None":
         return
-    
+
     if args.logsql:
         logging.getLogger('database').setLevel(logging.DEBUG)
     dry_run = not args.doupdates
@@ -223,6 +228,10 @@ def load_data(args):
     # # Load monster data
     if MonsterProcessor in processors:
         MonsterProcessor(cs_database).process(db_wrapper)
+
+    # # Ensure Latents
+    if LatentSkillProcessor in processors:
+        LatentSkillProcessor(cs_database).process(db_wrapper)
 
     # Egg machines
     if EggMachineProcessor in processors:
