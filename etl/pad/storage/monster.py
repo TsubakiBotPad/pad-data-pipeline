@@ -4,7 +4,7 @@ from typing import List, Optional
 from pad.common.shared_types import MonsterId, MonsterNo, Server
 from pad.common.utils import format_int_list
 from pad.db import sql_item
-from pad.db.sql_item import ExistsStrategy
+from pad.db.sql_item import ExistsStrategy, SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerCard
 from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
@@ -277,10 +277,10 @@ class MonsterWithMPValue(ServerDependentSqlItem):
         return 'MonsterMP({}): {}'.format(self.key_value(), self.buy_mp)
 
 
-class LatentTamadra(ServerDependentSqlItem):
+class LatentTamadra(SimpleSqlItem):
     """Latent tamadra to add monster_id to latent_skills."""
+    TABLE = 'latent_skills'
     KEY_COL = 'latent_skill_id'
-    BASE_TABLE = 'latent_skills'
 
     @staticmethod
     def from_csm(o: CrossServerCard):
