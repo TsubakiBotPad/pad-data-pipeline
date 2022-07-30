@@ -44,7 +44,6 @@ def parse_args():
                              help="Path to a folder where the input data is")
 
     input_group.add_argument("--server", required=True, help="na or jp")
-    input_group.add_argument("--group", required=True, help="guerrilla group (red/blue/green)")
     input_group.add_argument("--user_uuid", required=True, help="Account UUID")
     input_group.add_argument("--user_intid", required=True, help="Account code")
 
@@ -208,7 +207,7 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
                     db_wrapper.connection.autocommit(True)
 
 
-def identify_dungeons(database, group):
+def identify_dungeons(database):
     selected_dungeons = []
 
     # Identify normals and technicals
@@ -226,10 +225,6 @@ def identify_dungeons(database, group):
 
         if current_time < start_time or current_time > end_time:
             # Bonus not currently live
-            continue
-
-        if bonus.group and bonus.group.value != group:
-            # Not the right color
             continue
 
         if bonus.dungeon is None:
@@ -264,7 +259,7 @@ def load_data(args):
     db_wrapper = db_util.DbWrapper(dry_run)
     db_wrapper.connect(db_config)
 
-    dungeons = identify_dungeons(pad_db, args.group)
+    dungeons = identify_dungeons(pad_db)
 
     if server == Server.na:
         endpoint = pad_api.ServerEndpoint.NA

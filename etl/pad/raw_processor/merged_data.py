@@ -16,15 +16,15 @@ from pad.raw.skills.leader_skill_info import LeaderSkill
 
 
 class MergedBonus(pad_util.Printable):
-    def __init__(self, server: Server, bonus: Bonus, dungeon: Dungeon, group: StarterGroup):
+    def __init__(self, server: Server, bonus: Bonus, dungeon: Dungeon):
         self.server = server
         self.bonus = bonus
         self.dungeon = dungeon
-        self.group = group
+        self.group = None
 
     def __str__(self):
-        return 'MergedBonus({} {} - {} - {})'.format(
-            self.server, self.group, self.dungeon, self.bonus)
+        return 'MergedBonus({} {} - {})'.format(
+            self.server, self.dungeon, self.bonus)
 
     def open_duration(self):
         open_datetime_utc = datetime.fromtimestamp(self.bonus.start_timestamp, pytz.UTC)
