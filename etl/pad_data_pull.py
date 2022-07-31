@@ -17,7 +17,6 @@ inputGroup = parser.add_argument_group("Input")
 inputGroup.add_argument("--server", required=True, help="One of [NA, JP, KR]")
 inputGroup.add_argument("--user_uuid", required=True, help="Account UUID")
 inputGroup.add_argument("--user_intid", required=True, help="Account code")
-inputGroup.add_argument("--user_group", required=True, help="Expected user group")
 inputGroup.add_argument("--only_bonus", action='store_true', help="Only populate bonus data")
 
 outputGroup = parser.add_argument_group("Output")
@@ -44,25 +43,23 @@ else:
 
 api_client = pad_api.PadApiClient(endpoint, args.user_uuid, args.user_intid)
 
-user_group = args.user_group.lower()
 output_dir = args.output_dir
 os.makedirs(output_dir, exist_ok=True)
 
 api_client.login()
 
 
-def pull_and_write_endpoint(api_client, action, file_name_suffix=''):
+def pull_and_write_endpoint(api_client, action):
     action_json = api_client.action(action)
 
-    file_name = '{}{}.json'.format(action.value.name, file_name_suffix)
+    file_name = action.value.name + '.json'
     output_file = os.path.join(output_dir, file_name)
     print('writing', file_name)
     with open(output_file, 'w') as outfile:
         pad_util.json_file_dump(action_json, outfile)
 
 
-pull_and_write_endpoint(api_client, pad_api.EndpointAction.DOWNLOAD_LIMITED_BONUS_DATA,
-                        file_name_suffix='_{}'.format(user_group))
+pull_and_write_endpoint(api_client, pad_api.EndpointAction.DOWNLOAD_LIMITED_BONUS_DATA)
 
 if args.only_bonus:
     print('skipping other downloads')
@@ -78,7 +75,6 @@ pull_and_write_endpoint(api_client, pad_api.EndpointAction.SHOP_ITEM)
 api_client.load_player_data()
 player_data = api_client.player_data
 bonus_data = bonus.load_bonus_data(data_dir=output_dir,
-                                   data_group=user_group,
                                    server=server)
 
 # Egg machine extraction

@@ -40,7 +40,6 @@ flock -xn /tmp/dg_scraper_jp.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py
   --input_dir=${RAW_DIR} \
   --doupdates \
   --server=jp \
-  --group=${JP_PAD_USER_COLOR_GROUP} \
   --user_uuid=${JP_PAD_USER_UUID} \
   --user_intid=${JP_PAD_USER_INTID}
 human_fixes_check
@@ -51,7 +50,6 @@ flock -xn /tmp/dg_scraper_na.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py
   --input_dir=${RAW_DIR} \
   --doupdates \
   --server=na \
-  --group=${NA_PAD_USER_COLOR_GROUP} \
   --user_uuid=${NA_PAD_USER_UUID} \
   --user_intid=${NA_PAD_USER_INTID}
 human_fixes_check

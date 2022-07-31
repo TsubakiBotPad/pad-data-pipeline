@@ -14,7 +14,7 @@ from pad.common.pad_util import Printable, ghchance_plain, ghmult_plain
 from pad.common.shared_types import DungeonId, Server, StarterGroup, SubDungeonId
 
 # The typical JSON file name for this data.
-FILE_NAME = 'download_limited_bonus_data_{}.json'
+FILE_NAME = 'download_limited_bonus_data.json'
 
 
 class BonusType(Enum):
@@ -242,10 +242,8 @@ class Bonus(Printable):
 
 
 def load_bonus_data(data_dir: str = None,
-                    data_group: StarterGroup = None,
                     server: Server = None,
                     json_file: str = None) -> List[Bonus]:
     """Load Bonus objects from the PAD json file."""
-    group_file_name = FILE_NAME.format(data_group)
-    data_json = pad_util.load_raw_json(data_dir, json_file, group_file_name)
+    data_json = pad_util.load_raw_json(data_dir, json_file, FILE_NAME)
     return [Bonus(item, server) for item in data_json['bonuses']]
