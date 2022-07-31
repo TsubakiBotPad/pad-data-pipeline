@@ -20,7 +20,7 @@ function success_exit() {
 trap error_exit ERR
 trap success_exit EXIT
 
-flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/misc/azurlane_image_download.py" \
+flock -xn /tmp/azurlane.lck python3 "${ETL_DIR}/misc/azurlane_image_download.py" \
   --output_dir="${DADGUIDE_DATA_DIR}/azurlane"
 
 echo "Syncing"
