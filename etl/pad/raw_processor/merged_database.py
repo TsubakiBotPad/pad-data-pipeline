@@ -4,7 +4,7 @@ from typing import List, Dict, Optional
 
 from pad.common import pad_util
 from pad.common.monster_id_mapping import server_monster_id_fn
-from pad.common.shared_types import Server, StarterGroup, MonsterId, MonsterNo, DungeonId, SkillId
+from pad.common.shared_types import Server, MonsterId, MonsterNo, DungeonId, SkillId
 from pad.raw import Bonus, Card, Dungeon, MonsterSkill, EnemySkill, Exchange, Purchase
 from pad.raw import bonus, card, dungeon, skill, exchange, purchase, enemy_skill, extra_egg_machine
 from pad.raw.enemy_skills.enemy_skill_parser import BehaviorParser
@@ -18,24 +18,20 @@ human_fix_logger = logging.getLogger('human_fix')
 fail_logger = logging.getLogger('processor_failures')
 
 
-def _clean_bonuses(server: Server, bonus_sets, dungeons) -> List[MergedBonus]:
+def _clean_bonuses(server: Server, raw_bonuses, dungeons) -> List[MergedBonus]:
     dungeons_by_id = {d.dungeon_id: d for d in dungeons}
 
     merged_bonuses = []
-    for data_group, bonus_set in bonus_sets.items():
-        for bonus in bonus_set:
-            dungeon = None
-            guerrilla_group = None
-            if bonus.dungeon_id:
-                dungeon = dungeons_by_id.get(bonus.dungeon_id, None)
-                if dungeon is None:
-                    fail_logger.warning('Dungeon lookup failed for bonus: %s'.format(repr(bonus)))
-                else:
-                    guerrilla_group = StarterGroup(data_group) if dungeon.dungeon_type == 'guerrilla' else None
+    for bonus in raw_bonuses:
+        dungeon = None
+        guerrilla_group = None
+        if bonus.dungeon_id:
+            dungeon = dungeons_by_id.get(bonus.dungeon_id, None)
+            if dungeon is None:
+                fail_logger.warning('Dungeon lookup failed for bonus: %s'.format(repr(bonus)))
 
-            if guerrilla_group or data_group == StarterGroup.red.name:
-                result = MergedBonus(server, bonus, dungeon, guerrilla_group)
-                merged_bonuses.append(result)
+        result = MergedBonus(server, bonus, dungeon)
+        merged_bonuses.append(result)
 
     return merged_bonuses
 
@@ -93,7 +89,7 @@ class Database(object):
         # Loaded from disk
         self.raw_cards = []  # type: List[Card]
         self.dungeons = []  # type: List[Dungeon]
-        self.bonus_sets = {}  # type: Dict[str, List[Bonus]]
+        self.raw_bonuses = []  # type: List[Bonus]
         self.skills = []  # type: List[MonsterSkill]
         self.raw_enemy_skills = []  # type: List[EnemySkill]
         self.exchange = []  # type: List[Exchange]
@@ -124,10 +120,7 @@ class Database(object):
         self.dungeons = dungeon.load_dungeon_data(data_dir=base_dir)
 
         if not skip_bonus:
-            self.bonus_sets = {
-                g.value: bonus.load_bonus_data(data_dir=base_dir, server=self.server, data_group=g.value) for g in
-                StarterGroup
-            }
+            self.raw_bonuses = bonus.load_bonus_data(data_dir=base_dir, server=self.server)
 
         if not skip_skills:
             self.skills = skill.load_skill_data(data_dir=base_dir)
@@ -149,7 +142,7 @@ class Database(object):
             self.purchase = purchase.load_data(data_dir=base_dir, server=self.server)
             self.egg_machines = extra_egg_machine.load_data(data_dir=base_dir, server=self.server)
 
-        self.bonuses = _clean_bonuses(self.server, self.bonus_sets, self.dungeons)
+        self.bonuses = _clean_bonuses(self.server, self.raw_bonuses, self.dungeons)
         self.enemies = _clean_enemy(raw_cards, self.enemy_skills)
         self.cards = _clean_cards(self.server, raw_cards, self.enemies, self)
 

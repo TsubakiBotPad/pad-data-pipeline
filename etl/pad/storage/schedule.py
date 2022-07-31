@@ -18,7 +18,6 @@ class ScheduleEvent(SimpleSqlItem):
         return ScheduleEvent(
             event_id=None,  # Key that is looked up or inserted
             server_id=o.server.value,
-            group_name=o.group.name if o.group else None,
             event_type_id=o.bonus.bonus_id,
             start_timestamp=o.bonus.start_timestamp,
             end_timestamp=o.bonus.end_timestamp,
@@ -32,7 +31,6 @@ class ScheduleEvent(SimpleSqlItem):
     def __init__(self,
                  event_id: int = None,
                  server_id: int = None,
-                 group_name: str = None,
                  event_type_id: int = None,
                  start_timestamp: int = None,
                  end_timestamp: int = None,
@@ -44,7 +42,6 @@ class ScheduleEvent(SimpleSqlItem):
                  tstamp: int = None):
         self.event_id = event_id
         self.server_id = server_id
-        self.group_name = group_name
         self.event_type_id = event_type_id
         self.start_timestamp = start_timestamp
         self.end_timestamp = end_timestamp

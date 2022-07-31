@@ -21,6 +21,7 @@ function dl_data() {
     do_only_bonus=""
     if [ "${scolor^^}" != "RED" ]; then
       do_only_bonus="--only_bonus"
+      continue  # We don't separate by group anymore
     fi
 
     echo "Processing ${server}/${scolor}/${uuid}/${intid} ${do_only_bonus}"
@@ -30,7 +31,6 @@ function dl_data() {
       --server="${server^^}" \
       --user_uuid="${uuid}" \
       --user_intid="${intid}" \
-      --user_group="${scolor}" \
       ${do_only_bonus} || EXIT_CODE=$?
 
     if [ $EXIT_CODE -ne 0 ]; then
