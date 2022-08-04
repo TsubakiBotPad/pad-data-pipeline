@@ -1,6 +1,10 @@
+import json
+from typing import List
+
 from pad.db.db_util import DbWrapper
 from pad.db.sql_item import ExistsStrategy
 from pad.raw.skills import skill_text_typing
+from pad.raw.skills.active_behaviors import behavior_to_json
 from pad.raw.skills.active_skill_info import ActiveSkill as ASSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
@@ -116,6 +120,7 @@ class ActiveSubskill(ServerDependentSqlItem):
 
         return ActiveSubskill(
             active_subskill_id=act.skill_id,
+            behavior=behavior_to_json(act.behavior),
             # TODO: Figure out how to do names
             name_ja="",
             name_en="",
@@ -133,6 +138,7 @@ class ActiveSubskill(ServerDependentSqlItem):
 
     def __init__(self,
                  active_subskill_id: int = None,
+                 behavior: List[dict] = None,
                  name_ja: str = None,
                  name_en: str = None,
                  name_ko: str = None,
@@ -148,6 +154,7 @@ class ActiveSubskill(ServerDependentSqlItem):
                  tags: str = None,
                  tstamp: int = None):
         self.active_subskill_id = active_subskill_id
+        self.behavior = json.dumps(behavior)
         self.name_ja = name_ja
         self.name_en = name_en
         self.name_ko = name_ko
@@ -162,6 +169,9 @@ class ActiveSubskill(ServerDependentSqlItem):
         self.cooldown = cooldown
         self.tags = tags
         self.tstamp = tstamp
+
+    def _json_cols(self):
+        return ['behavior']
 
     def __str__(self):
         return 'ActiveSubskill({}): {}'.format(self.key_value(), self.desc_en)
@@ -186,7 +196,9 @@ class ActivePart(ServerDependentSqlItem):
 
         return ActivePart(
             active_part_id=act.skill_id,
+            behavior=behavior_to_json(act.behavior),
             active_skill_type_id=act.skill_type,
+            raw_behavior=act.raw_data,
             desc_ja=desc_ja,
             desc_en=desc_en,
             desc_ko=desc_ko,
@@ -197,7 +209,9 @@ class ActivePart(ServerDependentSqlItem):
 
     def __init__(self,
                  active_part_id: int = None,
+                 behavior: List[dict] = None,
                  active_skill_type_id: int = None,
+                 raw_behavior: List[int] = None,
                  desc_ja: str = None,
                  desc_en: str = None,
                  desc_ko: str = None,
@@ -207,7 +221,9 @@ class ActivePart(ServerDependentSqlItem):
                  tags: str = None,
                  tstamp: int = None):
         self.active_part_id = active_part_id
+        self.behavior = json.dumps(behavior)
         self.active_skill_type_id = active_skill_type_id
+        self.raw_behavior = json.dumps(raw_behavior)
         self.desc_ja = desc_ja
         self.desc_en = desc_en
         self.desc_ko = desc_ko
@@ -216,6 +232,9 @@ class ActivePart(ServerDependentSqlItem):
         self.desc_templated_ko = desc_templated_ko
         self.tags = tags
         self.tstamp = tstamp
+
+    def _json_cols(self):
+        return ['behavior', 'raw_behavior']
 
     def __str__(self):
         return 'ActivePart({}): {}'.format(self.key_value(), self.desc_en)

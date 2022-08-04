@@ -3,9 +3,10 @@ from collections import Counter, defaultdict, namedtuple
 from copy import copy
 from fractions import Fraction
 from numbers import Rational
-from typing import Any, Iterable, List, Mapping, Optional
+from typing import Any, Iterable, List, Mapping, Optional, Union
 
 from pad.raw.skill import MonsterSkill
+from pad.raw.skills.active_behaviors import ASBOrbChange, ASBehavior
 from pad.raw.skills.skill_common import Board, binary_con, merge_defaults, mult
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -18,6 +19,8 @@ class ActiveSkill:
     compound_skill_type = 0
 
     def __init__(self, ms: MonsterSkill, *,
+                 behavior: Union[List[ASBehavior], ASBehavior] = None,
+
                  transform_ids: Mapping[int, Rational] = None,
                  board: Board = None,
                  needs_context: bool = False):
@@ -25,6 +28,10 @@ class ActiveSkill:
             transform_ids = {None: 1}
         if board is None:
             board = Board()
+        if behavior is None:
+            behavior = []
+        elif not isinstance(behavior, list):
+            behavior = [behavior]
 
         if self.skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(self.skill_type, ms.skill_type))
@@ -40,6 +47,7 @@ class ActiveSkill:
 
         self._transform_ids = transform_ids
         self._board = board
+        self._behavior = behavior
 
         # If this is true, text can take an optional context: Iterable[ActiveSkill] argument
         self.needs_context = needs_context
@@ -59,6 +67,10 @@ class ActiveSkill:
     @property
     def board(self) -> Board:
         return self._board
+
+    @property
+    def behavior(self) -> List[ASBehavior]:
+        return self._behavior
 
     def text(self, converter: ASTextConverter) -> str:
         return '<unsupported>: {}'.format(self.raw_description)
@@ -99,6 +111,10 @@ class ASMultiPart(ActiveSkill):
         for part in self.child_skills:
             board |= part.board
         return board
+
+    @property
+    def behavior(self):
+        return [asb for act in self.child_skills for asb in act.behavior]
 
 
 class ASCompound(ASMultiPart):
@@ -229,7 +245,7 @@ class ASOneAttrtoOneAttr(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.from_attr = [data[0]]
         self.to_attr = [data[1]]
-        super().__init__(ms)
+        super().__init__(ms, behavior=ASBOrbChange(self.from_attr, self.to_attr))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_orb_change_convert(self)
@@ -274,7 +290,7 @@ class ASTwoAttrtoOneTwoAttr(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0])
         self.from_attr = [data[0], data[2]]
         self.to_attr = [data[1], data[3]] if data[1] != data[3] else [data[1]]
-        super().__init__(ms)
+        super().__init__(ms, behavior=ASBOrbChange(self.from_attr, self.to_attr))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.double_orb_convert(self)
@@ -465,7 +481,7 @@ class ASBoardChange(ActiveSkill):
         if len(self.to_attr) == 1:
             board = Board([[self.to_attr[0] for _ in range(7)] for _ in range(6)])
 
-        super().__init__(ms, board=board)
+        super().__init__(ms, behavior=ASBOrbChange(self.from_attr, self.to_attr), board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.board_change_convert(self)
@@ -791,7 +807,8 @@ class ASRandomLocationOrbSpawn(ActiveSkill):
         self.amount = data[0]
         self.orbs = binary_con(data[1])
         self.excluding_orbs = binary_con(data[2])
-        super().__init__(ms)
+        super().__init__(ms, behavior=ASBOrbChange(self.excluding_orbs, self.orbs, self.amount,
+                                                   from_invert=True))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.spawn_orb_convert(self)
@@ -898,7 +915,7 @@ class ASThreeAttrtoOneAttr(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.from_attr = binary_con(data[0])
         self.to_attr = binary_con(data[1])
-        super().__init__(ms)
+        super().__init__(ms, behavior=ASBOrbChange(self.from_attr, self.to_attr))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_orb_change_convert(self)
@@ -1178,7 +1195,10 @@ class ASRandomLocationDoubleOrbSpawn(ActiveSkill):
         self.amount2 = data[3]
         self.orbs2 = binary_con(data[4])
         self.excluding_orbs2 = binary_con(data[5])
-        super().__init__(ms)
+        super().__init__(ms, behavior=[ASBOrbChange(self.excluding_orbs, self.orbs, self.amount,
+                                                    from_invert=True),
+                                       ASBOrbChange(self.excluding_orbs2, self.orbs2, self.amount,
+                                                    from_invert=True)])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.double_spawn_orb_convert(self)

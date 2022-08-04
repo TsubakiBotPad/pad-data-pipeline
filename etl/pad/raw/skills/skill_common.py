@@ -1,7 +1,10 @@
 from enum import Enum, auto
-from typing import Dict, List
+from typing import Dict, List, NamedTuple, NamedTupleMeta, TYPE_CHECKING  # noqa
 
 import jinja2
+
+if TYPE_CHECKING:
+    NamedTupleMeta = type
 
 
 class I13NotImplemented(NotImplementedError):
