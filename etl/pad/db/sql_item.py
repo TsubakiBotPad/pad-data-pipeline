@@ -3,19 +3,24 @@ import time
 import binascii
 from datetime import datetime, date
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from pad.common.pad_util import Printable
 
 
-def object_to_sql_params(obj):
-    d = obj if type(obj) == dict else obj.__dict__
-    # Defensive copy since we're updating this dict
-    d = dict(d)
+def object_to_sql_params(obj: Union[Dict, "SqlItem"]) -> Dict[str, str]:
+    if isinstance(obj, dict):
+        d = obj.copy()
+        json_keys = []
+    else:
+        d = obj.__dict__.copy()
+        json_keys = obj._json_cols()
     d = _process_col_mappings(type(obj), d, reverse=True)
     new_d = {}
     for k, v in d.items():
         new_val = _value_to_sql_param(v)
+        if k in json_keys:
+            new_val = f"CAST({new_val} AS JSON)"
         if new_val is not None:
             new_d[k] = new_val
     return new_d
@@ -179,6 +184,9 @@ class SqlItem(Printable):
 
     def _lookup_columns(self):
         return self._update_columns()
+
+    def _json_cols(self):
+        return []
 
     def _key_lookup_sql(self):
         raise NotImplemented('no key lookup sql')

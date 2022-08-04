@@ -72,5 +72,11 @@ class LatentSkill(SimpleSqlItem):
         self.monster_id = monster_id
         self.tstamp = tstamp
 
+    def _non_auto_update_cols(self):
+        return ['monster_id']
+
+    def _json_cols(self):
+        return ['required_types']
+
     def __str__(self):
         return 'LatentSkill({}): {}'.format(self.key_value(), self.name_en)
