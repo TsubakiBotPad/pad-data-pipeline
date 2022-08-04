@@ -1360,6 +1360,19 @@ class ASRandomChangeMonster(ActiveSkill):
         return converter.random_change_monster(self)
 
 
+class ASHPBoostMonster(ActiveSkill):
+    skill_type = 237
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 100])
+        self.duration = data[0]
+        self.hp = multi(data[1])
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.hp_boost(self)
+
+
 class ASInflictES(ActiveSkill):
     skill_type = 1000
 
@@ -1498,4 +1511,5 @@ ALL_ACTIVE_SKILLS = [
     ASConditionalFloorThreshold,
     ASInflictES,
     ASRandomChangeMonster,
+    ASHPBoostMonster,
 ]

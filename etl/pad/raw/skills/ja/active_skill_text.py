@@ -266,6 +266,9 @@ class JaASTextConverter(JaBaseTextConverter):
     def haste_convert(self, act):
         return '自分以外の味方スキルが{}ターンの溜まる'.format(minmax(act.turns, act.max_turns))
 
+    def hp_boost(self, act):
+        return "{}ターンの間、最大HPが{}倍".format(act.duration, fmt_mult(act.hp))
+
     def random_orb_change_convert(self, act):
         from_attr = act.from_attr
         to_attr = act.to_attr
