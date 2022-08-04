@@ -1197,7 +1197,7 @@ class ASRandomLocationDoubleOrbSpawn(ActiveSkill):
         self.excluding_orbs2 = binary_con(data[5])
         super().__init__(ms, behavior=[ASBOrbChange(self.excluding_orbs, self.orbs, self.amount,
                                                     from_invert=True),
-                                       ASBOrbChange(self.excluding_orbs2, self.orbs2, self.amount,
+                                       ASBOrbChange(self.excluding_orbs2, self.orbs2, self.amount2,
                                                     from_invert=True)])
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1386,7 +1386,7 @@ class ASHPBoostMonster(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 100])
         self.duration = data[0]
-        self.hp = multi(data[1])
+        self.hp = mult(data[1])
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
