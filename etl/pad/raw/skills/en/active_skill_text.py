@@ -274,6 +274,9 @@ class EnASTextConverter(EnBaseTextConverter):
     def haste_convert(self, act):
         return 'Charge all allies\' skills by {:s}'.format(noun_count('turn', act.turns, act.max_turns))
 
+    def hp_boost(self, act):
+        return self.fmt_duration(act.duration) + f'{fmt_mult(act.hp)}x HP'
+
     def random_orb_change_convert(self, act):
         from_attr = act.from_attr
         to_attr = act.to_attr
