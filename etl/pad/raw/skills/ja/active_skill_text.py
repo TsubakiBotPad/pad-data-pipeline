@@ -2,7 +2,8 @@ from collections import OrderedDict
 from copy import deepcopy
 from typing import List
 
-from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
+from pad.raw.skills.active_skill_info import ASConditional
+from pad.raw.skills.skill_common import PartWithTextAndCount
 from pad.raw.skills.ja.skill_common import JaBaseTextConverter, TRANSLATION_NEEDED, minmax
 
 

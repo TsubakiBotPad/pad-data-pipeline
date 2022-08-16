@@ -1,10 +1,12 @@
 from enum import Enum, auto
-from typing import Dict, List, NamedTuple, NamedTupleMeta, TYPE_CHECKING  # noqa
+from numbers import Number, Real
+from typing import Dict, List, NamedTuple, TYPE_CHECKING, TypeVar
 
 import jinja2
 
-if TYPE_CHECKING:
-    NamedTupleMeta = type
+from pad.raw.skills.active_skill_info import ASTextConverter, ActiveSkill
+
+T = TypeVar('T')
 
 
 class I13NotImplemented(NotImplementedError):
@@ -157,12 +159,6 @@ class Source(Enum):
     types = auto()
 
 
-# LS FUNCTIONS
-class ThresholdType(Enum):
-    BELOW = '<'
-    ABOVE = '>'
-
-
 class Tag(Enum):
     NO_SKYFALL = auto()
     BOARD_7X6 = auto()
@@ -171,48 +167,35 @@ class Tag(Enum):
     ERASE_P = auto()
 
 
-def sort_tags(tags):
-    return sorted(tags, key=lambda x: x.value)
-
-
-class AttributeDict(dict):
-    def __getattr__(self, key):
-        if key not in self:
-            raise AttributeError()
-        return self[key]
-
-    __setattr__ = dict.__setitem__
-
-
-def mult(x):
+def mult(x: int) -> float:
     return x / 100
 
 
-def multi_floor(x):
+def multi_floor(x: int) -> float:
     return mult(x) if x != 0 else 1.0
 
 
-def atk_from_slice(x):
+def atk_from_slice(x: List[int]) -> float:
     return mult(x[2]) if 1 in x[:2] else 1.0
 
 
-def rcv_from_slice(x):
+def rcv_from_slice(x: List[int]) -> float:
     return mult(x[2]) if 2 in x[:2] else 1.0
 
 
-def binary_con(x):
+def binary_con(x: int) -> List[int]:
     return [] if x == -1 else [i for i, v in enumerate(str(bin(x))[:1:-1]) if v == '1']
 
 
-def list_binary_con(x):
+def list_binary_con(x: List[int]) -> List[int]:
     return [b for i in x for b in binary_con(i)]
 
 
-def list_con_pos(x):
+def list_con_pos(x: List[int]) -> List[int]:
     return [i for i in x if i > 0]
 
 
-def merge_defaults(data, defaults):
+def merge_defaults(data: List[T], defaults: List[T]) -> List[T]:
     return list(data) + defaults[len(data):]
 
 
@@ -243,3 +226,16 @@ class Board:
     def to_6x5(self):
         return "".join("".join(self.DAWNGLARE_CONSTS[v] for j, v in enumerate(row) if j != 3)
                        for i, row in enumerate(self.data) if i != 2)
+
+
+class PartWithTextAndCount:
+    def __init__(self, act: ActiveSkill, text: str):
+        self.act = act
+        self.text = text
+        self.repeat = 1
+
+    def templated_text(self, converter: ASTextConverter):
+        return self.text if self.repeat == 1 else converter.fmt_repeated(self.text, self.repeat)
+
+    def full_text(self, converter: ASTextConverter):
+        return converter.process_raw(self.templated_text(converter))

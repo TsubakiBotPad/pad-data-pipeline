@@ -14,36 +14,36 @@ FILE_NAME = 'download_skill_data.json'
 class MonsterSkill(pad_util.Printable):
     """Leader/active skill info for a player-ownable monster."""
 
-    def __init__(self, skill_id: int, raw: List[str]):
+    def __init__(self, skill_id: int, raw: List):
         self.skill_id = SkillId(skill_id)
 
         # Skill name text.
-        self.name = raw[0]
+        self.name: str = raw[0]
 
         # Skill description text (may include formatting).
-        self.description = raw[1]
+        self.description: str = raw[1]
 
         # Skill description text (no formatting).
         self.clean_description = pad_util.strip_colors(
             self.description).replace('\n', ' ').replace('^p', '')
 
         # Encodes the type of skill (requires parsing other_fields).
-        self.skill_type = int(raw[2])
+        self.skill_type: int = int(raw[2])
 
         # If an active skill, number of levels to max.
-        self.levels = int(raw[3]) or None
+        self.levels: int = int(raw[3]) or None
 
         # If an active skill, maximum cooldown.
-        self.cooldown_turns_max = int(raw[4]) if self.levels else None
+        self.cooldown_turns_max: int = int(raw[4]) if self.levels else None
 
         # If an active skill, minimum cooldown.
-        self.cooldown_turns_min = self.cooldown_turns_max - (self.levels - 1) if self.levels else None
+        self.cooldown_turns_min: int = self.cooldown_turns_max - (self.levels - 1) if self.levels else None
 
         # Unknown field.
         self.unknown_005 = raw[5]
 
         # Fields used in coordination with skill_type.
-        self.data = raw[6:]
+        self.data: List[int] = raw[6:]
 
     def __str__(self):
         return str(self.__dict__)

@@ -6,7 +6,9 @@ from numbers import Rational
 from typing import Any, Iterable, List, Mapping, Optional, Union
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.active_behaviors import ASBOrbChange, ASBehavior
+from pad.raw.skills.active_behaviors import ASBBoardChange, ASBBuff, ASBCustom, ASBDamage, ASBInflictDebuff, \
+    ASBOrbChange, ASBRecover, \
+    ASBSuperSkill, ASBehavior, behavior_to_json
 from pad.raw.skills.skill_common import Board, binary_con, merge_defaults, mult
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -18,9 +20,9 @@ class ActiveSkill:
     skill_type = -1
     compound_skill_type = 0
 
-    def __init__(self, ms: MonsterSkill, *,
-                 behavior: Union[List[ASBehavior], ASBehavior] = None,
-
+    def __init__(self, ms: MonsterSkill,
+                 behavior: Union[List[ASBehavior], ASBehavior],  # = None,
+                 *,
                  transform_ids: Mapping[int, Rational] = None,
                  board: Board = None,
                  needs_context: bool = False):
@@ -87,10 +89,13 @@ class ASConditional(ActiveSkill):
 
 
 class ASMultiPart(ActiveSkill):
+    multipart_type = 'multipart'
+
     def __init__(self, ms: MonsterSkill):
-        super().__init__(ms)
         self.child_ids: List[int] = ms.data
         self.child_skills: List[ActiveSkill] = []
+
+        super().__init__(ms, ASBSuperSkill(self.multipart_type, self.child_skills))
 
     @property
     def parts(self):
@@ -132,7 +137,7 @@ class ASMultiplierMultiTargetAttrNuke(ActiveSkill):
         self.attribute = data[0]
         self.multiplier = mult(data[1])
         self.mass_attack = True
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('flat', self.multiplier, self.attribute))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.attr_nuke_convert(self)
@@ -146,7 +151,7 @@ class ASFixedMultiTargetAttrNuke(ActiveSkill):
         self.attribute = data[0]
         self.damage = data[1]
         self.mass_attack = True
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.damage, self.attribute))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.fixed_attr_nuke_convert(self)
@@ -156,10 +161,10 @@ class ASMultiplierSelfAttrSingleTargetNuke(ActiveSkill):
     skill_type = 2
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [1, False])
+        data = merge_defaults(ms.data, [1])
         self.multiplier = mult(data[0])
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.multiplier))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.self_att_nuke_convert(self)
@@ -172,7 +177,7 @@ class ASDamageReduction(ActiveSkill):
         data = merge_defaults(ms.data, [1, 0])
         self.duration = data[0]
         self.shield = mult(data[1])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('shield', self.duration, {'mult': self.shield}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.shield_convert(self)
@@ -184,7 +189,7 @@ class ASPoisonEnemies(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [1])
         self.multiplier = mult(data[0])
-        super().__init__(ms)
+        super().__init__(ms, ASBInflictDebuff('poison', {'mult': self.multiplier}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.poison_convert(self)
@@ -196,7 +201,7 @@ class ASFreeOrbMovement(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.duration = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('change_the_world'))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.ctw_convert(self)
@@ -208,7 +213,7 @@ class ASGravity(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.percentage_hp = mult(data[0])
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('gravity', self.percentage_hp))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.gravity_convert(self)
@@ -220,7 +225,7 @@ class ASHpRecoverFromRcv(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.rcv_multiplier_as_hp = mult(data[0])
-        super().__init__(ms)
+        super().__init__(ms, ASBRecover('multiplier', self.rcv_multiplier_as_hp))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.heal_active_convert(self)
@@ -232,7 +237,7 @@ class ASHpRecoverStatic(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.hp = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBRecover('flat', self.hp))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.heal_active_convert(self)
@@ -245,7 +250,7 @@ class ASOneAttrtoOneAttr(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.from_attr = [data[0]]
         self.to_attr = [data[1]]
-        super().__init__(ms, behavior=ASBOrbChange(self.from_attr, self.to_attr))
+        super().__init__(ms, ASBOrbChange(self.from_attr, self.to_attr))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_orb_change_convert(self)
@@ -253,6 +258,9 @@ class ASOneAttrtoOneAttr(ActiveSkill):
 
 class ASOrbRefresh(ActiveSkill):
     skill_type = 10
+
+    def __init__(self, ms: MonsterSkill):
+        super().__init__(ms, ASBCustom('orb_refresh'))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.board_refresh(self)
@@ -264,7 +272,7 @@ class ASDelay(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.turns = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBInflictDebuff('delay', {'turns': self.turns}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.delay_convert(self)
@@ -277,7 +285,7 @@ class ASDefenseBreak(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.shield = mult(data[1])
-        super().__init__(ms)
+        super().__init__(ms, ASBInflictDebuff('guard_break', {'mult': self.shield}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.defense_reduction_convert(self)
@@ -290,7 +298,7 @@ class ASTwoAttrtoOneTwoAttr(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0, 0, 0])
         self.from_attr = [data[0], data[2]]
         self.to_attr = [data[1], data[3]] if data[1] != data[3] else [data[1]]
-        super().__init__(ms, behavior=ASBOrbChange(self.from_attr, self.to_attr))
+        super().__init__(ms, ASBOrbChange(self.from_attr, self.to_attr))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.double_orb_convert(self)
@@ -304,7 +312,8 @@ class ASDamageVoid(ActiveSkill):
         self.duration = data[0]
         self.attribute = data[1]
         self.shield = mult(data[2])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('attribute_shield', self.duration,
+                                     {'mult': self.shield, 'attribute': self.attribute}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.elemental_shield_convert(self)
@@ -318,7 +327,8 @@ class ASAtkBasedNuke(ActiveSkill):
         self.atk_multiplier = mult(data[0])
         self.recover_multiplier = mult(data[1])
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.atk_multiplier,
+                                       mass_attack=False, recover=self.recover_multiplier))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.drain_attack_convert(self)
@@ -328,11 +338,12 @@ class ASSingleTargetTeamAttrNuke(ActiveSkill):
     skill_type = 37
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [])
+        data = merge_defaults(ms.data, [0, 1])
         self.attribute = data[0]
         self.multiplier = mult(data[1])
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.multiplier,
+                                       mass_attack=False, attribute=self.attribute))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.attr_nuke_convert(self)
@@ -346,7 +357,8 @@ class ASAttrOnAttrNuke(ActiveSkill):
         self.enemy_attribute = data[0]
         self.attack_attribute = data[1]
         self.damage = data[2]
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('flat', self.damage, self.attack_attribute,
+                                       target_attribute=self.enemy_attribute))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.damage_to_att_enemy_convert(self)
@@ -365,7 +377,9 @@ class ASAttrBurst(ActiveSkill):
             self.attributes.remove(5)
         self.multiplier = mult(data[2])
         self.atk = self.multiplier
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': [1.0, self.multiplier, self.multiplier if self.rcv_boost else 1.0],
+                                      'target': {'attributes': self.attributes}}))
 
     def text(self, converter: ASTextConverter) -> str:
         # TODO: uhhh maybe this can be cleaned up
@@ -381,7 +395,7 @@ class ASMassAttack(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.duration = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('mass_attack', self.duration))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.mass_attack_convert(self)
@@ -393,7 +407,7 @@ class ASOrbEnhance(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = ms.data
         self.orbs = [data[0]]
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('enhance', {'attrs': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_convert(self)
@@ -406,7 +420,8 @@ class ASTrueDamageNuke(ActiveSkill):
         data = merge_defaults(ms.data, [0])
         self.damage = data[0]
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('flat', self.damage,
+                                       laser=True, mass_attack=False))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.laser_convert(self)
@@ -419,7 +434,8 @@ class ASTrueDamageNukeAll(ActiveSkill):
         data = merge_defaults(ms.data, [0])
         self.damage = data[0]
         self.mass_attack = True
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('flat', self.damage,
+                                       laser=True, mass_attack=True))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.laser_convert(self)
@@ -434,7 +450,9 @@ class ASAttrMassAttack(ActiveSkill):
         self.minimum_multiplier = mult(data[1])
         self.maximum_multiplier = mult(data[2])
         self.mass_attack = True
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.maximum_multiplier,
+                                       mass_attack=True, attribute=self.attribute,
+                                       min_damage=self.minimum_multiplier))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_nuke_convert(self)
@@ -449,7 +467,9 @@ class ASAttrRandomNuke(ActiveSkill):
         self.minimum_multiplier = mult(data[1])
         self.maximum_multiplier = mult(data[2])
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.maximum_multiplier,
+                                       mass_attack=False, attribute=self.attribute,
+                                       min_damage=self.minimum_multiplier))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_nuke_convert(self)
@@ -463,7 +483,7 @@ class ASCounterattack(ActiveSkill):
         self.duration = data[0]
         self.multiplier = mult(data[1])
         self.attribute = data[2]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('counterattack', self.duration, {'mult': self.multiplier}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.counterattack_convert(self)
@@ -481,7 +501,7 @@ class ASBoardChange(ActiveSkill):
         if len(self.to_attr) == 1:
             board = Board([[self.to_attr[0] for _ in range(7)] for _ in range(6)])
 
-        super().__init__(ms, behavior=ASBOrbChange(self.from_attr, self.to_attr), board=board)
+        super().__init__(ms, ASBOrbChange(self.from_attr, self.to_attr), board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.board_change_convert(self)
@@ -497,7 +517,10 @@ class ASHpConditionalTargetNuke(ActiveSkill):
         self.maximum_multiplier = mult(data[2])
         self.hp_remaining = mult(data[3])
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, [ASBCustom('suicide', hp_left=self.hp_remaining),
+                              ASBDamage('multiplier', self.maximum_multiplier,
+                                        attribute=self.attribute, mass_attack=False,
+                                        min_damage=self.maximum_multiplier)])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.suicide_random_nuke_convert(self)
@@ -513,7 +536,10 @@ class ASHpConditionalMassNuke(ActiveSkill):
         self.maximum_multiplier = mult(data[2])
         self.hp_remaining = mult(data[3])
         self.mass_attack = True
-        super().__init__(ms)
+        super().__init__(ms, [ASBCustom('suicide', hp_left=self.hp_remaining),
+                              ASBDamage('multiplier', self.maximum_multiplier,
+                                        attribute=self.attribute, mass_attack=True,
+                                        min_damage=self.maximum_multiplier)])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.suicide_random_nuke_convert(self)
@@ -528,7 +554,9 @@ class ASTargetNukeWithHpPenalty(ActiveSkill):
         self.damage = data[1]
         self.hp_remaining = mult(data[3])
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, [ASBCustom('suicide', hp_left=self.hp_remaining),
+                              ASBDamage('flat', self.damage,
+                                        attribute=self.attribute, mass_attack=False)])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.suicide_nuke_convert(self)
@@ -543,7 +571,9 @@ class ASMassNukeWithHpPenalty(ActiveSkill):
         self.damage = data[1]
         self.hp_remaining = mult(data[3])
         self.mass_attack = True
-        super().__init__(ms)
+        super().__init__(ms, [ASBCustom('suicide', hp_left=self.hp_remaining),
+                              ASBDamage('flat', self.damage,
+                                        attribute=self.attribute, mass_attack=True)])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.suicide_nuke_convert(self)
@@ -557,7 +587,9 @@ class ASTypeBurst(ActiveSkill):
         self.duration = data[0]
         self.types = [data[1]]
         self.multiplier = mult(data[2])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': [1.0, self.multiplier, 1.0],
+                                      'target': {'types': self.types}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.type_attack_boost_convert(self)
@@ -577,7 +609,9 @@ class ASAttrBurstMultiPart(ActiveSkill):
             self.rcv_boost = True
             self.attributes.remove(5)
 
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': [1.0, self.multiplier, self.multiplier if self.rcv_boost else 1.0],
+                                      'target': {'attrs': self.attributes}}))
 
     def text(self, converter: ASTextConverter) -> str:
         if self.duration == 0:
@@ -589,9 +623,9 @@ class ASBicolorOrbEnhance(ActiveSkill):
     skill_type = 91
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [])
+        data = merge_defaults(ms.data, [0, 0])
         self.orbs = data[0:2]
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('enhance', {'attrs': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_convert(self)
@@ -605,7 +639,9 @@ class ASTypeBurstNew(ActiveSkill):
         self.duration = data[0]
         self.types = data[1:3]
         self.multiplier = mult(data[3])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': [1.0, self.multiplier, 1.0],
+                                      'target': {'types': self.types}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.type_attack_boost_convert(self)
@@ -615,7 +651,7 @@ class ASLeaderSwap(ActiveSkill):
     skill_type = 93
 
     def __init__(self, ms: MonsterSkill):
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('leader_swap'))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.leader_swap(self)
@@ -630,7 +666,8 @@ class ASLowHpConditionalAttrDamageBoost(ActiveSkill):
         self.attribute = data[1]
         self.high_multiplier = mult(data[2])
         self.low_multiplier = mult(data[3])
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.high_multiplier, min_damage=self.low_multiplier,
+                                       attribute=self.attribute, grudge=True))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.grudge_strike_convert(self)
@@ -645,23 +682,11 @@ class ASMiniNukeandHpRecovery(ActiveSkill):
         self.atk_multiplier = mult(data[1])
         self.recover_multiplier = mult(data[2])
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('multiplier', self.atk_multiplier, recover=self.recover_multiplier,
+                                       attribute=self.attribute))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.drain_attr_attack_convert(self)
-
-
-class PartWithTextAndCount:
-    def __init__(self, act: ActiveSkill, text: str):
-        self.act = act
-        self.text = text
-        self.repeat = 1
-
-    def templated_text(self, converter: ASTextConverter):
-        return self.text if self.repeat == 1 else converter.fmt_repeated(self.text, self.repeat)
-
-    def full_text(self, converter: ASTextConverter):
-        return converter.process_raw(self.templated_text(converter))
 
 
 class ASMultiPartSkill(ASMultiPart):
@@ -680,8 +705,12 @@ class ASHpRecoveryandBindClear(ActiveSkill):
         self.rcv_multiplier_as_hp = mult(data[1])
         self.hp = data[2]
         self.percentage_max_hp = mult(data[3])
-        self.awoken_bind = data[4]
-        super().__init__(ms)
+        self.awoken_bind = bool(data[4])
+        super().__init__(ms, ASBRecover('flat' if self.hp else
+                                        'multiplier' if self.rcv_multiplier_as_hp else
+                                        'percentage' if self.percentage_max_hp else 'unknown',
+                                        self.hp or self.rcv_multiplier_as_hp or self.percentage_max_hp,
+                                        skill_bind=self.card_bind, awoken_bind=self.awoken_bind))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.heal_active_convert(self)
@@ -690,6 +719,7 @@ class ASHpRecoveryandBindClear(ActiveSkill):
 class ASRandomSkill(ASCompound):
     skill_type = 118
     compound_skill_type = 1
+    multipart_type = 'random'
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_skill(self)
@@ -712,6 +742,10 @@ class ASRandomSkill(ASCompound):
             board &= part.board
         return board
 
+    @property
+    def behavior(self):
+        return ASBCustom('random_skill', skills=[behavior_to_json(ss.behavior) for ss in self.subskills])
+
 
 class ASIncreasedSkyfallChance(ActiveSkill):
     skill_type = 126
@@ -722,7 +756,8 @@ class ASIncreasedSkyfallChance(ActiveSkill):
         self.duration = data[1]
         self.max_duration = data[2]
         self.percentage = mult(data[3])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('skyfall_chance', self.duration,
+                                     {'attributes': self.orbs, 'percentage': self.percentage}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_skyfall_convert(self)
@@ -745,7 +780,7 @@ class ASColumnOrbChange(ActiveSkill):
             if len(col.attrs) == 1:
                 idx = col.index if col.index < 3 else col.index + 1
                 board |= Board([[col.attrs[0] if j == idx else -1 for j in range(7)] for _ in range(6)])
-        super().__init__(ms, board=board)
+        super().__init__(ms, ASBBoardChange(board.data), board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.column_change_convert(self)
@@ -767,7 +802,7 @@ class ASRowOrbChange(ActiveSkill):
                 idx = row.index if row.index < 2 else row.index + 1
                 board |= Board([[row.attrs[0] if i == idx else -1 for _ in range(7)] for i in range(6)])
 
-        super().__init__(ms, board=board)
+        super().__init__(ms, ASBBoardChange(board.data), board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.row_change_convert(self)
@@ -781,7 +816,9 @@ class ASIncreasedOrbMovementTime(ActiveSkill):
         self.duration = data[0]
         self.static = data[1] / 10
         self.percentage = mult(data[2])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('orb_movement', self.duration,
+                                     {'unit': 'flat' if self.static else 'multiplier',
+                                      'amount': self.static or self.percentage}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.move_time_buff_convert(self)
@@ -793,7 +830,7 @@ class ASOrbEnhanceNew(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.orbs = binary_con(data[0])
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('enhance', {'attrs': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_convert(self)
@@ -821,7 +858,9 @@ class ASAttributeChange(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.attribute = data[1]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('attr_change', self.duration,
+                                     {'attribute': self.attribute,
+                                      'target': {'self': True}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.attribute_change_convert(self)
@@ -836,7 +875,7 @@ class ASHpMultiplierNuke(ActiveSkill):
         self.attribute = data[1]
         # Note; another slot must contain the attribute, since this is a fixed nuke.
         self.mass_attack = True
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('hp_multiplier', self.multiplier, attribute=self.attribute))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.hp_nuke_convert(self)
@@ -1049,7 +1088,7 @@ class ASAutoHealConvert(ActiveSkill):
     skill_type = 179
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0, None, 0, 0, 0])
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0])
         self.duration = data[0]
         self.percentage_max_hp = mult(data[2])
         self.card_bind = data[3]
@@ -1177,8 +1216,12 @@ class ASSpawnSpinner(ActiveSkill):
         # Only one example of this so far, so these are all just guesses
         self.turns = data[0]
         self.speed = mult(data[1])
-        self.count = data[7]
-        super().__init__(ms)
+        self.pos_map = [binary_con(row) for row in data[2:7]]
+        self.random_count = data[7]
+        super().__init__(ms, ASBBuff('spinner', self.turns,
+                                     {'speed': self.speed,
+                                      'shape': self.pos_map,
+                                      'random_count': self.random_count}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.spawn_spinner(self.turns, self.speed, self.count)
@@ -1210,7 +1253,7 @@ class ASDisableAllySkills(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.turns = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('disable_skills', self.turns))
 
     def text(self, converter) -> str:
         return converter.ally_active_disable(self.turns)
@@ -1223,7 +1266,8 @@ class ASCreateUnmatchable(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.orbs = binary_con(data[1])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('unmachable', self.duration,
+                                     {'attributes': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.create_unmatchable(self)
@@ -1235,7 +1279,7 @@ class ASDelayAllySkills(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.turns = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('self_delay', {'turns': self.turns}))
 
     def text(self, converter) -> str:
         return converter.ally_active_delay(self.turns)
@@ -1248,7 +1292,8 @@ class ASTimedEnemyAttrChange(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.turns = data[0]
         self.attribute = data[1]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('change_enemy_attribute', self.turns,
+                                     {'attribute': self.attribute}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_enemies_attribute_convert(self)
@@ -1261,7 +1306,9 @@ class ASConditionalHPThreshold(ASConditional):
         data = merge_defaults(ms.data, [0, 100])
         self.lower_limit = data[0]
         self.upper_limit = data[1] or 100
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('conditional',
+                                       {'type': 'hp',
+                                        'boundaries': [self.lower_limit, self.upper_limit]}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.conditional_hp_thresh(self)
@@ -1274,7 +1321,7 @@ class ASNailOrbSkyfall(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.chance = mult(data[1])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('nail_skyfall', self.duration, {'chance': self.chance}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.nail_orb_skyfall(self)
@@ -1286,7 +1333,7 @@ class ASLeaderSwapRightSub(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [])
         self.sub_slot = 4
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('lead_swap', {'position': 4}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.lead_swap_sub(self)
@@ -1302,7 +1349,11 @@ class ASTeamCompositionBuff(ActiveSkill):
         self.types = binary_con(data[2])
         self.atk_boost = mult(data[3])
         self.rcv_boost = mult(data[4])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
+                                     {'stats': [1.0, self.atk_boost, self.rcv_boost],
+                                      'attributes': self.attributes,
+                                      'types': self.types,
+                                      'awakenings': []}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.composition_buff(self)
@@ -1316,7 +1367,8 @@ class ASTeamTargetStatBuff(ActiveSkill):
         self.duration = data[0]
         self.target = data[1]
         self.atk_mult = mult(data[2])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'target': {'target_bitmap': self.target}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.team_target_stat_change(self)
@@ -1333,7 +1385,10 @@ class ASAwokenSkillStatBoost(ActiveSkill):
         self.unknown_5 = data[5]
         self.atk_per = mult(data[6])
         self.rcv_per = mult(data[7])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
+                                     {'stats': [1.0, self.atk_per, self.rcv_per],
+                                      'attributes': [], 'types': [],
+                                      'awakenings': self.awakenings}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.awakening_stat_boost_convert(self)
@@ -1342,6 +1397,7 @@ class ASAwokenSkillStatBoost(ActiveSkill):
 class ASEvolvingSkill(ASCompound):
     skill_type = 232
     compound_skill_type = 2
+    multipart_type = 'evolving'
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.evolving_active(self)
@@ -1350,6 +1406,7 @@ class ASEvolvingSkill(ASCompound):
 class ASLoopingEvolvingSkill(ASCompound):
     skill_type = 233
     compound_skill_type = 3
+    multipart_type = 'looping'
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.looping_evolving_active(self)
@@ -1362,7 +1419,10 @@ class ASConditionalFloorThreshold(ASConditional):
         data = merge_defaults(ms.data, [0, 9999])
         self.lower_limit = data[0]
         self.upper_limit = data[1] or 9999
-        super().__init__(ms, needs_context=True)
+        super().__init__(ms, ASBCustom('conditional',
+                                       {'type': 'floor',
+                                        'boundaries': [self.lower_limit, self.upper_limit]}),
+                         needs_context=True)
 
     def text(self, converter: ASTextConverter, context: Optional[Iterable[ActiveSkill]] = None) \
             -> str:
@@ -1373,8 +1433,8 @@ class ASRandomChangeMonster(ActiveSkill):
     skill_type = 236
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [0])
-        super().__init__(ms, transform_ids=Counter(data))
+        data = merge_defaults(ms.data, [])
+        super().__init__(ms, ASBCustom('transform', {'monsters': data}), transform_ids=Counter(data))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.random_change_monster(self)
@@ -1387,7 +1447,8 @@ class ASHPBoostMonster(ActiveSkill):
         data = merge_defaults(ms.data, [0, 100])
         self.duration = data[0]
         self.hp = mult(data[1])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': [self.hp, 1.0, 1.0]}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.hp_boost(self)
@@ -1401,7 +1462,7 @@ class ASInflictES(ActiveSkill):
         self.selector_type = data[0]
         self.players = binary_con(data[1])
         self.es_ref = data[2]
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('inflict_es', {'data': data}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.inflict_es(self)
