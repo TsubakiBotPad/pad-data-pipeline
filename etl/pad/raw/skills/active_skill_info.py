@@ -1173,15 +1173,15 @@ class ASSpawnSpinner(ActiveSkill):
     skill_type = 207
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [1, 100, 0, 0, 0, 0, 0, 1])
-        # Only one example of this so far, so these are all just guesses
+        data = merge_defaults(ms.data, [1, 100, 0, 0, 0, 0, 0, 0])
         self.turns = data[0]
         self.speed = mult(data[1])
-        self.count = data[7]
+        self.pos_map = [binary_con(row) for row in data[2:7]]
+        self.random_count = data[7]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
-        return converter.spawn_spinner(self.turns, self.speed, self.count)
+        return converter.spawn_spinner(self)
 
 
 class ASRandomLocationDoubleOrbSpawn(ActiveSkill):
