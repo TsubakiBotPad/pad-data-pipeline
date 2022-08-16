@@ -263,7 +263,7 @@ class EnASTextConverter(EnBaseTextConverter):
                                           for a in act.awakenings if a)
         skill_text += f" for each {awakenings} awakening on the team"
         return skill_text
-    
+
     def change_enemies_attribute_convert(self, act):
         if act.turns is not None:
             skill_text = self.fmt_duration(act.turns) + 'change'
@@ -439,27 +439,43 @@ class EnASTextConverter(EnBaseTextConverter):
                                                                              self.fmt_mass_atk(act.mass_attack))
 
     def fixed_pos_convert(self, act):
-        board = deepcopy(act.pos_map)
+        return self.fixed_shape_convert(act.pos_map, self.ATTRIBUTES[act.attribute] + ' orb', act)
+
+    def fixed_shape_convert(self, board, orb, act):
+        board = deepcopy(board)
 
         orb_count = 0
-
-        output = []
         for row_num in board:
             orb_count += len(row_num)
+        orb = pluralize(orb, orb_count)
 
-        board_repr = []
-        for row in board:
-            board_repr.append(''.join(['0' if n in row else 'X'
-                                       for n in range(6)]))
-        board_repr = '\n'.join(board_repr)
+        if board == [[], [], [], [], []]:
+            return ''
+        elif board == [[5], [], [], [], []]:
+            return 'Create one {} in the top-right corner'.format(orb)
+        elif board == [[3, 4, 5], [3, 5], [5], [5], []]:
+            return 'Create a 7-shape of {} in the upper right corner'.format(orb)
+        elif board == [[0, 5], [], [], [], [0, 5]]:
+            return 'Create 4 {} at the corners of the board'.format(orb)
+        elif board == [[0, 1, 2], [0, 1, 2], [], [], []]:
+            return 'Create a 3x2 rectangle of {} in the upper left corner'.format(orb)
+        elif board == [[], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], []]:
+            return 'Change all positions except for the outer ring to {}'.format(orb)
+        elif board == [[2, 3, 4], [1, 4, 5], [5], [1, 4, 5], [2, 3, 4]]:
+            return 'Create 13 {} in the shape of a crescent moon.'.format(orb)
+        elif board == [[0, 1, 2, 3, 4, 5], [0, 5], [0, 5], [0, 5], [0, 1, 2, 3, 4, 5]]:
+            return 'Change the outermost positions of the board to {}'.format(orb)
+        elif board == [[4, 5], [3, 4], [2, 3], [1, 2], [0, 1]]:
+            return 'Create a 2-orb wide bottom-left to top-right diagonal of {}'.format(orb)
+        elif board == [[0, 1, 2, 3, 4], [3], [2], [1], [0, 1, 2, 3, 4]]:
+            return 'Create 13 {} in the shape of a Z.'.format(orb)
+
+        if set(sum(board, [])) - {0, 1, 2, 3, 4, 5}:
+            print(board)
+            return ''
 
         skill_text = ''
-        if orb_count == 0 or set(sum(board, [])) - {0, 1, 2, 3, 4, 5}:
-            return ''
-        if orb_count == 4:
-            if len(board[0]) == len(board[4]) == 2:
-                skill_text += 'Create 4 {} orbs at the corners of the board'.format(
-                    self.ATTRIBUTES[act.attribute])
+        output = []
         if not (orb_count % 5):
             for row_num in range(1, len(board) - 1):  # Check for cross
                 if len(board[row_num]) == 3 and len(board[row_num - 1]) == \
@@ -500,32 +516,17 @@ class EnASTextConverter(EnBaseTextConverter):
                     output.append(result)
                     del board[row_num][1]
 
-        if board == [[3, 4, 5], [3, 5], [5], [5], []]:
-            return 'Create a 7-shape of {} orbs in the upper right corner'.format(self.ATTRIBUTES[act.attribute])
-        elif board == [[0, 1, 2], [0, 1, 2], [], [], []]:
-            return 'Create a 3x2 rectangle of {} orbs in the upper left corner'.format(
-                self.ATTRIBUTES[act.attribute])
-        elif board == [[], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], []]:
-            return 'Change all orbs except for the outer ring to {} orbs'.format(self.ATTRIBUTES[act.attribute])
-        elif board == [[2, 3, 4], [1, 4, 5], [5], [1, 4, 5], [2, 3, 4]]:
-            skill_text += 'Create 13 {} orbs in the shape of a crescent moon.'.format(self.ATTRIBUTES[act.attribute])
-        elif board == [[0, 1, 2, 3, 4, 5], [0, 5], [0, 5], [0, 5], [0, 1, 2, 3, 4, 5]]:
-            skill_text += 'Change the outermost orbs of the board to {} orbs'.format(self.ATTRIBUTES[act.attribute])
-        elif board == [[4, 5], [3, 4], [2, 3], [1, 2], [0, 1]]:
-            skill_text += 'Create a 2-orb wide bottom-left to top-right diagonal of {} orbs'.format(self.ATTRIBUTES[act.attribute])
-        elif board == [[0, 1, 2, 3, 4], [3], [2], [1], [0, 1, 2, 3, 4]]:
-            skill_text += 'Create 13 {} orbs in the shape of a Z.'.format(self.ATTRIBUTES[act.attribute])
-
         if output:
             for entry in output:
                 if skill_text:
                     skill_text += '; '
-                skill_text += 'Create {} of {} orbs with its center at {} and {}'.format(indef_article(entry[0]),
-                                                                                         self.ATTRIBUTES[act.attribute],
-                                                                                         ROW_INDEX[entry[1]],
-                                                                                         COLUMN_INDEX[entry[2]])
+                skill_text += 'Create {} of {} with its center at {} and {}'.format(indef_article(entry[0]),
+                                                                                    orb,
+                                                                                    ROW_INDEX[entry[1]],
+                                                                                    COLUMN_INDEX[entry[2]])
 
         if not skill_text:
+            board_repr = '\n'.join(''.join(['O' if n in row else 'X' for n in range(6)]) for row in board)
             human_fix_logger.error(
                 'Unknown board shape in {} ({}):\n{} \n{}\n{}'.format(
                     act.name, act.skill_id, act.raw_description, board_repr, board))
@@ -570,10 +571,13 @@ class EnASTextConverter(EnBaseTextConverter):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else 'all'
         return self.fmt_duration(act.duration) + attrs + " orbs appear locked"
 
-    def spawn_spinner(self, turns: int, speed: float, count: int):
-        return 'Create {:s} that {:s} every {:.1f}s for {:s}' \
-            .format(noun_count('spinner', count), pluralize("change", count, verb=True),
-                    speed, noun_count('turn', turns))
+    def spawn_spinner(self, act):
+        if act.random_count:
+            return 'Create {:s} that {:s} every {:.1f}s for {:s}' \
+                .format(noun_count('spinner', act.random_count), pluralize("change", act.random_count, verb=True),
+                        act.speed, noun_count('turn', act.turns))
+        else:
+            return self.fixed_shape_convert(act.pos_map, 'spinner', act)
 
     def ally_active_disable(self, turns: int):
         return 'Disable team active skills for {:s}'.format(noun_count('turn', turns))
@@ -584,8 +588,8 @@ class EnASTextConverter(EnBaseTextConverter):
     def create_unmatchable(self, act):
         skill_text = self.fmt_duration(act.duration)
         if act.orbs:
-            skill_text += " " + self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs)
-        return skill_text + " orbs are unmatchable"
+            skill_text += self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs) + ' '
+        return skill_text + "orbs are unmatchable"
 
     def conditional_hp_thresh(self, act):
         if act.lower_limit == 0:

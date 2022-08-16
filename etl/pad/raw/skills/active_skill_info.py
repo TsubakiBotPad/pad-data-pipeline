@@ -1177,11 +1177,12 @@ class ASSpawnSpinner(ActiveSkill):
         # Only one example of this so far, so these are all just guesses
         self.turns = data[0]
         self.speed = mult(data[1])
-        self.count = data[7]
         super().__init__(ms)
+        self.pos_map = [binary_con(row) for row in data[2:7]]
+        self.random_count = data[7]
 
     def text(self, converter: ASTextConverter) -> str:
-        return converter.spawn_spinner(self.turns, self.speed, self.count)
+        return converter.spawn_spinner(self)
 
 
 class ASRandomLocationDoubleOrbSpawn(ActiveSkill):

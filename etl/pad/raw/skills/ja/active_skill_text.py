@@ -539,9 +539,9 @@ class JaASTextConverter(JaBaseTextConverter):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else ''
         return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, attrs)
 
-    def spawn_spinner(self, turns: int, speed: float, count: int):
+    def spawn_spinner(self, act):
         return '{}ターンの間、ランダムで{}箇所のマスがが{}秒毎に変化する' \
-            .format(turns, count, speed)
+            .format(act.turns, act.count, act.speed)
 
     def ally_active_disable(self, turns: int):
         return '{}ターンの間、スキル使用不可。'.format(turns)
