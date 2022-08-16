@@ -541,7 +541,7 @@ class JaASTextConverter(JaBaseTextConverter):
 
     def spawn_spinner(self, act):
         return '{}ターンの間、ランダムで{}箇所のマスがが{}秒毎に変化する' \
-            .format(act.turns, act.count, act.speed)
+            .format(act.turns, act.random_count, act.speed)
 
     def ally_active_disable(self, turns: int):
         return '{}ターンの間、スキル使用不可。'.format(turns)
