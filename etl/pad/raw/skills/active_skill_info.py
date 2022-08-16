@@ -890,7 +890,8 @@ class ASAttrNukeOfAttrTwoAtk(ActiveSkill):
         self.multiplier = mult(data[1])
         self.mass_attack = data[2] == 0
         self.attack_attribute = data[3]
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('team_mult', self.multiplier, attribute=self.attack_attribute,
+                                       team_mult_attr=self.team_attributes, mass_attack=self.mass_attack))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.attack_attr_x_team_atk_convert(self)
@@ -902,7 +903,7 @@ class ASHpRecovery(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.team_rcv_multiplier_as_hp = mult(data[0])
-        super().__init__(ms)
+        super().__init__(ms, ASBRecover('team_multiplier', self.team_rcv_multiplier_as_hp))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.heal_active_convert(self)
@@ -915,7 +916,7 @@ class ASHaste(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.turns = data[0]
         self.max_turns = data[1] or self.turns
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('skill_charge', {'turns': [self.turns, self.max_turns]}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.haste_convert(self)
@@ -928,7 +929,7 @@ class ASOrbLock(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.orbs = binary_con(data[0])
         self.count = data[1]  # This can be 42/99 (both mean 'all') or a fixed number
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('lock', {'attributes': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.lock_convert(self)
@@ -939,9 +940,10 @@ class ASEnemyAttrChange(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
-        self.turns = None
+        self.turns = 9999
         self.attribute = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('change_enemy_attribute', self.turns,
+                                     {'attribute': self.attribute}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_enemies_attribute_convert(self)
@@ -975,7 +977,11 @@ class ASAwokenSkillBurst(ActiveSkill):
             self.amount_per = (data[5] - 100) / 100
         elif self.toggle == 3:
             self.amount_per = mult(data[5])
-        super().__init__(ms)
+        # TODO: Add other toggles
+        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
+                                     {'stats': [1.0, self.amount_per, 1.0],
+                                      'attributes': [], 'types': [],
+                                      'awakenings': self.awakenings}))
 
     def text(self, converter: ASTextConverter) -> str:
         if self.toggle == 1:
@@ -1004,7 +1010,11 @@ class ASAwokenSkillBurst2(ActiveSkill):
             self.amount_per = mult(data[7])
         elif self.toggle == 3:
             self.amount_per = mult(data[7])
-        super().__init__(ms)
+        # TODO: Add other toggles
+        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
+                                     {'stats': [1.0, self.amount_per, 1.0],
+                                      'attributes': [], 'types': [],
+                                      'awakenings': self.awakenings}))
 
     def text(self, converter: ASTextConverter) -> str:
         if self.toggle == 1:
@@ -1024,7 +1034,7 @@ class ASAddAdditionalCombos(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.combos = data[1]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('increase_combo', self.duration, {'additional_combos': self.combos}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.extra_combo_convert(self)
@@ -1036,7 +1046,7 @@ class ASTrueGravity(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.percentage_max_hp = mult(data[0])
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('true_gravity', self.percentage_max_hp))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.true_gravity_convert(self)
@@ -1046,7 +1056,7 @@ class ASOrbLockRemoval(ActiveSkill):
     skill_type = 172
 
     def __init__(self, ms: MonsterSkill):
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('board_unlock'))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.unlock_all_orbs(self)
@@ -1060,7 +1070,8 @@ class ASVoidDamageAbsorption(ActiveSkill):
         self.duration = data[0]
         self.attribute_absorb = bool(data[1])
         self.damage_absorb = bool(data[3])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('void_absorb', self.duration,
+                                     {'type': self.attribute_absorb << 1 + self.damage_absorb}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.absorb_mechanic_void_convert(self)
@@ -1078,7 +1089,7 @@ class ASFixedPosConvertSomething(ActiveSkill):
         board_data.insert(2, copy(board_data[2]))
         [row.insert(3, row[3]) for row in board_data]
         board = Board(board_data)
-        super().__init__(ms, board=board)
+        super().__init__(ms, ASBBoardChange(board.data), board=board)
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.fixed_pos_convert(self)
@@ -1093,7 +1104,10 @@ class ASAutoHealConvert(ActiveSkill):
         self.percentage_max_hp = mult(data[2])
         self.card_bind = data[3]
         self.awoken_bind = data[4]
-        super().__init__(ms)
+        super().__init__(ms, [ASBBuff('autoheal', self.duration,
+                                     {'percentage': self.percentage_max_hp}),
+                              ASBRecover('n/a', 0,
+                                         skill_bind=self.card_bind, awoken_bind=self.awoken_bind)])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.auto_heal_convert(self)
@@ -1106,7 +1120,8 @@ class ASIncreasedEnhanceOrbSkyfall(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.percentage_increase = mult(data[1])
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('enhanced_skyfall', self.duration,
+                                     {'chance': self.percentage_increase}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_skyfall_convert(self)
@@ -1118,7 +1133,7 @@ class ASNoSkyfallForXTurns(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.duration = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('no_skyfall', self.duration))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.no_skyfall_convert(self)
@@ -1131,7 +1146,8 @@ class ASMultiLaserConvert(ActiveSkill):
         data = merge_defaults(ms.data, [0])
         self.damage = data[0]
         self.mass_attack = False
-        super().__init__(ms)
+        super().__init__(ms, ASBDamage('fixed', self.damage,
+                                       mass_attack=False, laser=True))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.multi_hit_laser_convert(self)
@@ -1141,7 +1157,7 @@ class ASShowComboPath(ActiveSkill):
     skill_type = 189
 
     def __init__(self, ms: MonsterSkill):
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('show_path'))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.unlock_board_path_toragon(self)
@@ -1153,7 +1169,7 @@ class ASReduceVoidDamage(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.duration = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('bypass_void', self.duration))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.void_mechanic_convert(self)
@@ -1165,7 +1181,7 @@ class ASSuicide195(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.hp_remaining = mult(data[0])
-        super().__init__(ms)
+        super().__init__(ms, ASBCustom('suicide', hp_left=self.hp_remaining))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.suicide_convert(self)
@@ -1177,7 +1193,7 @@ class ASReduceDisableMatch(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.duration = data[0]
-        super().__init__(ms)
+        super().__init__(ms, ASBRecover('n/a', 0, match_bind=self.duration))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.match_disable_convert(self)
@@ -1188,7 +1204,8 @@ class ASChangeMonster(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
-        super().__init__(ms, transform_ids=Counter(data))
+        super().__init__(ms, ASBCustom('transform', {'monsters': data}),
+                         transform_ids=Counter(data))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.change_monster(self)
@@ -1198,11 +1215,11 @@ class ASSkyfallLock(ActiveSkill):
     skill_type = 205
 
     def __init__(self, ms: MonsterSkill):
-        # The '1' in slot 0 is suspicious but it seems set for everything so it changes nothing.
-        data = merge_defaults(ms.data, [1, 1])
+        data = merge_defaults(ms.data, [0, 1])
         self.orbs = binary_con(data[0])
         self.duration = data[1]
-        super().__init__(ms)
+        super().__init__(ms, ASBBuff('locked_skyfall', self.duration,
+                                     {'attributes': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.skyfall_lock(self)
@@ -1212,8 +1229,7 @@ class ASSpawnSpinner(ActiveSkill):
     skill_type = 207
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [1, 100, 0, 0, 0, 0, 0, 1])
-        # Only one example of this so far, so these are all just guesses
+        data = merge_defaults(ms.data, [1, 100, 0, 0, 0, 0, 0, 0])
         self.turns = data[0]
         self.speed = mult(data[1])
         self.pos_map = [binary_con(row) for row in data[2:7]]
@@ -1224,7 +1240,7 @@ class ASSpawnSpinner(ActiveSkill):
                                       'random_count': self.random_count}))
 
     def text(self, converter: ASTextConverter) -> str:
-        return converter.spawn_spinner(self.turns, self.speed, self.count)
+        return converter.spawn_spinner(self)
 
 
 class ASRandomLocationDoubleOrbSpawn(ActiveSkill):
