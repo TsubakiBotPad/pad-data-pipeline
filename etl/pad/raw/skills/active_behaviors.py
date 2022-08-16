@@ -62,16 +62,20 @@ class ASBInflictDebuff(NamedTuple):
     behavior_type = 'inflict_debuff'
 
 
-class ASBSuperSkill(NamedTuple):
+class ASBSuperSkill:
     multi_type: str
-    _subskills: List["ActiveSkill"]
+    raw_subskills: List["ActiveSkill"]
+
+    def __init__(self, multi_type, raw_subskills):
+        self.multi_type = multi_type
+        self.raw_subskills = raw_subskills
 
     def _asdict(self):
         return {'multi_type': self.multi_type, 'subskills': self.subskills}
 
     @property
     def subskills(self) -> List[List[Dict[str, Any]]]:
-        return [behavior_to_json(ss.behavior) for ss in self._subskills]
+        return [behavior_to_json(ss.behavior) for ss in self.raw_subskills]
 
     behavior_type = 'multi_part'
 
@@ -81,7 +85,7 @@ def ASBCustom(_behavior_type: str, fields=None, **kwargs) -> NamedTuple:
         fields = {}
     fields.update(kwargs)
 
-    class _ASBCustom(NamedTuple):
+    class _ASBCustom:
         behavior_type = _behavior_type
 
         def _asdict(self):
@@ -90,7 +94,7 @@ def ASBCustom(_behavior_type: str, fields=None, **kwargs) -> NamedTuple:
     return _ASBCustom()
 
 
-ASBehavior = NamedTuple
+ASBehavior = Any
 
 
 def behavior_to_json(behavior: List[Any]) -> List[Dict[str, Any]]:

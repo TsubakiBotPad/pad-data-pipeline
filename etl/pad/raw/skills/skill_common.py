@@ -1,10 +1,10 @@
 from enum import Enum, auto
-from numbers import Number, Real
-from typing import Dict, List, NamedTuple, TYPE_CHECKING, TypeVar
+from typing import Dict, List, TYPE_CHECKING, TypeVar
 
 import jinja2
 
-from pad.raw.skills.active_skill_info import ASTextConverter, ActiveSkill
+if TYPE_CHECKING:
+    from pad.raw.skills.active_skill_info import ASTextConverter, ActiveSkill
 
 T = TypeVar('T')
 
@@ -229,13 +229,13 @@ class Board:
 
 
 class PartWithTextAndCount:
-    def __init__(self, act: ActiveSkill, text: str):
+    def __init__(self, act: "ActiveSkill", text: str):
         self.act = act
         self.text = text
         self.repeat = 1
 
-    def templated_text(self, converter: ASTextConverter):
+    def templated_text(self, converter: "ASTextConverter"):
         return self.text if self.repeat == 1 else converter.fmt_repeated(self.text, self.repeat)
 
-    def full_text(self, converter: ASTextConverter):
+    def full_text(self, converter: "ASTextConverter"):
         return converter.process_raw(self.templated_text(converter))
