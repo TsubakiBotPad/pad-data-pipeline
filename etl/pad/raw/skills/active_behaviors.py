@@ -29,6 +29,7 @@ class ASBDamage(NamedTuple):
     mass_attack: bool = True
     laser: bool = False
     grudge: bool = False
+    team_mult_attr: Optional[List[int]] = None
 
     target_attribute: Optional[int] = None
 
@@ -41,7 +42,7 @@ class ASBRecover(NamedTuple):
 
     skill_bind: int = 0
     awoken_bind: int = 0
-    orb_attribute_bind: int = 0
+    match_bind: int = 0
 
     behavior_type = 'recover'
 

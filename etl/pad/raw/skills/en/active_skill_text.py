@@ -265,7 +265,7 @@ class EnASTextConverter(EnBaseTextConverter):
         return skill_text
 
     def change_enemies_attribute_convert(self, act):
-        if act.turns is not None:
+        if act.turns != 9999:
             skill_text = self.fmt_duration(act.turns) + 'change'
         else:
             skill_text = 'Change'
