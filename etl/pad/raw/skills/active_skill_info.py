@@ -6,7 +6,7 @@ from numbers import Rational
 from typing import Any, Iterable, List, Mapping, Optional, Union
 
 from pad.raw.skill import MonsterSkill
-from pad.raw.skills.active_behaviors import ASBBoardChange, ASBBuff, ASBCustom, ASBDamage, ASBInflictDebuff, \
+from pad.raw.skills.behaviors.active_behaviors import ASBBoardChange, ASBBuff, ASBCustom, ASBDamage, ASBInflictDebuff, \
     ASBOrbChange, ASBRecover, \
     ASBSuperSkill, ASBehavior, behavior_to_json
 from pad.raw.skills.skill_common import Board, binary_con, merge_defaults, mult
@@ -21,7 +21,7 @@ class ActiveSkill:
     compound_skill_type = 0
 
     def __init__(self, ms: MonsterSkill,
-                 behavior: Union[List[ASBehavior], ASBehavior],  # = None,
+                 behavior: Union[List[ASBehavior], ASBehavior],
                  *,
                  transform_ids: Mapping[int, Rational] = None,
                  board: Board = None,
@@ -177,7 +177,8 @@ class ASDamageReduction(ActiveSkill):
         data = merge_defaults(ms.data, [1, 0])
         self.duration = data[0]
         self.shield = mult(data[1])
-        super().__init__(ms, ASBBuff('shield', self.duration, {'mult': self.shield}))
+        super().__init__(ms, ASBBuff('shield', self.duration,
+                                     {'strength': self.shield, 'attribute': []}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.shield_convert(self)
@@ -285,7 +286,7 @@ class ASDefenseBreak(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.shield = mult(data[1])
-        super().__init__(ms, ASBInflictDebuff('guard_break', {'mult': self.shield}))
+        super().__init__(ms, ASBInflictDebuff('guard_break', {'percent': self.shield}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.defense_reduction_convert(self)
@@ -312,8 +313,8 @@ class ASDamageVoid(ActiveSkill):
         self.duration = data[0]
         self.attribute = data[1]
         self.shield = mult(data[2])
-        super().__init__(ms, ASBBuff('attribute_shield', self.duration,
-                                     {'mult': self.shield, 'attribute': self.attribute}))
+        super().__init__(ms, ASBBuff('shield', self.duration,
+                                     {'strength': self.shield, 'attribute': [self.attribute]}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.elemental_shield_convert(self)
@@ -378,8 +379,11 @@ class ASAttrBurst(ActiveSkill):
         self.multiplier = mult(data[2])
         self.atk = self.multiplier
         super().__init__(ms, ASBBuff('stat_mult', self.duration,
-                                     {'stats': [1.0, self.multiplier, self.multiplier if self.rcv_boost else 1.0],
-                                      'target': {'attributes': self.attributes}}))
+                                     {'stats': (1.0, self.multiplier, self.multiplier if self.rcv_boost else 1.0),
+                                      'target': {
+                                          'attributes': self.attributes,
+                                          'types': [],
+                                          'target_bitmap': 0}}))
 
     def text(self, converter: ASTextConverter) -> str:
         # TODO: uhhh maybe this can be cleaned up
@@ -588,8 +592,11 @@ class ASTypeBurst(ActiveSkill):
         self.types = [data[1]]
         self.multiplier = mult(data[2])
         super().__init__(ms, ASBBuff('stat_mult', self.duration,
-                                     {'stats': [1.0, self.multiplier, 1.0],
-                                      'target': {'types': self.types}}))
+                                     {'stats': (1.0, self.multiplier, 1.0),
+                                      'target': {
+                                          'attributes': [],
+                                          'types': self.types,
+                                          'target_bitmap': 0}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.type_attack_boost_convert(self)
@@ -610,8 +617,11 @@ class ASAttrBurstMultiPart(ActiveSkill):
             self.attributes.remove(5)
 
         super().__init__(ms, ASBBuff('stat_mult', self.duration,
-                                     {'stats': [1.0, self.multiplier, self.multiplier if self.rcv_boost else 1.0],
-                                      'target': {'attrs': self.attributes}}))
+                                     {'stats': (1.0, self.multiplier, self.multiplier if self.rcv_boost else 1.0),
+                                      'target': {
+                                          'attributes': self.attributes,
+                                          'types': [],
+                                          'target_bitmap': 0}}))
 
     def text(self, converter: ASTextConverter) -> str:
         if self.duration == 0:
@@ -640,8 +650,11 @@ class ASTypeBurstNew(ActiveSkill):
         self.types = data[1:3]
         self.multiplier = mult(data[3])
         super().__init__(ms, ASBBuff('stat_mult', self.duration,
-                                     {'stats': [1.0, self.multiplier, 1.0],
-                                      'target': {'types': self.types}}))
+                                     {'stats': (1.0, self.multiplier, 1.0),
+                                      'target': {
+                                          'attributes': [],
+                                          'types': self.types,
+                                          'target_bitmap': 0}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.type_attack_boost_convert(self)
@@ -666,8 +679,8 @@ class ASLowHpConditionalAttrDamageBoost(ActiveSkill):
         self.attribute = data[1]
         self.high_multiplier = mult(data[2])
         self.low_multiplier = mult(data[3])
-        super().__init__(ms, ASBDamage('multiplier', self.high_multiplier, min_damage=self.low_multiplier,
-                                       attribute=self.attribute, grudge=True))
+        super().__init__(ms, ASBDamage('grudge_multiplier', self.high_multiplier, min_damage=self.low_multiplier,
+                                       attribute=self.attribute))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.grudge_strike_convert(self)
@@ -858,9 +871,12 @@ class ASAttributeChange(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.attribute = data[1]
-        super().__init__(ms, ASBBuff('attr_change', self.duration,
+        super().__init__(ms, ASBBuff('attribute_change', self.duration,
                                      {'attribute': self.attribute,
-                                      'target': {'self': True}}))
+                                      'target': {
+                                          'attributes': [],
+                                          'types': [],
+                                          'target_bitmap': 1}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.attribute_change_convert(self)
@@ -890,7 +906,7 @@ class ASAttrNukeOfAttrTwoAtk(ActiveSkill):
         self.multiplier = mult(data[1])
         self.mass_attack = data[2] == 0
         self.attack_attribute = data[3]
-        super().__init__(ms, ASBDamage('team_mult', self.multiplier, attribute=self.attack_attribute,
+        super().__init__(ms, ASBDamage('team_multiplier', self.multiplier, attribute=self.attack_attribute,
                                        team_mult_attr=self.team_attributes, mass_attack=self.mass_attack))
 
     def text(self, converter: ASTextConverter) -> str:
@@ -942,7 +958,7 @@ class ASEnemyAttrChange(ActiveSkill):
         data = merge_defaults(ms.data, [0])
         self.turns = 9999
         self.attribute = data[0]
-        super().__init__(ms, ASBBuff('change_enemy_attribute', self.turns,
+        super().__init__(ms, ASBBuff('enemy_attribute_change', self.turns,
                                      {'attribute': self.attribute}))
 
     def text(self, converter: ASTextConverter) -> str:
@@ -978,10 +994,11 @@ class ASAwokenSkillBurst(ActiveSkill):
         elif self.toggle == 3:
             self.amount_per = mult(data[5])
         # TODO: Add other toggles
-        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
-                                     {'stats': [1.0, self.amount_per, 1.0],
-                                      'attributes': [], 'types': [],
-                                      'awakenings': self.awakenings}))
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': (1.0, self.amount_per, 1.0),
+                                      'per': {'attributes': [],
+                                              'types': [],
+                                              'awakenings': self.awakenings}}))
 
     def text(self, converter: ASTextConverter) -> str:
         if self.toggle == 1:
@@ -1011,10 +1028,11 @@ class ASAwokenSkillBurst2(ActiveSkill):
         elif self.toggle == 3:
             self.amount_per = mult(data[7])
         # TODO: Add other toggles
-        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
-                                     {'stats': [1.0, self.amount_per, 1.0],
-                                      'attributes': [], 'types': [],
-                                      'awakenings': self.awakenings}))
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': (1.0, self.amount_per, 1.0),
+                                      'per': {'attributes': [],
+                                              'types': [],
+                                              'awakenings': self.awakenings}}))
 
     def text(self, converter: ASTextConverter) -> str:
         if self.toggle == 1:
@@ -1034,7 +1052,8 @@ class ASAddAdditionalCombos(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.combos = data[1]
-        super().__init__(ms, ASBBuff('increase_combo', self.duration, {'additional_combos': self.combos}))
+        super().__init__(ms, ASBBuff('increase_combo', self.duration,
+                                     {'additional_combos': self.combos}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.extra_combo_convert(self)
@@ -1070,8 +1089,10 @@ class ASVoidDamageAbsorption(ActiveSkill):
         self.duration = data[0]
         self.attribute_absorb = bool(data[1])
         self.damage_absorb = bool(data[3])
-        super().__init__(ms, ASBBuff('void_absorb', self.duration,
-                                     {'type': self.attribute_absorb << 1 + self.damage_absorb}))
+        super().__init__(ms, ASBBuff('void', self.duration,
+                                     {'damage_void': False,
+                                      'attribute_absorb': self.attribute_absorb,
+                                      'damage_absorb': self.damage_absorb}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.absorb_mechanic_void_convert(self)
@@ -1105,7 +1126,7 @@ class ASAutoHealConvert(ActiveSkill):
         self.card_bind = data[3]
         self.awoken_bind = data[4]
         super().__init__(ms, [ASBBuff('autoheal', self.duration,
-                                     {'percentage': self.percentage_max_hp}),
+                                      {'percentage': self.percentage_max_hp}),
                               ASBRecover('n/a', 0,
                                          skill_bind=self.card_bind, awoken_bind=self.awoken_bind)])
 
@@ -1120,8 +1141,10 @@ class ASIncreasedEnhanceOrbSkyfall(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.percentage_increase = mult(data[1])
-        super().__init__(ms, ASBBuff('enhanced_skyfall', self.duration,
-                                     {'chance': self.percentage_increase}))
+        super().__init__(ms, ASBBuff('increase_skyfall', self.duration,
+                                     {'percentage': self.percentage_increase,
+                                      'attributes': [],
+                                      'type': 'enhanced'}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_skyfall_convert(self)
@@ -1146,7 +1169,7 @@ class ASMultiLaserConvert(ActiveSkill):
         data = merge_defaults(ms.data, [0])
         self.damage = data[0]
         self.mass_attack = False
-        super().__init__(ms, ASBDamage('fixed', self.damage,
+        super().__init__(ms, ASBDamage('flat', self.damage,
                                        mass_attack=False, laser=True))
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1169,7 +1192,10 @@ class ASReduceVoidDamage(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.duration = data[0]
-        super().__init__(ms, ASBBuff('bypass_void', self.duration))
+        super().__init__(ms, ASBBuff('void', self.duration,
+                                     {'damage_void': True,
+                                      'attribute_absorb': False,
+                                      'damage_absorb': False}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.void_mechanic_convert(self)
@@ -1218,8 +1244,10 @@ class ASSkyfallLock(ActiveSkill):
         data = merge_defaults(ms.data, [0, 1])
         self.orbs = binary_con(data[0])
         self.duration = data[1]
-        super().__init__(ms, ASBBuff('locked_skyfall', self.duration,
-                                     {'attributes': self.orbs}))
+        super().__init__(ms, ASBBuff('increase_skyfall', self.duration,
+                                     {'percentage': 1.0,
+                                      'attributes': self.orbs,
+                                      'type': 'locked'}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.skyfall_lock(self)
@@ -1308,7 +1336,7 @@ class ASTimedEnemyAttrChange(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.turns = data[0]
         self.attribute = data[1]
-        super().__init__(ms, ASBBuff('change_enemy_attribute', self.turns,
+        super().__init__(ms, ASBBuff('enemy_attribute_change', self.turns,
                                      {'attribute': self.attribute}))
 
     def text(self, converter: ASTextConverter) -> str:
@@ -1337,7 +1365,10 @@ class ASNailOrbSkyfall(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
         self.chance = mult(data[1])
-        super().__init__(ms, ASBBuff('nail_skyfall', self.duration, {'chance': self.chance}))
+        super().__init__(ms, ASBBuff('increase_skyfall', self.duration,
+                                     {'percentage': self.chance,
+                                      'attributes': [],
+                                      'type': 'nail'}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.nail_orb_skyfall(self)
@@ -1365,11 +1396,11 @@ class ASTeamCompositionBuff(ActiveSkill):
         self.types = binary_con(data[2])
         self.atk_boost = mult(data[3])
         self.rcv_boost = mult(data[4])
-        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
-                                     {'stats': [1.0, self.atk_boost, self.rcv_boost],
-                                      'attributes': self.attributes,
-                                      'types': self.types,
-                                      'awakenings': []}))
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': (1.0, self.atk_boost, self.rcv_boost),
+                                      'per': {'attributes': self.attributes,
+                                              'types': self.types,
+                                              'awakenings': []}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.composition_buff(self)
@@ -1384,7 +1415,11 @@ class ASTeamTargetStatBuff(ActiveSkill):
         self.target = data[1]
         self.atk_mult = mult(data[2])
         super().__init__(ms, ASBBuff('stat_mult', self.duration,
-                                     {'target': {'target_bitmap': self.target}}))
+                                     {'stats': (1.0, self.atk_mult, 1.0),
+                                      'target': {
+                                          'attributes': [],
+                                          'types': [],
+                                          'target_bitmap': self.target}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.team_target_stat_change(self)
@@ -1401,10 +1436,11 @@ class ASAwokenSkillStatBoost(ActiveSkill):
         self.unknown_5 = data[5]
         self.atk_per = mult(data[6])
         self.rcv_per = mult(data[7])
-        super().__init__(ms, ASBBuff('stat_mult_per', self.duration,
-                                     {'stats': [1.0, self.atk_per, self.rcv_per],
-                                      'attributes': [], 'types': [],
-                                      'awakenings': self.awakenings}))
+        super().__init__(ms, ASBBuff('stat_mult', self.duration,
+                                     {'stats': (1.0, self.atk_per, self.rcv_per),
+                                      'per': {'attributes': [],
+                                              'types': [],
+                                              'awakenings': self.awakenings}}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.awakening_stat_boost_convert(self)
@@ -1464,7 +1500,7 @@ class ASHPBoostMonster(ActiveSkill):
         self.duration = data[0]
         self.hp = mult(data[1])
         super().__init__(ms, ASBBuff('stat_mult', self.duration,
-                                     {'stats': [self.hp, 1.0, 1.0]}))
+                                     {'stats': (self.hp, 1.0, 1.0)}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.hp_boost(self)

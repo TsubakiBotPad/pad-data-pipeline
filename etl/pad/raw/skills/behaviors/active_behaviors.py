@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Literal, NamedTuple, Optional, TYPE_CHECKING, Union
+
+from pad.raw.skills.behaviors.buffs import Buff, Debuff
 
 if TYPE_CHECKING:
     from pad.raw.skills.active_skill_info import ActiveSkill
@@ -20,7 +22,9 @@ class ASBBoardChange(NamedTuple):
 
 
 class ASBDamage(NamedTuple):
-    unit: str
+    unit: Literal['flat',
+                  'multiplier', 'team_multiplier', 'hp_multiplier', 'grudge_multiplier',
+                  'gravity', 'true_gravity']
     amount: Union[int, float]
     min_damage: Optional[Union[int, float]] = None
     attribute: Optional[int] = None
@@ -28,7 +32,6 @@ class ASBDamage(NamedTuple):
 
     mass_attack: bool = True
     laser: bool = False
-    grudge: bool = False
     team_mult_attr: Optional[List[int]] = None
 
     target_attribute: Optional[int] = None
@@ -48,16 +51,19 @@ class ASBRecover(NamedTuple):
 
 
 class ASBBuff(NamedTuple):
-    buff_type: str
+    buff_type: Literal['shield', 'stat_mult', 'counterattack', 'mass_attack', 'skyfall_chance',
+                       'orb_movement', 'attribute_change', 'enemy_attribute_change', 'increase_combo',
+                       'void', 'increase_skyfall', 'disable_skills', 'unmachable', 'autoheal',
+                       'no_skyfall', 'spinner']
     turns: int
-    details: Dict[str, Any] = {}
+    details: Buff = {}
 
     behavior_type = 'buff'
 
 
 class ASBInflictDebuff(NamedTuple):
-    buff_type: str
-    details: Dict[str, Any] = {}
+    debuff_type: Literal['delay', 'guard_break', 'poison']
+    details: Debuff = {}
 
     behavior_type = 'inflict_debuff'
 
@@ -80,7 +86,7 @@ class ASBSuperSkill:
     behavior_type = 'multi_part'
 
 
-def ASBCustom(_behavior_type: str, fields=None, **kwargs) -> NamedTuple:
+def ASBCustom(_behavior_type: str, fields=None, **kwargs):
     if fields is None:
         fields = {}
     fields.update(kwargs)

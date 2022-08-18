@@ -4,7 +4,7 @@ from typing import List
 from pad.db.db_util import DbWrapper
 from pad.db.sql_item import ExistsStrategy
 from pad.raw.skills import skill_text_typing
-from pad.raw.skills.active_behaviors import behavior_to_json
+from pad.raw.skills.behaviors.active_behaviors import behavior_to_json
 from pad.raw.skills.active_skill_info import ActiveSkill as ASSkill
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
