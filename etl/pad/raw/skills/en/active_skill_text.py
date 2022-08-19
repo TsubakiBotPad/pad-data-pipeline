@@ -582,8 +582,8 @@ class EnASTextConverter(EnBaseTextConverter):
     def ally_active_disable(self, turns: int):
         return 'Disable team active skills for {:s}'.format(noun_count('turn', turns))
 
-    def ally_active_delay(self, turns: int):
-        return 'Self-delay active skills by {:s}'.format(noun_count('turn', turns))
+    def ally_active_delay(self, min_turns: int, max_turns: int):
+        return 'Self-delay active skills by {:s}'.format(noun_count('turn', min_turns, max_turns))
 
     def create_unmatchable(self, act):
         skill_text = self.fmt_duration(act.duration)

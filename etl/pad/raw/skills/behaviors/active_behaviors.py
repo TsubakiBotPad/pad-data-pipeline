@@ -86,7 +86,10 @@ class ASBSuperSkill:
     behavior_type = 'multi_part'
 
 
-def ASBCustom(_behavior_type: str, fields=None, **kwargs):
+def ASBCustom(_behavior_type: Literal['free_movement', 'orb_refresh', 'enhance', 'suicide',
+                                      'leader_swap', 'skill_charge', 'lock', 'board_unlock',
+                                      'show_path', 'transform', 'conditional', 'inflict_es'],
+              fields=None, **kwargs):
     if fields is None:
         fields = {}
     fields.update(kwargs)

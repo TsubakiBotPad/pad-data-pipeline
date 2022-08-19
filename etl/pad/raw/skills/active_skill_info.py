@@ -202,7 +202,7 @@ class ASFreeOrbMovement(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.duration = data[0]
-        super().__init__(ms, ASBCustom('change_the_world'))
+        super().__init__(ms, ASBCustom('free_movement', {'duration': self.duration}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.ctw_convert(self)
@@ -411,7 +411,7 @@ class ASOrbEnhance(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = ms.data
         self.orbs = [data[0]]
-        super().__init__(ms, ASBCustom('enhance', {'attrs': self.orbs}))
+        super().__init__(ms, ASBCustom('enhance', {'attributes': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_convert(self)
@@ -635,7 +635,7 @@ class ASBicolorOrbEnhance(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.orbs = data[0:2]
-        super().__init__(ms, ASBCustom('enhance', {'attrs': self.orbs}))
+        super().__init__(ms, ASBCustom('enhance', {'attributes': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_convert(self)
@@ -664,7 +664,7 @@ class ASLeaderSwap(ActiveSkill):
     skill_type = 93
 
     def __init__(self, ms: MonsterSkill):
-        super().__init__(ms, ASBCustom('leader_swap'))
+        super().__init__(ms, ASBCustom('leader_swap', {'position': -1}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.leader_swap(self)
@@ -755,10 +755,6 @@ class ASRandomSkill(ASCompound):
             board &= part.board
         return board
 
-    @property
-    def behavior(self):
-        return ASBCustom('random_skill', skills=[behavior_to_json(ss.behavior) for ss in self.subskills])
-
 
 class ASIncreasedSkyfallChance(ActiveSkill):
     skill_type = 126
@@ -843,7 +839,7 @@ class ASOrbEnhanceNew(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0])
         self.orbs = binary_con(data[0])
-        super().__init__(ms, ASBCustom('enhance', {'attrs': self.orbs}))
+        super().__init__(ms, ASBCustom('enhance', {'attributes': self.orbs}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.enhance_convert(self)
@@ -945,7 +941,7 @@ class ASOrbLock(ActiveSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.orbs = binary_con(data[0])
         self.count = data[1]  # This can be 42/99 (both mean 'all') or a fixed number
-        super().__init__(ms, ASBCustom('lock', {'attributes': self.orbs}))
+        super().__init__(ms, ASBCustom('lock', {'attributes': self.orbs, 'count': self.count}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.lock_convert(self)
@@ -1322,11 +1318,12 @@ class ASDelayAllySkills(ActiveSkill):
 
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0])
-        self.turns = data[0]
-        super().__init__(ms, ASBCustom('self_delay', {'turns': self.turns}))
+        self.min_turns = data[0]
+        self.max_turns = data[0] or self.min_turns
+        super().__init__(ms, ASBCustom('skill_charge', {'turns': [-self.max_turns, -self.min_turns]}))
 
     def text(self, converter) -> str:
-        return converter.ally_active_delay(self.turns)
+        return converter.ally_active_delay(self.min_turns, self.max_turns)
 
 
 class ASTimedEnemyAttrChange(ActiveSkill):
@@ -1380,7 +1377,7 @@ class ASLeaderSwapRightSub(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [])
         self.sub_slot = 4
-        super().__init__(ms, ASBCustom('lead_swap', {'position': 4}))
+        super().__init__(ms, ASBCustom('leader_swap', {'position': 4}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.lead_swap_sub(self)
@@ -1514,7 +1511,10 @@ class ASInflictES(ActiveSkill):
         self.selector_type = data[0]
         self.players = binary_con(data[1])
         self.es_ref = data[2]
-        super().__init__(ms, ASBCustom('inflict_es', {'data': data}))
+        super().__init__(ms, ASBCustom('inflict_es',
+                                       {'selector': self.selector_type,
+                                        'players': self.players,
+                                        'esid': self.es_ref}))
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.inflict_es(self)
