@@ -547,8 +547,11 @@ class JaASTextConverter(JaBaseTextConverter):
     def ally_active_disable(self, turns: int):
         return '{}ターンの間、スキル使用不可。'.format(turns)
 
-    def ally_active_delay(self, turns: int):
-        return '味方スキルが{}ターン減少。'.format(turns)
+    def ally_active_delay(self, min_turns: int, max_turns: int):
+        if min_turns != max_turns:
+            return '味方スキルが{}~{}ターン減少。'.format(min_turns, max_turns)
+        else:
+            return '味方スキルが{}ターン減少。'.format(min_turns)
 
     def create_unmatchable(self, act):
         skill_text = self.fmt_duration(act.duration) + self.concat_list_and(self.ATTRIBUTES[i] for i in act.orbs)
