@@ -8,7 +8,7 @@ from typing import Any, Iterable, List, Mapping, Optional, Union
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.behaviors.active_behaviors import ASBBoardChange, ASBBuff, ASBCustom, ASBDamage, ASBInflictDebuff, \
     ASBOrbChange, ASBRecover, \
-    ASBSuperSkill, ASBehavior, behavior_to_json
+    ASBSuperSkill, ASBehavior
 from pad.raw.skills.skill_common import Board, binary_con, merge_defaults, mult
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -1176,7 +1176,10 @@ class ASShowComboPath(ActiveSkill):
     skill_type = 189
 
     def __init__(self, ms: MonsterSkill):
-        super().__init__(ms, ASBCustom('show_path'))
+        super().__init__(ms, [ASBCustom('board_unlock'),
+                              ASBOrbChange([0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                           [0, 1, 2, 3]),
+                              ASBCustom('show_path')])
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.unlock_board_path_toragon(self)
