@@ -706,3 +706,25 @@ class EnASTextConverter(EnBaseTextConverter):
             if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '; '
         return skill_text
+
+    def cloud(self, act):
+        if act.cloud_width == 6 and act.cloud_height == 1:
+            shape = 'row'
+        elif act.cloud_width == 1 and act.cloud_height == 5:
+            shape = 'column'
+        else:
+            shape = '{:d}×{:d}'.format(act.cloud_width, act.cloud_height)
+            shape += ' square' if act.cloud_width == act.cloud_height else ' rectangle'
+        pos = []
+        if act.origin_x is not None and shape != 'row':
+            pos.append('{:s} row'.format(ordinal(act.origin_x)))
+        if act.origin_y is not None and shape != 'column':
+            pos.append('{:s} column'.format(ordinal(act.origin_y)))
+        if len(pos) == 0:
+            pos.append('a random location')
+        return 'A {:s} of clouds appears for {:s} at {:s}' \
+            .format(shape, noun_count('turn', act.duration), ', '.join(pos))
+
+    def damage_cap_boost(self, act):
+        return self.fmt_duration(act.duration) \
+            + "this monster damage cap becomes {}".format(act.damage_cap * 1e8)
