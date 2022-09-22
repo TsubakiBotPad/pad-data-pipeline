@@ -202,7 +202,7 @@ class EnLSTextConverter(EnBaseTextConverter):
             if not len(ls.match_attributes) != min_match:
                 skill_text += '+'
             skill_text += ' {} combos'.format(self.ATTRIBUTES[ls.match_attributes[0]])
-            if len(ls.match_attributes) != min_match:
+            if len(ls.match_attributes) != min_match and ls.atk_step:
                 skill_text += ', up to {}x at {} {} combos'.format(fmt_mult(ls.atk), len(ls.match_attributes),
                                                                    self.ATTRIBUTES[ls.match_attributes[0]])
         else:
@@ -212,7 +212,7 @@ class EnLSTextConverter(EnBaseTextConverter):
                     skill_text += ' or {}'.format(self.attributes_to_str(ls.match_attributes[1:]))
                 else:
                     skill_text += ' (or {})'.format(self.attributes_to_str(ls.match_attributes[1:]))
-            if ls.atk > min_atk:
+            if ls.atk > min_atk and ls.atk_step:
                 skill_text += ' up to {}x when matching {}'.format(fmt_mult(ls.atk),
                                                                    self.attributes_to_str(ls.match_attributes))
         return skill_text
