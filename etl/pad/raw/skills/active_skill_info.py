@@ -1173,15 +1173,15 @@ class ASSpawnSpinner(ActiveSkill):
     skill_type = 207
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [1, 100, 0, 0, 0, 0, 0, 1])
-        # Only one example of this so far, so these are all just guesses
+        data = merge_defaults(ms.data, [1, 100, 0, 0, 0, 0, 0, 0])
         self.turns = data[0]
         self.speed = mult(data[1])
-        self.count = data[7]
+        self.pos_map = [binary_con(row) for row in data[2:7]]
+        self.random_count = data[7]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
-        return converter.spawn_spinner(self.turns, self.speed, self.count)
+        return converter.spawn_spinner(self)
 
 
 class ASRandomLocationDoubleOrbSpawn(ActiveSkill):
@@ -1392,6 +1392,33 @@ class ASHPBoostMonster(ActiveSkill):
     def text(self, converter: ASTextConverter) -> str:
         return converter.hp_boost(self)
 
+class ASCreateCloud(ActiveSkill):
+    skill_type = 238
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, None, None])
+        self.duration = data[0]
+        self.cloud_width = data[1]
+        self.cloud_height = data[2]
+        self.origin_y = data[3]
+        self.origin_x = data[4]
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.cloud(self)
+
+class ASDamageCapBoost(ActiveSkill):
+    skill_type = 241
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.duration = data[0]
+        self.damage_cap = data[1]
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.damage_cap_boost(self)
+
 
 class ASInflictES(ActiveSkill):
     skill_type = 1000
@@ -1532,4 +1559,6 @@ ALL_ACTIVE_SKILLS = [
     ASInflictES,
     ASRandomChangeMonster,
     ASHPBoostMonster,
+    ASCreateCloud,
+    ASDamageCapBoost,
 ]

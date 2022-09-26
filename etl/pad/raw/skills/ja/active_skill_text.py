@@ -539,9 +539,9 @@ class JaASTextConverter(JaBaseTextConverter):
         attrs = self.attributes_to_str(act.orbs) if act.orbs else ''
         return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, attrs)
 
-    def spawn_spinner(self, turns: int, speed: float, count: int):
+    def spawn_spinner(self, act):
         return '{}ターンの間、ランダムで{}箇所のマスがが{}秒毎に変化する' \
-            .format(turns, count, speed)
+            .format(act.turns, act.random_count, act.speed)
 
     def ally_active_disable(self, turns: int):
         return '{}ターンの間、スキル使用不可。'.format(turns)
@@ -633,3 +633,24 @@ class JaASTextConverter(JaBaseTextConverter):
             if c != len(skills) - 1 and not isinstance(skillpart.act, ASConditional):
                 skill_text += '。'
         return skill_text
+
+    def cloud(self, act):
+        if act.cloud_width == 6 and act.cloud_height == 1:
+            shape = '横1列'
+        elif act.cloud_width == 1 and act.cloud_height == 5:
+            shape = '縦1列'
+        elif act.cloud_width == act.cloud_height:
+            shape = '{}×{}マスの正方形'.format(act.cloud_width, act.cloud_height)
+        else:
+            shape = '{}×{}マスの長方形'.format(act.cloud_width, act.cloud_height)
+        pos = []
+        if act.origin_x is not None and shape != '横1列':
+            pos.append('左から{}列目'.format(act.origin_x))
+        if act.origin_y is not None and shape != '縦1列':
+            pos.append('上から{}列目'.format(act.origin_y))
+        if len(pos) == 0:
+            pos.append('ランダムで')
+        return '{}ターンの間、{}の{}を雲で隠す'.format(act.duration, '、'.join(pos), shape)
+
+    def damage_cap_boost(self, act):
+        return "{}ターンの間、自分のダメージ上限値が{}億になる".format(act.duration, act.damage_cap)
