@@ -20,8 +20,8 @@ class LeaderSkill:
                  shield: float = 0,
                  extra_combos: int = 0,
                  bonus_damage: int = 0,
-                 mult_bonus_damage: int = 0,
-                 extra_time: int = 0):
+                 mult_bonus_damage: float = 0.0,
+                 extra_time: float = 0.0):
         if skill_type != ms.skill_type:
             raise ValueError('Expected {} but got {}'.format(skill_type, ms.skill_type))
         self.skill_id = ms.skill_id

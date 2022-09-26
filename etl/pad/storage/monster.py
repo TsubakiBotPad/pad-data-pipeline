@@ -29,9 +29,10 @@ class Monster(ServerDependentSqlItem):
 
         awakenings = format_int_list(cur_card.awakenings)
         super_awakenings = format_int_list(cur_card.super_awakenings)
-        orb_skin_id = cur_card.orb_skin_id or None
         voice_id_jp = cur_card.voice_id or None if o.jp_card.server == Server.jp else None
         voice_id_na = cur_card.voice_id or None if o.na_card.server == Server.na else None
+        orb_skin_id = cur_card.orb_skin_id or None
+        bgm_id = cur_card.bgm_id or None
         linked_monster_id = o.cur_card.linked_monster_id or o.jp_card.linked_monster_id or o.na_card.linked_monster_id
         latent_slots = 8 if cur_card.latent_slot_unlock_flag else 6
 
@@ -111,9 +112,10 @@ class Monster(ServerDependentSqlItem):
             collab_id=cur_card.collab_id,
             has_animation=o.has_animation,
             has_hqimage=o.has_hqimage,
-            orb_skin_id=orb_skin_id,
             voice_id_jp=voice_id_jp,
             voice_id_na=voice_id_na,
+            orb_skin_id=orb_skin_id,
+            bgm_id=bgm_id,
             linked_monster_id=linked_monster_id,
             latent_slots=latent_slots)
 
@@ -167,9 +169,10 @@ class Monster(ServerDependentSqlItem):
                  collab_id: int = None,
                  has_animation: bool = None,
                  has_hqimage: bool = None,
-                 orb_skin_id: int = None,
                  voice_id_jp: int = None,
                  voice_id_na: int = None,
+                 orb_skin_id: int = None,
+                 bgm_id: int = None,
                  linked_monster_id: int = None,
                  latent_slots: int = None,
                  tstamp: int = None):
@@ -222,9 +225,10 @@ class Monster(ServerDependentSqlItem):
         self.collab_id = collab_id
         self.has_animation = has_animation
         self.has_hqimage = has_hqimage
-        self.orb_skin_id = orb_skin_id
         self.voice_id_jp = voice_id_jp
         self.voice_id_na = voice_id_na
+        self.orb_skin_id = orb_skin_id
+        self.bgm_id = bgm_id
         self.linked_monster_id = linked_monster_id
         self.latent_slots = latent_slots
         self.tstamp = tstamp
