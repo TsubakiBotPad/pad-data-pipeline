@@ -193,11 +193,10 @@ class Card(pad_util.Printable):
         self.search_strings: List[str] = raw[67].split('|')
         self.limit_mult: int = raw[68]
 
-        # Number of the voice file, 1-indexed, 0 if no voice
+        # 1-indexed media ids
         self.voice_id: int = raw[69]
-
-        # Number of the orb skin unlocked, 1-indexed, 0 if no orb skin
-        self.orb_skin_id: int = raw[70]
+        self.orb_skin_id: int = raw[70] if raw[70] < 10_000 else 0
+        self.bgm_id: int = raw[70] - 10_000 if 10_000 <= raw[70] else 0
 
         # Seems like this could have multiple values.
         self.tags: str = raw[71]
