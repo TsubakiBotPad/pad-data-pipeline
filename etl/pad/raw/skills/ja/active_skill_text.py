@@ -435,19 +435,18 @@ class JaASTextConverter(JaBaseTextConverter):
             fmt_mult(act.multiplier),
             self.ATTRIBUTES[act.attribute])
 
-    def fixed_pos_convert(self, act):
+    def get_shape(self, act) -> List[str]:
         board = deepcopy(act.pos_map)
-        orb_count = 0
+        orb_count = sum(map(len, board))
 
         output = []
-        for x in board:
-            orb_count += len(x)
+        shapes = []
 
-        skill_text = ''
         shape = "<UNDEFINED>"
         if orb_count == 4:
             if len(board[0]) == len(board[4]) == 2:
-                skill_text += '盤面4隅に{}ドロップを1個ずつ生成。'.format(self.ATTRIBUTES[act.attribute])
+                shapes.append('盤面4隅に')
+
         if not (orb_count % 5):
             for x in range(1, len(board) - 1):  # Check for cross
                 if len(board[x]) == 3 and len(board[x - 1]) == len(board[x + 1]) == 1:  # Check for cross
@@ -478,7 +477,8 @@ class JaASTextConverter(JaBaseTextConverter):
                     output.append(result)
 
         if not (orb_count % 9):
-            for x in range(1, len(board) - 1):  # Check for square
+            # Check for square
+            for x in range(1, len(board) - 1):
                 if len(board[x]) == len(board[x - 1]) == len(board[x + 1]) == 3:
                     row_pos = x
                     col_pos = board[x][1]
@@ -488,20 +488,49 @@ class JaASTextConverter(JaBaseTextConverter):
                     del board[x][1]
         if orb_count == 18:
             if len(board[0]) == len(board[4]) == len(board[1]) + len(board[2]) + len(board[3]) == 6:
-                skill_text += '盤面外周を{}ドロップに変化。'.format(self.ATTRIBUTES[act.attribute])
+                shapes.append('盤面外周を')
+
+        if board == [[3, 4, 5], [3, 5], [5], [5], []]:
+            shapes.append('7の形に')
+
+        if board == [[0, 1, 2], [0, 1, 2], [], [], []]:
+            shapes.append('Create a 3x2 rectangle in the upper left corner')
+
+        if board == [[], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4], []]:
+            shapes.append('盤面中央を')
+
+        if board == [[4, 5], [3, 4], [2, 3], [1, 2], [0, 1]]:
+            shapes.append('盤面上に斜めに')
 
         if board == [[2, 3, 4], [1, 4, 5], [5], [1, 4, 5], [2, 3, 4]]:
-            skill_text += '三日月状に{}ドロップを生成。'.format(self.ATTRIBUTES[act.attribute])
+            shapes.append('三日月状に')
+ 
+        if board == [[0, 1, 2, 3, 4], [3], [2], [1], [0, 1, 2, 3, 4]]:
+            shapes.append('盤面上にZ字型に')
 
-        if output:
-            for entry in output:
-                if skill_text:
-                    skill_text += '。'
-                skill_text += '{}と{}の中心に{}の{}ドロップを1つ生成'.format(
-                    ROW_INDEX[entry[1]],
-                    COLUMN_INDEX[entry[2]],
-                    shape,
-                    self.ATTRIBUTES[act.attribute])
+        for shape, row_pos, col_pos in output:
+            shapes.append('{}と{}の中心に{}の'.format(
+                ROW_INDEX[row_pos],
+                COLUMN_INDEX[col_pos],
+                shape,
+            ))
+
+        if not shapes and orb_count:
+            for idx, row in enumerate(board):
+                if len(row) == 6:
+                    shapes.append(ROW_INDEX[idx])
+            for idx in range(6):
+                if sum(row.count(idx) for row in board) == 5:
+                    shapes.append(COLUMN_INDEX[idx])
+
+        return shapes
+
+    def fixed_pos_convert(self, act):
+        skill_text = '。'.join(
+            f'{shape}{self.ATTRIBUTES[act.attribute]}ドロップを1つ生成'
+            for shape in
+            self.get_shape(act)
+        )
 
         return skill_text
 
@@ -540,8 +569,14 @@ class JaASTextConverter(JaBaseTextConverter):
         return "{}ターンの間、{}ドロップがロック状態で落ちてくる".format(act.duration, attrs)
 
     def spawn_spinner(self, act):
-        return '{}ターンの間、ランダムで{}箇所のマスがが{}秒毎に変化する' \
-            .format(act.turns, act.random_count, act.speed)
+        if act.random_count:
+            return '{}ターンの間、ランダムで{}箇所のマスがが{}秒毎に変化する' \
+                .format(act.turns, act.random_count, act.speed)
+        else:
+            shapes = self.get_shape(act)
+            position = '、'.join(shapes)
+            return '{}ターンの間、{}にルーレットを生成({}秒毎に変化する)' \
+                .format(act.turns, position, act.speed)
 
     def ally_active_disable(self, turns: int):
         return '{}ターンの間、スキル使用不可。'.format(turns)
