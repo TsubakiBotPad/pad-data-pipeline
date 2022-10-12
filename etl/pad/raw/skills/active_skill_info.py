@@ -1420,6 +1420,19 @@ class ASDamageCapBoost(ActiveSkill):
         return converter.damage_cap_boost(self)
 
 
+class AS7x6Board(ActiveSkill):
+    skill_type = 244
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.duration = data[0]
+        self.board_type = data[1] # This is just guessing
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.changeto7x6board(self)
+
+
 class ASInflictES(ActiveSkill):
     skill_type = 1000
 
@@ -1561,4 +1574,5 @@ ALL_ACTIVE_SKILLS = [
     ASHPBoostMonster,
     ASCreateCloud,
     ASDamageCapBoost,
+    AS7x6Board,
 ]

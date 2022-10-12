@@ -646,10 +646,6 @@ class JaASTextConverter(JaBaseTextConverter):
             return f"バトル{act.lower_limit}以降："
         return f"バトル{act.lower_limit}～{act.upper_limit}："
 
-    def inflict_es(self, act):
-        return ("他のプレイヤーに何かをしてください。これが表示された場合は、フィードバ"
-                "ックを送信して、アラディアが実際にここに何かを書き込むようにしてください")
-
     def multi_part_active(self, act):
         text_to_item = OrderedDict()
         for p in act.parts:
@@ -689,3 +685,21 @@ class JaASTextConverter(JaBaseTextConverter):
 
     def damage_cap_boost(self, act):
         return "{}ターンの間、自分のダメージ上限値が{}億になる".format(act.duration, act.damage_cap)
+
+    def inflict_es(self, act):
+        if act.selector_type == 2:
+            skill_text = self.concat_list_and(f'{p}位' for p in act.players) + 'のプレイヤー'
+        elif act.selector_type == 3:
+            skill_text = "自分より上位のプレイヤーの皆様へ"
+        else:
+            skill_text = "To some other players, "
+        return skill_text + "に意地悪をする"
+
+    def orb_seal(self, act):
+        return '{}ターンの間、左から{}列目のドロップが操作不可' \
+            .format(act.duration, act.column)
+
+    def changeto7x6board(self, act):
+        return  self.fmt_duration(act.duration) + '盤面を7×6マスにする。'
+
+__all__ = ['JpASTextConverter']
