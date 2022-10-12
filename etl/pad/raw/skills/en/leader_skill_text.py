@@ -518,3 +518,9 @@ class EnLSTextConverter(EnBaseTextConverter):
 
     def tag_only_text(self, ls):
         return ''
+
+    def rarity_condition_bonus(self, ls):
+        return 'If all team members have different rarities,' + \
+            self.fmt_stats_type_attr_bonus(ls)
+
+__all__ = ['EnLSTextConverter']

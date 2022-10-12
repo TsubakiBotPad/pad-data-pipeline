@@ -3,6 +3,8 @@ from collections import namedtuple
 from functools import reduce
 from typing import Optional, List
 
+from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
+
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.skill_common import mult, merge_defaults, atk_from_slice, rcv_from_slice, binary_con, multi_floor, \
     list_con_pos, Tag, list_binary_con
@@ -1937,6 +1939,20 @@ class LSSizedBlobBoost(LeaderSkill):
     def text(self, converter) -> str:
         return converter.sized_blob(self)
 
+class LSRarityConditionBonus(LeaderSkill):
+    skill_type = 245
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, 0, 0, 0])
+
+        hp = multi_floor(data[3])
+        atk = multi_floor(data[4])
+        rcv = multi_floor(data[5])
+        super().__init__(245, ms, hp=hp, atk=atk, rcv=rcv)
+
+    def text(self, converter: EnLSTextConverter) -> str:
+        return converter.rarity_condition_bonus(self)
+
 
 def convert(skill_list: List[MonsterSkill]):
     results = {}
@@ -2095,4 +2111,5 @@ ALL_LEADER_SKILLS = [
     LSComboBonusDamage,
     LSTeamCompositionBuff,
     LSSizedBlobBoost,
+    LSRarityConditionBonus,
 ]
