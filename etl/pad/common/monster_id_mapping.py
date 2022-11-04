@@ -76,6 +76,14 @@ def _na_no_to_monster_id(na_id: MonsterNo) -> MonsterId:
     if between(na_id, 4949, 4987):
         return adjust(na_id, 4949, 4949 + 10000)
 
+    # GungHo: Another Story
+    if between(na_id, 6905, 6992):
+        return adjust(na_id, 6905, 6905 + 10000)
+
+    # GungHo: Another Story 2
+    if between(na_id, 9090, 9130):
+        return adjust(na_id, 9090, 9090 + 10000)
+
     return MonsterId(na_id)
 
 
@@ -99,5 +107,13 @@ def _kr_no_to_monster_id(kr_id: MonsterNo) -> MonsterId:
     # Voltron
     if between(kr_id, 2601, 2631):
         return adjust(kr_id, 2601, 2601 + 10000)
+
+    # GungHo: Another Story
+    if between(kr_id, 6905, 6992):
+        return adjust(kr_id, 6905, 6905 + 10000)
+
+    # GungHo: Another Story 2
+    if between(kr_id, 9090, 9130):
+        return adjust(kr_id, 9090, 9090 + 10000)
 
     return MonsterId(kr_id)
