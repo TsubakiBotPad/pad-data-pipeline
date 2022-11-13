@@ -438,7 +438,7 @@ class JaLSTextConverter(JaBaseTextConverter):
 
     def rarity_threshold_boost(self, ls):
         skill_text = f"チームの総レアリティが{ls.limit}以下の場合、"
-        return skill_text + self.fmt_multiplier_text(ls.hp, ls.atk, 1)
+        return skill_text + self.fmt_multiplier_text(ls.hp, ls.atk, ls.rcv)
 
     def sized_blob(self, ls):
         if 0 < len(ls.attributes) < 10:
