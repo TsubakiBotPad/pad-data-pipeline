@@ -1848,7 +1848,7 @@ class LSRarityThresholdBoost(LeaderSkill):
     skill_type = 217
 
     def __init__(self, ms: MonsterSkill):
-        data = merge_defaults(ms.data, [9999, 1, 1, 1])
+        data = merge_defaults(ms.data, [9999, 100, 100, 100])
         self.limit = data[0]
         super().__init__(217, ms, hp=multi_floor(data[1]), atk=multi_floor(data[2]), rcv=multi_floor(data[3]))
 
