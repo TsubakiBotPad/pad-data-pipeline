@@ -1590,4 +1590,5 @@ ALL_ACTIVE_SKILLS = [
     ASCreateCloud,
     ASDamageCapBoost,
     AS7x6Board,
+    ASCreateTape,
 ]
