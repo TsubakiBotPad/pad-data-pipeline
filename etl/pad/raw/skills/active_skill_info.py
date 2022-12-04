@@ -1392,6 +1392,7 @@ class ASHPBoostMonster(ActiveSkill):
     def text(self, converter: ASTextConverter) -> str:
         return converter.hp_boost(self)
 
+
 class ASCreateCloud(ActiveSkill):
     skill_type = 238
 
@@ -1406,6 +1407,20 @@ class ASCreateCloud(ActiveSkill):
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.cloud(self)
+
+
+class ASCreateTape(ActiveSkill):
+    skill_type = 239
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        self.column = data[0]
+        self.duration = data[1]
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.tape(self)
+
 
 class ASDamageCapBoost(ActiveSkill):
     skill_type = 241
