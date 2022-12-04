@@ -4,7 +4,7 @@ from copy import deepcopy
 from fractions import Fraction
 from typing import List
 
-from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
+from pad.raw.skills.active_skill_info import ASConditional, OrbLine, PartWithTextAndCount
 from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, noun_count, \
     ordinal, pluralize
 from pad.raw.skills.skill_common import fmt_mult
@@ -338,19 +338,22 @@ class EnASTextConverter(EnBaseTextConverter):
     def _line_change_convert(self, lines, index):
         skill_text = []
         # TODO: simplify this
-        lines = [(index[line.index], self.attributes_to_str(line.attrs)) for line in lines]
+        lines = [(index[line.index],
+                  self.attributes_to_str(line.attrs) + ' orbs'
+                  if isinstance(line.attrs, list) else line.attrs)
+                 for line in lines]
         skip = 0
         for c, line in enumerate(lines):
             if skip:
                 skip -= 1
                 continue
             elif c == len(lines) - 1 or lines[c + 1][1] != line[1]:
-                skill_text.append('change {} to {} orbs'.format(*line))
+                skill_text.append('change {} to {}'.format(*line))
             else:
                 while c + skip < len(lines) and lines[c + skip][1] == line[1]:
                     skip += 1
                 formatted = ' and '.join(map(lambda l: l[0], lines[c:c + skip]))
-                skill_text.append("change {} to {} orbs".format(formatted, line[1]))
+                skill_text.append("change {} to {}".format(formatted, line[1]))
                 skip -= 1
         return capitalize_first(' and '.join(skill_text))
 
@@ -467,6 +470,8 @@ class EnASTextConverter(EnBaseTextConverter):
             return 'Change the outermost positions of the board to {}'.format(orb)
         elif board == [[4, 5], [3, 4], [2, 3], [1, 2], [0, 1]]:
             return 'Create a 2-orb wide bottom-left to top-right diagonal of {}'.format(orb)
+        elif board == [[], [], [1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]]:
+            return 'Create a 3x4 rectangle of {} in the bottom center of the board'.format(orb)
         elif board == [[0, 1, 2, 3, 4], [3], [2], [1], [0, 1, 2, 3, 4]]:
             return 'Create 13 {} in the shape of a Z.'.format(orb)
 
@@ -524,6 +529,19 @@ class EnASTextConverter(EnBaseTextConverter):
                                                                                     orb,
                                                                                     ROW_INDEX[entry[1]],
                                                                                     COLUMN_INDEX[entry[2]])
+        else:  # Check for row or col
+            cols = []
+            rows = []
+            for col_num in range(6):  # Check for column
+                if all(col_num in row for row in board):
+                    cols.append(OrbLine(col_num, orb))
+            for row_num in range(5):  # Check for column
+                if len(board[row_num]) == 6:
+                    rows.append(OrbLine(row_num, orb))
+            if cols:
+                skill_text = self._line_change_convert(cols, COLUMN_INDEX)
+            elif rows:
+                skill_text = self._line_change_convert(rows, ROW_INDEX)
 
         if not skill_text:
             board_repr = '\n'.join(''.join(['O' if n in row else 'X' for n in range(6)]) for row in board)
