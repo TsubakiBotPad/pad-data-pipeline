@@ -1,10 +1,10 @@
 import logging
-from collections import Counter, OrderedDict
+from collections import OrderedDict
 from copy import deepcopy
 from fractions import Fraction
 from typing import List
 
-from pad.raw.skills.active_skill_info import ASConditional, ASConditionalFloorThreshold, PartWithTextAndCount
+from pad.raw.skills.active_skill_info import ASConditional, PartWithTextAndCount
 from pad.raw.skills.en.skill_common import EnBaseTextConverter, capitalize_first, indef_article, minmax, noun_count, \
     ordinal, pluralize
 from pad.raw.skills.skill_common import fmt_mult
@@ -672,7 +672,7 @@ class EnASTextConverter(EnBaseTextConverter):
                 return "Must (and can only) be used" + skill_text
 
     def changeto7x6board(self, act):
-        return  self.fmt_duration(act.duration) + "the board becomes 7x6"
+        return self.fmt_duration(act.duration) + "the board becomes 7x6"
 
     def inflict_es(self, act):
         if act.selector_type == 2:
@@ -728,6 +728,9 @@ class EnASTextConverter(EnBaseTextConverter):
         return 'A {:s} of clouds appears for {:s} at {:s}' \
             .format(shape, noun_count('turn', act.duration), ', '.join(pos))
 
+    def tape(self, act):
+        return self.fmt_duration(act.duration) + "seal " + COLUMN_INDEX[act.column - 1]
+
     def damage_cap_boost(self, act):
         return self.fmt_duration(act.duration) \
-            + "this monster damage cap becomes {}".format(act.damage_cap * 1e8)
+               + "this monster damage cap becomes {}".format(act.damage_cap * 1e8)

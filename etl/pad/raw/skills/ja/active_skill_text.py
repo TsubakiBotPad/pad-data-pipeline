@@ -699,7 +699,11 @@ class JaASTextConverter(JaBaseTextConverter):
         return '{}ターンの間、左から{}列目のドロップが操作不可' \
             .format(act.duration, act.column)
 
-    def changeto7x6board(self, act):
-        return  self.fmt_duration(act.duration) + '盤面を7×6マスにする。'
+    def tape(self, act):
+        return TRANSLATION_NEEDED
 
-__all__ = ['JpASTextConverter']
+    def changeto7x6board(self, act):
+        return self.fmt_duration(act.duration) + '盤面を7×6マスにする。'
+
+
+__all__ = ['JaASTextConverter']

@@ -474,4 +474,5 @@ class JaLSTextConverter(JaBaseTextConverter):
     def rarity_condition_bonus(self, ls):
         return 'チームのレアリティが全員違う場合、' + self.fmt_stats_type_attr_bonus(ls) + '。'
 
-__all__ = ['JpLSTextConverter']
+
+__all__ = ['JaLSTextConverter']
