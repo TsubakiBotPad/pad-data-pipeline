@@ -6,6 +6,7 @@ import urllib.request
 
 from PIL import Image
 import padtools
+import padtexturetool
 
 
 # The 'padtools' package did not work properly out of the box on linux. I had to go in
@@ -74,7 +75,6 @@ os.makedirs(corrected_dir, exist_ok=True)
 
 python_exec = sys.executable
 cur_file_path = os.path.dirname(os.path.realpath(__file__))
-tool_path = os.path.join(cur_file_path, 'PADTextureTool.py')
 
 IMAGE_SIZE = (640, 388)
 
@@ -111,15 +111,9 @@ for asset in assets:
         print('skipping existing file', extract_file_path)
     else:
         # Disable trimming for the card files; screws up portrait generation
-        no_trim = '-nt' if 'card' in extract_file_name.lower() else ''
-
         print('processing', raw_file_path, 'to', extract_dir, 'with name', extract_file_name)
-        os.system('{python} {tool} {no_trim} -o={output} {input}'.format(
-            python=python_exec,
-            tool=tool_path,
-            no_trim=no_trim,
-            input=raw_file_path,
-            output=extract_dir))
+        padtexturetool.extract(raw_file_path, extract_dir,
+                               trimming='card' not in extract_file_name.lower())
 
     corrected_file_name = extract_file_name.lower().strip('mons_').strip('0')
     corrected_file_path = os.path.join(corrected_dir, corrected_file_name)
