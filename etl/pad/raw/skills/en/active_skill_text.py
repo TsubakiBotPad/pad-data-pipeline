@@ -751,4 +751,4 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def damage_cap_boost(self, act):
         return self.fmt_duration(act.duration) \
-               + "this monster damage cap becomes {}".format(act.damage_cap * 1e8)
+               + f"this monster damage cap becomes {act.damage_cap * 1e8:,.0f}"
