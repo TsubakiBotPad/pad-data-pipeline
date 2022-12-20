@@ -690,7 +690,14 @@ class EnASTextConverter(EnBaseTextConverter):
                 return "Must (and can only) be used" + skill_text
 
     def changeto7x6board(self, act):
-        return self.fmt_duration(act.duration) + "the board becomes 7x6"
+        board_type = "an unknown size"
+        if act.board_type == 1:
+            board_type = "7x6"
+        elif act.board_type == 2:
+            board_type = "5x4"
+        elif act.board_type:
+            board_type = "6x5"
+        return self.fmt_duration(act.duration) + "the board becomes " + board_type
 
     def inflict_es(self, act):
         if act.selector_type == 2:

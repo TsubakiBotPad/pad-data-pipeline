@@ -1441,7 +1441,7 @@ class AS7x6Board(ActiveSkill):
     def __init__(self, ms: MonsterSkill):
         data = merge_defaults(ms.data, [0, 0])
         self.duration = data[0]
-        self.board_type = data[1] # This is just guessing
+        self.board_type = data[1]
         super().__init__(ms)
 
     def text(self, converter: ASTextConverter) -> str:
