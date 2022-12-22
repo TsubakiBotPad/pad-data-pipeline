@@ -198,19 +198,23 @@ class Card(pad_util.Printable):
         self.orb_skin_id: int = raw[70] if raw[70] < 10_000 else 0
         self.bgm_id: int = raw[70] - 10_000 if 10_000 <= raw[70] else 0
 
-        # Seems like this could have multiple values.
+        # This is currently unused by GH except for old monster transform values
         self.tags: str = raw[71]
-        self.linked_monster_no: Optional[MonsterNo] = None  # No longer used
-        if self.tags:
-            if 'link:' in self.tags:
-                self.linked_monster_no = MonsterNo(int(self.tags[len('link:'):]))
-            else:
-                human_fix_logger.error('Unexpected tag value: %s', self.tags)
 
         # Remove this condition once it comes to NA
         self.ls_bitflag: int = raw[72] + (raw[73] << 32)
 
-        self.other_fields: List = raw[74:]
+        # Remove this when NA catches up
+        if len(raw) == 74:
+            raw += [0, 0]
+
+        # This is 0 for all cards except NY cards
+        self.unknown_74: int = raw[74]
+
+        # This is 0 for all cards
+        self.unknown_75: int = raw[75]
+
+        self.other_fields: List = raw[76:]
 
         if self.other_fields:
             human_fix_logger.error('Unused monster values found.')
