@@ -14,7 +14,7 @@ helpGroup = parser.add_argument_group("Help")
 helpGroup.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
 
 BASE_URL = 'https://azurlane.koumakan.jp'
-SHIPS_URL = f'{BASE_URL}/List_of_Ships'
+SHIPS_URL = f'{BASE_URL}/wiki/List_of_Ships'
 
 
 def process_list_of_ships_table(table, id_mod=None):
@@ -68,20 +68,22 @@ def process_ship(full_url, item):
             inner_tabs = tab.findAll('article', {'class': 'tabber__panel'})
             if inner_tabs:
                 # keep the skin name of the outer tab, run on inner tab
-                title_base = tab['title']
+                title_base = tab['data-title']
                 for inner_tab in inner_tabs:
                     title = title_base
-                    if inner_tab['title'] != 'Default':
-                        title = "{} {}".format(title_base, inner_tab['title'])
+                    if inner_tab['data-title'] != 'Default':
+                        title = "{} {}".format(title_base, inner_tab['data-title'])
                     link = inner_tab.find('div', {'class': 'shipskin-image'}).find('a', {'class': 'image'})
                     link_target = link['href']
                     full_url = f'{BASE_URL}{link_target}'
+                    print(f'found skin {title}')
                     process_image(full_url, title, item)
             else:
-                title = tab['title']
+                title = tab['data-title']
                 link = tab.find('div', {'class': 'shipskin-image'}).find('a', {'class': 'image'})
                 link_target = link['href']
                 full_url = f'{BASE_URL}{link_target}'
+                print(f'found skin {title}')
                 process_image(full_url, title, item)
     else:
         # Ships with only 1 skin don't have tabbers
