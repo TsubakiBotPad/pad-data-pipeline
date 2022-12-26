@@ -1931,5 +1931,12 @@
     "name_ko": "Untranslated",
     "series_id": 285,
     "series_type": "ghcollab"
+  },
+  {
+    "name_en": "JoJo's Bizarre Adventure",
+    "name_ja": "ジョジョの奇妙な冒険",
+    "name_ko": "Untranslated",
+    "series_id": 286,
+    "series_type": "collab"
   }
 ]
