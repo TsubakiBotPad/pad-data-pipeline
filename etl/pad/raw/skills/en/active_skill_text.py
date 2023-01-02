@@ -758,4 +758,21 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def damage_cap_boost(self, act):
         return self.fmt_duration(act.duration) \
-               + f"this monster damage cap becomes {act.damage_cap * 1e8:,.0f}"
+               + f"this monster's damage cap becomes {act.damage_cap * 1e8:,.0f}"
+
+    def ctw_conditional_combo(self, act):
+        return self.ctw_convert(act) + f", and if {noun_count('combo', act.combos)} are reached," \
+                                       f" this monster's damage cap becomes {act.damage_cap * 1e8:,.0f}" \
+                                       f" for 1 turn"
+
+    def ctw_conditional_attributes(self, act):
+        skill_text = self.ctw_convert(act)
+        if len(act.allowed_attrs) == 5:
+            skill_text += f", and if {noun_count('different attribute', act.num_attrs)} are matched,"
+        else:
+            attrs = self.concat_list_and(self.ATTRIBUTES[i] for i in act.allowed_attrs)
+            skill_text += f", and if {noun_count('attribute', act.num_attrs)} of {attrs} are matched,"
+        return skill_text + f" this monster's damage cap becomes {act.damage_cap * 1e8:,.0f} for 1 turn"
+
+    def delay_compound(self, act):
+        return f"[{noun_count('turn', act.turns)} after activataion] {act.child_skills[0].templated_text(self)}"

@@ -201,7 +201,6 @@ class Card(pad_util.Printable):
         # This is currently unused by GH except for old monster transform values
         self.tags: str = raw[71]
 
-        # Remove this condition once it comes to NA
         self.ls_bitflag: int = raw[72] + (raw[73] << 32)
 
         # Remove this when NA catches up

@@ -1448,6 +1448,50 @@ class AS7x6Board(ActiveSkill):
         return converter.changeto7x6board(self)
 
 
+class ASCTWConditionalCombo(ActiveSkill):
+    skill_type = 246
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0])
+        self.duration = data[0]
+        self.combos = data[1]
+        self.damage_cap = data[2]
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.ctw_conditional_combo(self)
+
+
+class ASCTWConditionalAttributes(ActiveSkill):
+    skill_type = 247
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0, 0, 0])
+        self.duration = data[0]
+        self.allowed_attrs = binary_con(data[1])
+        self.num_attrs = data[2]
+        self.damage_cap = data[3]
+        super().__init__(ms)
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.ctw_conditional_attributes(self)
+
+
+class ASDelayCompound(ASCompound):
+    skill_type = 248
+
+    def __init__(self, ms: MonsterSkill):
+        data = merge_defaults(ms.data, [0, 0])
+        super().__init__(ms)
+
+        self.turns = data[0]
+        self.child_ids: List[int] = [ms.data[1]]
+        self.child_skills: List[ActiveSkill] = []
+
+    def text(self, converter: ASTextConverter) -> str:
+        return converter.delay_compound(self)
+
+
 class ASInflictES(ActiveSkill):
     skill_type = 1000
 
@@ -1591,4 +1635,7 @@ ALL_ACTIVE_SKILLS = [
     ASDamageCapBoost,
     AS7x6Board,
     ASCreateTape,
+    ASCTWConditionalCombo,
+    ASCTWConditionalAttributes,
+    ASDelayCompound,
 ]
