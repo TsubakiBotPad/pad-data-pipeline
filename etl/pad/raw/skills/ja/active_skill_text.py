@@ -705,5 +705,14 @@ class JaASTextConverter(JaBaseTextConverter):
     def changeto7x6board(self, act):
         return self.fmt_duration(act.duration) + '盤面を7×6マスにする。'
 
+    def ctw_conditional_attributes(self, act):
+        return TRANSLATION_NEEDED
+
+    def ctw_conditional_combo(self, act):
+        return TRANSLATION_NEEDED
+
+    def delay_compound(self, act):
+        return TRANSLATION_NEEDED
+
 
 __all__ = ['JaASTextConverter']
