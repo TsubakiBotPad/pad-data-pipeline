@@ -35,14 +35,20 @@ def parse_modifiers(mod_str: str) -> Dict[str, Union[bool, str]]:
 
 
 def merge_defaults(data, defaults):
-    return list(data) + defaults[len(data):]
+    out = []
+    for i in range(len(defaults)):
+        if i < len(data) and data[i] is not None:
+            out.append(data[i])
+        else:
+            out.append(defaults[i])
+    return out
 
 
 class FixedTeamMonster(pad_util.Printable):
     """A fixed team monster on a subdungeon team."""
 
     def __init__(self, data: str):
-        data = [int(v) if v.isnumeric() else v
+        data = [int(v) if v.isnumeric() else v or None
                 for v in data.rstrip(';').split(';')]
         data = merge_defaults(data, [None, 99, 0, 0, 0, 99, 99])
         (self.monster_id, self.level,
