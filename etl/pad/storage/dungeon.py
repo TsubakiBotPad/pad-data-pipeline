@@ -234,17 +234,17 @@ class FixedTeamMonster(ServerDependentSqlItem):
 
     @staticmethod
     def from_fc(o: Optional[FixedCardObject], idx: int, cssd: CrossServerSubDungeon) -> 'FixedTeamMonster':
-        if o is None:
+        if o is None:  # Empty space
             return FixedTeamMonster(
                 fixed_team_id=cssd.sub_dungeon_id,
                 fixed_slot_type_id=0,
                 order_idx=idx)
-        if not o.monster_id:
+        if not o.monster_id:  # Fixed no monster
             return FixedTeamMonster(
                 fixed_team_id=cssd.sub_dungeon_id,
                 fixed_slot_type_id=1,
                 order_idx=idx)
-        return FixedTeamMonster(
+        return FixedTeamMonster(  # Fixed Monster
             fixed_team_id=cssd.sub_dungeon_id,
             fixed_slot_type_id=2,
             alt_monster_id=server_monster_id_fn(cssd.server)(o.monster_id),
