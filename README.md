@@ -29,7 +29,7 @@ that you should install if you want to use the ETL pipeline.
 
 ## Database setup
 
-MySql is used as a backend on the server, and SQLite on the mobile app. You can install the server yourself:
+MySql is used as a backend on the server, and SQLite for [Tsubaki Bot](https://github.com/TsubakiBotPad/pad-cogs). You can install the server yourself:
 
 ```bash
 sudo apt install mysql-workbench
@@ -52,7 +52,7 @@ docker/start_env.sh
 ## Pipeline testing
 
 The utils directory contains a script called `data_exporter.py`. This script is run to generate the
-repository: https://github.com/nachoapps/pad-game-data-slim
+repository: https://github.com/TsubakiBotPad/pad-data-pipeline-export
 
 The server has a cron job which runs this periodically, commits, and pushes.
 
