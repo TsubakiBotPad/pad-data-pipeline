@@ -6,7 +6,6 @@ cd "$(dirname "$0")" || exit
 source ../shared_root.sh
 source ../shared.sh
 source ../discord.sh
-source "${VENV_ROOT}/bin/activate"
 
 function error_exit() {
   hook_error "Image Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
@@ -22,29 +21,23 @@ function success_exit() {
 trap error_exit ERR
 trap success_exit EXIT
 
-RUN_DIR="${MEDIA_ETL_DIR}/image_pull"
-
-# Enable NVM (Spammy)
 set +x
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 nvm use 16
 set -x
 
-# Portraits
-python3 ${RUN_DIR}/PADPortraitsGenerator.py \
-  --input_dir="${IMG_DIR}/na/full/extract_data" \
-  --data_dir="${RAW_DIR}" \
-  --card_templates_file="${RUN_DIR}/wide_cards.png" \
-  --server=na \
-  --output_dir="${IMG_DIR}/na/portrait/local"
-
-python3 ${RUN_DIR}/PADPortraitsGenerator.py \
-  --input_dir="${IMG_DIR}/jp/full/extract_data" \
-  --data_dir="${RAW_DIR}" \
-  --card_templates_file="${RUN_DIR}/wide_cards.png" \
-  --server=jp \
-  --output_dir="${IMG_DIR}/jp/portrait/local"
-
 # Animations
-flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_image_files.sh"
+yarn --cwd=${PAD_RESOURCES_ROOT} update "${PAD_RESOURCES_ROOT}/data/bin" \
+  --for-tsubaki --new-only
+yarn --cwd=${PAD_RESOURCES_ROOT} extract "${PAD_RESOURCES_ROOT}/data/bin" "${IMG_DIR}/spine" \
+  --animated-only --for-tsubaki --new-only
+xvfb-run -s "-ac -screen 0 640x388x24" \
+  yarn --cwd=${PAD_RESOURCES_ROOT} render "${IMG_DIR}/spine" "${IMG_DIR}/jp/portrait/local" \
+  --single --for-tsubaki # --new-only
+xvfb-run -s "-ac -screen 0 640x388x24" \
+  yarn --cwd=${PAD_RESOURCES_ROOT} render "${IMG_DIR}/spine" "${IMG_DIR}/animated" \
+  --for-tsubaki --new-only
+
+# Force a sync
+${CRONJOBS_DIR}/sync_data.sh
