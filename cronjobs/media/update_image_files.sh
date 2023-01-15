@@ -47,4 +47,4 @@ python3 ${RUN_DIR}/PADPortraitsGenerator.py \
   --output_dir="${IMG_DIR}/jp/portrait/local"
 
 # Animations
-flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"
+if flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"; then; fi
