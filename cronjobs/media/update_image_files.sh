@@ -47,4 +47,4 @@ python3 ${RUN_DIR}/PADIconGenerator.py \
   --output_dir="${IMG_DIR}/jp/icon/local"
 
 # Animations
-if flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"; then; fi
+flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"
