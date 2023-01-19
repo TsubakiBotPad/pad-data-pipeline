@@ -33,19 +33,21 @@ def copy_media(args):
     base_dir = args.base_dir
     output_dir = args.output_dir
 
-    jp_icon_input_dir = os.path.join(base_dir, 'jp', 'portrait', 'local')
-    na_icon_input_dir = os.path.join(base_dir, 'na', 'portrait', 'local')
+    jp_icon_input_dir = os.path.join(base_dir, 'jp', 'icon', 'local')
+    na_icon_input_dir = os.path.join(base_dir, 'na', 'icon', 'local')
 
-    jp_portrait_input_dir = os.path.join(base_dir, 'jp', 'full', 'corrected_data')
-    na_portrait_input_dir = os.path.join(base_dir, 'na', 'full', 'corrected_data')
+    jp_portrait_input_dir = os.path.join(base_dir, 'jp', 'portrait', 'corrected_data')
+    na_portrait_input_dir = os.path.join(base_dir, 'na', 'portrait', 'corrected_data')
 
     hq_portrait_input_dir = os.path.join(base_dir, 'hq_images')
-    animated_portrait_input_dir = os.path.join(base_dir, 'animated')
+    spine_file_input_dir = os.path.join(base_dir, 'spine')
 
     icon_output_dir = os.path.join(output_dir, 'icons')
     portrait_output_dir = os.path.join(output_dir, 'portraits')
     hq_portrait_output_dir = os.path.join(output_dir, 'hq_portraits')
-    animated_portrait_output_dir = os.path.join(output_dir, 'animated_portraits')
+    spine_file_output_dir = os.path.join(output_dir, 'spine')
+
+    shutil.copytree(spine_file_input_dir, spine_file_output_dir, dirs_exist_ok=True)
 
     for jp_id in range(1, 10000):
         monster_id = jp_id
@@ -60,11 +62,6 @@ def copy_media(args):
         do_copy(hq_portrait_input_dir, '{}.png'.format(monster_id),
                 hq_portrait_output_dir, '{}.png'.format(monster_id_filled))
 
-        do_copy(animated_portrait_input_dir, '{}.mp4'.format(monster_id),
-                animated_portrait_output_dir, '{}.mp4'.format(monster_id_filled))
-
-        do_copy(animated_portrait_input_dir, '{}.gif'.format(monster_id),
-                animated_portrait_output_dir, '{}.gif'.format(monster_id_filled))
 
     for na_id in range(1, 10000):
         monster_id = monster_id_mapping.na_no_to_monster_id(MonsterNo(na_id))

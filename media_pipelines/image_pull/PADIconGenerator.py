@@ -12,7 +12,7 @@ import logging
 fail_logger = logging.getLogger('human_fix')
 fail_logger.disabled = True
 
-parser = argparse.ArgumentParser(description="Generates P&D portraits.", add_help=False)
+parser = argparse.ArgumentParser(description="Generates P&D icons.", add_help=False)
 
 inputGroup = parser.add_argument_group("Input")
 inputGroup.add_argument("--input_dir", help="Path to a folder where CARD files are")
