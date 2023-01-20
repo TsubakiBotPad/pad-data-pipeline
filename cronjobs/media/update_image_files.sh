@@ -28,29 +28,8 @@ RUN_DIR="${MEDIA_ETL_DIR}/image_pull"
 set +x
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm use 8
+nvm use 16
 set -x
-
-yarn --cwd=${PAD_RESOURCES_ROOT} update
-
-# Full pictures
-python3 "${RUN_DIR}/PADTextureDownload.py" \
-  --output_dir="${IMG_DIR}/na/full" \
-  --server=NA
-
-python3 "${RUN_DIR}/PADAnimatedGenerator.py" \
-  --raw_dir="${IMG_DIR}/na/full/raw_data" \
-  --working_dir="${PAD_RESOURCES_ROOT}" \
-  --output_dir="${IMG_DIR}/na/full/corrected_data"
-
-python3 "${RUN_DIR}/PADTextureDownload.py" \
-  --output_dir="${IMG_DIR}/jp/full" \
-  --server=JP
-
-python3 "${RUN_DIR}/PADAnimatedGenerator.py" \
-  --raw_dir="${IMG_DIR}/jp/full/raw_data" \
-  --working_dir="${PAD_RESOURCES_ROOT}" \
-  --output_dir="${IMG_DIR}/jp/full/corrected_data"
 
 # Portraits
 python3 "${RUN_DIR}/PADTextureDownload.py" \
@@ -66,20 +45,14 @@ python3 ${RUN_DIR}/PADIconGenerator.py \
   --data_dir="${RAW_DIR}" \
   --card_templates_file="${RUN_DIR}/wide_cards.png" \
   --server=na \
-  --output_dir="${IMG_DIR}/na/portrait/local"
+  --output_dir="${IMG_DIR}/na/icon/local"
 
-python3 ${RUN_DIR}/PADPortraitsGenerator.py \
-  --input_dir="${IMG_DIR}/jp/full/extract_data" \
+python3 ${RUN_DIR}/PADIconGenerator.py \
+  --input_dir="${IMG_DIR}/jp/portrait/extract_data" \
   --data_dir="${RAW_DIR}" \
   --card_templates_file="${RUN_DIR}/wide_cards.png" \
   --server=jp \
-  --output_dir="${IMG_DIR}/jp/portrait/local"
+  --output_dir="${IMG_DIR}/jp/icon/local"
 
 # Animations
-python3 "${RUN_DIR}/PADAnimationGenerator.py" \
-  --raw_dir="${IMG_DIR}/jp/full/raw_data" \
-  --working_dir="${PAD_RESOURCES_ROOT}" \
-  --output_dir="${IMG_DIR}/animated"
-
-# Force a sync
-${CRONJOBS_DIR}/sync_data.sh
+flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"
