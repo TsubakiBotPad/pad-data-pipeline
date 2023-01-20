@@ -123,7 +123,7 @@ for asset in assets:
     elif not os.path.exists(extract_file_path):
         # Currently this is happening because of the new animated images, they
         # come in parts that are assembled by PAD.
-        print('Error, could not find file:', extract_file_path)
+        print('Still portrait not written:', extract_file_path)
     else:
         img = Image.open(extract_file_path)
         if img.size[1] > IMAGE_SIZE[1]:
