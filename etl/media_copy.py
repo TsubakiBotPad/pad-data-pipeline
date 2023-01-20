@@ -58,7 +58,10 @@ def copy_media(args):
         do_copy(jp_icon_input_dir, '{}.png'.format(monster_id),
                 icon_output_dir, '{}.png'.format(monster_id_filled))
 
+        # TODO: Fix the naming scheme so I don't have to do this twice
         do_copy(jp_portrait_input_dir, '{}.png'.format(monster_id),
+                portrait_output_dir, '{}.png'.format(monster_id_filled))
+        do_copy(jp_portrait_input_dir, '{}.png'.format(monster_id_filled),
                 portrait_output_dir, '{}.png'.format(monster_id_filled))
 
         do_copy(hq_portrait_input_dir, '{}.png'.format(monster_id),
