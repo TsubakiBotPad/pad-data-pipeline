@@ -47,7 +47,9 @@ def copy_media(args):
     hq_portrait_output_dir = os.path.join(output_dir, 'hq_portraits')
     spine_file_output_dir = os.path.join(output_dir, 'spine')
 
-    shutil.copytree(spine_file_input_dir, spine_file_output_dir, dirs_exist_ok=True)
+    if os.path.exists(spine_file_output_dir):
+        shutil.rmtree(spine_file_output_dir)
+    shutil.copytree(spine_file_input_dir, spine_file_output_dir)
 
     for jp_id in range(1, 10000):
         monster_id = jp_id
