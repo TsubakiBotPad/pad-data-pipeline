@@ -53,8 +53,16 @@ python3 "${RUN_DIR}/PADAnimatedGenerator.py" \
   --output_dir="${IMG_DIR}/jp/full/corrected_data"
 
 # Portraits
-python3 ${RUN_DIR}/PADPortraitsGenerator.py \
-  --input_dir="${IMG_DIR}/na/full/extract_data" \
+python3 "${RUN_DIR}/PADTextureDownload.py" \
+  --output_dir="${IMG_DIR}/na/portrait" \
+  --server=NA
+
+python3 "${RUN_DIR}/PADTextureDownload.py" \
+  --output_dir="${IMG_DIR}/jp/portrait" \
+  --server=JP
+
+python3 ${RUN_DIR}/PADIconGenerator.py \
+  --input_dir="${IMG_DIR}/na/portrait/extract_data" \
   --data_dir="${RAW_DIR}" \
   --card_templates_file="${RUN_DIR}/wide_cards.png" \
   --server=na \
