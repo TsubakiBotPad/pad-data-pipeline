@@ -38,6 +38,9 @@ parser = argparse.ArgumentParser(description="Downloads and extracts P&D texture
 settingsGroup = parser.add_argument_group("Settings")
 settingsGroup.add_argument("--reload_cards", action="store_true", help="Redownload all card files")
 
+inputGroup = parser.add_argument_group("Input")
+inputGroup.add_argument("--animated_dir", help="Path to a folder where animated tombstones are stored")
+
 outputGroup = parser.add_argument_group("Output")
 outputGroup.add_argument("--output_dir", help="Path to a folder where output should be saved")
 outputGroup.add_argument("--server", help="One of [NA, JP]")
@@ -52,8 +55,6 @@ if args.server == 'NA':
 elif args.server == 'JP':
     assets = padtools.regions.japan.server.assets
 
-output_dir = args.output_dir
-
 
 def download_file(url, file_path):
     response_object = urllib.request.urlopen(url)
@@ -65,9 +66,9 @@ def download_file(url, file_path):
 
 print('Found', len(assets), 'assets total')
 
-raw_dir = os.path.join(output_dir, 'raw_data')
-extract_dir = os.path.join(output_dir, 'extract_data')
-corrected_dir = os.path.join(output_dir, 'corrected_data')
+raw_dir = os.path.join(args.output_dir, 'raw_data')
+extract_dir = os.path.join(args.output_dir, 'extract_data')
+corrected_dir = os.path.join(args.output_dir, 'corrected_data')
 
 os.makedirs(raw_dir, exist_ok=True)
 os.makedirs(extract_dir, exist_ok=True)
@@ -92,8 +93,8 @@ for asset in assets:
     if 'card' in raw_file_path.lower():
         num = int(raw_file_name.rstrip('.bc').lstrip('cards_'))
         # Unless a card is given a new subattribute or a portrait changes,
-        #  all card files under 69 are static except for the 5 unfilled
-        #  slots: 1708, 1892, 1893, 1894, 1895.
+        #  all card files under 69 are static except for the 1 unfilled
+        #  slots: 1708
         if num >= 69 or args.reload_cards:
             should_always_process = True
 
@@ -106,9 +107,13 @@ for asset in assets:
 
     extract_file_name = getOutputFileName(raw_file_name).upper().replace('BC', 'PNG')
     extract_file_path = os.path.join(extract_dir, extract_file_name)
+    animated_tombstone_path = os.path.join(args.animated_dir, raw_file_name.replace('bc', 'tomb'))
 
     if os.path.exists(extract_file_path) and not should_always_process:
         print('skipping existing file', extract_file_path)
+    elif os.path.exists(animated_tombstone_path):
+        print('skipping animated file', extract_file_path)
+        continue
     else:
         # Disable trimming for the card files; screws up portrait generation
         print('processing', raw_file_path, 'to', extract_dir, 'with name', extract_file_name)

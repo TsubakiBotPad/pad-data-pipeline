@@ -22,7 +22,7 @@ function human_fixes_check() {
 flock -xn /tmp/dg_processor.lck python3 "${ETL_DIR}/data_processor.py" \
   --input_dir="${RAW_DIR}" \
   --es_dir="${ES_DIR}" \
-  --media_dir="${DADGUIDE_MEDIA_DIR}" \
+  --media_dir="${IMG_DIR}" \
   --output_dir="${DADGUIDE_DATA_DIR}/processed" \
   --db_config="${DB_CONFIG}" \
   --server=$1 \
