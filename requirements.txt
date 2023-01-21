@@ -1,5 +1,5 @@
 requests
-fake_useragent
+fake-useragent==0.1.13
 git+https://github.com/nachoapps/padtools.git
 pytz
 bs4
