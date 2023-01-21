@@ -45,6 +45,7 @@ python3 ${RUN_DIR}/PADIconGenerator.py \
   --data_dir="${RAW_DIR}" \
   --card_templates_file="${RUN_DIR}/wide_cards.png" \
   --server=na \
+  --animated_dir="${IMG_DIR}/animated" \
   --output_dir="${IMG_DIR}/na/icon/local"
 
 python3 ${RUN_DIR}/PADIconGenerator.py \
@@ -52,6 +53,7 @@ python3 ${RUN_DIR}/PADIconGenerator.py \
   --data_dir="${RAW_DIR}" \
   --card_templates_file="${RUN_DIR}/wide_cards.png" \
   --server=jp \
+  --animated_dir="${IMG_DIR}/animated" \
   --output_dir="${IMG_DIR}/jp/icon/local"
 
 # Animations

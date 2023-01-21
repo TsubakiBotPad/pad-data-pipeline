@@ -3,6 +3,7 @@ Data from across multiple servers merged together.
 """
 import logging
 import os
+import re
 from copy import copy
 from typing import Callable, List, Optional, Tuple, TypeVar, Union
 
@@ -541,13 +542,13 @@ class CrossServerDatabase:
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
 
     def load_extra_image_info(self, media_dir: str):
-        for f in os.listdir(os.path.join(media_dir, 'hq_portraits')):
-            if len(f) == 9 and f[-4:].lower() == '.png':
-                self.hq_image_monster_ids.append(MonsterId(int(f[0:5])))
+        for f in os.listdir(os.path.join(media_dir, 'hq_images')):
+            if (m := re.match(r'(\d+)\.png', f)):
+                self.animated_monster_ids.append(MonsterId(int(m.group(1))))
 
-        for f in os.listdir(os.path.join(media_dir, 'animated_portraits')):
-            if len(f) == 9 and f[-4:].lower() == '.mp4':
-                self.animated_monster_ids.append(MonsterId(int(f[0:5])))
+        for f in os.listdir(os.path.join(media_dir, 'animated')):
+            if (m := re.match(r'mons_(\d+)\.tomb', f)):
+                self.animated_monster_ids.append(MonsterId(int(m.group(1))))
 
         for csc in self.ownable_cards:
             if csc.monster_id in self.hq_image_monster_ids:
