@@ -544,7 +544,7 @@ class CrossServerDatabase:
     def load_extra_image_info(self, media_dir: str):
         for f in os.listdir(os.path.join(media_dir, 'hq_images')):
             if (m := re.match(r'(\d+)\.png', f)):
-                self.animated_monster_ids.append(MonsterId(int(m.group(1))))
+                self.hq_image_monster_ids.append(MonsterId(int(m.group(1))))
 
         for f in os.listdir(os.path.join(media_dir, 'animated')):
             if (m := re.match(r'mons_(\d+)\.tomb', f)):
