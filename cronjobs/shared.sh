@@ -4,7 +4,7 @@ set -e
 set -x
 
 declare -x REPO_ROOT="${PROJECT_ROOT}/pad-data-pipeline"
-declare -x PAD_RESOURCES_ROOT="${PROJECT_ROOT}/pad-resources"
+declare -x PAD_RESOURCES_ROOT="${PROJECT_ROOT}/pad-visual-media"
 declare -x GAME_DATA_DIR="${PROJECT_ROOT}/pad-data-pipeline-export"
 
 declare -x PAD_DATA_DIR="${REPO_ROOT}/pad_data"
