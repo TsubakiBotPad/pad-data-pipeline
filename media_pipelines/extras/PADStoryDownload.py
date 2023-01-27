@@ -39,7 +39,7 @@ def download_file(url, file_path):
 
 
 def decode_file(in_file, out_file):
-    cmd = 'python3 {}/PADTextureTool.py {} --outfile {}'.format(args.tool_dir, in_file, out_file)
+    cmd = 'python3 {}/wPADTextureTool.py {} --outfile {}'.format(args.tool_dir, in_file, out_file)
     print('running', cmd)
     os.system(cmd)
 

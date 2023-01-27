@@ -1,9 +1,6 @@
 import argparse
-import json
 import os
-import shutil
 import urllib.request
-from collections import defaultdict
 
 import padtools
 
@@ -63,16 +60,16 @@ for extra in extras:
 for file_name in os.listdir(raw_dir):
     in_file = os.path.join(raw_dir, file_name)
 
-    if file_name.endswith('.wav'):
-        out_file = os.path.join(fixed_dir, '{}.wav'.format(file_name.rstrip('.wav')))
+    if file_name.endswith(b'.wav'):
+        out_file = os.path.join(fixed_dir, '{}.wav'.format(file_name.rstrip(b'.wav')))
 
         cmd = 'sox -t ima -r 44100 -e ima-adpcm -v .5 {} -e signed-integer -b 16 {}'.format(in_file, out_file)
-    elif file_name.endswith('.caf'):
-        out_file = os.path.join(fixed_dir, '{}.mp3'.format(file_name.rstrip('.caf')))
+    elif file_name.endswith(b'.caf'):
+        out_file = os.path.join(fixed_dir, '{}.mp3'.format(file_name.rstrip(b'.caf')))
 
         cmd = 'ffmpeg -i {} -hide_banner -loglevel warning -nostats -y -ac 1 {}'.format(in_file, out_file)
     else:
-        print("skipping unknown type: " + file_name)
+        print(b"skipping unknown type: " + file_name)
         continue
     print('running', cmd)
     out = os.system(cmd)

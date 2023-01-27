@@ -52,7 +52,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 python_exec = sys.executable
 cur_file_path = os.path.dirname(os.path.realpath(__file__))
-tool_path = os.path.join(cur_file_path, '..', 'image_pull', 'PADTextureTool.py')
+tool_path = os.path.join(cur_file_path, '..', 'assets', 'PADTextureTool.py')
 
 should_always_process = False
 
