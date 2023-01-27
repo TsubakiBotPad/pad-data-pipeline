@@ -58,7 +58,7 @@ def parse_dmsg(dmsg: bytes):
     return table
 
 
-name_svr = 'name_en' if server == 'na' else 'name_ja' if server == 'ja' else None
+name_svr = 'name_en' if server == 'na' else 'name_ja' if server == 'jp' else None
 
 with open(args.db_config) as f:
     db_config = json.load(f)
@@ -69,16 +69,20 @@ cur = db.cursor()
 
 def insert_or_replace_into(data: dict, table: str, id_col: str):
     updates = []
-    repls = (*data.values(),)
-    for key, val in data.items():
+    update_repls = ()
+    for key, val in list(data.items()):
+        if val == '-':
+            del data[key]
+            continue
         if key != id_col:
             updates.append(f'{key}=%s')
-            repls += (val,)
+            update_repls += (val,)
 
-    query = (f"INSERT INTO {table} ({', '.join(data)}, tstamp)"
-             f"  VALUES ({', '.join('%s' for _ in data)}, UNIX_TIMESTAMP())"
-             f"  ON DUPLICATE KEY UPDATE {', '.join(updates)};")
-    cur.execute(query, repls)
+    if updates:
+        query = (f"INSERT INTO {table} ({', '.join(data)}, tstamp)"
+                 f"  VALUES ({', '.join('%s' for _ in data)}, UNIX_TIMESTAMP())"
+                 f"  ON DUPLICATE KEY UPDATE {', '.join(updates)};")
+        cur.execute(query, (*data.values(),) + update_repls)
 
 
 # Skin Data
@@ -95,7 +99,7 @@ with urllib.request.urlopen(skindata.url) as resp:
 skindata = parse_dmsg(decrypt_and_decompress_binary_blob(skindata))
 
 for row in skindata:
-    if int(row[0]) >= 10000:
+    if float(row[0]) >= 10000:  # GH sucks and sometimes likes to give these as floats
         if bgm_name_to_id(row[11]):
             insert_or_replace_into({'bgm_id': bgm_name_to_id(row[11]), name_svr: row[10].replace('\n', '')},
                                    'bgms', 'bgm_id')
@@ -103,11 +107,11 @@ for row in skindata:
             insert_or_replace_into({'bgm_id': bgm_name_to_id(row[13]), name_svr: row[12].replace('\n', '')},
                                    'bgms', 'bgm_id')
         insert_or_replace_into({
-            'bgm_set_id': int(row[0]),
+            'bgm_set_id': float(row[0]),
             name_svr: row[1].replace('\n', ''),
             'route_bgm_id': bgm_name_to_id(row[11]),
             'boss_bgm_id': bgm_name_to_id(row[13]),
-            'unused': int(row[8] or '0')
+            'unused': float(row[8] or '0')
         }, 'bgm_sets', 'bgm_set_id')
 
 cur.close()
