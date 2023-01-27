@@ -10,12 +10,12 @@ from padtexturetool.texture_reader import decrypt_and_decompress_binary_blob
 
 parser = argparse.ArgumentParser(description="Parses PAD DMSG files", add_help=False)
 
-inputGroup = parser.add_argument_group("Input")
-inputGroup.add_argument("--server", required=True, help="na or jp")
-inputGroup.add_argument("--db_config", help="JSON database info")
+input_group = parser.add_argument_group("Input")
+input_group.add_argument("--server", required=True, help="na or jp")
+input_group.add_argument("--db_config", help="JSON database info")
 
-helpGroup = parser.add_argument_group("Help")
-helpGroup.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
+help_group = parser.add_argument_group("Help")
+help_group.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
 args = parser.parse_args()
 
 server = args.server.lower()
