@@ -22,7 +22,7 @@ function success_exit() {
 trap error_exit ERR
 trap success_exit EXIT
 
-RUN_DIR="${MEDIA_ETL_DIR}/image_pull"
+RUN_DIR="${MEDIA_ETL_DIR}/assets"
 
 # Enable NVM (Spammy)
 set +x
@@ -32,29 +32,25 @@ nvm use 16
 set -x
 
 # Portraits
-python3 "${RUN_DIR}/PADTextureDownload.py" \
-  --output_dir="${IMG_DIR}/na/portrait" \
-  --server=NA
+for server in na jp; do
+  python3 "${RUN_DIR}/PADTextureDownload.py" \
+    --output_dir="${IMG_DIR}/${server}/portrait" \
+    --server=${server}
 
-python3 "${RUN_DIR}/PADTextureDownload.py" \
-  --output_dir="${IMG_DIR}/jp/portrait" \
-  --server=JP
+  python3 ${RUN_DIR}/PADIconGenerator.py \
+    --input_dir="${IMG_DIR}/${server}/portrait/extract_data" \
+    --data_dir="${RAW_DIR}" \
+    --card_templates_file="${RUN_DIR}/wide_cards.png" \
+    --server=na \
+    --animated_dir="${IMG_DIR}/animated" \
+    --output_dir="${IMG_DIR}/${server}/icon/local"
+done
 
-python3 ${RUN_DIR}/PADIconGenerator.py \
-  --input_dir="${IMG_DIR}/na/portrait/extract_data" \
-  --data_dir="${RAW_DIR}" \
-  --card_templates_file="${RUN_DIR}/wide_cards.png" \
-  --server=na \
-  --animated_dir="${IMG_DIR}/animated" \
-  --output_dir="${IMG_DIR}/na/icon/local"
-
-python3 ${RUN_DIR}/PADIconGenerator.py \
-  --input_dir="${IMG_DIR}/jp/portrait/extract_data" \
-  --data_dir="${RAW_DIR}" \
-  --card_templates_file="${RUN_DIR}/wide_cards.png" \
-  --server=jp \
-  --animated_dir="${IMG_DIR}/animated" \
-  --output_dir="${IMG_DIR}/jp/icon/local"
+# HQ Images
+python3 "${RUN_DIR}/PADHQImageDownload.py" \
+  --raw_file_dir="${IMG_DIR}/jp/portrait/raw_data" \
+  --db_config="${DB_CONFIG}" \
+  --output_dir="${IMG_DIR}/hq_images"
 
 # Animations
 flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"
