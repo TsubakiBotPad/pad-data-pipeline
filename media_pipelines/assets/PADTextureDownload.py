@@ -50,10 +50,10 @@ helpGroup.add_argument("-h", "--help", action="help", help="Displays this help m
 args = parser.parse_args()
 
 assets = []
-if args.server == 'NA':
-    assets = padtools.regions.north_america.server.assets
-elif args.server == 'JP':
-    assets = padtools.regions.japan.server.assets
+if args.server.lower() == 'na':
+    assets = padtools.regions.north_america.server.assets  # noqa
+elif args.server.lower() == 'jp':
+    assets = padtools.regions.japan.server.assets  # noqa
 
 
 def download_file(url, file_path):

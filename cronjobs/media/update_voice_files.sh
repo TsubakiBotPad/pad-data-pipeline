@@ -7,7 +7,7 @@ source ../shared_root.sh
 source ../shared.sh
 source "${VENV_ROOT}/bin/activate"
 
-RUN_DIR="${MEDIA_ETL_DIR}/voice_pull"
+RUN_DIR="${MEDIA_ETL_DIR}/extras"
 CACHE_DIR="${PAD_DATA_DIR}/voices/raw"
 FINAL_DIR=/home/bot/dadguide/data/media/voices
 
