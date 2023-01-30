@@ -43,7 +43,6 @@ for server in na jp; do
     --data_dir="${RAW_DIR}" \
     --card_templates_file="${RUN_DIR}/wide_cards.png" \
     --server=na \
-    --animated_dir="${IMG_DIR}/animated" \
     --output_dir="${IMG_DIR}/${server}/icon/local"
 done
 
