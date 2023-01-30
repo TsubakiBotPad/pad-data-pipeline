@@ -47,11 +47,11 @@ for server in na jp; do
     --output_dir="${IMG_DIR}/${server}/icon/local"
 done
 
+# Animations
+flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"
+
 # HQ Images
 python3 "${RUN_DIR}/PADHQImageDownload.py" \
   --raw_file_dir="${IMG_DIR}/jp/portrait/raw_data" \
   --db_config="${DB_CONFIG}" \
   --output_dir="${IMG_DIR}/hq_images"
-
-# Animations
-flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"
