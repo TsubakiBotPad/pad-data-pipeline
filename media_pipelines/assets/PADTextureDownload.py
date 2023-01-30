@@ -107,7 +107,10 @@ for asset in assets:
 
     extract_file_name = getOutputFileName(raw_file_name).upper().replace('BC', 'PNG')
     extract_file_path = os.path.join(extract_dir, extract_file_name)
-    animated_tombstone_path = os.path.join(args.animated_dir, raw_file_name.replace('bc', 'tomb'))
+    if args.animated_dir is not None:
+        animated_tombstone_path = os.path.join(args.animated_dir, raw_file_name.replace('bc', 'tomb'))
+    else:
+        animated_tombstone_path = raw_file_name.replace('bc', 'tomb')
 
     if os.path.exists(extract_file_path) and not should_always_process:
         print('skipping existing file', extract_file_path)
