@@ -93,9 +93,9 @@ for asset in assets:
     if 'card' in raw_file_path.lower():
         num = int(raw_file_name.rstrip('.bc').lstrip('cards_'))
         # Unless a card is given a new subattribute or a portrait changes,
-        #  all card files under 69 are static except for the 1 unfilled
-        #  slots: 1708
-        if num >= 69 or args.reload_cards:
+        #  all card files under 96 are static except for the 6 unfilled
+        #  slots: 1708, 2573, 6828, 6830, 6831, 8906
+        if num >= 96 or args.reload_cards:
             should_always_process = True
 
     if os.path.exists(raw_file_path) and not should_always_process:
