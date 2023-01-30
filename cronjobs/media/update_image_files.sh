@@ -34,6 +34,7 @@ set -x
 # Portraits
 for server in na jp; do
   python3 "${RUN_DIR}/PADTextureDownload.py" \
+    --animated_dir="${IMG_DIR}/animated"
     --output_dir="${IMG_DIR}/${server}/portrait" \
     --server=${server}
 
