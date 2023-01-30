@@ -43,7 +43,7 @@ with open(args.db_config) as f:
 db = pymysql.connect(**db_config, autocommit=True)
 cur = db.cursor()
 
-for file_name in os.listdir(raw_dir):
+for file_name in sorted(os.listdir(raw_dir)):
     if not (match := re.match(r'mons_0*(\d+).bc', file_name)):
         print('skipping', file_name)
         continue
