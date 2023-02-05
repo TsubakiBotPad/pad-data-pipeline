@@ -1,7 +1,6 @@
 from typing import Optional
 
 from pad.common.monster_id_mapping import server_monster_id_fn
-from pad.db.sql_item import ExistsStrategy
 from pad.dungeon.wave_converter import ResultFloor
 from pad.raw.dungeon import FixedTeamMonster as FixedCardObject
 from pad.raw_processor.crossed_data import CrossServerDungeon, CrossServerSubDungeon
@@ -43,7 +42,7 @@ class Dungeon(ServerDependentSqlItem):
         return ['visible']
 
     def __str__(self):
-        return 'Dungeon({}): {}'.format(self.key_value(), self.name_en)
+        return 'Dungeon({}): {}'.format(self.key_str(), self.name_en)
 
 
 class DungeonWaveData(ServerDependentSqlItem):
@@ -81,7 +80,7 @@ class DungeonRewardData(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'DungeonReward({}): {} - {}'.format(self.key_value(), self.reward_na, self.reward_icon_ids)
+        return 'DungeonReward({}): {} - {}'.format(self.key_str(), self.reward_na, self.reward_icon_ids)
 
 
 class SubDungeon(ServerDependentSqlItem):
@@ -134,7 +133,7 @@ class SubDungeon(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'SubDungeon({}): {}'.format(self.key_value(), self.name_en)
+        return 'SubDungeon({}): {}'.format(self.key_str(), self.name_en)
 
 
 class SubDungeonWaveData(ServerDependentSqlItem):
@@ -178,7 +177,7 @@ class SubDungeonWaveData(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'SDWaveData({}): {}'.format(self.key_value(), self.icon_id)
+        return 'SDWaveData({}): {}'.format(self.key_str(), self.icon_id)
 
 
 class SubDungeonRewardData(ServerDependentSqlItem):
@@ -202,7 +201,7 @@ class SubDungeonRewardData(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'SDRewardData({}): {}'.format(self.key_value(), self.reward_na)
+        return 'SDRewardData({}): {}'.format(self.key_str(), self.reward_na)
 
 
 class FixedTeam(ServerDependentSqlItem):
@@ -224,12 +223,12 @@ class FixedTeam(ServerDependentSqlItem):
         self.tstamp = None
 
     def __str__(self):
-        return 'FixedTeam({})'.format(self.key_value())
+        return 'FixedTeam({})'.format(self.key_str())
 
 
 class FixedTeamMonster(ServerDependentSqlItem):
     """A fixed monster in a subdungeon fixed team."""
-    KEY_COL = 'fixed_team_monster_id'
+    KEY_COL = {'fixed_team_id', 'order_idx'}
     BASE_TABLE = 'fixed_team_monsters'
 
     @staticmethod
@@ -259,7 +258,6 @@ class FixedTeamMonster(ServerDependentSqlItem):
             order_idx=idx)
 
     def __init__(self,
-                 fixed_team_monster_id: int = None,
                  fixed_team_id: int = None,
                  fixed_slot_type_id: int = None,
                  alt_monster_id: Optional[int] = None,
@@ -273,7 +271,6 @@ class FixedTeamMonster(ServerDependentSqlItem):
                  super_awakening_id: Optional[int] = None,
                  order_idx: int = None,
                  tstamp: int = None):
-        self.fixed_team_monster_id = fixed_team_monster_id
         self.fixed_team_id = fixed_team_id
         self.fixed_slot_type_id = fixed_slot_type_id
         self.alt_monster_id = alt_monster_id
@@ -288,19 +285,5 @@ class FixedTeamMonster(ServerDependentSqlItem):
         self.order_idx = order_idx
         self.tstamp = tstamp
 
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['fixed_team_id', 'order_idx']
-
     def __str__(self):
-        return 'FixedCard({}): {} in {} (#{})'.format(
-            self.key_value(), self.alt_monster_id,
-            self.fixed_team_id, self.order_idx)
+        return 'FixedCard({}): {}'.format(self.key_str(), self.fixed_team_id)

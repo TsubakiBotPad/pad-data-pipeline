@@ -79,4 +79,4 @@ class LatentSkill(SimpleSqlItem):
         return ['required_types']
 
     def __str__(self):
-        return 'LatentSkill({}): {}'.format(self.key_value(), self.name_en)
+        return 'LatentSkill({}): {}'.format(self.key_str(), self.name_en)

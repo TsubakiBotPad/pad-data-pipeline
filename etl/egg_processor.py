@@ -2,7 +2,6 @@ import argparse
 import ast
 import json
 import logging
-import os
 
 from pad.db.db_util import DbWrapper
 from pad.storage.egg_machines_monsters import EggMachinesMonster
@@ -46,16 +45,16 @@ def load_data(args):
     db_wrapper.connect(db_config)
     data = db_wrapper.fetch_data("SELECT * FROM egg_machines")
     for machine_sql in data:
-        egg_machine_id = machine_sql['egg_machine_id']
         contents = ast.literal_eval(machine_sql['contents'])
         for monster_id in contents.keys():
             real_monster_id = int(monster_id.strip("()"))
-            emm = EggMachinesMonster(egg_machine_monster_id=None, monster_id=real_monster_id,
+            emm = EggMachinesMonster(monster_id=real_monster_id,
                                      roll_chance=contents.get(monster_id),
-                                     egg_machine_id=egg_machine_id)
+                                     machine_row=machine_sql['machine_row'],
+                                     machine_type=machine_sql['machine_type'],
+                                     server_id=machine_sql['server_id'])
             db_wrapper.insert_or_update(emm)
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    load_data(args)
+    load_data(parse_args())
