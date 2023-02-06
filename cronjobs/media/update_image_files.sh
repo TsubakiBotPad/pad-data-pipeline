@@ -38,11 +38,11 @@ for server in na jp; do
     --output_dir="${IMG_DIR}/${server}/portrait" \
     --server=${server}
 
-  python3 ${RUN_DIR}/PADIconGenerator.py \
+  python3 "${RUN_DIR}/PADIconGenerator.py" \
     --input_dir="${IMG_DIR}/${server}/portrait/extract_data" \
     --data_dir="${RAW_DIR}" \
     --card_templates_file="${RUN_DIR}/wide_cards.png" \
-    --server=na \
+    --server=${server} \
     --output_dir="${IMG_DIR}/${server}/icon/local"
 done
 
@@ -54,3 +54,6 @@ python3 "${RUN_DIR}/PADHQImageDownload.py" \
   --raw_file_dir="${IMG_DIR}/jp/portrait/raw_data" \
   --db_config="${DB_CONFIG}" \
   --output_dir="${IMG_DIR}/hq_images"
+
+# Force a sync
+${CRONJOBS_DIR}/sync_data.sh
