@@ -3,8 +3,7 @@ from typing import List, Optional
 
 from pad.common.shared_types import MonsterId, MonsterNo, Server
 from pad.common.utils import format_int_list
-from pad.db import sql_item
-from pad.db.sql_item import ExistsStrategy, SimpleSqlItem
+from pad.db.sql_item import SimpleSqlItem
 from pad.raw_processor.crossed_data import CrossServerCard
 from pad.storage_processor.shared_storage import ServerDependentSqlItem
 
@@ -238,7 +237,7 @@ class Monster(ServerDependentSqlItem):
         ]
 
     def __str__(self):
-        return 'Monster({}): {}'.format(self.key_value(), self.name_en)
+        return 'Monster({}): {}'.format(self.key_str(), self.name_en)
 
 
 class MonsterWithExtraImageInfo(ServerDependentSqlItem):
@@ -257,7 +256,7 @@ class MonsterWithExtraImageInfo(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'MonsterImage({}): animated={} hq={}'.format(self.key_value(), self.has_animation, self.has_hqimage)
+        return 'MonsterImage({}): animated={} hq={}'.format(self.key_str(), self.has_animation, self.has_hqimage)
 
 
 class MonsterWithMPValue(ServerDependentSqlItem):
@@ -274,7 +273,7 @@ class MonsterWithMPValue(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'MonsterMP({}): {}'.format(self.key_value(), self.buy_mp)
+        return 'MonsterMP({}): {}'.format(self.key_str(), self.buy_mp)
 
 
 class LatentTamadra(SimpleSqlItem):
@@ -296,12 +295,12 @@ class LatentTamadra(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'LatentTamadra({}): {}'.format(self.key_value(), self.monster_id)
+        return 'LatentTamadra({}): {}'.format(self.key_str(), self.monster_id)
 
 
 class Awakening(ServerDependentSqlItem):
     """Monster awakening entry."""
-    KEY_COL = 'awakening_id'
+    KEY_COL = {'monster_id', 'order_idx'}
     BASE_TABLE = 'awakenings'
 
     @staticmethod
@@ -311,7 +310,6 @@ class Awakening(ServerDependentSqlItem):
         results = []
         for i, v in enumerate(awakenings):
             results.append(Awakening(
-                awakening_id=None,  # Key that is looked up or inserted
                 monster_id=o.monster_id,
                 awoken_skill_id=v[0],
                 is_super=v[1],
@@ -319,43 +317,25 @@ class Awakening(ServerDependentSqlItem):
         return results
 
     def __init__(self,
-                 awakening_id: int = None,
                  monster_id: int = None,
                  awoken_skill_id: int = None,
                  is_super: bool = None,
                  order_idx: int = None,
                  tstamp: int = None):
-        self.awakening_id = awakening_id
         self.monster_id = monster_id
         self.awoken_skill_id = awoken_skill_id
         self.is_super = is_super
         self.order_idx = order_idx
         self.tstamp = tstamp
 
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def value_exists_sql(self):
-        sql = """
-        SELECT awakening_id FROM {table}
-        WHERE monster_id = {monster_id} and order_idx = {order_idx}
-        """.format(table=self._table(), **sql_item.object_to_sql_params(self))
-        return sql
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
     def __str__(self):
-        return 'Awakening ({}): {} -> {}, super={}'.format(
-            self.key_value(), self.monster_id, self.awoken_skill_id, self.is_super)
+        return 'Awakening ({}): {}, super={}'.format(
+            self.key_str(), self.awoken_skill_id, self.is_super)
 
 
 class Evolution(ServerDependentSqlItem):
     """Monster evolution entry."""
-    KEY_COL = 'evolution_id'
+    KEY_COL = 'to_id'
     BASE_TABLE = 'evolutions'
 
     @staticmethod
@@ -375,7 +355,6 @@ class Evolution(ServerDependentSqlItem):
             reversible = True
 
         return Evolution(
-            evolution_id=None,  # Key that is looked up or inserted
             evolution_type=0,  # Eventually remove this.  evolution_type is deprecated and barely works as is
             reversible=reversible,
             from_id=convert(card.ancestor_id),
@@ -387,7 +366,6 @@ class Evolution(ServerDependentSqlItem):
             mat_5_id=safe_convert(card.evo_mat_id_5))
 
     def __init__(self,
-                 evolution_id: int = None,
                  evolution_type: int = None,
                  reversible: bool = None,
                  from_id: MonsterId = None,
@@ -398,7 +376,6 @@ class Evolution(ServerDependentSqlItem):
                  mat_4_id: MonsterId = None,
                  mat_5_id: MonsterId = None,
                  tstamp: int = None):
-        self.evolution_id = evolution_id
         self.evolution_type = evolution_type
         self.reversible = reversible
         self.from_id = from_id
@@ -410,29 +387,18 @@ class Evolution(ServerDependentSqlItem):
         self.mat_5_id = mat_5_id
         self.tstamp = tstamp
 
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['from_id', 'to_id']
-
     def __str__(self):
-        return 'Evo ({}): {} -> {}, type={}'.format(self.key_value(), self.from_id, self.to_id, self.evolution_type)
+        return 'Evo ({}): from={} type={}'.format(self.key_str(), self.from_id, self.evolution_type)
 
 
 class Transformation(ServerDependentSqlItem):
     """Monster evolution entry."""
-    KEY_COL = 'transformation_id'
+    KEY_COL = {'from_monster_id', 'to_monster_id'}
     BASE_TABLE = 'transformations'
 
     @staticmethod
-    def from_csm(o: CrossServerCard, tfid: MonsterNo, numerator: float, denominator: float) -> Optional['Transformation']:
+    def from_csm(o: CrossServerCard, tfid: MonsterNo, numerator: float, denominator: float) \
+            -> Optional['Transformation']:
         card = o.cur_card.card
 
         def convert(x: MonsterNo) -> MonsterId:
@@ -440,34 +406,19 @@ class Transformation(ServerDependentSqlItem):
 
         # Do something with the chance
         return Transformation(
-            transformation_id=None,  # Key that is looked up or inserted
             from_monster_id=convert(card.monster_no),
             to_monster_id=convert(tfid))
 
     def __init__(self,
-                 transformation_id: int = None,
                  from_monster_id: MonsterId = None,
                  to_monster_id: MonsterId = None,
                  tstamp: int = None):
-        self.transformation_id = transformation_id
         self.from_monster_id = from_monster_id
         self.to_monster_id = to_monster_id
         self.tstamp = tstamp
 
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['from_monster_id', 'to_monster_id']
-
     def __str__(self):
-        return 'Transform ({}): {} -> {}'.format(self.key_value(), self.from_monster_id, self.to_monster_id)
+        return 'Transform ({})'.format(self.key_str())
 
 
 class AltMonster(ServerDependentSqlItem):
@@ -502,4 +453,4 @@ class AltMonster(ServerDependentSqlItem):
         return ['reg_date']
 
     def __str__(self):
-        return 'AltMonster({}) - {}'.format(self.key_value(), self.monster_id)
+        return 'AltMonster({}) - {}'.format(self.key_str(), self.monster_id)

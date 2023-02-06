@@ -29,7 +29,7 @@ class ActiveSkillTag(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'ActiveSkillTag({}): {}'.format(self.key_value(), self.name_en)
+        return 'ActiveSkillTag({}): {}'.format(self.key_str(), self.name_en)
 
 
 class LeaderSkillTag(SimpleSqlItem):
@@ -60,4 +60,4 @@ class LeaderSkillTag(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'LeaderSkillTag({}): {}'.format(self.key_value(), self.name_en)
+        return 'LeaderSkillTag({}): {}'.format(self.key_str(), self.name_en)

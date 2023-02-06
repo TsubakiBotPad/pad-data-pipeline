@@ -2,7 +2,6 @@ import json
 from typing import List
 
 from pad.db.db_util import DbWrapper
-from pad.db.sql_item import ExistsStrategy
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_behaviors import behavior_to_json
 from pad.raw.skills.active_skill_info import ActiveSkill as ASSkill
@@ -98,7 +97,7 @@ class ActiveSkill(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'ActiveSkill({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
+        return 'ActiveSkill({}): {} -> {}'.format(self.key_str(), self.name_en, self.desc_en)
 
 
 class ActiveSubskill(ServerDependentSqlItem):
@@ -174,7 +173,7 @@ class ActiveSubskill(ServerDependentSqlItem):
         return ['behavior']
 
     def __str__(self):
-        return 'ActiveSubskill({}): {}'.format(self.key_value(), self.desc_en)
+        return 'ActiveSubskill({}): {}'.format(self.key_str(), self.desc_en)
 
 
 class ActivePart(ServerDependentSqlItem):
@@ -237,93 +236,61 @@ class ActivePart(ServerDependentSqlItem):
         return ['behavior', 'raw_behavior']
 
     def __str__(self):
-        return 'ActivePart({}): {}'.format(self.key_value(), self.desc_en)
+        return 'ActivePart({}): {}'.format(self.key_str(), self.desc_en)
 
 
 class ActiveSkillsSubskills(ServerDependentSqlItem):
     """Active skills to their subskills."""
-    KEY_COL = 'active_skills_subskills_id'
+    KEY_COL = {'active_skill_id', 'active_subskill_id', 'order_idx'}
     BASE_TABLE = 'active_skills_subskills'
 
     @staticmethod
     def from_css(skill: CrossServerSkill, subskill: ASSkill, order_idx: int = 0) \
             -> 'ActiveSkillsSubskills':
         return ActiveSkillsSubskills(
-            active_skills_subskills_id=None,  # Key that is looked up or inserted
             active_skill_id=skill.cur_skill.skill_id,
             active_subskill_id=subskill.skill_id,
             order_idx=order_idx)
 
     def __init__(self,
-                 active_skills_subskills_id: int = None,
                  active_skill_id: int = None,
                  active_subskill_id: int = None,
                  order_idx: int = None,
                  tstamp: int = None):
-        self.active_skills_subskills_id = active_skills_subskills_id
         self.active_skill_id = active_skill_id
         self.active_subskill_id = active_subskill_id
         self.order_idx = order_idx
         self.tstamp = tstamp
 
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['active_skill_id', 'active_subskill_id', 'order_idx']
-
     def __str__(self):
-        return 'ActiveSkillsSubskills({}): {} -> {} (#{})'.format(self.key_value(), self.active_skill_id,
-                                                                 self.active_subskill_id, self.order_idx)
+        return 'ActiveSkillsSubskills({}) (#{})'.format(self.key_str(), self.order_idx)
 
 
 class ActiveSubskillsParts(ServerDependentSqlItem):
     """Active subskills to their parts."""
-    KEY_COL = 'active_subskills_parts_id'
+    KEY_COL = {'active_subskill_id', 'active_part_id', 'order_idx'}
     BASE_TABLE = 'active_subskills_parts'
 
     @staticmethod
     def from_css(skill: ASSkill, part: ASSkill, order_idx: int = 0) \
             -> 'ActiveSubskillsParts':
         return ActiveSubskillsParts(
-            active_subskills_parts_id=None,  # Key that is looked up or inserted
             active_subskill_id=skill.skill_id,
             active_part_id=part.skill_id,
             order_idx=order_idx)
 
     def __init__(self,
-                 active_subskills_parts_id: int = None,
                  active_subskill_id: int = None,
                  active_part_id: int = None,
                  order_idx: int = None,
                  tstamp: int = None):
-        self.active_subskills_parts_id = active_subskills_parts_id
         self.active_subskill_id = active_subskill_id
         self.active_part_id = active_part_id
         self.order_idx = order_idx
         self.tstamp = tstamp
 
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['active_subskill_id', 'active_part_id', 'order_idx']
-
     def __str__(self):
-        return 'ActiveSubskillsParts({}): {} -> {} (#{})'.format(self.key_value(), self.active_subskill_id,
-                                                                 self.active_part_id, self.order_idx)
+        return 'ActiveSubskillsParts({}): (#{})'.format(self.key_str(), self.order_idx)
 
 
 def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
@@ -414,4 +381,4 @@ class LeaderSkill(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'LeaderSkill({}): {} -> {}'.format(self.key_value(), self.name_en, self.desc_en)
+        return 'LeaderSkill({}): {} -> {}'.format(self.key_str(), self.name_en, self.desc_en)

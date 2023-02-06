@@ -62,4 +62,4 @@ class AwokenSkill(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'AwokenSkill({}): {}'.format(self.key_value(), self.name_en)
+        return 'AwokenSkill({}): {}'.format(self.key_str(), self.name_en)

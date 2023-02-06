@@ -8,7 +8,7 @@ from pad.dungeon.wave_converter import ResultSlot
 class Encounter(SimpleSqlItem):
     """A monster that appears in a dungeon."""
     TABLE = 'encounters'
-    KEY_COL = 'encounter_id'
+    KEY_COL = 'encounter_id'  # ('sub_dungeon_id', 'stage', 'enemy_id', 'order_idx', 'level')
 
     def __init__(self,
                  encounter_id: int = None,
@@ -46,7 +46,7 @@ class Encounter(SimpleSqlItem):
         return ExistsStrategy.BY_KEY_IF_SET
 
     def __str__(self):
-        return 'Encounter({}): {} -> {} [{}, {}, {}]'.format(self.key_value(), self.sub_dungeon_id, self.enemy_id,
+        return 'Encounter({}): {} -> {} [{}, {}, {}]'.format(self.key_str(), self.sub_dungeon_id, self.enemy_id,
                                                              self.stage, self.monster_id, self.level)
 
 
@@ -77,10 +77,10 @@ class Drop(SimpleSqlItem):
         return ExistsStrategy.BY_VALUE
 
     def _non_auto_insert_cols(self):
-        return [self._key()]
+        return list(self._key())
 
     def _non_auto_update_cols(self):
-        return [self._key()]
+        return list(self._key())
 
     def __str__(self):
-        return 'Drop({}): {} -> {}'.format(self.key_value(), self.encounter_id, self.monster_id)
+        return 'Drop({}): {} -> {}'.format(self.key_str(), self.encounter_id, self.monster_id)

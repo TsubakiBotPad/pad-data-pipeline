@@ -56,7 +56,7 @@ class ScheduleEvent(SimpleSqlItem):
         return ExistsStrategy.BY_VALUE
 
     def _non_auto_insert_cols(self):
-        return [self._key()]
+        return list(self._key())
 
     def _non_auto_update_cols(self):
-        return [self._key()]
+        return list(self._key())

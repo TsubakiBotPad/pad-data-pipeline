@@ -9,7 +9,7 @@ from pad.raw.extra_egg_machine import ExtraEggMachine
 class EggMachine(SimpleSqlItem):
     """A per-server egg machine."""
     TABLE = 'egg_machines'
-    KEY_COL = 'egg_machine_id'
+    KEY_COL = {'server_id', 'machine_row', 'machine_type'}
 
     @staticmethod
     def from_eem(eem: ExtraEggMachine, server: Server) -> 'EggMachine':
@@ -27,7 +27,6 @@ class EggMachine(SimpleSqlItem):
         contents = json.dumps(content_map, sort_keys=True)
 
         return EggMachine(
-            egg_machine_id=None,  # Key that is looked up or inserted
             server_id=server.value,
             egg_machine_type_id=egg_machine_type_id,
             start_timestamp=eem.start_timestamp,
@@ -40,7 +39,6 @@ class EggMachine(SimpleSqlItem):
         )
 
     def __init__(self,
-                 egg_machine_id: int = None,
                  server_id: int = None,
                  egg_machine_type_id: int = None,
                  start_timestamp: int = None,
@@ -51,7 +49,6 @@ class EggMachine(SimpleSqlItem):
                  cost: int = None,
                  contents: str = None,
                  tstamp: int = None):
-        self.egg_machine_id = egg_machine_id
         self.server_id = server_id
         self.egg_machine_type_id = egg_machine_type_id
         self.start_timestamp = start_timestamp
@@ -63,18 +60,6 @@ class EggMachine(SimpleSqlItem):
         self.contents = contents
         self.tstamp = tstamp
 
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['server_id', 'machine_row', 'machine_type']
-
     def __str__(self):
-        return 'EggMachine ({}-{}-{}): {} [{}]'.format(self.server_id, self.machine_row, self.machine_type,
+        return 'EggMachine ({}): {} [{}]'.format(self.key_str(),
                                                        self.name, len(self.contents))

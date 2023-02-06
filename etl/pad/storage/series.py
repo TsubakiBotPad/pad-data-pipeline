@@ -31,7 +31,7 @@ class Series(SimpleSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'Series ({}): {}'.format(self.key_value(), self.name_en)
+        return 'Series ({}): {}'.format(self.key_str(), self.name_en)
 
 
 class MonsterSeries(SimpleSqlItem):
@@ -53,4 +53,4 @@ class MonsterSeries(SimpleSqlItem):
         self.priority = priority
 
     def __str__(self):
-        return 'MonsterSeries({}, {})'.format(self.key_value(), self.series_id)
+        return 'MonsterSeries({}, {})'.format(self.key_str(), self.series_id)
