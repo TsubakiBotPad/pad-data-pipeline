@@ -80,7 +80,7 @@ class EnemySkill(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'EnemySkill({}): {} - {}'.format(self.key_value(), self.name_en, self.desc_en)
+        return 'EnemySkill({}): {} - {}'.format(self.key_str(), self.name_en, self.desc_en)
 
 
 class EnemyData(ServerDependentSqlItem):
@@ -106,4 +106,4 @@ class EnemyData(ServerDependentSqlItem):
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'EnemyData({}): {} bytes'.format(self.key_value(), len(self.behavior))
+        return 'EnemyData({}): {} bytes'.format(self.key_str(), len(self.behavior))

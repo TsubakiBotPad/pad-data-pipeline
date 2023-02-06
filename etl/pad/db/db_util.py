@@ -153,23 +153,15 @@ class DbWrapper(object):
                 raise ValueError('got too many results for update:', num_rows, sql)
             return cursor.rowcount
 
-    def insert_or_update(self, item: SqlItem, force_insert: bool = False):
+    def insert_or_update(self, item: SqlItem):
         try:
-            return self._insert_or_update(item, force_insert=force_insert)
+            return self._insert_or_update(item)
         except Exception as ex:
             logger.fatal('Failed to insert item: %s', pad_util.json_string_dump(item, pretty=True))
             raise ex
 
-    def _insert_or_update(self, item: SqlItem, force_insert: bool):
-        key = item.key_value()
-
-        if force_insert:
-            new_key = self.insert_item(item.insert_sql())
-            if not key:
-                key = new_key
-                item.set_key_value(key)
-            logger.info('force inserted an item: %s', item)
-            return
+    def _insert_or_update(self, item: SqlItem):
+        key = item.key or None
 
         if item.exists_strategy() == ExistsStrategy.BY_KEY:
             if not self.check_existing(item.key_exists_sql()):

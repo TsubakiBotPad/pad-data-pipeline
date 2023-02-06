@@ -22,16 +22,17 @@ class EggMachineProcessor(object):
         for server, egg_machine_list in self.egg_machines.items():
             logger.debug('Process {} egg machines'.format(server.name.upper()))
             for egg_machine in egg_machine_list:
-                item = EggMachine.from_eem(egg_machine, server)
-                egg_machine_id = db.insert_or_update(item)
+                em = EggMachine.from_eem(egg_machine, server)
+                egg_machine_id = db.insert_or_update(em)
 
                 # process contents of the eggmachines
                 id_mapper = server_monster_id_fn(server)
                 monsters = [EggMachinesMonster(
-                    egg_machine_monster_id=None,
                     monster_id=id_mapper(k),
                     roll_chance=v,
-                    egg_machine_id=egg_machine_id
+                    machine_row=em.machine_row,
+                    machine_type=em.machine_type,
+                    server_id=em.server_id
                 ) for k, v in egg_machine.contents.items()]
                 for emm in monsters:
                     db.insert_or_update(emm)

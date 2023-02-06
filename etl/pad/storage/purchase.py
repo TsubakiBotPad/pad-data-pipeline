@@ -1,13 +1,13 @@
 from datetime import timedelta
 
 from pad.common.monster_id_mapping import server_monster_id_fn
-from pad.db.sql_item import SimpleSqlItem, ExistsStrategy
+from pad.db.sql_item import SimpleSqlItem
 
 
 class Purchase(SimpleSqlItem):
     """MP Purchases."""
     TABLE = 'purchases'
-    KEY_COL = 'purchase_id'
+    KEY_COL = {'server_id', 'target_monster_id', 'start_timestamp', 'end_timestamp'}
 
     @staticmethod
     def from_raw_purchase(o: "Purchase"):
@@ -23,7 +23,6 @@ class Purchase(SimpleSqlItem):
                         permanent=permanent)
 
     def __init__(self,
-                 purchase_id: int = None,
                  server_id: int = None,
                  target_monster_id: int = None,
                  mp_cost: int = None,
@@ -32,7 +31,6 @@ class Purchase(SimpleSqlItem):
                  end_timestamp: int = None,
                  permanent: int = None,
                  tstamp: int = None):
-        self.purchase_id = purchase_id
         self.server_id = server_id
         self.target_monster_id = target_monster_id
         self.mp_cost = mp_cost
@@ -41,18 +39,6 @@ class Purchase(SimpleSqlItem):
         self.end_timestamp = end_timestamp
         self.permanent = permanent
         self.tstamp = tstamp
-
-    def exists_strategy(self):
-        return ExistsStrategy.BY_VALUE
-
-    def _non_auto_insert_cols(self):
-        return [self._key()]
-
-    def _non_auto_update_cols(self):
-        return [self._key()]
-
-    def _lookup_columns(self):
-        return ['server_id', 'target_monster_id', 'start_timestamp', 'end_timestamp']
 
     def __str__(self):
         return 'Purchase ({}): {} - {:,d}MP'.format(self.server_id, self.target_monster_id, self.mp_cost)

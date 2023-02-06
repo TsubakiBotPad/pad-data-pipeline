@@ -3,7 +3,7 @@ import time
 import binascii
 from datetime import datetime, date
 from enum import Enum
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Set
 
 from pad.common.pad_util import Printable
 
@@ -14,7 +14,7 @@ def object_to_sql_params(obj: Union[Dict, "SqlItem"]) -> Dict[str, str]:
         json_keys = []
     else:
         d = obj.__dict__.copy()
-        json_keys = obj._json_cols()
+        json_keys = obj.json_cols
     d = _process_col_mappings(type(obj), d, reverse=True)
     new_d = {}
     for k, v in d.items():
@@ -101,10 +101,12 @@ def _full_columns(o: 'SqlItem', remove_cols=None, add_cols=None):
 
 def _key_and_cols_compare(item: 'SqlItem', cols=None, include_key=True):
     cols = cols or []
-    if include_key and item._key() not in cols:
-        cols = [item._key()] + cols
+    if include_key:
+        for col in item.key:
+            if col not in cols:
+                cols = [col] + cols
 
-    sql = 'SELECT {} FROM {} WHERE'.format(item._key(), item._table())
+    sql = 'SELECT {} FROM {} WHERE'.format(', '.join(item.key), item.table)
     sql += ' ' + ' AND '.join(map(_col_compare, cols))
     formatted_sql = sql.format(**object_to_sql_params(item))
     fixed_sql = formatted_sql.replace('= NULL', 'is NULL')
@@ -122,8 +124,8 @@ class ExistsStrategy(Enum):
 class SqlItem(Printable):
     __dict__: Dict[str, Any]
 
-    def key_value(self):
-        return getattr(self, self._key()) if self._key() else None
+    def key_str(self):
+        return ', '.join(str(getattr(self, key)) for key in self.key) if self.key else None
 
     def exists_strategy(self) -> ExistsStrategy:
         return ExistsStrategy.BY_KEY
@@ -152,11 +154,11 @@ class SqlItem(Printable):
         if hasattr(self, 'tstamp'):
             if 'tstamp' not in cols:
                 cols = cols + ['tstamp']
-            self.tstamp = int(time.time())
+            setattr(self, 'tstamp', int(time.time()))
 
         sql = 'UPDATE {}'.format(self._table())
         sql += ' SET ' + ', '.join(map(_col_compare, cols))
-        sql += ' WHERE ' + _col_compare(self._key())
+        sql += ' WHERE ' + ' AND '.join(_col_compare(key) for key in self.key)
         return sql.format(**object_to_sql_params(self))
 
     def insert_sql(self):
@@ -164,16 +166,25 @@ class SqlItem(Printable):
         if hasattr(self, 'tstamp'):
             if 'tstamp' not in cols:
                 cols = cols + ['tstamp']
-            self.tstamp = int(time.time())
+            setattr(self, 'tstamp', int(time.time()))
         return generate_insert_sql(self._table(), cols, self)
 
     def set_key_value(self, key_value):
-        setattr(self, self._key(), key_value)
+        assert len(self.key) == 1  # TODO: Remove this eventually
+        setattr(self, next(iter(self.key)), key_value)
 
-    def _table(self):
+    @property
+    def table(self) -> str:
+        return self._table()
+
+    def _table(self) -> str:
         raise NotImplemented('no table name set')
 
-    def _key(self):
+    @property
+    def key(self) -> Set[str]:
+        return self._key()
+
+    def _key(self) -> Set[str]:
         raise NotImplemented('no key name set')
 
     def _insert_columns(self):
@@ -183,21 +194,25 @@ class SqlItem(Printable):
         raise NotImplemented('no update columns set')
 
     def _lookup_columns(self):
+        """Value columns to check for by-value equivalence"""
         return self._update_columns()
+
+    @property
+    def json_cols(self):
+        return self._json_cols()
 
     def _json_cols(self):
         return []
 
-    def _key_lookup_sql(self):
-        raise NotImplemented('no key lookup sql')
-
 
 class SimpleSqlItem(SqlItem):
-    def _table(self):
+    def _table(self) -> str:
         return type(self).TABLE
 
-    def _key(self):
-        return type(self).KEY_COL
+    def _key(self) -> Set[str]:
+        if isinstance(type(self).KEY_COL, set):
+            return type(self).KEY_COL
+        return {type(self).KEY_COL}
 
     def _non_auto_insert_cols(self):
         return []
