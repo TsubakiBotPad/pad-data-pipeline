@@ -759,7 +759,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "2x ATK when 7+ combos",
+    "desc_en": "Increase ATK against Devil enemies by 5x & increase damage cap by 1.2x against Devil enemies",
     "desc_en_official": "ATK increases with 7+ combos",
     "desc_ja": "7コンボ以上で攻撃力が2倍",
     "desc_ja_official": "7コンボ以上で攻撃力がアップする",
