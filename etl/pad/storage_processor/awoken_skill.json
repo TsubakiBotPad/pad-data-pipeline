@@ -813,7 +813,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Increase ATK against Attacker enemies by 5x & increase damage cap by 1.2x against Attacker enemies",
+    "desc_en": "Increases Team HP by 5%",
     "desc_en_official": "Increases Team HP by 5%",
     "desc_ja": "チームのHPが5%アップする",
     "desc_ja_official": "チームのHPが5%アップする",
