@@ -795,7 +795,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Matching a column of Heal Orbs inflicts 500k bonus damage",
+    "desc_en": "Increase ATK against Balanced enemies by 5x & increase damage cap by 1.2x against Balanced enemies",
     "desc_en_official": "Inflicts 1 bonus damage when matching a column of Heal Orbs",
     "desc_ja": "回復ドロップを縦一列でそろえて消すと1ダメージの追い打ち",
     "desc_ja_official": "回復ドロップを縦一列でそろえて消すと 1ダメージの追い打ち",
