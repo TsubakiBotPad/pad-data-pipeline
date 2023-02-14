@@ -831,7 +831,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "Increases Team RCV by 20%",
+    "desc_en": "Increase ATK against Physical enemies by 5x & increase damage cap by 1.2x against Physical enemies",
     "desc_en_official": "Increases Team RCV by 10%",
     "desc_ja": "チームの回復力が10%アップする",
     "desc_ja_official": "チームの回復力が10%アップする",
