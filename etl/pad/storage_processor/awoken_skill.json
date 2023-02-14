@@ -777,7 +777,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": 0,
-    "desc_en": "This monster inflicts DEF-ignoring damage when attacking with 5 Att.",
+    "desc_en": "Increase ATK against Machine enemies by 5x & increase damage cap by 1.2x against Machine enemies",
     "desc_en_official": "This monster inflicts DEF-ignoring damage when attacking with 5 Att.",
     "desc_ja": "5属性同時攻撃すると敵の防御力を無視してダメージを与える",
     "desc_ja_official": "5属性同時攻撃すると 敵の防御力を無視してダメージを与える",
