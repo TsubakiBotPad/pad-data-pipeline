@@ -849,7 +849,7 @@
     "adj_atk": 0,
     "adj_hp": 0,
     "adj_rcv": "0",
-    "desc_en": "Increase ATK against Healer enemies by 5x & increase damage cap by 1.2x against Healer enemies",
+    "desc_en": "Matching a 3x3 Orb square of the same Att. as this monster boosts this match's ATK by 3.5x and ignores damage-voiding status",
     "desc_en_official": "Matching a 3x3 Orb square of the same Att. as this monster boosts ATK and ignores damage-voiding status",
     "desc_ja": "自分と同じ属性のドロップを3×3の正方形で消すと攻撃力が2.5倍にし、ダメージ無効を貫通する",
     "desc_ja_official": "自分と同じ属性のドロップを3×3の正方形で消すと 攻撃力がアップし、ダメージ無効を貫通する",
