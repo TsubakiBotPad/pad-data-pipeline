@@ -178,6 +178,9 @@ class Bonus(Printable):
 
         self.raw = raw
 
+        self.bonus_id = int(raw['b'])
+        self.bonus_info = TYPES_MAP.get(self.bonus_id, UNKNOWN_TYPE)
+
         # Start time as gungho time string
         self.start_time_str = str(raw['s'])
         self.start_timestamp = pad_util.gh_to_timestamp_2(self.start_time_str, server)
@@ -197,10 +200,10 @@ class Bonus(Printable):
         if 'f' in raw:
             self.sub_dungeon_id = SubDungeonId(int(raw['f']))
 
-        # If REM/PEM, the ID of the machine
-        self.egg_machine_id = None  # type: Optional[int]
+        # If REM/PEM, the ID of the machine or fixed value
+        self.bonus_value_2 = None  # type: Optional[int]
         if 'i' in raw:
-            self.egg_machine_id = int(raw['i'])
+            self.bonus_value_2 = int(raw['i'])
 
         # Optional human-readable message (with formatting)
         self.message = None  # type: Optional[str]
@@ -213,9 +216,6 @@ class Bonus(Printable):
             self.clean_message = pad_util.strip_colors(self.message)
             if (match := re.search(r'https?:.+?(?=\|)', self.message)):
                 self.url = match.group()
-
-        self.bonus_id = int(raw['b'])
-        self.bonus_info = TYPES_MAP.get(self.bonus_id, UNKNOWN_TYPE)
 
         # Bonus value, if provided, optionally processed
         self.bonus_value = None  # type: Optional[str]
