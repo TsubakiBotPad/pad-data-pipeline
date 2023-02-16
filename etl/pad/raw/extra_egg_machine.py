@@ -112,7 +112,7 @@ def machine_from_bonuses(server: Server,
             'comment': event.message,
             'start': event.start_time_str,
             'end': event.end_time_str,
-            'row': event.egg_machine_id,
+            'row': event.bonus_value_2,
             'egg_machine_type': em_type,
             # pri can actually be found in another event but it's probably safe to fix it.
             'pri': price,

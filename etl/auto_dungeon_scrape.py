@@ -68,12 +68,13 @@ class Arg:
     pass
 
 
-def do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper):
+def do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper, stam_adjust=False):
     if not args.doupdates:
         print('skipping due to dry run')
         return
 
     dg_pull_arg = Arg()
+    dg_pull_arg.base_dir = args.input_dir
     dg_pull_arg.db_config = args.db_config
     dg_pull_arg.server = args.server
     dg_pull_arg.user_uuid = args.user_uuid
@@ -83,6 +84,7 @@ def do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper):
     dg_pull_arg.loop_count = 100
     dg_pull_arg.logsql = False
     dg_pull_arg.stream_safe = args.stream_safe
+    dg_pull_arg.stam_adjust = stam_adjust
     pull_data(dg_pull_arg, api_client, db_wrapper)
 
 
@@ -144,27 +146,33 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
             should_enter = newer_count < minimum_wave_count
             print(f'Entries for floor {floor_id} ({sub_dungeon.clean_name}):'
                   f' old={older_count} new={newer_count} entering={should_enter}')
-            if should_enter:
-                try:
-                    do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper)
-                except BadResponseCode as brc:
-                    if brc.code == 2:
-                        try:
-                            print("Attempting Relog...")
-                            api_client.login()
-                            api_client.load_player_data()
-                            do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper)
-                            brc.code = 0
-                        except BadResponseCode as brc2:
-                            brc = brc2
 
-                    if brc.code == 8:
+            relogged = False
+            stam_adjust = False
+            while should_enter:
+                try:
+                    do_dungeon_load(args, dungeon_id, floor_id, api_client, db_wrapper, stam_adjust)
+                except BadResponseCode as brc:
+                    if brc.code == 2 and not relogged:
+                        relogged = True
+                        print("Attempting Relog...")
+                        api_client.login()
+                        api_client.load_player_data()
+                        continue
+                    elif brc.code == 8:
                         print(f"Failed to enter. Skipping dungeon. ({brc})")
                         fail_logger.debug(f"Failed to enter dungeon {dungeon.clean_name} ({dungeon_id})"
                                           f" on floor {floor_id}.\n{brc}")
-                        break
+                    elif brc.code == 54:
+                        if not stam_adjust:
+                            stam_adjust = True
+                            print("Trying 0 stamina...")
+                            continue
+                        else:
+                            print(f"Could not enter dungeon. ({brc})")
                     elif brc.code != 0:
                         raise
+                break
 
             wave_info = db_wrapper.get_single_or_no_row(
                 CHECK_AGE_SQL.format(age=args.maximum_wave_age, dungeon_id=dungeon_id, floor_id=floor_id))
@@ -207,7 +215,7 @@ def load_dungeons(args, db_wrapper, current_dungeons, api_client):
                     db_wrapper.connection.autocommit(True)
 
 
-def identify_dungeons(database):
+def identify_dungeons(database, bonuses=None):
     selected_dungeons = []
 
     # Identify normals and technicals
@@ -240,6 +248,14 @@ def identify_dungeons(database):
 
         selected_dungeons.append(bonus.dungeon)
 
+    if bonuses is not None:
+        bonuses = [b for b in bonuses if b.start_timestamp <= time.time() <= b.end_timestamp]
+        bonus_dgs = {b.dungeon_id for b in bonuses if b.dungeon_id is not None}
+        bonus_dgs.update(b.sub_dungeon_id // 1000 for b in bonuses if b.sub_dungeon_id is not None)
+        print(bonus_dgs)
+        print([b for b in bonuses if b.dungeon_id == 10])
+        selected_dungeons = [d for d in selected_dungeons if d.dungeon_id in bonus_dgs]
+
     return selected_dungeons
 
 
@@ -259,7 +275,8 @@ def load_data(args):
     db_wrapper = db_util.DbWrapper(dry_run)
     db_wrapper.connect(db_config)
 
-    dungeons = identify_dungeons(pad_db)
+    bonuses = [b.bonus for b in pad_db.bonuses]
+    dungeons = identify_dungeons(pad_db, bonuses)
 
     if server == Server.na:
         endpoint = pad_api.ServerEndpoint.NA

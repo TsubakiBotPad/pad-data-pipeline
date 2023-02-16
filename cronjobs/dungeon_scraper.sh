@@ -35,14 +35,14 @@ function human_fixes_check() {
 trap error_exit ERR
 trap success_exit EXIT
 
-flock -xn /tmp/dg_scraper_jp.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py \
-  --db_config=${DB_CONFIG} \
-  --input_dir=${RAW_DIR} \
-  --doupdates \
-  --server=jp \
-  --user_uuid=${JP_PAD_USER_UUID} \
-  --user_intid=${JP_PAD_USER_INTID}
-human_fixes_check
+#flock -xn /tmp/dg_scraper_jp.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py \
+#  --db_config=${DB_CONFIG} \
+#  --input_dir=${RAW_DIR} \
+#  --doupdates \
+#  --server=jp \
+#  --user_uuid=${JP_PAD_USER_UUID} \
+#  --user_intid=${JP_PAD_USER_INTID}
+#human_fixes_check
 
 
 flock -xn /tmp/dg_scraper_na.lck python3 ${REPO_ROOT}/etl/auto_dungeon_scrape.py \
