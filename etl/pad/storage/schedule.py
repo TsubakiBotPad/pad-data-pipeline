@@ -23,7 +23,7 @@ class ScheduleEvent(SimpleSqlItem):
             end_timestamp=o.bonus.end_timestamp,
             message=o.bonus.message,
             url=o.bonus.url,
-            value=o.bonus.bonus_value,
+            value=o.bonus.clean_bonus_value,
             dungeon_id=o.bonus.dungeon_id,
             sub_dungeon_id=o.bonus.sub_dungeon_id,
         )

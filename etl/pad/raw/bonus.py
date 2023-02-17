@@ -200,11 +200,6 @@ class Bonus(Printable):
         if 'f' in raw:
             self.sub_dungeon_id = SubDungeonId(int(raw['f']))
 
-        # If REM/PEM, the ID of the machine or fixed value
-        self.bonus_value_2 = None  # type: Optional[int]
-        if 'i' in raw:
-            self.bonus_value_2 = int(raw['i'])
-
         # Optional human-readable message (with formatting)
         self.message = None  # type: Optional[str]
         # Optional human-readable message (no formatting)
@@ -218,9 +213,16 @@ class Bonus(Printable):
                 self.url = match.group()
 
         # Bonus value, if provided, optionally processed
-        self.bonus_value = None  # type: Optional[str]
+        self.clean_bonus_value = None  # type: Optional[str]
+        self.bonus_value = None  # type: Optional[int]
         if 'a' in raw:
-            self.bonus_value = self.bonus_info.mod_fn(raw['a'])
+            self.bonus_value = int(raw['a'])
+            self.clean_bonus_value = self.bonus_info.mod_fn(raw['a'])
+
+        # If REM/PEM, the ID of the machine or fixed value
+        self.bonus_value_2 = None  # type: Optional[int]
+        if 'i' in raw:
+            self.bonus_value_2 = int(raw['i'])
 
         # Human readable name for the bonus
         self.bonus_name = self.bonus_info.bonus_type.name

@@ -203,15 +203,15 @@ class Card(pad_util.Printable):
 
         self.ls_bitflag: int = raw[72] + (raw[73] << 32)
 
-        # Remove this when NA catches up
-        if len(raw) == 74:
-            raw += [0, 0]
-
         # This is 0 for all cards except NY cards
         self.unknown_74: int = raw[74]
 
         # This is 0 for all cards
         self.unknown_75: int = raw[75]
+
+        # Use this for server mismatch
+        if len(raw) == 74:
+            raw += [0] * 2
 
         self.other_fields: List = raw[76:]
 
