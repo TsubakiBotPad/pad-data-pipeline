@@ -252,8 +252,6 @@ def identify_dungeons(database, bonuses=None):
         bonuses = [b for b in bonuses if b.start_timestamp <= time.time() <= b.end_timestamp]
         bonus_dgs = {b.dungeon_id for b in bonuses if b.dungeon_id is not None}
         bonus_dgs.update(b.sub_dungeon_id // 1000 for b in bonuses if b.sub_dungeon_id is not None)
-        print(bonus_dgs)
-        print([b for b in bonuses if b.dungeon_id == 10])
         selected_dungeons = [d for d in selected_dungeons if d.dungeon_id in bonus_dgs]
 
     return selected_dungeons

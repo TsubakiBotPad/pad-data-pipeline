@@ -76,7 +76,8 @@ def pull_data(args, api_client=None, db_wrapper=None):
         db_wrapper.connect(db_config)
 
     stamina = db_wrapper.get_single_value(f"SELECT stamina FROM sub_dungeons"
-                                          f" WHERE sub_dungeon_id = {int(dungeon_id) * 1000 + int(floor_id)};")
+                                          f" WHERE sub_dungeon_id = {int(dungeon_id) * 1000 + int(floor_id)};",
+                                          op=int)
     bonuses = bonus.load_bonus_data(data_dir=os.path.join(args.base_dir, args.server.lower()), server=server)
     now = time.time()
     stam_bonus = next((b for b in bonuses
