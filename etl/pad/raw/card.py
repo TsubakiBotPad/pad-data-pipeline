@@ -210,10 +210,13 @@ class Card(pad_util.Printable):
         self.unknown_75: int = raw[75]
 
         # Use this for server mismatch
-        if len(raw) == 74:
-            raw += [0] * 2
+        if len(raw) == 76:
+            raw += [-1]
 
-        self.other_fields: List = raw[76:]
+        # This is -1 for most cards and 0 for a few enemy monsters
+        self.unknown_76: int = raw[76]
+
+        self.other_fields: List = raw[77:]
 
         if self.other_fields:
             human_fix_logger.error('Unused monster values found.')
