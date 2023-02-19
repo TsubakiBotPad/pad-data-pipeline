@@ -41,7 +41,7 @@ for server in na jp; do
   python3 "${RUN_DIR}/PADIconGenerator.py" \
     --input_dir="${IMG_DIR}/${server}/portrait/extract_data" \
     --data_dir="${RAW_DIR}" \
-    --card_templates_file="${RUN_DIR}/wide_cards.png" \
+    --card_templates_file="${RUN_DIR}/attribute_frames.png" \
     --server=${server} \
     --output_dir="${IMG_DIR}/${server}/icon/local"
 done
