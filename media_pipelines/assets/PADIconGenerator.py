@@ -1,13 +1,11 @@
 import argparse
-import json
+import logging
 import os
 
 from PIL import Image
 
-from pad.raw_processor import merged_database
 from pad.common.shared_types import Server
-
-import logging
+from pad.raw_processor import merged_database
 
 fail_logger = logging.getLogger('human_fix')
 fail_logger.disabled = True
@@ -31,28 +29,20 @@ card_templates_file = args.card_templates_file
 output_dir = args.output_dir
 
 templates_img = Image.open(card_templates_file)
-attr_imgs = {}
-sattr_imgs = {}
+attr1_imgs = {}
+attr2_imgs = {}
+attr3_imgs = {}
+psize = 100
 for idx, t in enumerate(['r', 'b', 'g', 'l', 'd', 'x']):
-    pwidth = 100
-    pheight = 100
-    xstart = idx * (pwidth + 2)
+    xstart = idx * (psize + 2)
     ystart = 0
-
-    xend = xstart + pwidth
-    yend = ystart + pheight
-
-    attr_imgs[t] = templates_img.crop(box=(xstart, ystart, xend, yend))
-
-    ystart = ystart + pheight + 5
-    yend = ystart + pheight - 1 - 1  # Stops one short of full height
-
-    sattr_imgs[t] = templates_img.crop(box=(xstart, ystart, xend, yend))
+    for attr_img_dict in (attr1_imgs, attr2_imgs, attr3_imgs):
+        attr_img_dict[t] = templates_img.crop(box=(xstart, ystart, xstart + psize, ystart + psize))
+        ystart += psize + 4
 
 card_types = []
-
 attr_map = {
-    -1: '',
+    -1: 'x',
     0: 'r',
     1: 'b',
     2: 'g',
@@ -77,8 +67,9 @@ for merged_card in pad_db.cards:
 
     card_types.append([
         card_id,
-        attr_map[card.attr_id],
-        attr_map[card.sub_attr_id]
+        attr_map[card.attr1_id],
+        attr_map[card.attr2_id],
+        attr_map[card.attr3_id]
     ])
 
 
@@ -122,7 +113,7 @@ def is_entirely_transparent(img):
     return img.getextrema() == ((0, 0), (0, 0), (0, 0), (0, 0))
 
 
-for card_id, card_attr, card_sattr in card_types:
+for card_id, card_attr1, card_attr2, card_attr3 in card_types:
     output_file = os.path.join(output_dir, '{}.png'.format(card_id))
     if os.path.exists(output_file):
         continue
@@ -144,24 +135,14 @@ for card_id, card_attr, card_sattr in card_types:
     grey_img = Image.new("RGBA", card_img.size, color=(68, 68, 68, 255))
     card_img = Image.alpha_composite(grey_img, card_img)
 
-    attr_img = attr_imgs[card_attr]
-
     # Adjust the card image to fit the portrait
-    new_card_img = Image.new("RGBA", attr_img.size)
-    new_card_img.paste(card_img, (2, 2))
+    merged_img = Image.new("RGBA", (100, 100))
+    merged_img.paste(card_img, (2, 2))
 
     # Merge the attribute border on to the portrait
-    merged_img = Image.alpha_composite(new_card_img, attr_img)
-
-    if card_sattr:
-        sattr_img = sattr_imgs[card_sattr]
-        # Adjust the subattribute image to the attribute image size
-        new_sattr_img = Image.new("RGBA", attr_img.size)
-        # There's a slight offset needed for the subattribute border
-        new_sattr_img.paste(sattr_img, (0, 1))
-
-        # Merge the subattribute on top
-        merged_img = Image.alpha_composite(merged_img, new_sattr_img)
+    merged_img = Image.alpha_composite(merged_img, attr1_imgs[card_attr1])
+    merged_img = Image.alpha_composite(merged_img, attr2_imgs[card_attr2])
+    merged_img = Image.alpha_composite(merged_img, attr3_imgs[card_attr3])
 
     # Save
     merged_img.save(os.path.join(output_dir, '{}.png'.format(card_id)), 'PNG')

@@ -31,7 +31,7 @@ class Monster(ServerDependentSqlItem):
         voice_id_jp = cur_card.voice_id or None if o.jp_card.server == Server.jp else None
         voice_id_na = cur_card.voice_id or None if o.na_card.server == Server.na else None
         orb_skin_id = cur_card.orb_skin_id or None
-        bgm_id = cur_card.bgm_id or None
+        bgm_id = cur_card.bgm_set_id or None
         latent_slots = 8 if cur_card.latent_slot_unlock_flag else 6
 
         def none_or(value: int):
@@ -82,8 +82,9 @@ class Monster(ServerDependentSqlItem):
             level=max_level,
             rarity=cur_card.rarity,
             limit_mult=cur_card.limit_mult,
-            attribute_1_id=cur_card.attr_id,
-            attribute_2_id=none_or(cur_card.sub_attr_id),
+            attribute_1_id=cur_card.attr1_id,
+            attribute_2_id=none_or(cur_card.attr2_id),
+            attribute_3_id=none_or(cur_card.attr3_id),
             leader_skill_id=jp_card.leader_skill_id,
             active_skill_id=jp_card.active_skill_id,
             type_1_id=cur_card.type_1_id,
@@ -140,6 +141,7 @@ class Monster(ServerDependentSqlItem):
                  limit_mult: int = None,
                  attribute_1_id: int = None,
                  attribute_2_id: int = None,
+                 attribute_3_id: int = None,
                  leader_skill_id: int = None,
                  active_skill_id: int = None,
                  type_1_id: int = None,
@@ -195,6 +197,7 @@ class Monster(ServerDependentSqlItem):
         self.limit_mult = limit_mult
         self.attribute_1_id = attribute_1_id
         self.attribute_2_id = attribute_2_id
+        self.attribute_3_id = attribute_3_id
         self.leader_skill_id = leader_skill_id
         self.active_skill_id = active_skill_id
         self.type_1_id = type_1_id
