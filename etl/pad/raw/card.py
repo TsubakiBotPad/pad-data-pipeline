@@ -55,8 +55,8 @@ class Card(pad_util.Printable):
 
         self.monster_no = MonsterNo(raw[0])
         self.name: str = raw[1]
-        self.attr_id = AttrId(raw[2])
-        self.sub_attr_id = AttrId(raw[3])
+        self.attr1_id = AttrId(raw[2])
+        self.attr2_id = AttrId(raw[3])
         self.is_ult: bool = bool(raw[4])  # True if ultimate, False if normal evo
         self.type_1_id = TypeId(raw[5])
         self.type_2_id = TypeId(raw[6])
@@ -196,7 +196,7 @@ class Card(pad_util.Printable):
         # 1-indexed media ids
         self.voice_id: int = raw[69]
         self.orb_skin_id: int = raw[70] if raw[70] < 10_000 else 0
-        self.bgm_id: int = raw[70] - 10_000 if 10_000 <= raw[70] else 0
+        self.bgm_set_id: int = raw[70] - 10_000 if 10_000 <= raw[70] else 0
 
         # This is currently unused by GH except for old monster transform values
         self.tags: str = raw[71]
@@ -213,8 +213,7 @@ class Card(pad_util.Printable):
         if len(raw) == 76:
             raw += [-1]
 
-        # This is -1 for most cards and 0 for a few enemy monsters
-        self.unknown_76: int = raw[76]
+        self.attr3_id = AttrId(raw[76])
 
         self.other_fields: List = raw[77:]
 
