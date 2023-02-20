@@ -1870,5 +1870,23 @@
     "name_ko": "Untranslated",
     "name_ko_official": "Unknown Official Name",
     "pad_awakening_id": 104
+  },
+  {
+    "adj_atk": 0,
+    "adj_hp": 0,
+    "adj_rcv": 0,
+    "desc_en": "Team starts with 1 more turn needed to activate skills",
+    "desc_en_official": "Team starts with 1 more turn needed to activate skills",
+    "desc_ja": "チーム全体のスキルが1ターン減った状態で始まる",
+    "desc_ja_official": "チーム全体のスキルが1ターン減った状態で始まる",
+    "desc_ko": "Untranslated",
+    "desc_ko_official": "Unknown Official Text",
+    "name_en": "Anti-Skill Boost",
+    "name_en_official": "Anti-Skill Boost",
+    "name_ja": "スキルブーストマイナス",
+    "name_ja_official": "スキルブーストマイナス",
+    "name_ko": "Untranslated",
+    "name_ko_official": "Unknown Official Name",
+    "pad_awakening_id": 105
   }
 ]
