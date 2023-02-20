@@ -1888,5 +1888,23 @@
     "name_ko": "Untranslated",
     "name_ko_official": "Unknown Official Name",
     "pad_awakening_id": 105
+  },
+  {
+    "adj_atk": 0,
+    "adj_hp": 0,
+    "adj_rcv": 0,
+    "desc_en": "Untranslated",
+    "desc_en_official": "Unknown Official Text",
+    "desc_ja": "Untranslated",
+    "desc_ja_official": "自分自身への超重力効果を緩和する",
+    "desc_ko": "Untranslated",
+    "desc_ko_official": "Unknown Official Text",
+    "name_en": "Levitate",
+    "name_en_official": "Unknown Official Name",
+    "name_ja": "浮遊",
+    "name_ja_official": "浮遊",
+    "name_ko": "Untranslated",
+    "name_ko_official": "Unknown Official Name",
+    "pad_awakening_id": 106
   }
 ]
