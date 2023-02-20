@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
+echo "Setting secrets..."
+set +x
 
 declare -x AWS_ACCESS_KEY_ID="GetThisFromAWSCred"
-declare -x AWS_SECRET_ACCESS_KEY="FromAWsConsole"
+declare -x AWS_SECRET_ACCESS_KEY="FromAWSConsole"
 declare -x MYSQL_USER="whateverYouMadeYourSqlUserNameToBe"
 declare -x MYSQL_PASSWORD="your sql password"
 declare -x JP_PAD_USER_UUID="00000000-0000-0000-0000-000000000000"
@@ -18,3 +19,5 @@ declare -x PRIVATE_WARN_WEBHOOK_URL="https://discordapp.com/api/webhooks/THIS/IS
 declare -x PRIVATE_INFO_WEBHOOK_URL="https://discordapp.com/api/webhooks/THIS/IS-YOUR-WEBHOOK-URL3"
 declare -x PUBLIC_WEBHOOK_URL="https://discordapp.com/api/webhooks/THIS/IS-YOUR-WEBHOOK-URL4"
 declare -x NOTIFICATION_DISCORD_ROLE_ID="12398612894698234"
+
+set -x
