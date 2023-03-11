@@ -62,9 +62,9 @@ class Monster(ServerDependentSqlItem):
 
         return Monster(
             monster_id=o.monster_id,
-            monster_no_jp=jp_card.monster_no,
-            monster_no_na=na_card.monster_no,
-            monster_no_kr=kr_card.monster_no,
+            monster_no_jp=jp_card.monster_no if on_jp else None,
+            monster_no_na=na_card.monster_no if on_na else None,
+            monster_no_kr=kr_card.monster_no if on_kr else None,
             name_ja=jp_card.name,
             name_en=na_card.name,
             name_ko=kr_card.name,
