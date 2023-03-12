@@ -114,7 +114,7 @@ def is_entirely_transparent(img):
 
 
 for card_id, card_attr1, card_attr2, card_attr3 in card_types:
-    output_file = os.path.join(output_dir, '{}.png'.format(card_id))
+    output_file = os.path.join(output_dir, f'{card_id:05d}.png')
     if os.path.exists(output_file):
         continue
 
@@ -145,4 +145,4 @@ for card_id, card_attr1, card_attr2, card_attr3 in card_types:
     merged_img = Image.alpha_composite(merged_img, attr3_imgs[card_attr3])
 
     # Save
-    merged_img.save(os.path.join(output_dir, '{}.png'.format(card_id)), 'PNG')
+    merged_img.save(output_file, 'PNG')
