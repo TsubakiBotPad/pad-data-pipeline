@@ -17,6 +17,9 @@ import padtexturetool
 #
 # Did this for padtools/regions/__init__.py and padtools/servers/__init__.py
 
+raise RuntimeError("I moved where files are and this won't work until I fix"
+                   " this but I don't want to do that right now and this file"
+                   " isn't used anyway")
 
 def getOutputFileName(suggestedFileName):
     outputFileName = suggestedFileName
