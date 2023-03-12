@@ -23,7 +23,6 @@ def parse_args():
 def do_copy(src_path, dest_path):
     for file in os.listdir(src_path):
         if not os.path.exists(dest_path / file):
-            print(file)
             shutil.copy2(src_path / file, dest_path / file)
 
 
