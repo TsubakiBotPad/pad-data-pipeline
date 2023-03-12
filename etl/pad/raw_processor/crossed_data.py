@@ -542,7 +542,7 @@ class CrossServerDatabase:
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
 
     def load_extra_image_info(self, media_dir: str):
-        for f in os.listdir(os.path.join(media_dir, 'jp', 'hq_images')):
+        for f in os.listdir(os.path.join(media_dir, 'jp', 'hq_portrait')):
             if (m := re.match(r'(\d+)\.png', f)):
                 self.hq_image_monster_ids.append(MonsterId(int(m.group(1))))
 
