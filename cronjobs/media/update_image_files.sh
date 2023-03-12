@@ -43,7 +43,7 @@ for SERVER in na jp; do
   done
   set -x
   yarn --cwd=${PAD_RESOURCES_ROOT} update "${FILE_DIR}/raw_data" \
-    --new-only --for-tsubaki --server "${SERVER}" --mons "6978 8852 9356" --cards "1" --quiet
+    --new-only --for-tsubaki --server "${SERVER}" --quiet
   yarn --cwd=${PAD_RESOURCES_ROOT} extract "${FILE_DIR}/raw_data" \
     --still-dir "${FILE_DIR}/portraits" \
     --card-dir "${FILE_DIR}/cards" \
