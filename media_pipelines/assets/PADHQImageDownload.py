@@ -49,7 +49,7 @@ for file_name in sorted(os.listdir(raw_dir)):
         continue
 
     pad_id = match.group(1)
-    final_image_name = '{}.png'.format(pad_id)
+    final_image_name = '{}.png'.format(pad_id.zfill(5))
     corrected_file_path = os.path.join(corrected_dir, final_image_name)
 
     if os.path.exists(corrected_file_path):

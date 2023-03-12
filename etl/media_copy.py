@@ -4,81 +4,43 @@ Copies PAD media to the expected DadGuide locations.
 import argparse
 import os
 import shutil
-
-from pad.common import monster_id_mapping
-from pad.common.shared_types import MonsterNo
+from pathlib import Path
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Creates DadGuide image repository.", add_help=False)
     input_group = parser.add_argument_group("Input")
-    input_group.add_argument("--base_dir", required=True, help="Miru image base dir")
+    input_group.add_argument("--base_dir", required=True, help="Tsubaki image base dir")
 
     output_group = parser.add_argument_group("Output")
     output_group.add_argument("--output_dir", required=True,
-                              help="Dir to write dadguide-formatted media to")
+                              help="Dir to write coalesced output data to")
 
     return parser.parse_args()
 
 
-def do_copy(src_dir, src_file, dest_dir, dest_file):
-    src_path = os.path.join(src_dir, src_file)
-    dest_path = os.path.join(dest_dir, dest_file)
-    if os.path.exists(src_path) and not os.path.exists(dest_path):
-        shutil.copy2(src_path, dest_path)
+def do_copy(src_path, dest_path):
+    for file in os.listdir(src_path):
+        if not os.path.exists(dest_path / file):
+            print(file)
+            shutil.copy2(src_path / file, dest_path / file)
 
 
 def copy_media(args):
     base_dir = args.base_dir
     output_dir = args.output_dir
 
-    jp_icon_input_dir = os.path.join(base_dir, 'jp', 'icon', 'local')
-    na_icon_input_dir = os.path.join(base_dir, 'na', 'icon', 'local')
-
-    jp_portrait_input_dir = os.path.join(base_dir, 'jp', 'portrait', 'corrected_data')
-    na_portrait_input_dir = os.path.join(base_dir, 'na', 'portrait', 'corrected_data')
-
-    hq_portrait_input_dir = os.path.join(base_dir, 'hq_images')
-    spine_file_input_dir = os.path.join(base_dir, 'spine')
-
-    icon_output_dir = os.path.join(output_dir, 'icons')
-    portrait_output_dir = os.path.join(output_dir, 'portraits')
-    hq_portrait_output_dir = os.path.join(output_dir, 'hq_portraits')
-    spine_file_output_dir = os.path.join(output_dir, 'spine')
-
-    if os.path.exists(spine_file_output_dir):
-        shutil.rmtree(spine_file_output_dir)
-    shutil.copytree(spine_file_input_dir, spine_file_output_dir)
-
-    for jp_id in range(1, 10000):
-        monster_id = jp_id
-        monster_id_filled = str(monster_id).zfill(5)
-
-        do_copy(jp_icon_input_dir, '{}.png'.format(monster_id),
-                icon_output_dir, '{}.png'.format(monster_id_filled))
-
-        # TODO: Fix the naming scheme so I don't have to do this twice
-        do_copy(jp_portrait_input_dir, '{}.png'.format(monster_id),
-                portrait_output_dir, '{}.png'.format(monster_id_filled))
-        do_copy(jp_portrait_input_dir, '{}.png'.format(monster_id_filled),
-                portrait_output_dir, '{}.png'.format(monster_id_filled))
-
-        do_copy(hq_portrait_input_dir, '{}.png'.format(monster_id),
-                hq_portrait_output_dir, '{}.png'.format(monster_id_filled))
-
-
-    for na_id in range(1, 10000):
-        monster_id = monster_id_mapping.na_no_to_monster_id(MonsterNo(na_id))
-        monster_id_filled = str(monster_id).zfill(5)
-
-        do_copy(na_icon_input_dir, '{}.png'.format(na_id),
-                icon_output_dir, '{}.png'.format(monster_id_filled))
-
-        do_copy(na_portrait_input_dir, '{}.png'.format(na_id),
-                portrait_output_dir, '{}.png'.format(monster_id_filled))
+    for server in ('na', 'jp'):
+        for folder in ('portraits', 'icons', 'spine_files', 'hq_portraits'):
+            # HQ Portraits don't exist in NA server
+            if server == 'na' and folder == 'hq_portraits':
+                continue
+            from_dir = Path(base_dir, server, folder)
+            to_dir = Path(output_dir, folder)
+            to_dir.mkdir(parents=True, exist_ok=True)
+            do_copy(from_dir, to_dir)
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    copy_media(args)
+    copy_media(parse_args())
