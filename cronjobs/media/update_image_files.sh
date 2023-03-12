@@ -8,9 +8,6 @@ source ../shared.sh
 source ../discord.sh
 source "${VENV_ROOT}/bin/activate"
 
-exec 8>"/tmp/image.lock";
-flock -nx 8;
-
 function error_exit() {
   hook_error "Image Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
   hook_file "/tmp/dg_image_log.txt"
@@ -25,6 +22,10 @@ function success_exit() {
 trap error_exit ERR
 trap success_exit EXIT
 
+# Only allow one instance of this script to run at a time
+exec 8>"/tmp/image.lock";
+flock -nx 8;
+
 RUN_DIR="${MEDIA_ETL_DIR}/assets"
 
 # Enable NVM (Spammy)
@@ -34,6 +35,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm use 16
 set -x
 
+mkdir -p "${IMG_DIR}/animated_tombstones"
 for SERVER in na jp; do
   FILE_DIR="${IMG_DIR}/${SERVER}"
   # Make folders (Spammy)
@@ -43,7 +45,7 @@ for SERVER in na jp; do
   done
   set -x
   yarn --cwd=${PAD_RESOURCES_ROOT} update "${FILE_DIR}/raw_data" \
-    --new-only --for-tsubaki --server "${SERVER}" --quiet
+    --new-only --for-tsubaki --server "${SERVER}" --mons "6978 8852 9116 9536" --cards 1 --quiet
   yarn --cwd=${PAD_RESOURCES_ROOT} extract "${FILE_DIR}/raw_data" \
     --still-dir "${FILE_DIR}/portraits" \
     --card-dir "${FILE_DIR}/cards" \
@@ -53,10 +55,12 @@ for SERVER in na jp; do
     yarn --cwd=${PAD_RESOURCES_ROOT} render "${FILE_DIR}/spine_files" \
     --animated-dir "${FILE_DIR}/animated_portraits" \
     --still-dir "${FILE_DIR}/portraits" \
+    --tomb-dir "${IMG_DIR}/animated_tombstones" \
     --new-only --for-tsubaki --server "${SERVER}" --quiet \
   || yarn --cwd=${PAD_RESOURCES_ROOT} render "${FILE_DIR}/spine_files" \
     --animated-dir "${FILE_DIR}/animated_portraits" \
     --still-dir "${FILE_DIR}/portraits" \
+    --tomb-dir "${IMG_DIR}/animated_tombstones" \
     --new-only --for-tsubaki --server "${SERVER}" --quiet
 
   python3 "${RUN_DIR}/PADIconGenerator.py" \
