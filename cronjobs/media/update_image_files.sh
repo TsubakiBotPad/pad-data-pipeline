@@ -8,6 +8,9 @@ source ../shared.sh
 source ../discord.sh
 source "${VENV_ROOT}/bin/activate"
 
+exec 8>"/tmp/image.lock";
+flock -nx 8;
+
 function error_exit() {
   hook_error "Image Pipeline failed <@&${NOTIFICATION_DISCORD_ROLE_ID}>"
   hook_file "/tmp/dg_image_log.txt"
@@ -31,29 +34,45 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm use 16
 set -x
 
-# Portraits
-for server in na jp; do
-  python3 "${RUN_DIR}/PADTextureDownload.py" \
-    --animated_dir="${IMG_DIR}/animated" \
-    --output_dir="${IMG_DIR}/${server}/portrait" \
-    --server=${server}
+for SERVER in na jp; do
+  FILE_DIR="${IMG_DIR}/${SERVER}"
+  # Make folders (Spammy)
+  set +x
+  for FOLDER in raw_data portraits cards icons spine_files animated_portraits; do
+    mkdir -p "${FILE_DIR}/${FOLDER}"
+  done
+  set -x
+  yarn --cwd=${PAD_RESOURCES_ROOT} update "${FILE_DIR}/raw_data" \
+    --new-only --for-tsubaki --server "${SERVER}" --quiet
+  yarn --cwd=${PAD_RESOURCES_ROOT} extract "${FILE_DIR}/raw_data" \
+    --still-dir "${FILE_DIR}/portraits" \
+    --card-dir "${FILE_DIR}/cards" \
+    --animated-dir "${FILE_DIR}/spine_files" \
+    --new-only --for-tsubaki --server "${SERVER}" --quiet
+  xvfb-run -s "-ac -screen 0 640x388x24" \
+    yarn --cwd=${PAD_RESOURCES_ROOT} render "${FILE_DIR}/spine_files" \
+    --animated-dir "${FILE_DIR}/animated_portraits" \
+    --still-dir "${FILE_DIR}/portraits" \
+    --new-only --for-tsubaki --server "${SERVER}" --quiet \
+  || yarn --cwd=${PAD_RESOURCES_ROOT} render "${FILE_DIR}/spine_files" \
+    --animated-dir "${FILE_DIR}/animated_portraits" \
+    --still-dir "${FILE_DIR}/portraits" \
+    --new-only --for-tsubaki --server "${SERVER}" --quiet
 
   python3 "${RUN_DIR}/PADIconGenerator.py" \
-    --input_dir="${IMG_DIR}/${server}/portrait/extract_data" \
+    --input_dir="${FILE_DIR}/cards" \
     --data_dir="${RAW_DIR}" \
     --card_templates_file="${RUN_DIR}/attribute_frames.png" \
-    --server=${server} \
-    --output_dir="${IMG_DIR}/${server}/icon/local"
+    --server=${SERVER} \
+    --output_dir="${FILE_DIR}/icons"
 done
 
-# Animations
-flock -xn /tmp/animation.lck "${CRONJOBS_DIR}/media/update_animation_files.sh"
-
-# HQ Images
+# HQ Images are only in JP
+mkdir -p "${IMG_DIR}/jp/hq_portraits"
 python3 "${RUN_DIR}/PADHQImageDownload.py" \
-  --raw_file_dir="${IMG_DIR}/jp/portrait/raw_data" \
+  --raw_file_dir="${IMG_DIR}/jp/raw_data" \
   --db_config="${DB_CONFIG}" \
-  --output_dir="${IMG_DIR}/hq_images"
+  --output_dir="${IMG_DIR}/jp/hq_portraits"
 
 # Force a sync
 ${CRONJOBS_DIR}/sync_data.sh
