@@ -542,13 +542,14 @@ class CrossServerDatabase:
         return self.dungeon_id_to_dungeon.get(dungeon_id, None)
 
     def load_extra_image_info(self, media_dir: str):
-        for f in os.listdir(os.path.join(media_dir, 'hq_images')):
-            if (m := re.match(r'(\d+)\.png', f)):
-                self.hq_image_monster_ids.append(MonsterId(int(m.group(1))))
+        for server in ('na', 'jp'):
+            for f in os.listdir(os.path.join(media_dir, server, 'hq_images')):
+                if (m := re.match(r'(\d+)\.png', f)):
+                    self.hq_image_monster_ids.append(MonsterId(int(m.group(1))))
 
-        for f in os.listdir(os.path.join(media_dir, 'animated')):
-            if (m := re.match(r'mons_(\d+)\.tomb', f)):
-                self.animated_monster_ids.append(MonsterId(int(m.group(1))))
+            for f in os.listdir(os.path.join(media_dir, server, 'animated')):
+                if (m := re.match(r'mons_(\d+)\.tomb', f)):
+                    self.animated_monster_ids.append(MonsterId(int(m.group(1))))
 
         for csc in self.ownable_cards:
             if csc.monster_id in self.hq_image_monster_ids:
