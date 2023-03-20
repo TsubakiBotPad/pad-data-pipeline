@@ -184,7 +184,7 @@ class Card(pad_util.Printable):
         self.latent_slot_unlock_flag = bool(self.flags & 32)
 
         # Composed with flags and other monster attributes
-        self.inheritable = bool(self.inheritable_flag and self.active_skill_id)
+        self.inheritable = bool(self.inheritable_flag and self.active_skill_id and self.awakenings)
         self.take_assists = bool(self.take_assists_flag and self.active_skill_id)
         self.is_stackable = bool(not self.unstackable_flag and self.type_1_id in [0, 12, 14])
         self.ownable = self.monster_no < 100000
