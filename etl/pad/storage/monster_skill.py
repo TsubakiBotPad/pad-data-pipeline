@@ -1,10 +1,10 @@
 import json
-from typing import List
+from typing import List, Dict, Any
 
 from pad.db.db_util import DbWrapper
 from pad.raw.skills import skill_text_typing
 from pad.raw.skills.active_behaviors import behavior_to_json
-from pad.raw.skills.active_skill_info import ActiveSkill as ASSkill
+from pad.raw.skills.active_skill_info import ActiveSkill as ASSkill, ASConverted
 from pad.raw.skills.en.active_skill_text import EnASTextConverter
 from pad.raw.skills.en.leader_skill_text import EnLSTextConverter
 from pad.raw.skills.ja.active_skill_text import JaASTextConverter
@@ -272,34 +272,46 @@ class ActiveSubskillsParts(ServerDependentSqlItem):
     BASE_TABLE = 'active_subskills_parts'
 
     @staticmethod
-    def from_css(skill: ASSkill, part: ASSkill, order_idx: int = 0) \
+    def from_css(skill: ASSkill, part: ASSkill, order_idx: int = 0, data: Dict[str, Any] = None) \
             -> 'ActiveSubskillsParts':
+        if data is None:
+            data = {}
+
         return ActiveSubskillsParts(
             active_subskill_id=skill.skill_id,
             active_part_id=part.skill_id,
-            order_idx=order_idx)
+            order_idx=order_idx,
+            **data)
 
     def __init__(self,
                  active_subskill_id: int = None,
                  active_part_id: int = None,
                  order_idx: int = None,
-                 tstamp: int = None):
+                 delay: int = 0,
+                 tstamp: int = None,):
         self.active_subskill_id = active_subskill_id
         self.active_part_id = active_part_id
         self.order_idx = order_idx
+        self.delay = delay
         self.tstamp = tstamp
 
     def __str__(self):
-        return 'ActiveSubskillsParts({}): (#{})'.format(self.key_str(), self.order_idx)
+        return f'ActiveSubskillsParts({self.key_str()}): (#{self.order_idx}) (Delay: {self.delay})'
 
 
 def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
     db.insert_or_update(ActiveSkill.from_css(skill))
     for c, subskill in enumerate(skill.cur_skill.subskills):
         db.insert_or_update(ActiveSubskill.from_as(subskill))
-        for c2, part in enumerate(subskill.parts):
-            db.insert_or_update(ActivePart.from_as(part))
-            db.insert_or_update(ActiveSubskillsParts.from_css(subskill, part, c2))
+        for c2, (part, pdata) in enumerate(subskill.parts):
+            if isinstance(part, ASConverted):
+                print(part.convert())
+                for c3, (part2, _) in enumerate(part.convert()):
+                    db.insert_or_update(ActivePart.from_as(part2))
+                    db.insert_or_update(ActiveSubskillsParts.from_css(subskill, part2, c3, pdata))
+            else:
+                db.insert_or_update(ActivePart.from_as(part))
+                db.insert_or_update(ActiveSubskillsParts.from_css(subskill, part, c2, pdata))
         db.insert_or_update(ActiveSkillsSubskills.from_css(skill, subskill, c))
 
 
