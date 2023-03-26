@@ -715,9 +715,9 @@ class EnASTextConverter(EnBaseTextConverter):
 
     def multi_part_active(self, act):
         text_to_item = OrderedDict()
-        for p in act.parts:
+        for p, _ in act.parts:
             if p.needs_context:
-                p_text = p.text(self, act.parts)
+                p_text = p.text(self, [s for s, _ in act.parts])
             else:
                 p_text = p.text(self)
             if p_text in text_to_item:

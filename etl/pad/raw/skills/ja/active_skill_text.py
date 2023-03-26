@@ -648,7 +648,7 @@ class JaASTextConverter(JaBaseTextConverter):
 
     def multi_part_active(self, act):
         text_to_item = OrderedDict()
-        for p in act.parts:
+        for p, _ in act.parts:
             p_text = p.text(self)
             if p_text in text_to_item:
                 text_to_item[p_text].repeat += 1

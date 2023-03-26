@@ -119,11 +119,11 @@ def parse_as_conditions(skill, child=False) -> List[ASTags]:
     results = set()
 
     if isinstance(skill, ASMultiPartSkill):
-        for s in skill.parts:
+        for s, _ in skill.parts:
             results.update(parse_as_conditions(s, True))
-        if len([s for s in skill.parts if isinstance(s, (ASOneAttrtoOneAttr,
-                                                         ASTwoAttrtoOneTwoAttr,
-                                                         ASThreeAttrtoOneAttr))]) >= 2:
+        if len([s for s, _ in skill.parts if isinstance(s, (ASOneAttrtoOneAttr,
+                                                            ASTwoAttrtoOneTwoAttr,
+                                                            ASThreeAttrtoOneAttr))]) >= 2:
             results.add(ASTags.DOUBLE_ORBS_CONVERT)
 
     if isinstance(skill, ASRandomSkill):

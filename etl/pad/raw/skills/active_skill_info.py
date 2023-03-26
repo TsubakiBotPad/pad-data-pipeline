@@ -3,7 +3,7 @@ from collections import Counter, defaultdict, namedtuple
 from copy import copy
 from fractions import Fraction
 from numbers import Rational
-from typing import Any, Iterable, List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, Optional, Union, Tuple, Dict
 
 from pad.raw.skill import MonsterSkill
 from pad.raw.skills.active_behaviors import ASBOrbChange, ASBehavior
@@ -57,8 +57,8 @@ class ActiveSkill:
         return [self]
 
     @property
-    def parts(self) -> List["ActiveSkill"]:
-        return [self]
+    def parts(self) -> List[Tuple["ActiveSkill", Dict[str, Any]]]:
+        return [(self, {})]
 
     @property
     def transform_ids(self) -> Mapping[int, Rational]:
@@ -121,6 +121,11 @@ class ASCompound(ASMultiPart):
     @property
     def subskills(self) -> List["ActiveSkill"]:
         return self.child_skills
+
+
+class ASConverted(ASMultiPart):
+    def convert(self) -> List[Tuple["ActiveSkill", Dict[str, Any]]]:
+        ...
 
 
 class ASMultiplierMultiTargetAttrNuke(ActiveSkill):
@@ -1477,7 +1482,7 @@ class ASCTWConditionalAttributes(ActiveSkill):
         return converter.ctw_conditional_attributes(self)
 
 
-class ASDelayCompound(ASCompound):
+class ASDelayCompound(ASConverted):
     skill_type = 248
 
     def __init__(self, ms: MonsterSkill):
@@ -1490,6 +1495,20 @@ class ASDelayCompound(ASCompound):
 
     def text(self, converter: ASTextConverter) -> str:
         return converter.delay_compound(self)
+
+    @property
+    def parts(self):
+        return [(self, {})]
+
+    def convert(self):
+        parts = sum([s.parts for s in self.child_skills], [])
+        new_parts = []
+        for part, data in parts:
+            new_data = data.copy()
+            new_data['delay'] = new_data.get('delay', 0) + self.turns
+            new_parts.append((part, new_data))
+        return new_parts
+
 
 
 class ASInflictES(ActiveSkill):
