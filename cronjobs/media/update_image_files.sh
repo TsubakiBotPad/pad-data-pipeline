@@ -23,8 +23,8 @@ trap error_exit ERR
 trap success_exit EXIT
 
 # Only allow one instance of this script to run at a time
-exec 8>"/tmp/image.lock";
-flock -nx 8;
+# exec 8>"/tmp/image.lock";
+# flock -nx 8;
 
 RUN_DIR="${MEDIA_ETL_DIR}/assets"
 
