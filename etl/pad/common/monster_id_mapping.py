@@ -43,7 +43,7 @@ def alt_no_to_monster_id(no_converter: Callable[[MonsterNo], MonsterId]) \
 @alt_no_to_monster_id
 def jp_no_to_monster_id(jp_no: MonsterNo) -> MonsterId:
     # Ghost numbers for coins and other special drops
-    if jp_no > 10_000:
+    if jp_no >= 10_000:
         jp_no -= 100
     return MonsterId(jp_no)
 
@@ -51,7 +51,7 @@ def jp_no_to_monster_id(jp_no: MonsterNo) -> MonsterId:
 @alt_no_to_monster_id
 def na_no_to_monster_id(na_no: MonsterNo) -> MonsterId:
     # Ghost numbers for coins and other special drops
-    if na_no > 10_000:
+    if na_no >= 10_000:
         na_no -= 100
 
     # Shinra Bansho 1
@@ -92,7 +92,7 @@ def na_no_to_monster_id(na_no: MonsterNo) -> MonsterId:
 @alt_no_to_monster_id
 def kr_no_to_monster_id(kr_no: MonsterNo) -> MonsterId:
     # Ghost numbers for coins and other special drops
-    if kr_no > 10_000:
+    if kr_no >= 10_000:
         kr_no -= 100
 
     # Shinra Bansho 1
