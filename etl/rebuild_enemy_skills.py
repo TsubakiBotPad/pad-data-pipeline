@@ -153,7 +153,7 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
             if not skillset.has_actions():
                 continue
 
-            skillset_extraction = (csc.monster_id % 100000) in APPLY_SKILLSET_GROUPING
+            skillset_extraction = (csc.monster_id % 100_000) in APPLY_SKILLSET_GROUPING
             flattened = enemy_skill_proto.flatten_skillset(level, skillset, skillset_extraction=skillset_extraction)
 
             # Check if we've already seen this level behavior; zero out the level and stick it

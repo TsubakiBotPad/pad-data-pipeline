@@ -40,10 +40,10 @@ class MonsterProcessor(object):
     def _process_monsters(self, db):
         logger.info('loading monsters')
         for m in self.data.all_cards:
-            if 0 < m.monster_id < 19999 and not is_bad_name(m.jp_card.card.name):
+            if 0 < m.monster_id < 100_000 and not is_bad_name(m.jp_card.card.name):
                 db.insert_or_update(Monster.from_csm(m))
             canonical_id = next((cm.monster_id for cm in self.data.ownable_cards
-                                 if cm.monster_id == m.monster_id % 100000), None)
+                                 if cm.monster_id == m.monster_id % 100_000), None)
             db.insert_or_update(AltMonster.from_csm(m, canonical_id))
 
     def _process_monster_images(self, db):

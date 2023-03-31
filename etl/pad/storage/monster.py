@@ -436,7 +436,7 @@ class AltMonster(ServerDependentSqlItem):
             monster_id=mid,
             active_skill_id=o.cur_card.card.active_skill_id,
             reg_date=date.today().isoformat(),
-            is_alt=o.monster_id >= 20000)
+            is_alt=o.monster_id >= 50000)
 
     def __init__(self,
                  alt_monster_id: int = None,
