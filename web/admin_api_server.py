@@ -151,7 +151,7 @@ async def serve_next_reapproval_monster(request):
 @app.route('/dadguide/admin/monsterInfo')
 async def serve_monster_info(request):
     enemy_id = int(request.args.get('id'))
-    monster_id = enemy_id % 100000
+    monster_id = enemy_id % 100_000
     sql = '''
         select m.monster_id as monster_id, m.name_en as name
         from monsters m

@@ -187,7 +187,7 @@ class Card(pad_util.Printable):
         self.inheritable = bool(self.inheritable_flag and self.active_skill_id and self.awakenings)
         self.take_assists = bool(self.take_assists_flag and self.active_skill_id)
         self.is_stackable = bool(not self.unstackable_flag and self.type_1_id in [0, 12, 14])
-        self.ownable = self.monster_no < 100000
+        self.ownable = self.monster_no < 100_000
         self.usable = bool(not self.assist_only_flag and self.ownable)
 
         self.search_strings: List[str] = raw[67].split('|')
