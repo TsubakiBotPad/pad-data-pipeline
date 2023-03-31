@@ -20,7 +20,7 @@ class Exchange(Printable):
 
     def __init__(self, raw: List[str], server: Server):
         self.server = server
-        self.unknown_000 = str(raw[0])  # Seems to always be 'A'  (For Array maybe?  TODO: Look into this for GH CSV)
+        self.unknown_0 = str(raw[0])  # Seems to always be 'A'  (For Array maybe?  TODO: Look into this for GH CSV)
 
         # Seems to be the unique ID for the trade?
         self.trade_id = int(raw[1])

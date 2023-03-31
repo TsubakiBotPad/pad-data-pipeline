@@ -49,13 +49,13 @@ def _clean_cards(server: Server,
 
         if card.active_skill_id:
             active_skill = db.active_skill_by_id(card.active_skill_id)
-            if active_skill is None and card.monster_no < 100000:
+            if active_skill is None and card.monster_no < 100_000:
                 human_fix_logger.warning('Active skill lookup failed: %s - %s',
                                          repr(card), card.active_skill_id)
 
         if card.leader_skill_id:
             leader_skill = db.leader_skill_by_id(card.leader_skill_id)
-            if leader_skill is None and card.monster_no < 100000:
+            if leader_skill is None and card.monster_no < 100_000:
                 human_fix_logger.warning('Leader skill lookup failed: %s - %s',
                                          repr(card), card.leader_skill_id)
 

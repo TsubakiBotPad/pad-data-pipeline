@@ -1,8 +1,11 @@
 # Pad NA/JP don't have the exact same monster IDs for the same monster.
 # We use JP ids as the monster number; NA-only cards are adjusted to a new range.
+from functools import wraps
 from typing import Callable
 
 from pad.common.shared_types import MonsterId, MonsterNo, Server
+
+NA_ONLY_OFFSET = 50_000
 
 
 def between(n: int, bottom: int, top: int):
@@ -22,98 +25,102 @@ def server_monster_id_fn(server: Server) -> Callable[[MonsterNo], MonsterId]:
         return kr_no_to_monster_id
 
 
-def jp_no_to_monster_id(jp_id: MonsterNo) -> MonsterId:
-    # We use JP IDs as the monster_no; no need to adjust.
-    return MonsterId(jp_id)
+def alt_no_to_monster_id(no_converter: Callable[[MonsterNo], MonsterId]) \
+        -> Callable[[MonsterNo], MonsterId]:
+    @wraps(no_converter)
+    def convert_alt_no(mno: MonsterNo):
+        if mno > 99999:
+            sub_id = MonsterNo(mno % 100_000)
+            mno -= sub_id
+            mno += no_converter(sub_id)
+        else:
+            mno = no_converter(mno)
+
+        return MonsterId(mno)
+    return convert_alt_no
 
 
-# Fixes for early collabs, and adjusting voltron to a new range.
-def na_no_to_monster_id(na_id: MonsterNo) -> MonsterId:
-    if na_id > 99999:
-        sub_id = MonsterNo(na_id % 100000)
-        na_id -= sub_id
-        na_id += _na_no_to_monster_id(sub_id)
-    else:
-        na_id = _na_no_to_monster_id(na_id)
-
-    return MonsterId(na_id)
+@alt_no_to_monster_id
+def jp_no_to_monster_id(jp_no: MonsterNo) -> MonsterId:
+    # Ghost numbers for coins and other special drops
+    if jp_no > 10_000:
+        jp_no -= 100
+    return MonsterId(jp_no)
 
 
-# Fixes for early collabs, and adjusting voltron to a new range.
-def kr_no_to_monster_id(kr_id: MonsterNo) -> MonsterId:
-    if kr_id > 99999:
-        sub_id = MonsterNo(kr_id % 100000)
-        kr_id -= sub_id
-        kr_id += _kr_no_to_monster_id(sub_id)
-    else:
-        kr_id = _kr_no_to_monster_id(kr_id)
+@alt_no_to_monster_id
+def na_no_to_monster_id(na_no: MonsterNo) -> MonsterId:
+    # Ghost numbers for coins and other special drops
+    if na_no > 10_000:
+        na_no -= 100
 
-    return MonsterId(kr_id)
-
-
-def _na_no_to_monster_id(na_id: MonsterNo) -> MonsterId:
     # Shinra Bansho 1
-    if between(na_id, 934, 935):
-        return adjust(na_id, 934, 669)
+    if between(na_no, 934, 935):
+        return adjust(na_no, 934, 669)
 
     # Shinra Bansho 2
-    if between(na_id, 1049, 1058):
-        return adjust(na_id, 1049, 671)
+    if between(na_no, 1049, 1058):
+        return adjust(na_no, 1049, 671)
 
     # Batman 1
-    if between(na_id, 669, 680):
-        return adjust(na_id, 669, 924)
+    if between(na_no, 669, 680):
+        return adjust(na_no, 669, 924)
 
     # Batman 2
-    if between(na_id, 924, 933):
-        return adjust(na_id, 924, 1049)
+    if between(na_no, 924, 933):
+        return adjust(na_no, 924, 1049)
 
     # Voltron
-    if between(na_id, 2601, 2631):
-        return adjust(na_id, 2601, 2601 + 10000)
+    if between(na_no, 2601, 2631):
+        return adjust(na_no, 2601, 2601 + NA_ONLY_OFFSET)
 
     # Power Rangers
-    if between(na_id, 4949, 4987):
-        return adjust(na_id, 4949, 4949 + 10000)
+    if between(na_no, 4949, 4987):
+        return adjust(na_no, 4949, 4949 + NA_ONLY_OFFSET)
 
     # GungHo: Another Story
-    if between(na_id, 6905, 6992):
-        return adjust(na_id, 6905, 6905 + 10000)
+    if between(na_no, 6905, 6992):
+        return adjust(na_no, 6905, 6905 + NA_ONLY_OFFSET)
 
     # GungHo: Another Story 2
-    if between(na_id, 9090, 9130):
-        return adjust(na_id, 9090, 9090 + 10000)
+    if between(na_no, 9090, 9130):
+        return adjust(na_no, 9090, 9090 + NA_ONLY_OFFSET)
 
-    return MonsterId(na_id)
+    return MonsterId(na_no)
 
 
-def _kr_no_to_monster_id(kr_id: MonsterNo) -> MonsterId:
+@alt_no_to_monster_id
+def kr_no_to_monster_id(kr_no: MonsterNo) -> MonsterId:
+    # Ghost numbers for coins and other special drops
+    if kr_no > 10_000:
+        kr_no -= 100
+
     # Shinra Bansho 1
-    if between(kr_id, 934, 935):
-        return adjust(kr_id, 934, 669)
+    if between(kr_no, 934, 935):
+        return adjust(kr_no, 934, 669)
 
     # Shinra Bansho 2
-    if between(kr_id, 1049, 1058):
-        return adjust(kr_id, 1049, 671)
+    if between(kr_no, 1049, 1058):
+        return adjust(kr_no, 1049, 671)
 
     # Batman 1
-    if between(kr_id, 669, 680):
-        return adjust(kr_id, 669, 924)
+    if between(kr_no, 669, 680):
+        return adjust(kr_no, 669, 924)
 
     # Batman 2
-    if between(kr_id, 924, 933):
-        return adjust(kr_id, 924, 1049)
+    if between(kr_no, 924, 933):
+        return adjust(kr_no, 924, 1049)
 
     # Voltron
-    if between(kr_id, 2601, 2631):
-        return adjust(kr_id, 2601, 2601 + 10000)
+    if between(kr_no, 2601, 2631):
+        return adjust(kr_no, 2601, 2601 + NA_ONLY_OFFSET)
 
     # GungHo: Another Story
-    if between(kr_id, 6905, 6992):
-        return adjust(kr_id, 6905, 6905 + 10000)
+    if between(kr_no, 6905, 6992):
+        return adjust(kr_no, 6905, 6905 + NA_ONLY_OFFSET)
 
     # GungHo: Another Story 2
-    if between(kr_id, 9090, 9130):
-        return adjust(kr_id, 9090, 9090 + 10000)
+    if between(kr_no, 9090, 9130):
+        return adjust(kr_no, 9090, 9090 + NA_ONLY_OFFSET)
 
-    return MonsterId(kr_id)
+    return MonsterId(kr_no)

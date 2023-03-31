@@ -212,7 +212,7 @@ class ResultSlot(object):
         self.max_spawn = max_spawn
 
     def visible_monster_id(self) -> MonsterId:
-        return MonsterId(self.monster_id % 100000)
+        return MonsterId(self.monster_id % 100_000)
 
 
 class WaveConverter(object):
@@ -237,7 +237,7 @@ class WaveConverter(object):
             # 9916: permanent dungeon
             # 9917: badge
             # 9999: announcement
-            if drop_id and (9000 < drop_id < 10000):
+            if drop_id and (9_900 <= drop_id < 10_000):
                 raise ValueError('Special drop detected (not handled yet)')
 
             # Build a structure that merges DB info with wave data.
