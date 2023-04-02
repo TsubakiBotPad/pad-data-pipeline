@@ -49,17 +49,17 @@ def _clean_cards(server: Server,
 
         if card.active_skill_id:
             active_skill = db.active_skill_by_id(card.active_skill_id)
-            if active_skill is None and card.monster_no < 100_000:
+            if active_skill is None and card.gungho_id < 100_000:
                 human_fix_logger.warning('Active skill lookup failed: %s - %s',
                                          repr(card), card.active_skill_id)
 
         if card.leader_skill_id:
             leader_skill = db.leader_skill_by_id(card.leader_skill_id)
-            if leader_skill is None and card.monster_no < 100_000:
+            if leader_skill is None and card.gungho_id < 100_000:
                 human_fix_logger.warning('Leader skill lookup failed: %s - %s',
                                          repr(card), card.leader_skill_id)
 
-        enemy = enemy_by_enemy_id.get(card.monster_no)
+        enemy = enemy_by_enemy_id.get(card.gungho_id)
         enemy_skills = enemy.enemy_skills if enemy else []
 
         result = MergedCard(server, card, active_skill, leader_skill, enemy_skills)
@@ -77,7 +77,7 @@ def _clean_enemy(cards: List[Card], enemy_skills: List[ESBehavior]) -> List[Merg
 
         merged_skills = [ESInstance(enemy_skill_map[ref.enemy_skill_id], ref, c) for ref in c.enemy_skill_refs if
                          ref]
-        merged_enemies.append(MergedEnemy(c.monster_no, c.enemy(), merged_skills))
+        merged_enemies.append(MergedEnemy(c.gungho_id, c.enemy(), merged_skills))
     return merged_enemies
 
 
@@ -147,10 +147,10 @@ class Database(object):
         self.cards = _clean_cards(self.server, raw_cards, self.enemies, self)
 
         self.dungeon_id_to_dungeon = {d.dungeon_id: d for d in self.dungeons}
-        self.monster_no_to_card = {c.monster_no: c for c in self.cards}
+        self.monster_no_to_card = {c.gungho_id: c for c in self.cards}
 
         id_mapper = server_monster_id_fn(self.server)
-        self.monster_id_to_card = {id_mapper(c.monster_no): c for c in self.cards}
+        self.monster_id_to_card = {id_mapper(c.gungho_id): c for c in self.cards}
 
         self.enemy_id_to_enemy = {e.enemy_id: e for e in self.enemies}
 

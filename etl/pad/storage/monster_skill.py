@@ -305,7 +305,6 @@ def upsert_active_skill_data(db: DbWrapper, skill: CrossServerSkill):
         db.insert_or_update(ActiveSubskill.from_as(subskill))
         for c2, (part, pdata) in enumerate(subskill.parts):
             if isinstance(part, ASConverted):
-                print(part.convert())
                 for c3, (part2, _) in enumerate(part.convert()):
                     db.insert_or_update(ActivePart.from_as(part2))
                     db.insert_or_update(ActiveSubskillsParts.from_css(subskill, part2, c3, pdata))

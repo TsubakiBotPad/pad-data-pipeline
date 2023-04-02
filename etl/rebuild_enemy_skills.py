@@ -179,7 +179,7 @@ def process_card(csc: CrossServerCard) -> MonsterBehavior:
             else:
                 # TODO: some monsters have whacked out behavior (they aren't real monsters)
                 # Should start ignoring those (e.g. pixel yuna).
-                print('\tLoop detection failure for', card.monster_no, card.name)
+                print('\tLoop detection failure for', card.gungho_id, card.name)
                 break
     if not skill_listings:
         return None
