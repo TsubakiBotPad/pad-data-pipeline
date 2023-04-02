@@ -25,11 +25,10 @@ bin_dir = args.raw_file_dir
 output_dir = args.output_dir
 
 GUNGHO_TEMPLATE = 'https://pad.gungho.jp/member/img/graphic/illust/{}'
-HTTP_SEMAPHORE = asyncio.Semaphore(10)
 
 
-async def download_file(url, file_path, monster_id, cursor):
-    async with HTTP_SEMAPHORE:
+async def download_file(url, file_path, monster_id, cursor, semaphore):
+    async with semaphore:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, allow_redirects=False) as response:
                 if response.status == 302:
@@ -57,6 +56,7 @@ async def main():
     db = pymysql.connect(**db_config, autocommit=True)
     cur = db.cursor()
     file_downloads = []
+    semaphore = asyncio.Semaphore(10)
 
     for file_name in sorted(os.listdir(bin_dir)):
         if not (match := re.match(r'mons_0*(\d+).bin', file_name)):
@@ -72,7 +72,8 @@ async def main():
         gungho_url = GUNGHO_TEMPLATE.format(monster_id)
 
         try:
-            file_downloads.append(download_file(gungho_url, corrected_file_path, int(monster_id), cur))
+            file_downloads.append(download_file(gungho_url, corrected_file_path,
+                                                int(monster_id), cur, semaphore))
         except Exception as e:
             print('Failed to download: ', e)
 
