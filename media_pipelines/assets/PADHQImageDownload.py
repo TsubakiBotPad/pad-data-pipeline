@@ -21,20 +21,23 @@ helpGroup = parser.add_argument_group("Help")
 helpGroup.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
 
 args = parser.parse_args()
-raw_dir = args.raw_file_dir
-corrected_dir = args.output_dir
+bin_dir = args.raw_file_dir
+output_dir = args.output_dir
 
 GUNGHO_TEMPLATE = 'https://pad.gungho.jp/member/img/graphic/illust/{}'
+HTTP_SEMAPHORE = asyncio.Semaphore(10)
 
 
 async def download_file(url, file_path, monster_id, cursor):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, allow_redirects=False) as response:
-            if response.status == 302:
-                return
-            if response.status != 200:
-                return
-            image_data = await response.content.read()
+    async with HTTP_SEMAPHORE:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, allow_redirects=False) as response:
+                if response.status == 302:
+                    return
+                if response.status != 200:
+                    print(f"Invalid response code {response.status} for {monster_id}")
+                    return
+                image_data = await response.content.read()
 
     with open(file_path, "wb") as f:
         f.write(image_data)
@@ -55,25 +58,21 @@ async def main():
     cur = db.cursor()
     file_downloads = []
 
-    for file_name in sorted(os.listdir(raw_dir)):
+    for file_name in sorted(os.listdir(bin_dir)):
         if not (match := re.match(r'mons_0*(\d+).bin', file_name)):
-            print('skipping', file_name)
             continue
 
-        pad_id = match.group(1)
-        final_image_name = '{}.png'.format(pad_id.zfill(5))
-        corrected_file_path = os.path.join(corrected_dir, final_image_name)
+        monster_id = int(match.group(1))
+        final_image_name = f'{monster_id:05d}.png'
+        corrected_file_path = os.path.join(output_dir, final_image_name)
 
         if os.path.exists(corrected_file_path):
-            print('skipping', corrected_file_path)
             continue
 
-        print('processing', corrected_file_path)
-
-        gungho_url = GUNGHO_TEMPLATE.format(pad_id)
+        gungho_url = GUNGHO_TEMPLATE.format(monster_id)
 
         try:
-            file_downloads.append(download_file(gungho_url, corrected_file_path, int(pad_id), cur))
+            file_downloads.append(download_file(gungho_url, corrected_file_path, int(monster_id), cur))
         except Exception as e:
             print('Failed to download: ', e)
 
@@ -86,4 +85,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
