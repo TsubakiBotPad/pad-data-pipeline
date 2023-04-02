@@ -25,11 +25,17 @@ def server_monster_id_fn(server: Server) -> Callable[[MonsterNo], MonsterId]:
         return kr_no_to_monster_id
 
 
+def convert_gungho_id(monster_no: MonsterNo) -> MonsterNo:
+    if monster_no >= 10_000:
+        monster_no -= 100
+    return MonsterNo(monster_no)
+
+
 def alt_no_to_monster_id(no_converter: Callable[[MonsterNo], MonsterId]) \
         -> Callable[[MonsterNo], MonsterId]:
     @wraps(no_converter)
     def convert_alt_no(mno: MonsterNo):
-        if mno > 99999:
+        if mno >= 100_000:
             sub_id = MonsterNo(mno % 100_000)
             mno -= sub_id
             mno += no_converter(sub_id)
@@ -43,16 +49,14 @@ def alt_no_to_monster_id(no_converter: Callable[[MonsterNo], MonsterId]) \
 @alt_no_to_monster_id
 def jp_no_to_monster_id(jp_no: MonsterNo) -> MonsterId:
     # Ghost numbers for coins and other special drops
-    if jp_no >= 10_000:
-        jp_no -= 100
+    jp_no = convert_gungho_id(jp_no)
     return MonsterId(jp_no)
 
 
 @alt_no_to_monster_id
 def na_no_to_monster_id(na_no: MonsterNo) -> MonsterId:
     # Ghost numbers for coins and other special drops
-    if na_no >= 10_000:
-        na_no -= 100
+    jp_no = convert_gungho_id(na_no)
 
     # Shinra Bansho 1
     if between(na_no, 934, 935):
@@ -92,8 +96,7 @@ def na_no_to_monster_id(na_no: MonsterNo) -> MonsterId:
 @alt_no_to_monster_id
 def kr_no_to_monster_id(kr_no: MonsterNo) -> MonsterId:
     # Ghost numbers for coins and other special drops
-    if kr_no >= 10_000:
-        kr_no -= 100
+    jp_no = convert_gungho_id(kr_no)
 
     # Shinra Bansho 1
     if between(kr_no, 934, 935):

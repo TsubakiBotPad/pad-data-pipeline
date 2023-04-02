@@ -57,7 +57,7 @@ pad_db.load_database(skip_skills=True, skip_extra=True)
 
 for merged_card in pad_db.cards:
     card = merged_card.card
-    card_id = card.monster_no
+    card_id = card.gungho_id
     released = card.released_status
 
     # Prevent loading junk entries (fake enemies) and also limit to data which has

@@ -5,6 +5,7 @@ import logging
 from typing import List, Any, Optional
 
 from pad.common import pad_util
+from pad.common.monster_id_mapping import convert_gungho_id
 from pad.common.shared_types import AttrId, MonsterNo, SkillId, TypeId, Curve
 
 human_fix_logger = logging.getLogger('human_fix')
@@ -53,7 +54,8 @@ class Card(pad_util.Printable):
         _unflatten(raw, 57, 3)
         _unflatten(raw, 58, 1)
 
-        self.monster_no = MonsterNo(raw[0])
+        self.gungho_id = MonsterNo(raw[0])
+        self.monster_no = convert_gungho_id(self.gungho_id)
         self.name: str = raw[1]
         self.attr1_id = AttrId(raw[2])
         self.attr2_id = AttrId(raw[3])
@@ -187,7 +189,7 @@ class Card(pad_util.Printable):
         self.inheritable = bool(self.inheritable_flag and self.active_skill_id and self.awakenings)
         self.take_assists = bool(self.take_assists_flag and self.active_skill_id)
         self.is_stackable = bool(not self.unstackable_flag and self.type_1_id in [0, 12, 14])
-        self.ownable = self.monster_no < 100_000
+        self.ownable = self.gungho_id < 100_000
         self.usable = bool(not self.assist_only_flag and self.ownable)
 
         self.search_strings: List[str] = raw[67].split('|')
@@ -260,7 +262,7 @@ class Card(pad_util.Printable):
         return Curve(self.sell_gold_per_level, max_level=99)
 
     def __str__(self):
-        return 'Card({} - {})'.format(self.monster_no, self.name)
+        return 'Card({} - {})'.format(self.gungho_id, self.name)
 
 
 def _unflatten(raw: List[Any], idx: int, width: int):

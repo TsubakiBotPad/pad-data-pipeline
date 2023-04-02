@@ -155,7 +155,7 @@ def main(args):
         active_skill = skill_parser.active(monster.active_skill_id)
         leader_skill = skill_parser.leader(monster.leader_skill_id)
 
-        print(f"[{monster.monster_no}] {monster.name}\n")
+        print(f"[{monster.gungho_id}] {monster.name}\n")
         if active_skill is not None:
             print(f"Active Skill: {active_skill.name}"
                   f" (ID {active_skill.skill_id}, Type {active_skill.skill_type}, Raw {active_skill.raw_data})\n"

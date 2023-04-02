@@ -474,6 +474,16 @@ class EnASTextConverter(EnBaseTextConverter):
             return 'Create a 3x4 rectangle of {} in the bottom center of the board'.format(orb)
         elif board == [[0, 1, 2, 3, 4], [3], [2], [1], [0, 1, 2, 3, 4]]:
             return 'Create 13 {} in the shape of a Z.'.format(orb)
+        elif board == [[0], [], [], [], []]:
+            return 'Create one {} in the top-left corner'.format(orb)
+        elif board == [[], [], [], [], [5]]:
+            return 'Create one {} in the bottom-right corner'.format(orb)
+        elif board == [[0, 1, 2], [], [], [], []]:
+            return 'Create three {} in the on left side of the top row'.format(orb)
+        elif board == [[0, 5], [], [], [], []]:
+            return 'Create two {} in the top corners'.format(orb)
+
+
 
         if set(sum(board, [])) - {0, 1, 2, 3, 4, 5}:
             print(board)
@@ -623,12 +633,11 @@ class EnASTextConverter(EnBaseTextConverter):
         return f"Swap team leader with the sub in the {ordinal(act.sub_slot)} position"
 
     def composition_buff(self, act):
-        if act.attributes and act.types:
-            human_fix_logger.warning(f"Can't parse active skill {act.skill_id}: attributes and types.")
-            return ""
         skill_text = (self.fmt_duration(act.duration) + '+' +
                       self.fmt_multiplier_text(0, act.atk_boost, act.rcv_boost, default=0))
-        if act.attributes:
+        if act.attributes and act.types:
+            return skill_text + f" for each {self.fmt_multi_attr(act.attributes)} or {self.typing_to_str(act.types, 'or')} card in team"
+        elif act.attributes:
             return skill_text + f" for each {self.fmt_multi_attr(act.attributes)} card in team"
         else:
             return skill_text + f" for each instance of {self.typing_to_str(act.types, 'or')} in team"
