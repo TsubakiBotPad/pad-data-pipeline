@@ -2,13 +2,13 @@
 Data from the different sources in the same server, merged together.
 """
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 import pytz
 
 from pad.common import pad_util
-from pad.common.monster_id_mapping import server_monster_id_fn
-from pad.common.shared_types import Server, StarterGroup, MonsterNo, MonsterId
+from pad.common.monster_id_mapping import server_monster_id_fn, convert_gungho_id
+from pad.common.shared_types import Server, MonsterNo, MonsterId
 from pad.raw import Bonus, Card, Dungeon, Enemy
 from pad.raw.skills.active_skill_info import ActiveSkill
 from pad.raw.skills.enemy_skill_info import ESInstance
@@ -53,8 +53,8 @@ class MergedCard(pad_util.Printable):
                  leader_skill: LeaderSkill,
                  enemy_skills: List[ESInstance]):
         self.server = server
-        self.monster_no = card.monster_no
-        self.monster_id = self.no_to_id(card.monster_no)
+        self.gungho_id = card.gungho_id
+        self.monster_id = self.no_to_id(card.gungho_id)
         self.card = card
 
         self.active_skill_id = active_skill.skill_id if active_skill else None

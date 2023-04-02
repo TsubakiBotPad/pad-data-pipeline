@@ -65,6 +65,9 @@ class Monster(ServerDependentSqlItem):
             monster_no_jp=jp_card.monster_no if on_jp else None,
             monster_no_na=na_card.monster_no if on_na else None,
             monster_no_kr=kr_card.monster_no if on_kr else None,
+            gungho_id_jp=jp_card.gungho_id if on_jp else None,
+            gungho_id_na=na_card.gungho_id if on_na else None,
+            gungho_id_kr=kr_card.gungho_id if on_kr else None,
             name_ja=jp_card.name,
             name_en=na_card.name,
             name_ko=kr_card.name,
@@ -122,6 +125,9 @@ class Monster(ServerDependentSqlItem):
                  monster_no_jp: int = None,
                  monster_no_na: int = None,
                  monster_no_kr: int = None,
+                 gungho_id_jp: int = None,
+                 gungho_id_na: int = None,
+                 gungho_id_kr: int = None,
                  name_ja: str = None,
                  name_en: str = None,
                  name_ko: str = None,
@@ -358,10 +364,10 @@ class Evolution(ServerDependentSqlItem):
             reversible = True
 
         return Evolution(
-            evolution_type=0,  # Eventually remove this.  evolution_type is deprecated and barely works as is
+            evolution_type=0,  # TODO: Eventually remove this.  evolution_type is deprecated and barely works as is
             reversible=reversible,
             from_id=convert(card.ancestor_id),
-            to_id=convert(card.monster_no),
+            to_id=convert(card.gungho_id),
             mat_1_id=safe_convert(card.evo_mat_id_1),
             mat_2_id=safe_convert(card.evo_mat_id_2),
             mat_3_id=safe_convert(card.evo_mat_id_3),
@@ -409,7 +415,7 @@ class Transformation(ServerDependentSqlItem):
 
         # Do something with the chance
         return Transformation(
-            from_monster_id=convert(card.monster_no),
+            from_monster_id=convert(card.gungho_id),
             to_monster_id=convert(tfid))
 
     def __init__(self,
@@ -436,7 +442,7 @@ class AltMonster(ServerDependentSqlItem):
             monster_id=mid,
             active_skill_id=o.cur_card.card.active_skill_id,
             reg_date=date.today().isoformat(),
-            is_alt=o.monster_id >= 50000)
+            is_alt=o.monster_id >= 100_000)
 
     def __init__(self,
                  alt_monster_id: int = None,

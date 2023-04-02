@@ -1051,7 +1051,7 @@ def make_repeating_comparable(hp: int, repeating: List[RepeatSkillGroup]):
 
 def convert(card: Card, enemy_behavior: List[ESInstance], level: int, long_loop: bool) -> ProcessedSkillset:
     force_one_enemy = int(card.unknown_009) == 5 and (
-            card.monster_no % 100_000 not in [4227, 5119])  # hacky fix for hexa/qilin
+            card.gungho_id % 100_000 not in [4227, 5119])  # hacky fix for hexa/qilin
     enemy_skill_max_counter = card.enemy_skill_max_counter
     enemy_skill_counter_increment = card.enemy_skill_counter_increment
 
