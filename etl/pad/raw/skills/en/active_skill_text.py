@@ -476,6 +476,13 @@ class EnASTextConverter(EnBaseTextConverter):
             return 'Create 13 {} in the shape of a Z.'.format(orb)
         elif board == [[0], [], [], [], []]:
             return 'Create one {} in the top-left corner'.format(orb)
+        elif board == [[], [], [], [], [5]]:
+            return 'Create one {} in the bottom-right corner'.format(orb)
+        elif board == [[0, 1, 2], [], [], [], []]:
+            return 'Create three {} in the on left side of the top row'.format(orb)
+        elif board == [[0, 5], [], [], [], []]:
+            return 'Create two {} in the top corners'.format(orb)
+
 
 
         if set(sum(board, [])) - {0, 1, 2, 3, 4, 5}:
