@@ -52,11 +52,11 @@ async def download_file(url, file_path, monster_id, cursor, semaphore):
 async def main():
     with open(args.db_config) as f:
         db_config = json.load(f)
-        
+
     db = pymysql.connect(**db_config, autocommit=True)
     cur = db.cursor()
     file_downloads = []
-    semaphore = asyncio.Semaphore(10)
+    semaphore = asyncio.Semaphore(100)
 
     for file_name in sorted(os.listdir(bin_dir)):
         if not (match := re.match(r'mons_0*(\d+).bin', file_name)):
