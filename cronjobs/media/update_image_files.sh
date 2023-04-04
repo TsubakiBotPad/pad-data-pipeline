@@ -64,10 +64,10 @@ for SERVER in na jp; do
     --new-only --for-tsubaki --server "${SERVER}" --quiet
 
   python3 "${RUN_DIR}/PADIconGenerator.py" \
-    --input_dir="${FILE_DIR}/cards" \
-    --data_dir="${RAW_DIR}" \
-    --card_templates_file="${RUN_DIR}/attribute_frames.png" \
+    --card_dir="${FILE_DIR}/cards" \
+    --db_config="${DB_CONFIG}" \
     --server=${SERVER} \
+    --card_templates_file="${RUN_DIR}/attribute_frames.png" \
     --output_dir="${FILE_DIR}/icons"
 done
 
