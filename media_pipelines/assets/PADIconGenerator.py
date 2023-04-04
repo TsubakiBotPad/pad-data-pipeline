@@ -140,6 +140,9 @@ def main(args: argparse.Namespace):
     no_to_attrs, no_to_id = get_monster_no_maps(args.server, args.db_config)
     attr_frames = get_attr_frames(args.card_templates_file)
     for monster_no, card_attrs in no_to_attrs.items():
+        output_fname = os.path.join(args.output_dir, f'{no_to_id[monster_no]:05d}.png')
+        if os.path.exists(output_fname):
+            continue
         try:
             plain_icon = get_card_icon(monster_no, args.card_dir)
         except CardMissingError:
@@ -151,8 +154,6 @@ def main(args: argparse.Namespace):
             continue
 
         icon = apply_attribute_frames(plain_icon, card_attrs, attr_frames)
-
-        output_fname = os.path.join(args.output_dir, f'{no_to_id[monster_no]:05d}.png')
         icon.save(output_fname, 'PNG')
 
 
