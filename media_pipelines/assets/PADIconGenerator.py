@@ -35,6 +35,10 @@ def parse_args() -> argparse.Namespace:
     outputGroup = parser.add_argument_group("Output")
     outputGroup.add_argument("--output_dir", help="Path to a folder where output should be saved")
 
+    settingsGroup = parser.add_argument_group("Settings")
+    settingsGroup.add_argument("--verbose", action='store_true', help="Give more output")
+    settingsGroup.add_argument("--regenerate", action='store_true', help="Regenerate already-existing cards")
+
     helpGroup = parser.add_argument_group("Help")
     helpGroup.add_argument("-h", "--help", action="help", help="Displays this help message and exits.")
     args = parser.parse_args()
@@ -141,7 +145,7 @@ def main(args: argparse.Namespace):
     attr_frames = get_attr_frames(args.card_templates_file)
     for monster_no, card_attrs in no_to_attrs.items():
         output_fname = os.path.join(args.output_dir, f'{no_to_id[monster_no]:05d}.png')
-        if os.path.exists(output_fname):
+        if os.path.exists(output_fname) and not args.regenerate:
             continue
         try:
             plain_icon = get_card_icon(monster_no, args.card_dir)
@@ -154,6 +158,8 @@ def main(args: argparse.Namespace):
             continue
 
         icon = apply_attribute_frames(plain_icon, card_attrs, attr_frames)
+        if args.verbose:
+            print(f"Saving monster with no. {args.server.upper()} {monster_no} to {no_to_id[monster_no]:05d}.png")
         icon.save(output_fname, 'PNG')
 
 
